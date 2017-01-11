@@ -4,4 +4,5 @@
     <string name="app_desc">防止微信撤回聊天消息</string>
 
     <string name="view_about_project_github">项目源码 rarnu/wechat_no_revoke</string>
+    <string name="view_about_intro">防止微信撤回聊天消息, 支持微信 6.5.3 并将持续更新。</string>
 </resources>

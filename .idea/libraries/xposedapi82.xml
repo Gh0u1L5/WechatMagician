@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="xposedapi82">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/xposed/xposedapi82.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

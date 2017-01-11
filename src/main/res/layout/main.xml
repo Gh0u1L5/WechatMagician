@@ -2,7 +2,8 @@
 <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="8dip">
 
     <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
         <LinearLayout
@@ -34,7 +35,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="start|top"
                 android:layout_below="@+id/layApp"
-                android:layout_marginTop="8dip"/>
+                android:layout_marginTop="8dip"
+                android:text="@string/view_about_intro"/>
 
         <TextView android:layout_width="match_parent" android:layout_height="1dip"
                   android:id="@+id/tvSplit" android:background="@android:color/darker_gray"

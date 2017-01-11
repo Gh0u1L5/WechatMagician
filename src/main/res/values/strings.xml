@@ -3,6 +3,6 @@
     <string name="app_name">NoRevoke</string>
     <string name="app_desc">Prevent Wechat from recalling chat messages.</string>
 
-
     <string name="view_about_project_github">Project Source: rarnu/wechat_no_revoke</string>
+    <string name="view_about_intro">Prevent Wechat from recalling chat messages. Support WeChat 6.5.3 and keeping updating.</string>
 </resources>
