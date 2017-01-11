@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">阻止撤回</string>
+    <string name="app_desc">防止微信撤回聊天消息</string>
+
+    <string name="view_about_project_github">项目源码 rarnu/wechat_no_revoke</string>
+</resources>
