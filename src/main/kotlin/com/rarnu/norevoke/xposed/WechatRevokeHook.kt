@@ -2,7 +2,9 @@ package com.rarnu.norevoke.xposed
 
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import com.rarnu.norevoke.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
 /**
@@ -53,14 +55,13 @@ class WechatRevokeHook {
                         }
                         val content = cur.getString(cur.getColumnIndex("content"))
                         cur.close()
-                        if (content.contains("<?xml")) {
+                        if (content.contains("<?xml ") || (content.contains("<msg>") && content.contains("</msg>"))) {
                             m[".sysmsg.\$type"] = null
                         } else {
-                            var replaceMsg = m[".sysmsg.revokemsg.replacemsg"]!!
-                            replaceMsg = replaceMsg.substring(1)
-                            replaceMsg = replaceMsg.substring(0, replaceMsg.indexOf("\""))
-                            replaceMsg = "  $replaceMsg 试图撤回一条消息:  \n  $content  "
-                            m[".sysmsg.revokemsg.replacemsg"] = replaceMsg
+                            XposedBridge.log("content => \"$content\"")
+                            var replaceMsg = m[".sysmsg.revokemsg.replacemsg"]
+                            val text = MessageUtil.extractContent(replaceMsg, content)
+                            m[".sysmsg.revokemsg.replacemsg"] = text
                         }
                         param.result = m
                     }
