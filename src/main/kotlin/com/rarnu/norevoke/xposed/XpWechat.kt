@@ -13,8 +13,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 class XpWechat : IXposedHookLoadPackage {
 
 
-    private val hooks = SparseArray<WechatRevokeHook>()
-    private val supportVersions = arrayOf("6.5.3")
+    private val _hooks = SparseArray<WechatRevokeHook>()
+    private val _supportVersions = arrayOf("6.5.3")
 
     @Throws(Throwable::class)
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
@@ -38,12 +38,12 @@ class XpWechat : IXposedHookLoadPackage {
     }
 
     private fun getHooks(pkgName: String, versionName: String, uid: Int): WechatRevokeHook? {
-        if (hooks.indexOfKey(uid) != -1) {
-            return hooks[uid]
+        if (_hooks.indexOfKey(uid) != -1) {
+            return _hooks[uid]
         }
         if (isSupported(versionName)) {
-            hooks.put(uid, WechatRevokeHook(WechatVersion(pkgName, versionName)))
-            return hooks[uid]
+            _hooks.put(uid, WechatRevokeHook(WechatVersion(pkgName, versionName)))
+            return _hooks[uid]
         }
         return null
     }
@@ -52,6 +52,6 @@ class XpWechat : IXposedHookLoadPackage {
         if (TextUtils.isEmpty(versionName)) {
             return false
         }
-        return supportVersions.any { versionName.contains(it) }
+        return _supportVersions.any { versionName.contains(it) }
     }
 }

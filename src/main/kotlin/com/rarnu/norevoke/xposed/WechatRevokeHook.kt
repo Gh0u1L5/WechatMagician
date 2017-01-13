@@ -10,65 +10,83 @@ import de.robv.android.xposed.XposedHelpers
  */
 class WechatRevokeHook {
 
-    var v: WechatVersion? = null
-    var db: WechatDatabase? = null
+    var _v: WechatVersion? = null
+    var _db: WechatDatabase? = null
+    // var _snsdb: SnsDatabase? = null
 
     constructor(ver: WechatVersion) {
-        v = ver
+        _v = ver
     }
 
     fun hook(loader: ClassLoader?) {
-        try { hookRevoke(loader) } catch (t: Throwable) { }
-        try { hookDatabase(loader) } catch (t: Throwable) { }
-        try { hookApplicationPackageManager(loader) } catch (t: Throwable) { }
+        try {
+            hookDatabase(loader)
+        } catch (t: Throwable) {
+        }
+        try {
+            hookRevoke(loader)
+        } catch (t: Throwable) {
+        }
+//        try {
+//            hookSns(loader)
+//        } catch (t: Throwable) {
+//        }
+        try {
+            hookApplicationPackageManager(loader)
+        } catch (t: Throwable) {
+        }
     }
 
     private fun hookRevoke(loader: ClassLoader?) {
-        XposedHelpers.findAndHookMethod(v?.recallClass, loader, v?.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+
+        XposedHelpers.findAndHookMethod(_v?.recallClass, loader, _v?.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val m = param.result as MutableMap<String, String?>
-                val type = m[".sysmsg.\$type"]
-                if (type == "revokemsg") {
-                    val talker = m[".sysmsg.revokemsg.session"]
-                    var replaceMsg = m[".sysmsg.revokemsg.replacemsg"]!!
-                    val msgSvrId = m[".sysmsg.revokemsg.newmsgid"]
-                    if (replaceMsg.startsWith("你") || replaceMsg.toLowerCase().startsWith("you")) {
-                        return
-                    }
-                    val strings = replaceMsg.split("\"")
-                    replaceMsg = "\"" + strings[1] + "\" " + "尝试撤回上一条消息 （已阻止)"
-                    m.put(".sysmsg.\$type", null)
-                    param.result = m
-
-                    try {
-                        val cur = db?.getMessageViaId(msgSvrId)
+                val m = param.result as MutableMap<String, String?>?
+                if (m != null) {
+                    val type = m[".sysmsg.\$type"]
+                    if (type == "revokemsg") {
+                        val msgSvrId = m[".sysmsg.revokemsg.newmsgid"]
+                        val cur = _db?.getMessageViaId(msgSvrId)
                         if (cur == null || !cur.moveToFirst()) {
                             return
                         }
-                        val createTime = cur.getLong(cur.getColumnIndex("createTime"))
-                        val idx = cur.getColumnIndex("talkerId")
-                        var talkerId = -1
-                        if (idx != -1) {
-                            talkerId = cur.getInt(cur.getColumnIndex("talkerId"))
-                        }
+                        val content = cur.getString(cur.getColumnIndex("content"))
                         cur.close()
-                        db?.insertSystemMessage(talker, talkerId, replaceMsg, createTime + 1)
-                    } catch (t: Throwable) {
-
+                        if (content.contains("<?xml")) {
+                            m[".sysmsg.\$type"] = null
+                        } else {
+                            var replaceMsg = m[".sysmsg.revokemsg.replacemsg"]!!
+                            replaceMsg = replaceMsg.substring(1)
+                            replaceMsg = replaceMsg.substring(0, replaceMsg.indexOf("\""))
+                            replaceMsg = "  $replaceMsg 试图撤回一条消息:  \n  $content  "
+                            m[".sysmsg.revokemsg.replacemsg"] = replaceMsg
+                        }
+                        param.result = m
                     }
                 }
             }
         })
     }
 
+//    private fun hookSns(loader: ClassLoader?) {
+//        XposedHelpers.findAndHookConstructor(_v?.snsClass, loader, _v?.snsConstructorParam, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun afterHookedMethod(param: MethodHookParam) {
+//                if (_snsdb == null) {
+//                    _snsdb = SnsDatabase(_v, param.args[0], loader)
+//                }
+//            }
+//        })
+//    }
+
     private fun hookDatabase(loader: ClassLoader?) {
-        XposedHelpers.findAndHookConstructor(v?.storageClass, loader, v?.storageMethod, object : XC_MethodHook() {
+        XposedHelpers.findAndHookConstructor(_v?.storageClass, loader, _v?.storageMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (db == null) {
+                if (_db == null) {
                     try {
-                        db = WechatDatabase(param.args[0])
+                        _db = WechatDatabase(param.args[0])
                     } catch (t: Throwable) {
 
                     }
