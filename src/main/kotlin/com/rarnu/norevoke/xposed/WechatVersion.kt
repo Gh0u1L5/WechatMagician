@@ -11,18 +11,10 @@ class WechatVersion {
     var recallMethod = ""
     var snsClass = ""
     var snsConstructorParam = ""
+    var snsCommentClass = ""
     var storageClass = ""
     var storageMethod = ""
     var SQLiteDatabaseClass = ""
-    // sns
-    var blobDecodeMethod = ""
-    var commentContentField = ""
-    var snsContentField = ""
-    var commentsListField = ""
-    var commentTimeField = ""
-    var commentClass = ""
-    var snsContentClass = ""
-    var snsAttrClass = ""
 
     constructor(pkgName: String, versionName: String) {
         packageName = pkgName
@@ -41,18 +33,10 @@ class WechatVersion {
         recallMethod = "q"
         snsClass = "$packageName.plugin.sns.storage.l"
         snsConstructorParam = "$packageName.sdk.h.d"
+        snsCommentClass = "$packageName.plugin.sns.storage.h"
+
         storageClass = "$packageName.storage.r"
         storageMethod = "$packageName.bg.g"
-
-        // sns
-        commentClass = "com.tencent.mm.protocal.c.avm"
-        commentContentField = "hQP"
-        commentsListField = "mSN"
-        commentTimeField = "hNS"
-        blobDecodeMethod = "az"
-        snsContentClass = "com.tencent.mm.protocal.c.azr"
-        snsContentField = "mWn"
-        snsAttrClass = "com.tencent.mm.protocal.c.awa"
 
     }
 

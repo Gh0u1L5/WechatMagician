@@ -15,7 +15,20 @@ object MessageUtil {
         } else if (_str.contains(":\n")) {
             _str = _str.replaceFirst(":\n", "")
         }
+        _str = _str.replace("\n", "\n  ")
         _replace = "  $_replace 试图撤回一条消息:  \n  $_str  "
         return _replace
+    }
+
+    fun argsToString(arg: Array<String?>?): String? {
+        var ret = ""
+        arg?.forEach { ret += "$it," }
+        return ret
+    }
+
+    fun argsToString(args: Array<Any?>?): String? {
+        var ret = ""
+        args?.forEach { ret += "${it.toString()}," }
+        return ret
     }
 }

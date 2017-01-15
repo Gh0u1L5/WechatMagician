@@ -27,7 +27,7 @@ class WechatDatabase {
     fun insertSystemMessage(talker: String?, talkerId: Int, msg: String?, createTime: Long) = insertMessage(talker, talkerId, msg, 10000, createTime)
 
     fun insertMessage(talker: String?, talkerId: Int, msg: String?, type: Int, createTime: Long) {
-        val msgSvrId = createTime + Random().nextInt()
+        val msgSvrId = createTime + (Random().nextInt())
         val msgId = getNextMsgId()
         val v = ContentValues()
         v.put("msgid", msgId)
