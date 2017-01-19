@@ -38,7 +38,7 @@
                 android:layout_marginTop="8dip"
                 android:text="@string/view_about_intro"/>
 
-        <TextView android:layout_width="match_parent" android:layout_height="1dip"
+        <View android:layout_width="match_parent" android:layout_height="1dip"
                   android:id="@+id/tvSplit" android:background="@android:color/darker_gray"
                   android:layout_below="@+id/tvIntro"
                   android:layout_marginTop="8dip"/>
@@ -55,13 +55,37 @@
                 android:focusable="true"
                 android:clickable="true"/>
 
+        <View android:layout_width="match_parent" android:layout_height="1dip"
+              android:id="@+id/tvSplit2" android:background="@android:color/darker_gray"
+              android:layout_below="@+id/tvProj"
+              android:layout_marginTop="8dip"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/tvRepo1" android:layout_below="@+id/tvSplit2"
+                  android:layout_marginTop="8dip"
+                  android:textColor="@android:color/holo_green_dark"
+                  android:gravity="start|center_vertical"
+                  android:padding="4dip"
+                  android:focusable="true"
+                  android:clickable="true"
+                  android:text="@string/view_about_project_repo1"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  android:id="@+id/tvRepo2" android:layout_below="@+id/tvRepo1"
+                  android:layout_marginTop="8dip"
+                  android:textColor="@android:color/holo_green_dark"
+                  android:gravity="start|center_vertical"
+                  android:padding="4dip"
+                  android:focusable="true"
+                  android:clickable="true"
+                  android:text="@string/view_about_project_repo2"/>
+
         <ImageView
                 android:id="@+id/ivLogo"
                 android:layout_width="80dip" android:layout_height="80dip"
                 android:contentDescription="@null"
                 android:src="@drawable/ic_launcher"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@+id/tvProj"
+                android:layout_below="@+id/tvRepo2"
                 android:layout_marginTop="16dip"
         />
     </RelativeLayout>

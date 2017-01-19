@@ -4,5 +4,10 @@
     <string name="app_desc">防止微信撤回聊天消息</string>
 
     <string name="view_about_project_github">项目源码 rarnu/wechat_no_revoke</string>
+    <string name="view_about_project_repo1">[关联项目] RootToolsNeo: rarnu/root-tools</string>
+    <string name="view_about_project_repo2">[关联项目] Native Port: rarnu/root-tools/utils</string>
     <string name="view_about_intro">防止微信撤回聊天消息, 支持微信 6.5.3 并将持续更新。</string>
+    <string name="view_about_project_github_url">https://github.com/rarnu/wechat_no_revoke</string>
+    <string name="view_about_project_repo1_url">https://github.com/rarnu/root-tools</string>
+    <string name="view_about_project_repo2_url">https://github.com/rarnu/root-tools/tree/master/utils</string>
 </resources>
