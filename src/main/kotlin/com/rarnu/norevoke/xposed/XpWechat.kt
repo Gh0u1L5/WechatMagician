@@ -14,7 +14,7 @@ class XpWechat : IXposedHookLoadPackage {
 
 
     private val _hooks = SparseArray<WechatRevokeHook>()
-    private val _supportVersions = arrayOf("6.5.3")
+    private val _supportVersions = arrayOf("6.5.3", "6.5.4")
 
     @Throws(Throwable::class)
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {

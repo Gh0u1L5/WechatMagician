@@ -6,7 +6,7 @@
     <string name="view_about_project_github">Project Source: rarnu/wechat_no_revoke</string>
     <string name="view_about_project_repo1">[In repo] RootToolsNeo: rarnu/root-tools</string>
     <string name="view_about_project_repo2">[In repo] Native Port: rarnu/root-tools/utils</string>
-    <string name="view_about_intro">Prevent Wechat from recalling chat messages. Support WeChat 6.5.3 and keeping updating.</string>
+    <string name="view_about_intro">Prevent Wechat from recalling chat messages. Support WeChat 6.5.4 and keeping updating.</string>
     <string name="view_about_project_github_url">https://github.com/rarnu/wechat_no_revoke</string>
     <string name="view_about_project_repo1_url">https://github.com/rarnu/root-tools</string>
     <string name="view_about_project_repo2_url">https://github.com/rarnu/root-tools/tree/master/utils</string>

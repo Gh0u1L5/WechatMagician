@@ -89,7 +89,6 @@ class WechatRevokeHook {
         public final int updateWithOnConflict(String str, ContentValues contentValues, String str2, String[] strArr, int i)
         public final int delete(String str, String str2, String[] strArr)
         private int executeSql(String str, Object[] objArr)
-
          */
         XposedHelpers.findAndHookMethod(_v?.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
