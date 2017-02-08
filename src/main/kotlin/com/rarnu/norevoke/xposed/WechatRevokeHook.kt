@@ -10,25 +10,16 @@ import de.robv.android.xposed.XposedHelpers
 /**
  * Created by rarnu on 1/11/17.
  */
-class WechatRevokeHook {
+class WechatRevokeHook(ver: WechatVersion) {
 
     var _v: WechatVersion? = null
     var _db: WechatDatabase? = null
 
-    constructor(ver: WechatVersion) {
-        _v = ver
-    }
+    init { _v = ver }
 
     fun hook(loader: ClassLoader?) {
-        try {
-            hookRevoke(loader)
-        } catch (t: Throwable) {
-        }
-        try {
-            hookDatabase(loader)
-        } catch (t: Throwable) {
-
-        }
+        try { hookRevoke(loader) } catch (t: Throwable) { }
+        try { hookDatabase(loader) } catch (t: Throwable) { }
     }
 
     private fun hookRevoke(loader: ClassLoader?) {
@@ -39,32 +30,15 @@ class WechatRevokeHook {
                 val m = param.result as MutableMap<String, String?>?
                 if (m != null) {
                     val type = m[".sysmsg.\$type"]
-                    if (type == null || !type.equals("revokemsg")) {
-                        return
-                    }
-                    var replaceMsg = m[".sysmsg.revokemsg.replacemsg"]!!
-                    if (replaceMsg.startsWith("你") || replaceMsg.toLowerCase().startsWith("you")) {
-                        return
-                    }
-                    try {
-                        val msgId = m[".sysmsg.revokemsg.newmsgid"]
-                        val cur = _db?.getMessageViaId(msgId)
-                        if (cur == null || !cur.moveToFirst()) {
-                            return
-                        }
-                        val t = cur.getInt(cur.getColumnIndex("type"))
-                        if (t == 1) {
-                            var content = cur.getString(cur.getColumnIndex("content")).trim()
-                            content = MessageUtil.extractContent(replaceMsg, content)!!
-                            m[".sysmsg.revokemsg.replacemsg"] = content
-                        } else {
-                            m[".sysmsg.\$type"] = null
-                        }
-                        cur.close()
-                        param.result = m
-                    } catch (t: Throwable) {
+                    if (type == null || type != "revokemsg") return
 
-                    }
+                    val replaceMsg = m[".sysmsg.revokemsg.replacemsg"]!!
+                    if (replaceMsg.startsWith("你") || replaceMsg.toLowerCase().startsWith("you")) return
+
+                    try {
+                        m[".sysmsg.revokemsg.replacemsg"] = MessageUtil.customize(replaceMsg)
+                        param.result = m
+                    } catch (t: Throwable) { }
                 }
             }
         })
@@ -74,13 +48,8 @@ class WechatRevokeHook {
         XposedHelpers.findAndHookConstructor(_v?.storageClass, loader, _v?.storageMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (_db == null) {
-                    try {
-                        _db = WechatDatabase(param.args[0])
-                    } catch (t: Throwable) {
-
-                    }
-                }
+                if (_db == null)
+                    try { _db = WechatDatabase(param.args[0]) } catch (t: Throwable) { }
             }
         })
 
@@ -97,7 +66,8 @@ class WechatRevokeHook {
                 val p2 = param.args[1] as String?
                 val p3 = param.args[2] as ContentValues?
                 val p4 = param.args[3] as Int
-                XposedBridge.log("DB => insert p1 = $p1, p2 = $p2, p3 = ${p3.toString()}, p4 = $p4")
+                if (p1 == "message")
+                    XposedBridge.log("DB => insert p1 = $p1, p2 = $p2, p3 = ${p3.toString()}, p4 = $p4")
             }
         })
 
@@ -109,7 +79,17 @@ class WechatRevokeHook {
                 val p3 = param.args[2] as String?
                 val p4 = param.args[3] as Array<String?>?
                 val p5 = param.args[4] as Int
-                XposedBridge.log("DB => update p1 = $p1, p2 = ${p2.toString()}, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
+                if (p1 == "message") {
+                    XposedBridge.log("DB => update p1 = $p1, p2 = ${p2.toString()}, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
+                    if (p2 == null || p2["type"] != 10000 || p2.containsKey("isSend")) return
+
+                    p2.remove("type")
+
+                    val cur = _db?.getMessageViaId(p2["msgId"].toString());
+                    if (cur == null || !cur.moveToFirst()) return
+                    p2.put("content", "[已撤回] ${cur.getString(cur.getColumnIndex("content"))}")
+                    cur.close()
+                }
             }
         })
 
