@@ -40,7 +40,7 @@ object MessageUtil {
         return msg.copyOfRange(0, start) + ntext + msg.copyOfRange(start + content.second, msg.size)
     }
 
-    fun argsToString(arg: Array<String?>?): String {
+    fun argsToString(arg: Array<*>?): String {
         var ret = ""
         arg?.forEach { ret += "$it," }
         return ret.substring(0, ret.length - 1)
