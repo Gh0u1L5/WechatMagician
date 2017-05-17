@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.0.6'
+    ext.kotlin_version = '1.1.1'
     repositories {
         jcenter();
     }
@@ -13,13 +13,13 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion '25.0.0'
 
     defaultConfig {
         applicationId "com.rarnu.norevoke"
         minSdkVersion 21
-        targetSdkVersion 24
+        targetSdkVersion 25
     }
 
     signingConfigs {
@@ -63,6 +63,6 @@ dependencies {
     provided fileTree(include: ['*.jar'], dir: 'xposed')
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.2.0'
+    compile 'com.android.support:design:25.3.1'
 }
 

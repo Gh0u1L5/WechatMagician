@@ -18,9 +18,7 @@ class MainActivity : Activity(), View.OnClickListener {
         tvVersion = findViewById(R.id.tvVersion) as TextView?
         tvProj = findViewById(R.id.tvProj) as TextView?
 
-        try {
-            tvVersion?.text = packageManager.getPackageInfo(packageName, 0).versionName
-        } catch (e: Exception) { }
+        tvVersion?.text = packageManager.getPackageInfo(packageName, 0).versionName
         tvProj?.setOnClickListener(this)
     }
 
@@ -31,9 +29,8 @@ class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun openUrl(resId: Int) {
-        val u = Uri.parse(getString(resId))
-        val inWeb = Intent(Intent.ACTION_VIEW)
-        inWeb.data = u
-        startActivity(inWeb)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(getString(resId))
+        startActivity(intent)
     }
 }
