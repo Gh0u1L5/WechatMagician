@@ -1,6 +1,8 @@
 package com.rarnu.norevoke.xposed
 
-class WechatVersion(pkgName: String, versionName: String) {
+import com.rarnu.norevoke.util.Version
+
+class WechatVersion(pkgName: String, versionStr: String) {
 
     var packageName = ""
     var packageNameBase = ""
@@ -12,14 +14,22 @@ class WechatVersion(pkgName: String, versionName: String) {
         packageName = pkgName
         packageNameBase = packageName.substring(0, packageName.lastIndexOf("."))
 
-        SQLiteDatabaseClass = "$packageNameBase.mmdb.database.SQLiteDatabase"
-        if (versionName.contains("6.5.3")) {
-            recallClass = "$packageName.sdk.platformtools.bg"
-            recallMethod = "q"
+        val version = Version(versionStr)
+        when {
+            version >= Version("6.5.8") -> SQLiteDatabaseClass = "$packageNameBase.wcdb.database.SQLiteDatabase"
+            version >= Version("6.5.3") -> SQLiteDatabaseClass = "$packageNameBase.mmdb.database.SQLiteDatabase"
+            else -> throw Error("unsupported version")
         }
-        if (versionName.contains("6.5.4")) {
-            recallClass = "$packageName.sdk.platformtools.bf"
-            recallMethod = "q"
+
+        when (version) {
+            Version("6.5.3") -> {
+                recallClass = "$packageName.sdk.platformtools.bg"
+                recallMethod = "q"
+            }
+            Version("6.5.4") -> {
+                recallClass = "$packageName.sdk.platformtools.bf"
+                recallMethod = "q"
+            }
         }
     }
 }

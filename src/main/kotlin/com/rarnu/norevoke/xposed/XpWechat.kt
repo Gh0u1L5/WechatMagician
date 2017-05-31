@@ -15,12 +15,10 @@ class XpWechat : IXposedHookLoadPackage {
         val pkgName = param.packageName
         if (pkgName != "com.tencent.mm") return
 
-        try {
-            val activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass("android.app.ActivityThread", null), "currentActivityThread")
-            val context = XposedHelpers.callMethod(activityThread, "getSystemContext") as Context?
-            val versionName = context?.packageManager?.getPackageInfo(pkgName, 0)?.versionName
-            getHooks(pkgName, versionName!!, param.appInfo.uid)?.hook(param.classLoader)
-        } catch (t: Throwable) { }
+        val activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass("android.app.ActivityThread", null), "currentActivityThread")
+        val context = XposedHelpers.callMethod(activityThread, "getSystemContext") as Context?
+        val versionName = context?.packageManager?.getPackageInfo(pkgName, 0)?.versionName
+        getHooks(pkgName, versionName!!, param.appInfo.uid)?.hook(param.classLoader)
     }
 
     private fun getHooks(pkgName: String, versionName: String, uid: Int): WechatRevokeHook? {

@@ -3,7 +3,7 @@ package com.rarnu.norevoke.util
 object MessageUtil {
 
     fun customize(str: String?): String? {
-        return str?.let { "${it.substring(1, it.indexOf("\"", 1))} 妄图撤回一条消息，啧啧" }
+        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} 妄图撤回一条消息，啧啧" }
     }
 
     fun notifyChatroomRecall(head: String, msg: String): String {
@@ -41,21 +41,19 @@ object MessageUtil {
     }
 
     fun argsToString(arg: Array<*>?): String {
-        var ret = ""
-        arg?.forEach { ret += "$it," }
-        return ret.substring(0, ret.length - 1)
+        if (arg == null) return ""
+        return arg.joinToString(", ")
     }
 
     fun bytesToHexString(arg: ByteArray?): String {
-        var ret = ""
-        arg?.forEach { ret += String.format("%02X", it) }
-        return ret
+        if (arg == null) return ""
+        return arg.map{ String.format("%02X", it) }.joinToString("")
     }
     
     fun hexStringToBytes(arg: String?): ByteArray {
-        var ret = byteArrayOf()
-        arg?.forEachIndexed { i, c -> if(i % 2 == 0) ret += Integer.parseInt(arg.slice(i..(i + 1)), 16).toByte() }
-        return ret
+        if (arg == null || arg.isEmpty()) return byteArrayOf()
+        val byte = Integer.parseInt(arg.slice(0..1), 16).toByte()
+        return byteArrayOf(byte) + hexStringToBytes(arg.drop(2))
     }
 
     fun byteToUnsignedInt(arg: Byte): Int {

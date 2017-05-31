@@ -1,4 +1,5 @@
 import com.rarnu.norevoke.util.MessageUtil
+import com.rarnu.norevoke.util.Version
 import org.junit.Test as Test
 import org.junit.Assert.*
 
@@ -52,5 +53,17 @@ class UnitTest {
         assertArrayEquals(byteArrayOf(), MessageUtil.hexStringToBytes(""))
         assertArrayEquals(byteArrayOf(0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F), MessageUtil.hexStringToBytes("0102030405060708090A0B0C0D0E0F"))
         assertArrayEquals(byteArrayOf(-0x0F, -0x0E, -0x0D, -0x0C, -0x0B, -0x0A, -0x09, -0x08, -0x07, -0x06, -0x05, -0x04, -0x03, -0x02, -0x01), MessageUtil.hexStringToBytes("F1F2F3F4F5F6F7F8F9FAFBFCFDFEFF"))
+    }
+
+    @Test fun VersionCompareTest() {
+        assertTrue(Version("1") < Version("2"))
+        assertTrue(Version("1") == Version("1"))
+        assertTrue(Version("1.2") < Version("1.2.1"))
+        assertTrue(Version("1.12") > Version("1.1"))
+
+        assertTrue(Version("6.5.8") > Version("6.5.4"))
+        assertTrue(Version("6.5.8") >= Version("6.5.4"))
+        assertTrue(Version("6.5.4") >= Version("6.5.4"))
+        assertTrue(Version("6.5.4") == Version("6.5.4"))
     }
 }
