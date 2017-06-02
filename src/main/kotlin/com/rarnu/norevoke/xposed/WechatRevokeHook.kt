@@ -127,6 +127,5 @@ class WechatRevokeHook(var ver: WechatVersion) {
 //                XposedBridge.log("DB => executeSqlxecSQL p1 = $p1, p2 = ${MessageUtil.argsToString(p2)}")
 //            }
 //        })
-
     }
 }
