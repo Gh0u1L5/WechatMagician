@@ -62,7 +62,7 @@ object MessageUtil {
 
     fun encodeSnsMsg(msg: ByteArray): ByteArray {
         if (msg.size >= 0x80)
-            return byteArrayOf((msg.size and 0xFF).toByte(), ((msg.size shr 7) + 1).toByte()) + msg
+            return byteArrayOf((msg.size and 0xFF).toByte(), (msg.size shr 7).toByte()) + msg
         else
             return byteArrayOf(msg.size.toByte()) + msg
     }
