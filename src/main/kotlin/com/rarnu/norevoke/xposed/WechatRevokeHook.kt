@@ -100,8 +100,6 @@ class WechatRevokeHook(var ver: WechatVersion) {
                         if (!containsKey("sourceType") || this["sourceType"] != 0){
                             return
                         }
-//                        XposedBridge.log("DB => content = ${MessageUtil.bytesToHexString(p2.getAsByteArray("content"))}")
-//                        XposedBridge.log("DB => content length = ${p2.getAsByteArray("content").size}")
                         put("content", MessageUtil.notifyInfoDelete("[已删除]", getAsByteArray("content")))
                         remove("sourceType")
                     }
