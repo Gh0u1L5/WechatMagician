@@ -4,6 +4,6 @@
     <string name="app_desc">防止微信撤回聊天消息</string>
 
     <string name="view_about_project_github">项目源码 Gh0u1L5/wechat_no_revoke</string>
-    <string name="view_about_intro">防止微信撤回聊天消息, 支持微信 6.5.4 并将持续更新。原版插件由rarnu编写，但此版本使用完全不同的思路实现防撤回效果。</string>
+    <string name="view_about_intro">防止微信撤回聊天消息, 支持微信 6.5.8 并将持续更新。原版插件由rarnu编写，但此版本使用完全不同的思路实现防撤回效果。</string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/wechat_no_revoke</string>
 </resources>

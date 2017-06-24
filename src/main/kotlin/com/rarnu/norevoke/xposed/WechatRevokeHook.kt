@@ -72,6 +72,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
                 val p4 = param.args[3] as Array<*>?
                 val p5 = param.args[4] as Int
 //                XposedBridge.log("DB => update p1 = $p1, p2 = ${p2?.toString()}, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
+
                 if (p1 == "message") {
                     p2?.apply {
                         if (getAsInteger("type") != 10000){
