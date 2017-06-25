@@ -15,11 +15,26 @@ class WechatMessage(val msgId: Int, val type: Int, val talker: String, var conte
 
 class WechatRevokeHook(var ver: WechatVersion) {
 
-    var msgTable: Deque<WechatMessage> = ArrayDeque<WechatMessage>()
+    var msgTable: List<WechatMessage> = listOf()
 
     fun hook(loader: ClassLoader?) {
         hookRevoke(loader)
         hookDatabase(loader)
+    }
+
+    @Synchronized
+    private fun addMessage(msgId: Int, type: Int, talker: String, content: String) {
+        msgTable += WechatMessage(msgId, type, talker,content)
+    }
+
+    @Synchronized
+    private fun getMessage(msgId: Int): WechatMessage? {
+        return msgTable.find { it.msgId == msgId }
+    }
+
+    @Synchronized
+    private fun cleanMessage() {
+        msgTable = msgTable.filter { currentTimeMillis() - it.time < 120000 }
     }
 
     private fun hookRevoke(loader: ClassLoader?) {
@@ -49,16 +64,15 @@ class WechatRevokeHook(var ver: WechatVersion) {
                 val p3 = param.args[2] as ContentValues?
                 val p4 = param.args[3] as Int
 
-                if (p1 != "message") return
-                p3?.apply {
-                    if (!containsKey("type") || !containsKey("talker")) {
-                        XposedBridge.log("DB => insert p1 = $p1, p2 = $p2, p3 = ${p3.toString()}, p4 = $p4")
-                        return
+                if (p1 == "message") {
+                    p3?.apply {
+                        if (!containsKey("type") || !containsKey("talker")) {
+                            XposedBridge.log("DB => insert p1 = $p1, p2 = $p2, p3 = $p3, p4 = $p4")
+                            return
+                        }
+                        addMessage(getAsInteger("msgId"), getAsInteger("type"), getAsString("talker"), getAsString("content"))
                     }
-                    msgTable.addLast(WechatMessage(getAsInteger("msgId"), getAsInteger("type"), getAsString("talker"), getAsString("content")))
-                }
-                while (currentTimeMillis() - msgTable.first.time > 120000) {
-                    msgTable.removeFirst()
+                    cleanMessage()
                 }
             }
         })
@@ -71,7 +85,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
                 val p3 = param.args[2] as String?
                 val p4 = param.args[3] as Array<*>?
                 val p5 = param.args[4] as Int
-//                XposedBridge.log("DB => update p1 = $p1, p2 = ${p2?.toString()}, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
+//                XposedBridge.log("DB => update p1 = $p1, p2 = $p2, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
 
                 if (p1 == "message") {
                     p2?.apply {
@@ -85,14 +99,12 @@ class WechatRevokeHook(var ver: WechatVersion) {
                         }
 
                         remove("content"); remove("type")
-                        for (msg in msgTable) {
-                            if (msg.msgId != getAsInteger("msgId")){
-                                if (msg.type != 1) return
-                                if (msg.talker.contains("chatroom"))
-                                    put("content", MessageUtil.notifyChatroomRecall("[已撤回]", msg.content))
-                                else
-                                    put("content", MessageUtil.notifyPrivateRecall("[已撤回]", msg.content))
-                            }
+                        getMessage(getAsInteger("msgId"))?.let {
+                            if (it.type != 1) return
+                            if (it.talker.contains("chatroom"))
+                                put("content", MessageUtil.notifyChatroomRecall("[已撤回]", it.content))
+                            else
+                                put("content", MessageUtil.notifyPrivateRecall("[已撤回]", it.content))
                         }
                     }
                 }
