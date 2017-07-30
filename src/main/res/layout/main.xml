@@ -6,42 +6,49 @@
         android:padding="8dip">
 
     <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+
         <LinearLayout
-                android:id="@+id/layApp"
-                android:layout_width="wrap_content" android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true" android:orientation="horizontal"
-                android:layout_marginTop="16dip">
+            android:id="@+id/layApp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:orientation="horizontal">
+
             <TextView
-                    android:id="@+id/tvName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/app_name"
-                    android:textSize="20sp"
-            />
+                android:id="@+id/tvName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/app_name"
+                android:textSize="20sp" />
+
             <TextView
-                    android:id="@+id/tvVersion"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:textSize="14sp"
-                    android:layout_marginStart="16dip"/>
+                android:id="@+id/tvVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="1.0.0"
+                android:textSize="20sp" />
         </LinearLayout>
 
-        <TextView
-                android:id="@+id/tvIntro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="start|top"
-                android:layout_below="@+id/layApp"
-                android:layout_marginTop="8dip"
-                android:text="@string/view_about_intro"/>
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="80dip"
+            android:layout_height="80dip"
+            android:layout_below="@+id/layApp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_launcher" />
 
-        <View android:layout_width="match_parent" android:layout_height="1dip"
-                  android:id="@+id/tvSplit" android:background="@android:color/darker_gray"
-                  android:layout_below="@+id/tvIntro"
-                  android:layout_marginTop="8dip"/>
+        <View
+            android:id="@+id/tvSplit"
+            android:layout_width="match_parent"
+            android:layout_height="1dip"
+            android:layout_below="@+id/ivLogo"
+            android:layout_marginTop="8dip"
+            android:background="@android:color/darker_gray" />
         <TextView
                 android:id="@+id/tvProj"
                 android:layout_width="match_parent"
@@ -60,15 +67,14 @@
               android:layout_below="@+id/tvProj"
               android:layout_marginTop="8dip"/>
 
-        <ImageView
-                android:id="@+id/ivLogo"
-                android:layout_width="80dip" android:layout_height="80dip"
-                android:contentDescription="@null"
-                android:src="@drawable/ic_launcher"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@+id/tvProj"
-                android:layout_marginTop="16dip"
-        />
+        <TextView
+            android:id="@+id/tvIntro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvSplit2"
+            android:layout_marginTop="8dip"
+            android:gravity="start|top"
+            android:text="@string/view_about_intro" />
 
     </RelativeLayout>
 </ScrollView>

@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">NoRevoke</string>
-    <string name="app_desc">Prevent Wechat from recalling chat messages.</string>
+    <string name="app_name">Wechat Magician</string>
+    <string name="app_desc">Prevent Wechat from recalling chat messages or deleting moments.</string>
 
-    <string name="view_about_project_github">Project Source: Gh0u1L5/wechat_no_revoke</string>
-    <string name="view_about_intro">Prevent Wechat from recalling chat messages. Support WeChat 6.5.8 and keeping updating. The original app was written by rarnu, but this one do the same work using a very different method. </string>
-    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/wechat_no_revoke</string>
+    <string name="view_about_project_github">Project Source: Gh0u1L5/WechatMagician</string>
+    <string name="view_about_intro">
+        Supported Features:\n
+        \t1. Prevent friends from recalling messages.\n
+        \t2. Prevent friends from deleting moments or comments.\n
+        \tSupport WeChat 6.5.10 and will keep updating.\n
+        \n
+        Credits:\n
+        \t@rovo89 for the awesome Xposed framework.\n
+        \t@rarnu for the prototype module wechat_no_revoke.
+    </string>
+    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 </resources>
