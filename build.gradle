@@ -1,11 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.1.3'
+    ext.kotlin_version = '1.1.3-2'
     repositories {
         jcenter()
-        mavenCentral();
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.3'
+        classpath 'com.android.tools.build:gradle:3.0.0-alpha8'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -14,25 +14,22 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.3'
-
+    compileSdkVersion 26
+    buildToolsVersion '26.0.1'
     defaultConfig {
-        applicationId "com.rarnu.norevoke"
+        applicationId "com.gh0u1l5.wechatmagician"
         minSdkVersion 21
         maxSdkVersion 25
-        targetSdkVersion 25
+        targetSdkVersion 26
     }
-
     signingConfigs {
         signConfig {
-            storeFile file ('roottools2.keystore')
+            storeFile file('roottools2.keystore')
             storePassword '123456'
             keyAlias 'roottools2'
             keyPassword '123456'
         }
     }
-
     buildTypes {
         release {
             signingConfig signingConfigs.signConfig
@@ -41,30 +38,30 @@ android {
             signingConfig signingConfigs.signConfig
         }
     }
-
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
-
-    lintOptions {
-        abortOnError false
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
-
+    dexOptions {
+    }
+    productFlavors {
+    }
 }
 
 repositories {
-    mavenCentral()
+    jcenter()
+    google()
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    provided fileTree(include: ['*.jar'], dir: 'xposed')
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:design:26.0.0'
+
+    compile 'de.robv.android.xposed:api:82'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }
 
