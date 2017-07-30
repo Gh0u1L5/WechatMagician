@@ -22,32 +22,12 @@ android {
         maxSdkVersion 25
         targetSdkVersion 26
     }
-    signingConfigs {
-        signConfig {
-            storeFile file('roottools2.keystore')
-            storePassword '123456'
-            keyAlias 'roottools2'
-            keyPassword '123456'
-        }
-    }
-    buildTypes {
-        release {
-            signingConfig signingConfigs.signConfig
-        }
-        debug {
-            signingConfig signingConfigs.signConfig
-        }
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
-    }
-    dexOptions {
-    }
-    productFlavors {
     }
 }
 

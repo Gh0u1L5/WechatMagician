@@ -15,7 +15,7 @@ class MainActivity : Activity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
-        
+
         tvVersion = findViewById<TextView>(R.id.tvVersion)
         tvProj = findViewById<TextView>(R.id.tvProj)
 
