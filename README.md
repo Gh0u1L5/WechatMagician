@@ -1,9 +1,15 @@
 # WechatMagician
 
-感谢 @rarnu 编写的原版微信防撤回插件，本插件在重写了内部逻辑后成为独立项目。
+Read this README.md in [English](https://github.com/Gh0u1L5/WechatMagician/blob/master/README.en.md).
 
 ## 实现功能
-* 防止微信撤回聊天消息
-* 防止朋友圈删除动态、评论
+* 防止微信好友撤回聊天消息
+* 防止微信好友删除朋友圈动态、评论
 
 目前支持最新微信 6.5.10 版并将持续更新。
+
+## 特别鸣谢
+* 感谢 @rovo89 编写的Xposed框架
+* 感谢 @rarnu 编写的防撤回插件wechat_no_revoke
+
+虽然 @rarnu 的代码让我看了眼后直接删了（笑），但是我觉得wechat_no_revoke的文件结构不错。
