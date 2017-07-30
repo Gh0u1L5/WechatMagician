@@ -10,6 +10,4 @@ Read this README.md in [English](https://github.com/Gh0u1L5/WechatMagician/blob/
 
 ## 特别鸣谢
 * 感谢 @rovo89 编写的Xposed框架
-* 感谢 @rarnu 编写的防撤回插件wechat_no_revoke
-
-虽然 @rarnu 的代码让我看了眼后直接删了（笑），但是我觉得wechat_no_revoke的文件结构不错。
+* 感谢 @rarnu 编写的防撤回插件wechat_no_revoke, 虽然 @rarnu 的代码让我直接删了（笑）。
