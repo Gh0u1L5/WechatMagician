@@ -1,6 +1,6 @@
-package com.rarnu.norevoke.xposed
+package com.gh0u1l5.wechatmagician.xposed
 
-import com.rarnu.norevoke.util.Version
+import com.gh0u1l5.wechatmagician.util.Version
 
 class WechatVersion(pkgName: String, versionStr: String) {
 

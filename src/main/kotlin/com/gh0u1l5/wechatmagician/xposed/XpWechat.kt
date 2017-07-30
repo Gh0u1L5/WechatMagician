@@ -1,4 +1,4 @@
-package com.rarnu.norevoke.xposed
+package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.Context
 import android.util.SparseArray

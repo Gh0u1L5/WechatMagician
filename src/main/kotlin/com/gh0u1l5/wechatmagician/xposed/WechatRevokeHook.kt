@@ -1,12 +1,11 @@
-package com.rarnu.norevoke.xposed
+package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.ContentValues
-import com.rarnu.norevoke.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import java.lang.System.currentTimeMillis
-import java.util.*
 
 class WechatMessage(val msgId: Int, val type: Int, val talker: String, var content: String) {
     val time: Long = currentTimeMillis()
@@ -37,13 +36,14 @@ class WechatRevokeHook(var ver: WechatVersion) {
         msgTable = msgTable.filter { currentTimeMillis() - it.time < 120000 }
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun hookRevoke(loader: ClassLoader?) {
         if (ver.recallClass == "" || ver.recallMethod == "") return
 
         XposedHelpers.findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                param.result = (param.result as MutableMap<String, String?>).apply {
+                param.result = (param.result as? MutableMap<String, String?>)?.apply {
                     if (this[".sysmsg.\$type"] != "revokemsg") return
                     this[".sysmsg.revokemsg.replacemsg"] = this[".sysmsg.revokemsg.replacemsg"]?.let {
                         if (it.startsWith("你") || it.toLowerCase().startsWith("you")) it
@@ -82,9 +82,9 @@ class WechatRevokeHook(var ver: WechatVersion) {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val p1 = param.args[0] as String?
                 val p2 = param.args[1] as ContentValues?
-                val p3 = param.args[2] as String?
-                val p4 = param.args[3] as Array<*>?
-                val p5 = param.args[4] as Int
+//                val p3 = param.args[2] as String?
+//                val p4 = param.args[3] as Array<*>?
+//                val p5 = param.args[4] as Int
 //                XposedBridge.log("DB => update p1 = $p1, p2 = $p2, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
 
                 if (p1 == "message") {

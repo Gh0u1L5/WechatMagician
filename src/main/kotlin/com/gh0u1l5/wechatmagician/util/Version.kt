@@ -1,4 +1,4 @@
-package com.rarnu.norevoke.util
+package com.gh0u1l5.wechatmagician.util
 
 class Version(versionStr: String) {
     var version: List<Int> = listOf()

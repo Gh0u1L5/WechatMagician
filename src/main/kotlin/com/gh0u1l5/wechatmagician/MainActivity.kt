@@ -1,4 +1,4 @@
-package com.rarnu.norevoke
+package com.gh0u1l5.wechatmagician
 
 import android.app.Activity
 import android.content.Intent
@@ -15,8 +15,9 @@ class MainActivity : Activity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
-        tvVersion = findViewById(R.id.tvVersion) as TextView?
-        tvProj = findViewById(R.id.tvProj) as TextView?
+        
+        tvVersion = findViewById<TextView>(R.id.tvVersion)
+        tvProj = findViewById<TextView>(R.id.tvProj)
 
         tvVersion?.text = packageManager.getPackageInfo(packageName, 0).versionName
         tvProj?.setOnClickListener(this)
