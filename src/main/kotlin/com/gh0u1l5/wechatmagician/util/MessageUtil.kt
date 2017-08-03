@@ -2,8 +2,8 @@ package com.gh0u1l5.wechatmagician.util
 
 object MessageUtil {
 
-    fun customize(str: String?): String? {
-        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} 妄图撤回一条消息，啧啧" }
+    fun customize(str: String?, suffix: String?): String? {
+        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} $suffix" }
     }
 
     fun notifyChatroomRecall(head: String, msg: String): String {

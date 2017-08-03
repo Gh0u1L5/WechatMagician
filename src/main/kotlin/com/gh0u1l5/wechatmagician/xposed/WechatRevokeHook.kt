@@ -1,6 +1,8 @@
 package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.ContentValues
+import android.content.res.XModuleResources
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
@@ -12,7 +14,7 @@ class WechatMessage(val msgId: Int, val type: Int, val talker: String, var conte
     init { if (type != 1) content = "" }
 }
 
-class WechatRevokeHook(var ver: WechatVersion) {
+class WechatRevokeHook(var ver: WechatVersion, var res: XModuleResources) {
 
     var msgTable: List<WechatMessage> = listOf()
 
@@ -47,7 +49,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
                     if (this[".sysmsg.\$type"] != "revokemsg") return
                     this[".sysmsg.revokemsg.replacemsg"] = this[".sysmsg.revokemsg.replacemsg"]?.let {
                         if (it.startsWith("你") || it.toLowerCase().startsWith("you")) it
-                        else MessageUtil.customize(it)
+                        else MessageUtil.customize(it, res.getString(R.string.easter_egg))
                     }
                 }
             }
@@ -55,6 +57,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
     }
 
     private fun hookDatabase(loader: ClassLoader?) {
+        if (ver.SQLiteDatabaseClass == "") return
 
         XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -87,24 +90,25 @@ class WechatRevokeHook(var ver: WechatVersion) {
 //                val p5 = param.args[4] as Int
 //                XposedBridge.log("DB => update p1 = $p1, p2 = $p2, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
 
+                val label_recalled = res.getString(R.string.label_recalled)
+                val label_deleted = res.getString(R.string.label_deleted)
+
                 if (p1 == "message") {
                     p2?.apply {
                         if (getAsInteger("type") != 10000){
                             return
                         }
-
                         val sysMsg = getAsString("content")
                         if (sysMsg.startsWith("你") || sysMsg.toLowerCase().startsWith("you")) {
                             return
                         }
-
                         remove("content"); remove("type")
                         getMessage(getAsInteger("msgId"))?.let {
                             if (it.type != 1) return
                             if (it.talker.contains("chatroom"))
-                                put("content", MessageUtil.notifyChatroomRecall("[已撤回]", it.content))
+                                put("content", MessageUtil.notifyChatroomRecall(label_recalled, it.content))
                             else
-                                put("content", MessageUtil.notifyPrivateRecall("[已撤回]", it.content))
+                                put("content", MessageUtil.notifyPrivateRecall(label_recalled, it.content))
                         }
                     }
                 }
@@ -113,7 +117,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
                         if (!containsKey("sourceType") || this["sourceType"] != 0){
                             return
                         }
-                        put("content", MessageUtil.notifyInfoDelete("[已删除]", getAsByteArray("content")))
+                        put("content", MessageUtil.notifyInfoDelete(label_deleted, getAsByteArray("content")))
                         remove("sourceType")
                     }
                 }
@@ -125,7 +129,7 @@ class WechatRevokeHook(var ver: WechatVersion) {
                         if (this["type"] == 1 || this["commentflag"] != 1){
                             return
                         }
-                        put("curActionBuf", MessageUtil.notifyCommentDelete("[已删除]", getAsByteArray("curActionBuf")))
+                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, getAsByteArray("curActionBuf")))
                         remove("commentflag")
                     }
                 }

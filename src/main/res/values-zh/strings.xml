@@ -15,4 +15,7 @@
         \t感谢 @rarnu 编写的防撤回插件wechat_no_revoke
     </string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
+    <string name="label_recalled">[已撤回]</string>
+    <string name="label_deleted">[已删除]</string>
+    <string name="easter_egg">妄图撤回一条消息，啧啧</string>
 </resources>

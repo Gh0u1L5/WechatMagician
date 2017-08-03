@@ -1,16 +1,21 @@
 package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.Context
+import android.content.res.XModuleResources
 import android.util.SparseArray
 import de.robv.android.xposed.IXposedHookLoadPackage
+import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
-class XpWechat : IXposedHookLoadPackage {
-
+class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
     private val _hooks = SparseArray<WechatRevokeHook>()
+    private lateinit var _res: XModuleResources
 
-    @Throws(Throwable::class)
+    override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam?) {
+        _res = XModuleResources.createInstance(startupParam?.modulePath, null)
+    }
+
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
         val pkgName = param.packageName
         if (pkgName != "com.tencent.mm") return
@@ -23,7 +28,7 @@ class XpWechat : IXposedHookLoadPackage {
 
     private fun getHooks(pkgName: String, versionName: String, uid: Int): WechatRevokeHook? {
         if (_hooks.indexOfKey(uid) == -1)
-            _hooks.put(uid, WechatRevokeHook(WechatVersion(pkgName, versionName)))
+            _hooks.put(uid, WechatRevokeHook(WechatVersion(pkgName, versionName), _res))
         return _hooks[uid]
     }
 }
