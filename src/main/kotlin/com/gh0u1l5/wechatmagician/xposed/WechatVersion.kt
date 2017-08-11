@@ -21,15 +21,18 @@ class WechatVersion(pkgName: String, versionStr: String) {
             else -> throw Error("unsupported version")
         }
 
-        when (version) {
-            Version("6.5.3") -> {
+        recallMethod = "q"
+        when {
+            version >= Version("6.5.10") -> {
+                recallClass = "$packageName.sdk.platformtools.bh"
+            }
+            version >= Version("6.5.4") -> {
                 recallClass = "$packageName.sdk.platformtools.bg"
-                recallMethod = "q"
             }
-            Version("6.5.4") -> {
+            version == Version("6.5.3") -> {
                 recallClass = "$packageName.sdk.platformtools.bf"
-                recallMethod = "q"
             }
+            else -> throw Error("unsupported version")
         }
     }
 }

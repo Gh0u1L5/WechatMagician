@@ -19,8 +19,12 @@ class WechatRevokeHook(var ver: WechatVersion, var res: XModuleResources) {
     var msgTable: List<WechatMessage> = listOf()
 
     fun hook(loader: ClassLoader?) {
-        hookRevoke(loader)
-        hookDatabase(loader)
+        try {
+            hookDatabase(loader)
+            hookRevoke(loader)
+        } catch(t: Throwable) {
+            XposedBridge.log(t)
+        }
     }
 
     @Synchronized
