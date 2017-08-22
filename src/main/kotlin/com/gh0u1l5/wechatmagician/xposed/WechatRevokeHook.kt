@@ -22,6 +22,8 @@ class WechatRevokeHook(var ver: WechatVersion, var res: XModuleResources) {
         try {
             hookDatabase(loader)
             hookRevoke(loader)
+        } catch(e: NoSuchMethodError) {
+            XposedBridge.log("EE => ${e.message}")
         } catch(t: Throwable) {
             XposedBridge.log(t)
         }
