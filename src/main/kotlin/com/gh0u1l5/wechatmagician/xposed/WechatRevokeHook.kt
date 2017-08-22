@@ -23,7 +23,11 @@ class WechatRevokeHook(var ver: WechatVersion, var res: XModuleResources) {
             hookDatabase(loader)
             hookRevoke(loader)
         } catch(e: NoSuchMethodError) {
-            XposedBridge.log("EE => ${e.message}")
+            val ver = XpWechat._ver!!
+            if (e.message!!.contains("${ver.recallClass}#${ver.recallMethod}")) {
+                XpWechat._ver?.recallClass = ""
+                XpWechat._ver?.recallMethod = ""
+            } else throw e
         } catch(t: Throwable) {
             XposedBridge.log(t)
         }

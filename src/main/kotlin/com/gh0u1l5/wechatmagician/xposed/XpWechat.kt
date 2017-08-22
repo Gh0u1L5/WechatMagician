@@ -10,10 +10,16 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
     private val _hooks = SparseArray<WechatRevokeHook>()
-    private lateinit var _res: XModuleResources
+
+    companion object {
+        var _ver: WechatVersion? = null
+        var _res: XModuleResources? = null
+        fun setVersion(ver: WechatVersion) { _ver = _ver ?: ver }
+        fun setResource(res: XModuleResources) { _res = _res ?: res }
+    }
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam?) {
-        _res = XModuleResources.createInstance(startupParam?.modulePath, null)
+        setResource(XModuleResources.createInstance(startupParam?.modulePath, null))
     }
 
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
@@ -24,13 +30,13 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
         val currentThread = XposedHelpers.callStaticMethod(activityThread, "currentActivityThread")
         val systemContext = XposedHelpers.callMethod(currentThread, "getSystemContext") as Context
         val versionName = systemContext.packageManager.getPackageInfo(pkgName, 0).versionName
-        getHooks(pkgName, versionName!!, param.appInfo.uid)?.hook(param.classLoader)
+        setVersion(WechatVersion(pkgName, versionName))
+        getHooks(param.appInfo.uid)?.hook(param.classLoader)
     }
 
-    private fun getHooks(pkgName: String, versionName: String, uid: Int): WechatRevokeHook? {
+    private fun getHooks(uid: Int): WechatRevokeHook? {
         if (_hooks.indexOfKey(uid) == -1) {
-            val _ver = WechatVersion(pkgName, versionName)
-            _hooks.put(uid, WechatRevokeHook(_ver, _res))
+            _hooks.put(uid, WechatRevokeHook(_ver!!, _res!!))
         }
         return _hooks[uid]
     }
