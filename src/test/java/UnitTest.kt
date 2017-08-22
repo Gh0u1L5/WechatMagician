@@ -5,8 +5,8 @@ import org.junit.Assert.*
 
 class UnitTest {
     @Test fun CustomizeTest() {
-        assertNull(MessageUtil.customize(null))
-        assertEquals("test 妄图撤回一条消息，啧啧", MessageUtil.customize("\"test\" 撤回了一条消息"))
+        assertNull(MessageUtil.customize(null, ""))
+        assertEquals("test 妄图撤回一条消息，啧啧", MessageUtil.customize("\"test\" 撤回了一条消息", "妄图撤回一条消息，啧啧"))
     }
 
     @Test fun NotifyChatroomRecallTest() {
