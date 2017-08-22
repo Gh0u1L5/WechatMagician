@@ -20,9 +20,10 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
         val pkgName = param.packageName
         if (pkgName != "com.tencent.mm") return
 
-        val activityThread = XposedHelpers.callStaticMethod(XposedHelpers.findClass("android.app.ActivityThread", null), "currentActivityThread")
-        val context = XposedHelpers.callMethod(activityThread, "getSystemContext") as Context?
-        val versionName = context?.packageManager?.getPackageInfo(pkgName, 0)?.versionName
+        val activityThread = XposedHelpers.findClass("android.app.ActivityThread", null)
+        val currentThread = XposedHelpers.callStaticMethod(activityThread, "currentActivityThread")
+        val systemContext = XposedHelpers.callMethod(currentThread, "getSystemContext") as Context
+        val versionName = systemContext.packageManager.getPackageInfo(pkgName, 0).versionName
         getHooks(pkgName, versionName!!, param.appInfo.uid)?.hook(param.classLoader)
     }
 
