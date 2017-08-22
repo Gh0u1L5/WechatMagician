@@ -23,11 +23,18 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             hookDatabase(loader)
             hookRevoke(loader)
         } catch(e: NoSuchMethodError) {
-            val ver = XpWechat._ver!!
-            if (e.message!!.contains("${ver.recallClass}#${ver.recallMethod}")) {
-                XpWechat._ver?.recallClass = ""
-                XpWechat._ver?.recallMethod = ""
-            } else throw e
+            when {
+                e.message!!.contains(ver.SQLiteDatabaseClass) -> {
+                    XposedBridge.log("NSME => ${ver.SQLiteDatabaseClass}")
+                    XpWechat._ver?.SQLiteDatabaseClass = ""
+                }
+                e.message!!.contains("${ver.recallClass}#${ver.recallMethod}") -> {
+                    XposedBridge.log("NSME => ${ver.recallClass}#${ver.recallMethod}")
+                    XpWechat._ver?.recallClass = ""
+                    XpWechat._ver?.recallMethod = ""
+                }
+                else -> throw e
+            }
         } catch(t: Throwable) {
             XposedBridge.log(t)
         }
