@@ -23,6 +23,9 @@ class WechatVersion(pkgName: String, versionStr: String) {
 
         recallMethod = "q"
         when {
+            version >= Version("6.5.13") -> {
+                recallClass = "$packageName.sdk.platformtools.bg"
+            }
             version >= Version("6.5.10") -> {
                 recallClass = "$packageName.sdk.platformtools.bh"
             }
