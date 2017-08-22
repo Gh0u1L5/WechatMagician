@@ -27,8 +27,10 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun getHooks(pkgName: String, versionName: String, uid: Int): WechatRevokeHook? {
-        if (_hooks.indexOfKey(uid) == -1)
-            _hooks.put(uid, WechatRevokeHook(WechatVersion(pkgName, versionName), _res))
+        if (_hooks.indexOfKey(uid) == -1) {
+            val _ver = WechatVersion(pkgName, versionName)
+            _hooks.put(uid, WechatRevokeHook(_ver, _res))
+        }
         return _hooks[uid]
     }
 }
