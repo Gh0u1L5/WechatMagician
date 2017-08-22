@@ -6,7 +6,7 @@ Read this README.md in [English](https://github.com/Gh0u1L5/WechatMagician/blob/
 * 防止微信好友撤回聊天消息
 * 防止微信好友删除朋友圈动态、评论
 
-目前支持最新微信 6.5.10 版并将持续更新。
+目前支持最新微信 6.5.13 版并将持续更新。
 
 ## 特别鸣谢
 * 感谢 @rovo89 编写的Xposed框架

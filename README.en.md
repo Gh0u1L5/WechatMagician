@@ -4,7 +4,7 @@
 * Prevent friends from recalling messages.
 * Prevent friends from deleting moments or comments.
 
-Support WeChat 6.5.10 and will keep updating.
+Support WeChat 6.5.13 and will keep updating.
 
 ## Credits
 * Thanks @rovo89 for the awesome Xposed framework.
