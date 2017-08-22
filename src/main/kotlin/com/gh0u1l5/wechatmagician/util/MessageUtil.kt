@@ -63,7 +63,7 @@ object MessageUtil {
 
     fun bytesToHexString(arg: ByteArray?): String {
         if (arg == null) return ""
-        return arg.map{ String.format("%02X", it) }.joinToString("")
+        return arg.joinToString("") { String.format("%02X", it) }
     }
 
     fun hexStringToBytes(arg: String?): ByteArray {
@@ -75,12 +75,13 @@ object MessageUtil {
     }
 
     fun encodeMsgSize(msgSize: Int): ByteArray {
-        if (msgSize shr 7 > 0)
-            return byteArrayOf (
+        return if (msgSize shr 7 > 0)
+            byteArrayOf (
                     (msgSize and 0x7F or 0x80).toByte(),
-                    (msgSize shr 7).toByte())
+                    (msgSize shr 7).toByte()
+            )
         else
-            return byteArrayOf(msgSize.toByte())
+            byteArrayOf(msgSize.toByte())
     }
 
     fun decodeMsgSize(start: Int, msg: ByteArray): Pair<Int, Int> {

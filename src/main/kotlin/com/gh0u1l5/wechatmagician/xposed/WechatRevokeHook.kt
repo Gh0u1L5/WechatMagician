@@ -14,9 +14,9 @@ class WechatMessage(val msgId: Int, val type: Int, val talker: String, var conte
     init { if (type != 1) content = "" }
 }
 
-class WechatRevokeHook(var ver: WechatVersion, var res: XModuleResources) {
+class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleResources) {
 
-    var msgTable: List<WechatMessage> = listOf()
+    private var msgTable: List<WechatMessage> = listOf()
 
     fun hook(loader: ClassLoader?) {
         try {

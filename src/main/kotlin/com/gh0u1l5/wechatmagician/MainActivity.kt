@@ -16,8 +16,8 @@ class MainActivity : Activity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main)
 
-        tvVersion = findViewById<TextView>(R.id.tvVersion)
-        tvProj = findViewById<TextView>(R.id.tvProj)
+        tvVersion = findViewById(R.id.tvVersion)
+        tvProj = findViewById(R.id.tvProj)
 
         tvVersion?.text = packageManager.getPackageInfo(packageName, 0).versionName
         tvProj?.setOnClickListener(this)
