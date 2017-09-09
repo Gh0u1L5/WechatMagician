@@ -16,8 +16,8 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
         fun setResource(res: XModuleResources) { _res = _res ?: res }
     }
 
-    override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam?) {
-        setResource(XModuleResources.createInstance(startupParam?.modulePath, null))
+    override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
+        setResource(XModuleResources.createInstance(param?.modulePath, null))
     }
 
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {

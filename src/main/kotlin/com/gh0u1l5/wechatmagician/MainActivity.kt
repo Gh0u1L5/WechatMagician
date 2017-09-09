@@ -30,8 +30,7 @@ class MainActivity : Activity(), View.OnClickListener {
     }
 
     private fun openUrl(resId: Int) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(getString(resId))
+        val intent = Intent(Intent.ACTION_VIEW).setData(Uri.parse(getString(resId)))
         startActivity(intent)
     }
 }

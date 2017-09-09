@@ -5,8 +5,8 @@ import android.content.res.XModuleResources
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleResources) {
 
@@ -19,18 +19,16 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
         } catch(e: NoSuchMethodError) {
             when {
                 e.message!!.contains(ver.SQLiteDatabaseClass) -> {
-                    XposedBridge.log("NSME => ${ver.SQLiteDatabaseClass}")
+                    log("NSME => ${ver.SQLiteDatabaseClass}")
                     XpWechat._ver?.SQLiteDatabaseClass = ""
                 }
                 e.message!!.contains("${ver.recallClass}#${ver.recallMethod}") -> {
-                    XposedBridge.log("NSME => ${ver.recallClass}#${ver.recallMethod}")
+                    log("NSME => ${ver.recallClass}#${ver.recallMethod}")
                     XpWechat._ver?.recallClass = ""
                     XpWechat._ver?.recallMethod = ""
                 }
                 else -> throw e
             }
-        } catch(t: Throwable) {
-            XposedBridge.log(t)
         }
     }
 
@@ -51,14 +49,18 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 
     @Suppress("UNCHECKED_CAST")
     private fun hookRevoke(loader: ClassLoader?) {
-        if (ver.recallClass == "" || ver.recallMethod == "") return
-
-        XposedHelpers.findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+        if (ver.recallClass == "" || ver.recallMethod == "") {
+            return
+        }
+        findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object: XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
-                    if (this[".sysmsg.\$type"] != "revokemsg") return
-                    this[".sysmsg.revokemsg.replacemsg"] = this[".sysmsg.revokemsg.replacemsg"]?.let {
+                    if (this[".sysmsg.\$type"] != "revokemsg"){
+                        return
+                    }
+                    val replacemsg = this[".sysmsg.revokemsg.replacemsg"]
+                    this[".sysmsg.revokemsg.replacemsg"] = replacemsg?.let {
                         if (it.startsWith("你") || it.toLowerCase().startsWith("you")) it
                         else MessageUtil.customize(it, res.getString(R.string.easter_egg))
                     }
@@ -68,101 +70,102 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
     }
 
     private fun hookDatabase(loader: ClassLoader?) {
-        if (ver.SQLiteDatabaseClass == "") return
+        if (ver.SQLiteDatabaseClass == ""){
+            return
+        }
 
-        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object: XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val p1 = param.args[0] as String?
-                val p2 = param.args[1] as String?
-                val p3 = param.args[2] as ContentValues?
-                val p4 = param.args[3] as Int
+                val table = param.args[0] as String?
+                val initialValues = param.args[2] as ContentValues?
 
-                if (p1 == "message") {
-                    p3?.apply {
+                if (table == "message") {
+                    initialValues?.apply {
                         if (!containsKey("type") || !containsKey("talker")) {
-                            XposedBridge.log("DB => insert p1 = $p1, p2 = $p2, p3 = $p3, p4 = $p4")
+                            log("DB => insert table = $table, initialValues = $initialValues")
                             return
                         }
-                        addMessage(getAsInteger("msgId"), getAsInteger("type"), getAsString("talker"), getAsString("content"))
+                        addMessage(
+                                getAsInteger("msgId"),
+                                getAsInteger("type"),
+                                getAsString("talker"),
+                                getAsString("content"))
                     }
                     cleanMessage()
                 }
             }
         })
 
-        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object: XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val p1 = param.args[0] as String?
-                val p2 = param.args[1] as ContentValues?
-//                val p3 = param.args[2] as String?
-//                val p4 = param.args[3] as Array<*>?
-//                val p5 = param.args[4] as Int
-//                XposedBridge.log("DB => update p1 = $p1, p2 = $p2, p3 = $p3, p4 = ${MessageUtil.argsToString(p4)}, p5 = $p5")
+                val table = param.args[0] as String?
+                val values = param.args[1] as ContentValues?
+//                val whereClause = param.args[2] as String?
+//                val whereArgs = param.args[3] as Array<*>?
+//                log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
 
                 val label_recalled = res.getString(R.string.label_recalled)
                 val label_deleted = res.getString(R.string.label_deleted)
 
-                if (p1 == "message") {
-                    p2?.apply {
-                        if (getAsInteger("type") != 10000){
+                when (table) {
+                    "message" -> values?.apply {
+                        if (!containsKey("type") || this["type"] != 10000){
                             return
                         }
-                        val sysMsg = getAsString("content")
+                        val sysMsg = this["content"] as String
                         if (sysMsg.startsWith("你") || sysMsg.toLowerCase().startsWith("you")) {
                             return
                         }
                         remove("content"); remove("type")
-                        getMessage(getAsInteger("msgId"))?.let {
-                            if (it.type != 1) return
+                        getMessage(this["msgId"] as Int)?.let {
+                            if (it.type != 1) {
+                                return
+                            }
                             if (it.talker.contains("chatroom"))
                                 put("content", MessageUtil.notifyChatroomRecall(label_recalled, it.content))
                             else
                                 put("content", MessageUtil.notifyPrivateRecall(label_recalled, it.content))
                         }
                     }
-                }
-                if (p1 == "SnsInfo") {
-                    p2?.apply {
+                    "SnsInfo" -> values?.apply {
                         if (!containsKey("sourceType") || this["sourceType"] != 0){
                             return
                         }
-                        put("content", MessageUtil.notifyInfoDelete(label_deleted, getAsByteArray("content")))
+                        put("content", MessageUtil.notifyInfoDelete(label_deleted, this["content"] as ByteArray))
                         remove("sourceType")
                     }
-                }
-                if (p1 == "SnsComment") {
-                    p2?.apply {
-                        if (!containsKey("type") || !containsKey("commentflag")){
+                    "SnsComment" -> values?.apply {
+                        if (!containsKey("type") || this["type"] == 1){
                             return
                         }
-                        if (this["type"] == 1 || this["commentflag"] != 1){
+                        if (!containsKey("commentflag") || this["commentflag"] != 1){
                             return
                         }
-                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, getAsByteArray("curActionBuf")))
+                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, this["curActionBuf"] as ByteArray))
                         remove("commentflag")
                     }
                 }
             }
         })
 
-//        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object: XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val p1 = param.args[0] as String?
 //                val p2 = param.args[1] as String?
-//                val p3 = param.args[2] as Array<*?>?
-//                XposedBridge.log("DB => delete p1 = $p1, p2 = $p2, p3 = ${MessageUtil.argsToString(p3)}")
+//                val p3 = param.args[2] as Array<*>?
+//                log("DB => delete p1 = $p1, p2 = $p2, p3 = ${MessageUtil.argsToString(p3)}")
 //            }
 //        })
 
-//        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object: XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val p1 = param.args[0] as String?
-//                val p2 = param.args[1] as Array<*?>?
-//                XposedBridge.log("DB => executeSqlxecSQL p1 = $p1, p2 = ${MessageUtil.argsToString(p2)}")
+//                val p2 = param.args[1] as Array<*>?
+//                log("DB => executeSqlxecSQL p1 = $p1, p2 = ${MessageUtil.argsToString(p2)}")
 //            }
 //        })
     }

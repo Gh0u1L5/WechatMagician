@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
 class Version(versionName: String) {
-    var version: List<Int> = listOf()
+    var version: List<Int>
 
     init {
         val sections = versionName.split('.')

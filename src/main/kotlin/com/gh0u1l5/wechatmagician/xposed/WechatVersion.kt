@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician.xposed
 
 import com.gh0u1l5.wechatmagician.util.Version
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findMethodExact
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
@@ -54,12 +54,7 @@ class WechatVersion(param: XC_LoadPackage.LoadPackageParam) {
         for (clazz in classes) {
             try {
                 val className = getClassName(clazz)
-                val method = XposedHelpers.findMethodExact(
-                        className,
-                        classLoader,
-                        methodName,
-                        *parameterTypes
-                )
+                val method = findMethodExact(className, classLoader, methodName, *parameterTypes)
                 if (method.returnType == returnType) {
                     return className
                 }
