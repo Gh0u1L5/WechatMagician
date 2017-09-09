@@ -7,12 +7,6 @@ import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
-import java.lang.System.currentTimeMillis
-
-class WechatMessage(val msgId: Int, val type: Int, val talker: String, var content: String) {
-    val time: Long = currentTimeMillis()
-    init { if (type != 1) content = "" }
-}
 
 class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleResources) {
 
@@ -52,7 +46,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 
     @Synchronized
     private fun cleanMessage() {
-        msgTable = msgTable.filter { currentTimeMillis() - it.time < 120000 }
+        msgTable = msgTable.filter { System.currentTimeMillis() - it.time < 120000 }
     }
 
     @Suppress("UNCHECKED_CAST")
