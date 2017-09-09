@@ -69,6 +69,6 @@ class WechatVersion(param: XC_LoadPackage.LoadPackageParam) {
                 continue
             }
         }
-        return ""
+        throw Error("unsupported version")
     }
 }
