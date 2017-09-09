@@ -33,12 +33,12 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
     }
 
     @Synchronized
-    private fun addMessage(msgId: Int, type: Int, talker: String, content: String) {
+    private fun addMessage(msgId: Long, type: Int, talker: String, content: String) {
         msgTable += WechatMessage(msgId, type, talker,content)
     }
 
     @Synchronized
-    private fun getMessage(msgId: Int): WechatMessage? {
+    private fun getMessage(msgId: Long): WechatMessage? {
         return msgTable.find { it.msgId == msgId }
     }
 
@@ -87,7 +87,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                             return
                         }
                         addMessage(
-                                getAsInteger("msgId"),
+                                getAsLong("msgId"),
                                 getAsInteger("type"),
                                 getAsString("talker"),
                                 getAsString("content"))
@@ -119,7 +119,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                             return
                         }
                         remove("content"); remove("type")
-                        getMessage(this["msgId"] as Int)?.let {
+                        getMessage(this["msgId"] as Long)?.let {
                             if (it.type != 1) {
                                 return
                             }
