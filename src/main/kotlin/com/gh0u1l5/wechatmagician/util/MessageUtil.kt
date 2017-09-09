@@ -7,11 +7,11 @@ object MessageUtil {
     }
 
     fun notifyChatroomRecall(head: String, msg: String): String {
-        val index = msg.indexOf(":\n")
-        if (msg.substring(index + 2).startsWith(head)) {
+        val len = msg.indexOf(":\n") + ":\n".length
+        if (msg.drop(len).startsWith(head)) {
             return msg
         }
-        return "${msg.substring(0, index + 2)}$head ${msg.substring(index + 2)}"
+        return msg.replaceFirst(":\n", ":\n$head ")
     }
 
     fun notifyPrivateRecall(head: String, msg: String): String {
