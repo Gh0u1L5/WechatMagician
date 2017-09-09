@@ -120,13 +120,15 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                         }
                         remove("content"); remove("type")
                         getMessage(this["msgId"] as Long)?.let {
-                            if (it.type != 1) {
-                                return
+                            when (it.type) {
+                                1 -> {
+                                    if (it.talker.contains("chatroom"))
+                                        put("content", MessageUtil.notifyChatroomMsgRecall(label_recalled, it.content))
+                                    else
+                                        put("content", MessageUtil.notifyPrivateMsgRecall(label_recalled, it.content))
+                                }
+                                49 -> put("content", MessageUtil.notifyLinkRecall(label_recalled, it.content))
                             }
-                            if (it.talker.contains("chatroom"))
-                                put("content", MessageUtil.notifyChatroomRecall(label_recalled, it.content))
-                            else
-                                put("content", MessageUtil.notifyPrivateRecall(label_recalled, it.content))
                         }
                     }
                     "SnsInfo" -> values?.apply {

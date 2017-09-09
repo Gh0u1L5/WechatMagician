@@ -6,7 +6,7 @@ object MessageUtil {
         return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} $suffix" }
     }
 
-    fun notifyChatroomRecall(head: String, msg: String): String {
+    fun notifyChatroomMsgRecall(head: String, msg: String): String {
         val len = msg.indexOf(":\n") + ":\n".length
         if (msg.drop(len).startsWith(head)) {
             return msg
@@ -14,11 +14,19 @@ object MessageUtil {
         return msg.replaceFirst(":\n", ":\n$head ")
     }
 
-    fun notifyPrivateRecall(head: String, msg: String): String {
+    fun notifyPrivateMsgRecall(head: String, msg: String): String {
         if (msg.startsWith(head)) {
             return msg
         }
         return "$head $msg"
+    }
+
+    fun notifyLinkRecall(head: String, msg: String): String {
+        val len = msg.indexOf("<title>") + "<title>".length
+        if (msg.drop(len).startsWith(head)) {
+            return msg
+        }
+        return msg.replaceFirst("<title>", "<title>$head ")
     }
 
     fun notifyInfoDelete(head: String?, msg: ByteArray?): ByteArray? {

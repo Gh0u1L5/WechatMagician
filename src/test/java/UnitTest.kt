@@ -9,16 +9,22 @@ class UnitTest {
         assertEquals("test 妄图撤回一条消息，啧啧", MessageUtil.customize("\"test\" 撤回了一条消息", "妄图撤回一条消息，啧啧"))
     }
 
-    @Test fun NotifyChatroomRecallTest() {
-        assertEquals("wxid:\ntest", MessageUtil.notifyChatroomRecall("", "wxid:\ntest"))
-        assertEquals("wxid:\n[已撤回] test", MessageUtil.notifyChatroomRecall("[已撤回]", "wxid:\ntest"))
-        assertEquals("wxid:\n[已撤回] test", MessageUtil.notifyChatroomRecall("[已撤回]", "wxid:\n[已撤回] test"))
+    @Test fun NotifyChatroomMsgRecallTest() {
+        assertEquals("wxid:\ntest", MessageUtil.notifyChatroomMsgRecall("", "wxid:\ntest"))
+        assertEquals("wxid:\n[已撤回] test", MessageUtil.notifyChatroomMsgRecall("[已撤回]", "wxid:\ntest"))
+        assertEquals("wxid:\n[已撤回] test", MessageUtil.notifyChatroomMsgRecall("[已撤回]", "wxid:\n[已撤回] test"))
     }
 
-    @Test fun NotifyPrivateRecallTest() {
-        assertEquals("test", MessageUtil.notifyPrivateRecall("", "test"))
-        assertEquals("[已撤回] test", MessageUtil.notifyPrivateRecall("[已撤回]", "test"))
-        assertEquals("[已撤回] test", MessageUtil.notifyPrivateRecall("[已撤回]", "[已撤回] test"))
+    @Test fun NotifyPrivateMsgRecallTest() {
+        assertEquals("test", MessageUtil.notifyPrivateMsgRecall("", "test"))
+        assertEquals("[已撤回] test", MessageUtil.notifyPrivateMsgRecall("[已撤回]", "test"))
+        assertEquals("[已撤回] test", MessageUtil.notifyPrivateMsgRecall("[已撤回]", "[已撤回] test"))
+    }
+
+    @Test fun NotifyLinkRecallTest() {
+        assertEquals("<msg><title>test</title></msg>", MessageUtil.notifyLinkRecall("", "<msg><title>test</title></msg>"))
+        assertEquals("<msg><title>[已撤回] test</title></msg>", MessageUtil.notifyLinkRecall("[已撤回]", "<msg><title>test</title></msg>"))
+        assertEquals("<msg><title>[已撤回] test</title></msg>", MessageUtil.notifyLinkRecall("[已撤回]", "<msg><title>[已撤回] test</title></msg>"))
     }
 
     @Test fun NotifyInfoDeleteTest() {
