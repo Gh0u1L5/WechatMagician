@@ -61,7 +61,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                     }
                     val replacemsg = this[".sysmsg.revokemsg.replacemsg"]
                     this[".sysmsg.revokemsg.replacemsg"] = replacemsg?.let {
-                        if (it.startsWith("你") || it.toLowerCase().startsWith("you")) it
+                        if (it.startsWith("你") || it.startsWith("you", true)) it
                         else MessageUtil.customize(it, res.getString(R.string.easter_egg))
                     }
                 }
@@ -115,7 +115,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                             return
                         }
                         val sysMsg = this["content"] as String
-                        if (sysMsg.startsWith("你") || sysMsg.toLowerCase().startsWith("you")) {
+                        if (sysMsg.startsWith("你") || sysMsg.startsWith("you", true)) {
                             return
                         }
                         remove("content"); remove("type")
