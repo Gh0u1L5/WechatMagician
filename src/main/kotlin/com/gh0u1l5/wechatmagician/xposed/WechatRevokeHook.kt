@@ -83,7 +83,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                 if (table == "message") {
                     initialValues?.apply {
                         if (!containsKey("type") || !containsKey("talker")) {
-                            log("DB => insert table = $table, initialValues = $initialValues")
+                            log("DB => skewed message $initialValues")
                             return
                         }
                         addMessage(
