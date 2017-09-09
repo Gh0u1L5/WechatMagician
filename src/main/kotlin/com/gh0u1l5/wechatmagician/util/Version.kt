@@ -1,10 +1,10 @@
 package com.gh0u1l5.wechatmagician.util
 
-class Version(versionStr: String) {
+class Version(versionName: String) {
     var version: List<Int> = listOf()
 
     init {
-        val sections = versionStr.split('.')
+        val sections = versionName.split('.')
         version = sections.map{ it.toInt() }
     }
 
