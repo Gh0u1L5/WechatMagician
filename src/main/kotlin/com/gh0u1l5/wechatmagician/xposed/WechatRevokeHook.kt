@@ -135,8 +135,8 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                         if (!containsKey("sourceType") || this["sourceType"] != 0){
                             return
                         }
-                        put("content", MessageUtil.notifyInfoDelete(label_deleted, this["content"] as ByteArray))
                         remove("sourceType")
+                        put("content", MessageUtil.notifyInfoDelete(label_deleted, this["content"] as ByteArray))
                     }
                     "SnsComment" -> values?.apply {
                         if (!containsKey("type") || this["type"] == 1){
@@ -145,8 +145,8 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                         if (!containsKey("commentflag") || this["commentflag"] != 1){
                             return
                         }
-                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, this["curActionBuf"] as ByteArray))
                         remove("commentflag")
+                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, this["curActionBuf"] as ByteArray))
                     }
                 }
             }
