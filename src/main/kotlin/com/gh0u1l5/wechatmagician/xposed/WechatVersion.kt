@@ -9,8 +9,8 @@ import net.dongliu.apk.parser.bean.DexClass
 
 class WechatVersion(param: XC_LoadPackage.LoadPackageParam) {
 
-    var recallClass = ""
-    var recallMethod = ""
+    var XMLParserClass = ""
+    var XMLParseMethod = ""
     var SQLiteDatabaseClass = ""
 
     init {
@@ -23,14 +23,14 @@ class WechatVersion(param: XC_LoadPackage.LoadPackageParam) {
             else -> throw Error("unsupported version")
         }
 
-        recallMethod = when {
+        XMLParseMethod = when {
             version >= Version("6.5.3") -> "q"
             else -> throw Error("unsupported version")
         }
-        recallClass = findClassWithMethod(
+        XMLParserClass = findClassWithMethod(
                 param.classLoader,
                 findClassesFromPackage(apkFile,"com.tencent.mm.sdk.platformtools"),
-                Map::class.java, recallMethod, String::class.java, String::class.java
+                Map::class.java, XMLParseMethod, String::class.java, String::class.java
         )
     }
 

@@ -22,10 +22,10 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                     log("NSME => ${ver.SQLiteDatabaseClass}")
                     XpWechat._ver?.SQLiteDatabaseClass = ""
                 }
-                e.message!!.contains("${ver.recallClass}#${ver.recallMethod}") -> {
-                    log("NSME => ${ver.recallClass}#${ver.recallMethod}")
-                    XpWechat._ver?.recallClass = ""
-                    XpWechat._ver?.recallMethod = ""
+                e.message!!.contains("${ver.XMLParserClass}#${ver.XMLParseMethod}") -> {
+                    log("NSME => ${ver.XMLParserClass}#${ver.XMLParseMethod}")
+                    XpWechat._ver?.XMLParserClass = ""
+                    XpWechat._ver?.XMLParseMethod = ""
                 }
                 else -> throw e
             }
@@ -76,10 +76,10 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 
     @Suppress("UNCHECKED_CAST")
     private fun hookRevoke(loader: ClassLoader?) {
-        if (ver.recallClass == "" || ver.recallMethod == "") {
+        if (ver.XMLParserClass == "" || ver.XMLParseMethod == "") {
             return
         }
-        findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+        findAndHookMethod(ver.XMLParserClass, loader, ver.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val XML = param.args[0] as String
