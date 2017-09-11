@@ -10,7 +10,7 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private val _hooks = SparseArray<WechatRevokeHook>()
 
-    private fun getHooks(uid: Int): WechatRevokeHook? {
+    private fun getHook(uid: Int): WechatRevokeHook? {
         if (_hooks.indexOfKey(uid) == -1) {
             _hooks.put(uid, WechatRevokeHook(_ver!!, _res!!))
         }
@@ -31,7 +31,7 @@ class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
         if (param.packageName == "com.tencent.mm") {
             setVersion(WechatVersion(param))
-            getHooks(param.appInfo.uid)?.hook(param.classLoader)
+            getHook(param.appInfo.uid)?.hook(param.classLoader)
         }
     }
 }
