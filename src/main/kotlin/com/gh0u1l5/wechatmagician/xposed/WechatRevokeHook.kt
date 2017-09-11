@@ -47,6 +47,33 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
         msgTable = msgTable.filter { System.currentTimeMillis() - it.time < 120000 }
     }
 
+    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
+        val label_recalled = res.getString(R.string.label_recalled)
+
+        val speaker: String?; var message: String?
+        if (origin.talker.contains("chatroom")) {
+            val len = (origin.content?.indexOf(":\n") ?: 0) + 2
+            speaker = origin.content?.take(len)
+            message = origin.content?.drop(len)
+        } else {
+            speaker = ""; message = origin.content
+        }
+
+        when (origin.type) {
+            1 -> {
+                message = MessageUtil.notifyMessageRecall(label_recalled, message!!)
+                values?.put("content", speaker + message)
+            }
+            3 -> {
+
+            }
+            49 -> {
+                message = MessageUtil.notifyLinkRecall(label_recalled, message!!)
+                values?.put("content", speaker + message)
+            }
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun hookRevoke(loader: ClassLoader?) {
         if (ver.recallClass == "" || ver.recallMethod == "") {
@@ -115,9 +142,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 //                val whereArgs = param.args[3] as Array<*>?
 //                log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
 
-                val label_recalled = res.getString(R.string.label_recalled)
                 val label_deleted = res.getString(R.string.label_deleted)
-
                 when (table) {
                     "message" -> values?.apply {
                         if (!containsKey("type") || this["type"] != 10000){
@@ -129,15 +154,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                         }
                         remove("content"); remove("type")
                         getMessage(this["msgId"] as Long)?.let {
-                            when (it.type) {
-                                1 -> {
-                                    if (it.talker.contains("chatroom"))
-                                        put("content", MessageUtil.notifyChatroomMsgRecall(label_recalled, it.content))
-                                    else
-                                        put("content", MessageUtil.notifyPrivateMsgRecall(label_recalled, it.content))
-                                }
-                                49 -> put("content", MessageUtil.notifyLinkRecall(label_recalled, it.content))
-                            }
+                            handleMessageRecall(it, values)
                         }
                     }
                     "SnsInfo" -> values?.apply {
