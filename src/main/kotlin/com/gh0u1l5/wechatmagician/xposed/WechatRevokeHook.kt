@@ -53,6 +53,13 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             return
         }
         findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun beforeHookedMethod(param: MethodHookParam) {
+//                val XML = param.args[0] as String
+//                val tag = param.args[1] as String
+//                log("XMLParser => XML = $XML, tag = $tag")
+//            }
+
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
@@ -79,6 +86,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
                 val initialValues = param.args[2] as ContentValues?
+//                log("DB => insert table = $table, initialValues = $initialValues")
 
                 if (table == "message") {
                     initialValues?.apply {
