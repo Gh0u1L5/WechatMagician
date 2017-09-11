@@ -52,7 +52,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
         if (ver.recallClass == "" || ver.recallMethod == "") {
             return
         }
-        findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object: XC_MethodHook() {
+        findAndHookMethod(ver.recallClass, loader, ver.recallMethod, String::class.java, String::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
@@ -74,7 +74,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             return
         }
 
-        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object: XC_MethodHook() {
+        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -97,7 +97,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             }
         })
 
-        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object: XC_MethodHook() {
+        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -152,7 +152,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
             }
         })
 
-//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object: XC_MethodHook() {
+//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val p1 = param.args[0] as String?
@@ -162,7 +162,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 //            }
 //        })
 
-//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object: XC_MethodHook() {
+//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val p1 = param.args[0] as String?
