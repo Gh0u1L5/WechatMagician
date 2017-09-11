@@ -163,19 +163,19 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 //        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
-//                val p1 = param.args[0] as String?
-//                val p2 = param.args[1] as String?
-//                val p3 = param.args[2] as Array<*>?
-//                log("DB => delete p1 = $p1, p2 = $p2, p3 = ${MessageUtil.argsToString(p3)}")
+//                val table = param.args[0] as String?
+//                val whereClause = param.args[1] as String?
+//                val whereArgs = param.args[2] as Array<*>?
+//                log("DB => delete table = $table, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
 //            }
 //        })
 
 //        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
-//                val p1 = param.args[0] as String?
-//                val p2 = param.args[1] as Array<*>?
-//                log("DB => executeSqlxecSQL p1 = $p1, p2 = ${MessageUtil.argsToString(p2)}")
+//                val sql = param.args[0] as String?
+//                val bindArgs = param.args[1] as Array<*>?
+//                log("DB => executeSqlxecSQL sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}")
 //            }
 //        })
     }
