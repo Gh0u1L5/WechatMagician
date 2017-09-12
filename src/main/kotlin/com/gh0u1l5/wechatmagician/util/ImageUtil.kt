@@ -11,23 +11,10 @@ import java.io.IOException
 
 object ImageUtil {
 
-    // TODO: Set class and method in WechatPackage
-    private fun getThumbnailDirPath(): String {
-        val clazz = findClass("com.tencent.mm.plugin.n.b", WechatHook.loader)
-        return callStaticMethod(clazz, "xc") as String
-    }
-
-    private fun getImgIdFromPath(path: String): String {
-        if (path.startsWith("THUMBNAIL_DIRPATH")) {
-            return path.drop("THUMBNAIL_DIRPATH://th_".length)
-        }
-        return path
-    }
-
-    private fun getAbsolutePathFromImgId(imgId: String): String {
-        val firstByte = imgId.take(2)
-        val secondByte = imgId.drop(2).take(2)
-        return "${getThumbnailDirPath()}$firstByte/$secondByte/th_$imgId"
+    private fun getAbsolutePathFromImgId(path: String): String {
+        val obj = WechatHook.pkg.ImgInfoStorage
+        val method = WechatHook.pkg.ImgLoadMethod
+        return callMethod(obj, method, path, "th_", "", false) as String
     }
 
     private fun replaceThumbDiskCache(path: String, bitmap: Bitmap) {
@@ -45,23 +32,17 @@ object ImageUtil {
         }
     }
 
-    // TODO: Set class and method in WechatPackage
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
-        val imgInfoStorageClass = findClass("com.tencent.mm.ah.n", WechatHook.loader)
-        val imgInfoStorage = callStaticMethod(imgInfoStorageClass, "GT")
-
         // Update memory cache
-        val cache = getObjectField(imgInfoStorage, "hFn")
-        callMethod(cache, "remove", path)
-        callMethod(cache, "k", "${path}hd", bitmap)
+        callMethod(WechatHook.pkg.CacheMap, "remove", path)
+        callMethod(WechatHook.pkg.CacheMap, "k", "${path}hd", bitmap)
 
         // Notify storage update
-        callMethod(imgInfoStorage, "doNotify")
+        callMethod(WechatHook.pkg.ImgInfoStorage, "doNotify")
     }
 
     fun replaceThumbnail(path: String, bitmap: Bitmap) {
-        val imgId = getImgIdFromPath(path)
-        val absolutePath = getAbsolutePathFromImgId(imgId)
+        val absolutePath = getAbsolutePathFromImgId(path)
         replaceThumbMemoryCache(absolutePath, bitmap)
         replaceThumbDiskCache("${absolutePath}hd", bitmap)
     }

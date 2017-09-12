@@ -2,12 +2,15 @@ package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.ContentValues
 import android.content.res.XModuleResources
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.xposed.MessageCache.WechatMessage
 import de.robv.android.xposed.*
+import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -32,6 +35,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         pkg = WechatPackage(param)
         loader = param.classLoader
         try {
+            hookImgCache()
+            hookImgStorage()
             hookXMLParse()
             hookDatabase()
         } catch(e: NoSuchMethodError) {
@@ -49,13 +54,60 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
     }
 
+    private fun hookImgCache() {
+        if (pkg.CacheMapClass == "" || pkg.CacheMapPutMethod == "") {
+            return
+        }
+
+        findAndHookMethod(pkg.CacheMapClass, loader, pkg.CacheMapPutMethod, C.Object, C.Object, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (param.args[1] !is Bitmap) {
+                    return
+                }
+                val key = param.args[0] as String
+                if (key.startsWith("/")) {
+                    if (pkg.CacheMap !== param.thisObject) {
+                        pkg.CacheMap = param.thisObject
+                    }
+                }
+            }
+        })
+    }
+
+    private fun hookImgStorage() {
+        if (pkg.ImgInfoStorageClass == "") {
+            return
+        }
+
+        val ImgInfoStorageClass = findClass(pkg.ImgInfoStorageClass, loader)
+        hookAllConstructors(ImgInfoStorageClass, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (pkg.ImgInfoStorage !== param.thisObject) {
+                    pkg.ImgInfoStorage = param.thisObject
+                }
+            }
+        })
+
+//        findAndHookMethod(ImgInfoStorageClass, pkg.ImgLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun afterHookedMethod(param: MethodHookParam) {
+//                val imgId = param.args[0] as String?
+//                val prefix = param.args[1] as String?
+//                val suffix = param.args[2] as String?
+//                log("IMG => imgId = $imgId, prefix = $prefix, suffix = $suffix")
+//            }
+//        })
+    }
+
     @Suppress("UNCHECKED_CAST")
     private fun hookXMLParse() {
         if (pkg.XMLParserClass == "" || pkg.XMLParseMethod == "") {
             return
         }
 
-        findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+        findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val XML = param.args[0] as String?
@@ -84,7 +136,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -108,7 +160,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -155,7 +207,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String?
@@ -165,7 +217,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?

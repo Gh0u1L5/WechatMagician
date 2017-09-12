@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.xposed
 
+import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.Version
 import de.robv.android.xposed.XposedHelpers.findMethodExact
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError
@@ -9,13 +10,23 @@ import net.dongliu.apk.parser.bean.DexClass
 
 class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
 
-    var XMLParserClass = ""
-    var XMLParseMethod = ""
-    var SQLiteDatabaseClass = ""
+    var CacheMap: Any? = null
+    var ImgInfoStorage: Any? = null
+
+    var XMLParserClass: String
+    var XMLParseMethod: String
+    var CacheMapClass: String
+    var CacheMapPutMethod: String
+    var ImgLoadMethod: String
+    var ImgInfoStorageClass: String
+    var SQLiteDatabaseClass: String
 
     init {
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
+
+        CacheMapClass =  "com.tencent.mm.a.f"
+        CacheMapPutMethod = "k"
 
         SQLiteDatabaseClass = when {
             version >= Version("6.5.8") -> "com.tencent.wcdb.database.SQLiteDatabase"
@@ -30,7 +41,17 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
         XMLParserClass = findClassWithMethod(
                 param.classLoader,
                 findClassesFromPackage(apkFile,"com.tencent.mm.sdk.platformtools"),
-                Map::class.java, XMLParseMethod, String::class.java, String::class.java
+                C.Map, XMLParseMethod, C.String , C.String
+        )
+
+        ImgLoadMethod = when {
+            version >= Version("6.5.3") -> "a"
+            else -> throw Error("unsupported version")
+        }
+        ImgInfoStorageClass = findClassWithMethod(
+                param.classLoader,
+                findClassesFromPackage(apkFile, "com.tencent.mm", 1),
+                C.String, ImgLoadMethod, C.String, C.String, C.String, C.Boolean
         )
     }
 
