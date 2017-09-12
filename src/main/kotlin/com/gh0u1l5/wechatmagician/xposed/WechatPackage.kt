@@ -7,7 +7,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 
-class WechatVersion(param: XC_LoadPackage.LoadPackageParam) {
+class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
 
     var XMLParserClass = ""
     var XMLParseMethod = ""

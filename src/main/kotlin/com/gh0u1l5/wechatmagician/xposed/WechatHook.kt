@@ -2,95 +2,70 @@ package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.ContentValues
 import android.content.res.XModuleResources
+import android.graphics.BitmapFactory
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.findAndHookMethod
+import com.gh0u1l5.wechatmagician.xposed.MessageCache.WechatMessage
+import de.robv.android.xposed.*
+import de.robv.android.xposed.callbacks.XC_LoadPackage
 
-class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleResources) {
+class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
-    private var msgTable: List<WechatMessage> = listOf()
+    companion object {
+        lateinit var ver: WechatPackage
+        lateinit var res: XModuleResources
+        lateinit var loader: ClassLoader
+    }
 
-    fun hook(loader: ClassLoader?) {
+    override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
+        res = XModuleResources.createInstance(param?.modulePath, null)
+    }
+
+    override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
+        if (param.packageName != "com.tencent.mm") {
+            return
+        }
+
+        ver = WechatPackage(param)
+        loader = param.classLoader
         try {
-            hookDatabase(loader)
-            hookRevoke(loader)
+            hookXMLParse()
+            hookDatabase()
         } catch(e: NoSuchMethodError) {
             when {
                 e.message!!.contains(ver.SQLiteDatabaseClass) -> {
-                    log("NSME => ${ver.SQLiteDatabaseClass}")
-                    XpWechat._ver?.SQLiteDatabaseClass = ""
+                    XposedBridge.log("NSME => ${ver.SQLiteDatabaseClass}")
+                    ver.SQLiteDatabaseClass = ""
                 }
                 e.message!!.contains("${ver.XMLParserClass}#${ver.XMLParseMethod}") -> {
-                    log("NSME => ${ver.XMLParserClass}#${ver.XMLParseMethod}")
-                    XpWechat._ver?.XMLParserClass = ""
-                    XpWechat._ver?.XMLParseMethod = ""
+                    XposedBridge.log("NSME => ${ver.XMLParserClass}#${ver.XMLParseMethod}")
+                    ver.XMLParserClass = ""
+                    ver.XMLParseMethod = ""
                 }
                 else -> throw e
             }
         }
     }
 
-    @Synchronized
-    private fun addMessage(msgId: Long, type: Int, talker: String, content: String?, imgPath: String?) {
-        msgTable += WechatMessage(msgId, type, talker, content, imgPath)
-    }
-
-    @Synchronized
-    private fun getMessage(msgId: Long): WechatMessage? {
-        return msgTable.find { it.msgId == msgId }
-    }
-
-    @Synchronized
-    private fun cleanMessage() {
-        msgTable = msgTable.filter { System.currentTimeMillis() - it.time < 120000 }
-    }
-
-    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
-        val label_recalled = res.getString(R.string.label_recalled)
-
-        val speaker: String?; var message: String?
-        if (origin.talker.contains("chatroom")) {
-            val len = (origin.content?.indexOf(":\n") ?: 0) + 2
-            speaker = origin.content?.take(len)
-            message = origin.content?.drop(len)
-        } else {
-            speaker = ""; message = origin.content
-        }
-
-        when (origin.type) {
-            1 -> {
-                message = MessageUtil.notifyMessageRecall(label_recalled, message!!)
-                values?.put("content", speaker + message)
-            }
-            3 -> {
-
-            }
-            49 -> {
-                message = MessageUtil.notifyLinkRecall(label_recalled, message!!)
-                values?.put("content", speaker + message)
-            }
-        }
-    }
-
     @Suppress("UNCHECKED_CAST")
-    private fun hookRevoke(loader: ClassLoader?) {
+    private fun hookXMLParse() {
         if (ver.XMLParserClass == "" || ver.XMLParseMethod == "") {
             return
         }
-        findAndHookMethod(ver.XMLParserClass, loader, ver.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+
+        XposedHelpers.findAndHookMethod(ver.XMLParserClass, loader, ver.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
-//                val XML = param.args[0] as String
-//                val tag = param.args[1] as String
+//                val XML = param.args[0] as String?
+//                val tag = param.args[1] as String?
 //                log("XMLParser => XML = $XML, tag = $tag")
 //            }
 
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
-                    if (this[".sysmsg.\$type"] != "revokemsg"){
+                    if (this[".sysmsg.\$type"] != "revokemsg") {
                         return
                     }
                     val replacemsg = this[".sysmsg.revokemsg.replacemsg"]
@@ -103,12 +78,12 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
         })
     }
 
-    private fun hookDatabase(loader: ClassLoader?) {
+    private fun hookDatabase() {
         if (ver.SQLiteDatabaseClass == ""){
             return
         }
 
-        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -118,22 +93,21 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                 if (table == "message") {
                     initialValues?.apply {
                         if (!containsKey("type") || !containsKey("talker")) {
-                            log("DB => skewed message $initialValues")
+                            XposedBridge.log("DB => skewed message $initialValues")
                             return
                         }
-                        addMessage(
-                                this["msgId"] as Long,
+                        val msgId = this["msgId"] as Long
+                        MessageCache[msgId] = WechatMessage(
                                 this["type"] as Int,
                                 this["talker"] as String,
                                 this["content"] as String?,
                                 this["imgPath"] as String?)
                     }
-                    cleanMessage()
                 }
             }
         })
 
-        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -145,7 +119,7 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                 val label_deleted = res.getString(R.string.label_deleted)
                 when (table) {
                     "message" -> values?.apply {
-                        if (!containsKey("type") || this["type"] != 10000){
+                        if (!containsKey("type") || this["type"] != 10000) {
                             return
                         }
                         val sysMsg = this["content"] as String
@@ -153,26 +127,28 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
                             return
                         }
                         remove("content"); remove("type")
-                        getMessage(this["msgId"] as Long)?.let {
+                        MessageCache[this["msgId"] as Long]?.let {
                             handleMessageRecall(it, values)
                         }
                     }
                     "SnsInfo" -> values?.apply {
-                        if (!containsKey("sourceType") || this["sourceType"] != 0){
+                        if (!containsKey("sourceType") || this["sourceType"] != 0) {
                             return
                         }
                         remove("sourceType")
-                        put("content", MessageUtil.notifyInfoDelete(label_deleted, this["content"] as ByteArray))
+                        val content =  this["content"] as ByteArray
+                        put("content", MessageUtil.notifyInfoDelete(label_deleted, content))
                     }
                     "SnsComment" -> values?.apply {
-                        if (!containsKey("type") || this["type"] == 1){
+                        if (!containsKey("type") || this["type"] == 1) {
                             return
                         }
-                        if (!containsKey("commentflag") || this["commentflag"] != 1){
+                        if (!containsKey("commentflag") || this["commentflag"] != 1) {
                             return
                         }
                         remove("commentflag")
-                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, this["curActionBuf"] as ByteArray))
+                        val curActionBuf = this["curActionBuf"] as ByteArray
+                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, curActionBuf))
                     }
                 }
             }
@@ -193,8 +169,38 @@ class WechatRevokeHook(private val ver: WechatVersion, private val res: XModuleR
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?
 //                val bindArgs = param.args[1] as Array<*>?
-//                log("DB => executeSqlxecSQL sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}")
+//                log("DB => executeSql sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}")
 //            }
 //        })
+    }
+
+    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
+        val label_recalled = res.getString(R.string.label_recalled)
+
+        val speaker: String?; var message: String?
+        if (origin.talker.contains("chatroom")) {
+            val len = (origin.content?.indexOf(":\n") ?: 0) + 2
+            speaker = origin.content?.take(len)
+            message = origin.content?.drop(len)
+        } else {
+            speaker = ""; message = origin.content
+        }
+
+        when (origin.type) {
+            1 -> {
+                message = MessageUtil.notifyMessageRecall(label_recalled, message!!)
+                values?.put("content", speaker + message)
+            }
+            3 -> {
+                val imgName = "image_recall_${res.getString(R.string.language)}.jpg"
+                val imgStream = res.assets.open(imgName)
+                val bitmap = BitmapFactory.decodeStream(imgStream)
+                ImageUtil.replaceThumbnail(origin.imgPath!!, bitmap)
+            }
+            49 -> {
+                message = MessageUtil.notifyLinkRecall(label_recalled, message!!)
+                values?.put("content", speaker + message)
+            }
+        }
     }
 }
