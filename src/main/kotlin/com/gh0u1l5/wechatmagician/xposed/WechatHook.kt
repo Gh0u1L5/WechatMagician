@@ -108,9 +108,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
-//                val XML = param.args[0] as String?
+//                val xml = param.args[0] as String?
 //                val tag = param.args[1] as String?
-//                log("XMLParser => XML = $XML, tag = $tag")
+//                log("XML => xml = $xml, tag = $tag")
 //            }
 
             @Throws(Throwable::class)
