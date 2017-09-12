@@ -66,8 +66,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 }
                 val key = param.args[0] as String
                 if (key.startsWith("/")) {
-                    if (pkg.CacheMap !== param.thisObject) {
-                        pkg.CacheMap = param.thisObject
+                    if (pkg.CacheMapObject !== param.thisObject) {
+                        pkg.CacheMapObject = param.thisObject
                     }
                 }
             }
@@ -75,21 +75,21 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookImgStorage() {
-        if (pkg.ImgInfoStorageClass == "") {
+        if (pkg.ImgStorageClass == "") {
             return
         }
 
-        val ImgInfoStorageClass = findClass(pkg.ImgInfoStorageClass, loader)
+        val ImgInfoStorageClass = findClass(pkg.ImgStorageClass, loader)
         hookAllConstructors(ImgInfoStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (pkg.ImgInfoStorage !== param.thisObject) {
-                    pkg.ImgInfoStorage = param.thisObject
+                if (pkg.ImgStorageObject !== param.thisObject) {
+                    pkg.ImgStorageObject = param.thisObject
                 }
             }
         })
 
-//        findAndHookMethod(ImgInfoStorageClass, pkg.ImgLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
+//        findAndHookMethod(ImgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun afterHookedMethod(param: MethodHookParam) {
 //                val imgId = param.args[0] as String?

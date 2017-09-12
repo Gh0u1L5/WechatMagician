@@ -11,10 +11,10 @@ import java.io.IOException
 
 object ImageUtil {
 
-    private fun getAbsolutePathFromImgId(path: String): String {
-        val obj = WechatHook.pkg.ImgInfoStorage
-        val method = WechatHook.pkg.ImgLoadMethod
-        return callMethod(obj, method, path, "th_", "", false) as String
+    private fun getPathFromImgId(imgId: String): String {
+        val obj = WechatHook.pkg.ImgStorageObject
+        val method = WechatHook.pkg.ImgStorageLoadMethod
+        return callMethod(obj, method, imgId, "th_", "", false) as String
     }
 
     private fun replaceThumbDiskCache(path: String, bitmap: Bitmap) {
@@ -34,16 +34,17 @@ object ImageUtil {
 
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Update memory cache
-        callMethod(WechatHook.pkg.CacheMap, "remove", path)
-        callMethod(WechatHook.pkg.CacheMap, "k", "${path}hd", bitmap)
+        val cache = WechatHook.pkg.CacheMapObject
+        callMethod(cache, WechatHook.pkg.CacheMapRemoveMethod, path)
+        callMethod(cache, WechatHook.pkg.CacheMapPutMethod, "${path}hd", bitmap)
 
         // Notify storage update
-        callMethod(WechatHook.pkg.ImgInfoStorage, "doNotify")
+        callMethod(WechatHook.pkg.ImgStorageObject, WechatHook.pkg.ImgStorageNotifyMethod)
     }
 
-    fun replaceThumbnail(path: String, bitmap: Bitmap) {
-        val absolutePath = getAbsolutePathFromImgId(path)
-        replaceThumbMemoryCache(absolutePath, bitmap)
-        replaceThumbDiskCache("${absolutePath}hd", bitmap)
+    fun replaceThumbnail(imgId: String, bitmap: Bitmap) {
+        val path = getPathFromImgId(imgId)
+        replaceThumbMemoryCache(path, bitmap)
+        replaceThumbDiskCache("${path}hd", bitmap)
     }
 }

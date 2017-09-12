@@ -10,23 +10,24 @@ import net.dongliu.apk.parser.bean.DexClass
 
 class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
 
-    var CacheMap: Any? = null
-    var ImgInfoStorage: Any? = null
+    var SQLiteDatabaseClass: String
 
     var XMLParserClass: String
     var XMLParseMethod: String
+
+    var CacheMapObject: Any? = null
     var CacheMapClass: String
     var CacheMapPutMethod: String
-    var ImgLoadMethod: String
-    var ImgInfoStorageClass: String
-    var SQLiteDatabaseClass: String
+    var CacheMapRemoveMethod: String
+
+    var ImgStorageObject: Any? = null
+    var ImgStorageClass: String
+    var ImgStorageLoadMethod: String
+    var ImgStorageNotifyMethod: String
 
     init {
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
-
-        CacheMapClass =  "com.tencent.mm.a.f"
-        CacheMapPutMethod = "k"
 
         SQLiteDatabaseClass = when {
             version >= Version("6.5.8") -> "com.tencent.wcdb.database.SQLiteDatabase"
@@ -34,24 +35,23 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
             else -> throw Error("unsupported version")
         }
 
-        XMLParseMethod = when {
-            version >= Version("6.5.3") -> "q"
-            else -> throw Error("unsupported version")
-        }
+        XMLParseMethod = "q"
         XMLParserClass = findClassWithMethod(
                 param.classLoader,
                 findClassesFromPackage(apkFile,"com.tencent.mm.sdk.platformtools"),
                 C.Map, XMLParseMethod, C.String , C.String
         )
 
-        ImgLoadMethod = when {
-            version >= Version("6.5.3") -> "a"
-            else -> throw Error("unsupported version")
-        }
-        ImgInfoStorageClass = findClassWithMethod(
+        CacheMapClass =  "com.tencent.mm.a.f"
+        CacheMapPutMethod = "k"
+        CacheMapRemoveMethod = "remove"
+
+        ImgStorageLoadMethod = "a"
+        ImgStorageNotifyMethod = "doNotify"
+        ImgStorageClass = findClassWithMethod(
                 param.classLoader,
                 findClassesFromPackage(apkFile, "com.tencent.mm", 1),
-                C.String, ImgLoadMethod, C.String, C.String, C.String, C.Boolean
+                C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
         )
     }
 
