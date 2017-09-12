@@ -34,24 +34,23 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         pkg = WechatPackage(param)
         loader = param.classLoader
-        try {
-            hookImgCache()
-            hookImgStorage()
-            hookXMLParse()
-            hookDatabase()
-        } catch(e: NoSuchMethodError) {
-            when {
-                e.message!!.contains(pkg.SQLiteDatabaseClass) -> {
-                    log("NSME => ${pkg.SQLiteDatabaseClass}")
-                    pkg.SQLiteDatabaseClass = ""
-                }
-                e.message!!.contains("${pkg.XMLParserClass}#${pkg.XMLParseMethod}") -> {
-                    log("NSME => ${pkg.XMLParserClass}#${pkg.XMLParseMethod}")
-                    pkg.XMLParserClass = ""; pkg.XMLParseMethod = ""
-                }
-                else -> throw e
-            }
-        }
+
+        tryHook(this::hookDatabase, {
+            pkg.SQLiteDatabaseClass = ""
+        })
+        tryHook(this::hookXMLParse, {
+            pkg.XMLParserClass = ""
+        })
+        tryHook(this::hookImgCache, {
+            pkg.CacheMapClass = ""
+        })
+        tryHook(this::hookImgStorage, {
+            pkg.ImgStorageClass = ""
+        })
+    }
+
+    private fun tryHook(hook: () -> Unit, cleanup: (Throwable) -> Unit) {
+        try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
     }
 
     private fun hookImgCache() {
