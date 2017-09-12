@@ -145,9 +145,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 if (table == "message") {
                     initialValues?.apply {
+                        if (this["isSend"] == 1) {
+                            return // ignore the message sent by myself
+                        }
                         if (!containsKey("type") || !containsKey("talker")) {
                             log("DB => skewed message $initialValues")
-                            return
+                            return // ignore skewed message
                         }
                         val msgId = this["msgId"] as Long
                         MessageCache[msgId] = WechatMessage(
@@ -175,12 +178,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (!containsKey("type") || this["type"] != 10000) {
                             return
                         }
-                        val sysMsg = this["content"] as String
-                        if (sysMsg.startsWith("你") || sysMsg.startsWith("you", true)) {
-                            return
-                        }
                         remove("content"); remove("type")
-                        MessageCache[this["msgId"] as Long]?.let {
+                        val msgId = this["msgId"] as Long
+                        MessageCache[msgId]?.let {
                             handleMessageRecall(it, values)
                         }
                     }
