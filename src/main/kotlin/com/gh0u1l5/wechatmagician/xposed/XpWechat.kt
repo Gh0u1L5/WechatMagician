@@ -8,20 +8,20 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 class XpWechat : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
-    private val _hooks = SparseArray<WechatRevokeHook>()
+    private val hooks = SparseArray<WechatRevokeHook>()
 
     private fun getHook(uid: Int): WechatRevokeHook? {
-        if (_hooks.indexOfKey(uid) == -1) {
-            _hooks.put(uid, WechatRevokeHook(_ver!!, _res!!))
+        if (hooks.indexOfKey(uid) == -1) {
+            hooks.put(uid, WechatRevokeHook(ver!!, res!!))
         }
-        return _hooks[uid]
+        return hooks[uid]
     }
 
     companion object {
-        var _ver: WechatVersion? = null
-        var _res: XModuleResources? = null
-        fun setVersion(ver: WechatVersion) { _ver = _ver ?: ver }
-        fun setResource(res: XModuleResources) { _res = _res ?: res }
+        var ver: WechatVersion? = null
+        var res: XModuleResources? = null
+        fun setVersion(ver: WechatVersion) { this.ver = this.ver ?: ver }
+        fun setResource(res: XModuleResources) { this.res = this.res ?: res }
     }
 
     override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
