@@ -101,7 +101,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
     }
 
-    @Suppress("UNCHECKED_CAST")
     private fun hookXMLParse() {
         if (pkg.XMLParserClass == "" || pkg.XMLParseMethod == "") {
             return
@@ -117,6 +116,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
+                @Suppress("UNCHECKED_CAST")
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
                     if (this[".sysmsg.\$type"] != "revokemsg") {
                         return
