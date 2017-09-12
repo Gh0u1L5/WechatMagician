@@ -8,12 +8,14 @@ import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.xposed.MessageCache.WechatMessage
 import de.robv.android.xposed.*
+import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     companion object {
-        lateinit var ver: WechatPackage
+        lateinit var pkg: WechatPackage
         lateinit var res: XModuleResources
         lateinit var loader: ClassLoader
     }
@@ -27,21 +29,20 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        ver = WechatPackage(param)
+        pkg = WechatPackage(param)
         loader = param.classLoader
         try {
             hookXMLParse()
             hookDatabase()
         } catch(e: NoSuchMethodError) {
             when {
-                e.message!!.contains(ver.SQLiteDatabaseClass) -> {
-                    XposedBridge.log("NSME => ${ver.SQLiteDatabaseClass}")
-                    ver.SQLiteDatabaseClass = ""
+                e.message!!.contains(pkg.SQLiteDatabaseClass) -> {
+                    log("NSME => ${pkg.SQLiteDatabaseClass}")
+                    pkg.SQLiteDatabaseClass = ""
                 }
-                e.message!!.contains("${ver.XMLParserClass}#${ver.XMLParseMethod}") -> {
-                    XposedBridge.log("NSME => ${ver.XMLParserClass}#${ver.XMLParseMethod}")
-                    ver.XMLParserClass = ""
-                    ver.XMLParseMethod = ""
+                e.message!!.contains("${pkg.XMLParserClass}#${pkg.XMLParseMethod}") -> {
+                    log("NSME => ${pkg.XMLParserClass}#${pkg.XMLParseMethod}")
+                    pkg.XMLParserClass = ""; pkg.XMLParseMethod = ""
                 }
                 else -> throw e
             }
@@ -50,11 +51,11 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     @Suppress("UNCHECKED_CAST")
     private fun hookXMLParse() {
-        if (ver.XMLParserClass == "" || ver.XMLParseMethod == "") {
+        if (pkg.XMLParserClass == "" || pkg.XMLParseMethod == "") {
             return
         }
 
-        XposedHelpers.findAndHookMethod(ver.XMLParserClass, loader, ver.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
+        findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, String::class.java, String::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val XML = param.args[0] as String?
@@ -79,11 +80,11 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookDatabase() {
-        if (ver.SQLiteDatabaseClass == ""){
+        if (pkg.SQLiteDatabaseClass == ""){
             return
         }
 
-        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "insertWithOnConflict", String::class.java, String::class.java, ContentValues::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -93,7 +94,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 if (table == "message") {
                     initialValues?.apply {
                         if (!containsKey("type") || !containsKey("talker")) {
-                            XposedBridge.log("DB => skewed message $initialValues")
+                            log("DB => skewed message $initialValues")
                             return
                         }
                         val msgId = this["msgId"] as Long
@@ -107,7 +108,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-        XposedHelpers.findAndHookMethod(ver.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "updateWithOnConflict", String::class.java, ContentValues::class.java, String::class.java, Array<String?>::class.java, Integer.TYPE, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -154,7 +155,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "delete", String::class.java, String::class.java, Array<String?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String?
@@ -164,7 +165,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(ver.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "executeSql", String::class.java, Array<Any?>::class.java, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?
