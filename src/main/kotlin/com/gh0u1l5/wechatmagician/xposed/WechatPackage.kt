@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.xposed
 
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.Version
+import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findMethodExact
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -93,6 +94,7 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
                 continue
             }
         }
-        throw Error("unsupported version")
+        log("HOOK => Cannot find class with method $methodName")
+        return ""
     }
 }
