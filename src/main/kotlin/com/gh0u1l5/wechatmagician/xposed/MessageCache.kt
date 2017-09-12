@@ -28,6 +28,11 @@ object MessageCache {
     }
 
     @Synchronized
+    operator fun contains(msgId: Long): Boolean {
+        return msgId in msgTable
+    }
+
+    @Synchronized
     fun clear() {
         val now = System.currentTimeMillis()
         timeTable = timeTable.filter { now - it.key < 120000 }
