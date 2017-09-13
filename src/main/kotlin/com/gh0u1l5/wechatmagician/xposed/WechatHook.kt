@@ -151,7 +151,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                log("XML => xml = $xml, tag = $tag")
 
                 @Suppress("UNCHECKED_CAST")
-                param.result = (param.result as MutableMap<String, String?>).apply {
+                param.result = (param.result as MutableMap<String, String?>?)?.apply {
                     if (this[".sysmsg.\$type"] != "revokemsg") {
                         return
                     }
