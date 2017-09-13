@@ -6,6 +6,7 @@ Read this README.md in [English](https://github.com/Gh0u1L5/WechatMagician/blob/
 * 防止微信好友撤回聊天消息
 * 防止微信好友删除朋友圈动态、评论
 
+官方交流QQ群: 135955386
 目前支持最新微信 6.5.13 版。本插件使用静态/动态分析来智能比对函数签名，几乎不会因为微信更新版本而失效。
 
 ## 效果预览
