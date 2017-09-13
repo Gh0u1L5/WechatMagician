@@ -207,7 +207,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (!containsKey("type") || this["type"] != 10000) {
                             return
                         }
-                        remove("content"); remove("type")
                         val msgId = this["msgId"] as Long
                         MessageCache[msgId]?.let {
                             handleMessageRecall(it, values)
@@ -269,6 +268,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
 
         // Modify runtime data to notify user
+        values?.remove("type")
+        values?.remove("content")
         when (origin.type) {
             1 -> {
                 message = MessageUtil.notifyMessageRecall(res.label_recalled, message!!)
