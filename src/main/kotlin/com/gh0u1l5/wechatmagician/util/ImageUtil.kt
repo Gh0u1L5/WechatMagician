@@ -16,10 +16,10 @@ object ImageUtil {
     var blockTable: Set<String> = setOf()
 
     // getPathFromImgId maps the given imgId to corresponding absolute path.
-    private fun getPathFromImgId(imgId: String): String {
-        val obj = WechatHook.pkg.ImgStorageObject
-        val method = WechatHook.pkg.ImgStorageLoadMethod
-        return callMethod(obj, method, imgId, "th_", "", false) as String
+    private fun getPathFromImgId(imgId: String): String? {
+        val storage = WechatHook.pkg.ImgStorageObject ?: return null
+        val load = WechatHook.pkg.ImgStorageLoadMethod
+        return callMethod(storage, load, imgId, "th_", "", false) as String
     }
 
     // replaceThumbDiskCache replaces the disk cache of a specific
@@ -54,21 +54,22 @@ object ImageUtil {
     // replaceThumbMemoryCache replaces the memory cache of a specific
     // thumbnail with the given bitmap.
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
-        // Check if memory cache established
+        // Check if memory cache and image storage are established
         val cache = WechatHook.pkg.CacheMapObject ?: return
+        val storage = WechatHook.pkg.ImgStorageObject ?: return
 
         // Update memory cache
         callMethod(cache, WechatHook.pkg.CacheMapRemoveMethod, path)
         callMethod(cache, WechatHook.pkg.CacheMapPutMethod, "${path}hd", bitmap)
 
         // Notify storage update
-        callMethod(WechatHook.pkg.ImgStorageObject, WechatHook.pkg.ImgStorageNotifyMethod)
+        callMethod(storage, WechatHook.pkg.ImgStorageNotifyMethod)
     }
 
     // replaceThumbnail replaces the memory cache and disk cache of a
     // specific thumbnail with the given bitmap.
     fun replaceThumbnail(imgId: String, bitmap: Bitmap) {
-        val path = getPathFromImgId(imgId)
+        val path = getPathFromImgId(imgId) ?: return
         replaceThumbDiskCache("${path}hd", bitmap)
         replaceThumbMemoryCache(path, bitmap)
     }
