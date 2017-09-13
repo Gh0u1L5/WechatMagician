@@ -203,7 +203,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
 
                 when (table) {
-                    "message" -> values?.apply {
+                    "message" -> values?.apply { // recall message
                         if (!containsKey("type") || this["type"] != 10000) {
                             return
                         }
@@ -213,7 +213,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                             handleMessageRecall(it, values)
                         }
                     }
-                    "SnsInfo" -> values?.apply {
+                    "SnsInfo" -> values?.apply { // delete moment
                         if (!containsKey("sourceType") || this["sourceType"] != 0) {
                             return
                         }
@@ -221,7 +221,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         val content =  this["content"] as ByteArray
                         put("content", MessageUtil.notifyInfoDelete(res.label_deleted, content))
                     }
-                    "SnsComment" -> values?.apply {
+                    "SnsComment" -> values?.apply { // delete moment comment
                         if (!containsKey("type") || this["type"] == 1) {
                             return
                         }
