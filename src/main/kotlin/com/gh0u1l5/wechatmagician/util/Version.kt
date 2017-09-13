@@ -1,6 +1,8 @@
 package com.gh0u1l5.wechatmagician.util
 
+// Version is a helper class for comparing version strings
 class Version(versionName: String) {
+
     var version: List<Int>
 
     init {

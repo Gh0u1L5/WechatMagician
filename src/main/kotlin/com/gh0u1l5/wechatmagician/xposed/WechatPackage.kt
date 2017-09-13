@@ -9,6 +9,8 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 
+// WechatPackage analyzes and stores critical classes and objects in Wechat application.
+// These classes and objects will be used for hooking and tampering with runtime data.
 class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
 
     var SQLiteDatabaseClass: String
@@ -16,16 +18,18 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
     var XMLParserClass: String
     var XMLParseMethod: String
 
-    var CacheMapObject: Any? = null
+    @Volatile var CacheMapObject: Any? = null
     var CacheMapClass: String
     var CacheMapPutMethod: String
     var CacheMapRemoveMethod: String
 
-    var ImgStorageObject: Any? = null
+    @Volatile var ImgStorageObject: Any? = null
     var ImgStorageClass: String
     var ImgStorageLoadMethod: String
     var ImgStorageNotifyMethod: String
 
+    // Analyzes Wechat package statically for the name of classes.
+    // WechatHook will do the runtime analysis and set the objects.
     init {
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)

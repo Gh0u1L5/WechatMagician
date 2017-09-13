@@ -16,6 +16,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
 import java.io.IOException
 
+// WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     data class LocalizedResources (
@@ -31,6 +32,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         lateinit var loader: ClassLoader
     }
 
+    // Hook for initializing localized resources.
     override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
         val _res = XModuleResources.createInstance(param?.modulePath, null)
 
@@ -46,6 +48,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         res = LocalizedResources(easter_egg, label_deleted, label_recalled, bitmap_recalled)
     }
 
+    // Hook for hacking Wechat application.
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
         if (param.packageName != "com.tencent.mm") {
             return

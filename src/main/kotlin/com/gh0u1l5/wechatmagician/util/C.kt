@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.util
 import android.content.ContentValues
 import java.io.File
 
+// C.[class] is a shortcut for [class]::class.java
 object C {
     val Boolean = Boolean::class.java
     val ContentValues = ContentValues::class.java

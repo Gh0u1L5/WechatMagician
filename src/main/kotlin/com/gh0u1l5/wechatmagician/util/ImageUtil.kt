@@ -10,18 +10,26 @@ import java.io.FileOutputStream
 
 object ImageUtil {
 
+    // blockTable records all the thumbnail files changed by ImageUtil
+    // In WechatHook.hookImgStorage, the module hooks FileOutputStream
+    // to prevent anyone from overwriting these files.
     var blockTable: Set<String> = setOf()
 
+    // getPathFromImgId maps the given imgId to corresponding absolute path.
     private fun getPathFromImgId(imgId: String): String {
         val obj = WechatHook.pkg.ImgStorageObject
         val method = WechatHook.pkg.ImgStorageLoadMethod
         return callMethod(obj, method, imgId, "th_", "", false) as String
     }
 
+    // replaceThumbDiskCache replaces the disk cache of a specific
+    // thumbnail with the given bitmap.
     private fun replaceThumbDiskCache(path: String, bitmap: Bitmap, retry: Boolean = true) {
         val file = File(path)
         var out: FileOutputStream? = null
+
         try {
+            // Write bitmap to disk cache
             out = FileOutputStream(file)
             bitmap.compress(JPEG, 100, out)
             out.flush()
@@ -29,11 +37,13 @@ object ImageUtil {
             if (!retry) {
                 return
             }
+            // Create missing directories and try again
             file.parentFile.mkdirs()
             replaceThumbDiskCache(path, bitmap, false)
         } catch (_: Throwable) {
-            // do not care about other errors
+            // Ignore any other errors
         } finally {
+            // Update block table and cleanup
             synchronized(blockTable) {
                 blockTable += path
             }
@@ -41,6 +51,8 @@ object ImageUtil {
         }
     }
 
+    // replaceThumbMemoryCache replaces the memory cache of a specific
+    // thumbnail with the given bitmap.
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Check if memory cache established
         val cache = WechatHook.pkg.CacheMapObject ?: return
@@ -53,7 +65,8 @@ object ImageUtil {
         callMethod(WechatHook.pkg.ImgStorageObject, WechatHook.pkg.ImgStorageNotifyMethod)
     }
 
-    // replaceThumbnail replace the memory cache and disk cache of a specific thumbnail
+    // replaceThumbnail replaces the memory cache and disk cache of a
+    // specific thumbnail with the given bitmap.
     fun replaceThumbnail(imgId: String, bitmap: Bitmap) {
         val path = getPathFromImgId(imgId)
         replaceThumbDiskCache("${path}hd", bitmap)
