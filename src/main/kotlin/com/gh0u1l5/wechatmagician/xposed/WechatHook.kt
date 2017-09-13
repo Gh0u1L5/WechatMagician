@@ -17,14 +17,32 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
+    data class LocalizedResources (
+            val easter_egg: String,
+            val label_deleted: String,
+            val label_recalled: String,
+            val bitmap_recalled: Bitmap
+    )
+
     companion object {
         lateinit var pkg: WechatPackage
-        lateinit var res: XModuleResources
+        lateinit var res: LocalizedResources
         lateinit var loader: ClassLoader
     }
 
     override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
-        res = XModuleResources.createInstance(param?.modulePath, null)
+        val _res = XModuleResources.createInstance(param?.modulePath, null)
+
+        val easter_egg = _res.getString(R.string.easter_egg)
+        val label_deleted = _res.getString(R.string.label_deleted)
+        val label_recalled = _res.getString(R.string.label_recalled)
+
+        val imgName = "image_recall_${_res.getString(R.string.language)}.jpg"
+        val imgStream = _res.assets.open(imgName)
+        val bitmap_recalled = BitmapFactory.decodeStream(imgStream)
+        imgStream.close()
+
+        res = LocalizedResources(easter_egg, label_deleted, label_recalled, bitmap_recalled)
     }
 
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
@@ -123,7 +141,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     val replacemsg = this[".sysmsg.revokemsg.replacemsg"]
                     this[".sysmsg.revokemsg.replacemsg"] = replacemsg?.let {
                         if (it.startsWith("你") || it.startsWith("you", true)) it
-                        else MessageUtil.customize(it, res.getString(R.string.easter_egg))
+                        else MessageUtil.customize(it, res.easter_egg)
                     }
                 }
             }
@@ -171,7 +189,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                val whereArgs = param.args[3] as Array<*>?
 //                log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
 
-                val label_deleted = res.getString(R.string.label_deleted)
                 when (table) {
                     "message" -> values?.apply {
                         if (!containsKey("type") || this["type"] != 10000) {
@@ -189,7 +206,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         }
                         remove("sourceType")
                         val content =  this["content"] as ByteArray
-                        put("content", MessageUtil.notifyInfoDelete(label_deleted, content))
+                        put("content", MessageUtil.notifyInfoDelete(res.label_deleted, content))
                     }
                     "SnsComment" -> values?.apply {
                         if (!containsKey("type") || this["type"] == 1) {
@@ -200,7 +217,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         }
                         remove("commentflag")
                         val curActionBuf = this["curActionBuf"] as ByteArray
-                        put("curActionBuf", MessageUtil.notifyCommentDelete(label_deleted, curActionBuf))
+                        put("curActionBuf", MessageUtil.notifyCommentDelete(res.label_deleted, curActionBuf))
                     }
                 }
             }
@@ -227,8 +244,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
-        val label_recalled = res.getString(R.string.label_recalled)
-
         val speaker: String?; var message: String?
         if (origin.talker.contains("chatroom")) {
             val len = (origin.content?.indexOf(":\n") ?: 0) + 2
@@ -240,17 +255,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         when (origin.type) {
             1 -> {
-                message = MessageUtil.notifyMessageRecall(label_recalled, message!!)
+                message = MessageUtil.notifyMessageRecall(res.label_recalled, message!!)
                 values?.put("content", speaker + message)
             }
             3 -> {
-                val imgName = "image_recall_${res.getString(R.string.language)}.jpg"
-                val imgStream = res.assets.open(imgName)
-                val bitmap = BitmapFactory.decodeStream(imgStream)
-                ImageUtil.replaceThumbnail(origin.imgPath!!, bitmap)
+                ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmap_recalled)
             }
             49 -> {
-                message = MessageUtil.notifyLinkRecall(label_recalled, message!!)
+                message = MessageUtil.notifyLinkRecall(res.label_recalled, message!!)
                 values?.put("content", speaker + message)
             }
         }
