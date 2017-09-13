@@ -1,9 +1,12 @@
 package com.gh0u1l5.wechatmagician.util
 
+// MessageUtil is a helper object for processing Wechat internal strings / byte arrays.
 object MessageUtil {
 
     fun applyEasterEgg(str: String?, easter_egg: String?): String? {
-        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} $easter_egg" }
+        return str?.let{
+            "${it.substring(1, it.indexOf("\"", 1))} $easter_egg"
+        }
     }
 
     fun notifyMessageRecall(head: String, msg: String): String {
@@ -74,6 +77,7 @@ object MessageUtil {
         return byteArrayOf(byte) + hexStringToBytes(arg.drop(2))
     }
 
+    // encodeMsgSize encodes the size of a moment.
     fun encodeMsgSize(msgSize: Int): ByteArray {
         return if (msgSize shr 7 > 0)
             byteArrayOf (
@@ -84,6 +88,7 @@ object MessageUtil {
             byteArrayOf(msgSize.toByte())
     }
 
+    // decodeMsgSize decodes the length of a moment.
     fun decodeMsgSize(start: Int, msg: ByteArray): Pair<Int, Int> {
         var lenSize = 1
         var msgSize = msg[start].toInt()

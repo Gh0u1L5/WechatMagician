@@ -80,6 +80,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        // Analyzes dynamically to find the cache map instance of thumbnails
         findAndHookMethod(pkg.CacheMapClass, loader, pkg.CacheMapPutMethod, C.Object, C.Object, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -101,24 +102,13 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        // Analyze dynamically to find the global image storage instance
         val ImgInfoStorageClass = findClass(pkg.ImgStorageClass, loader)
         hookAllConstructors(ImgInfoStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
                     pkg.ImgStorageObject = param.thisObject
-                }
-            }
-        })
-
-        findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val path = (param.args[0] as File).path
-                synchronized(ImageUtil.blockTable) {
-                    if (path in ImageUtil.blockTable) {
-                        param.throwable = IOException()
-                    }
                 }
             }
         })
@@ -132,6 +122,19 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                log("IMG => imgId = $imgId, prefix = $prefix, suffix = $suffix")
 //            }
 //        })
+
+        // Hook FileOutputStream to prevent Wechat from overwriting disk cache
+        findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val path = (param.args[0] as File).path
+                synchronized(ImageUtil.blockTable) {
+                    if (path in ImageUtil.blockTable) {
+                        param.throwable = IOException()
+                    }
+                }
+            }
+        })
     }
 
     private fun hookXMLParse() {
@@ -139,16 +142,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        // Hook XML Parser for the status bar easter egg
         findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
-//            @Throws(Throwable::class)
-//            override fun beforeHookedMethod(param: MethodHookParam) {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
 //                val xml = param.args[0] as String?
 //                val tag = param.args[1] as String?
 //                log("XML => xml = $xml, tag = $tag")
-//            }
 
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
                 @Suppress("UNCHECKED_CAST")
                 param.result = (param.result as? MutableMap<String, String?>)?.apply {
                     if (this[".sysmsg.\$type"] != "revokemsg") {
@@ -169,6 +170,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        // Hook SQLiteDatabase.insert to update MessageCache
         findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -196,6 +198,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
+        // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
         findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -259,7 +262,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
     }
 
+    // handleMessageRecall notifies user that someone has recalled the message
     private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
+        // Split speaker and message for chatrooms
         val speaker: String?; var message: String?
         if (origin.talker.contains("chatroom")) {
             val len = (origin.content?.indexOf(":\n") ?: 0) + 2
@@ -269,6 +274,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             speaker = ""; message = origin.content
         }
 
+        // Modify runtime data to notify user
         when (origin.type) {
             1 -> {
                 message = MessageUtil.notifyMessageRecall(res.label_recalled, message!!)

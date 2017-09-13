@@ -5,6 +5,7 @@ import kotlin.concurrent.timer
 // MessageCache records the recent messages received from friends.
 object MessageCache {
 
+    // WechatMessage stores important properties of a single message.
     data class WechatMessage(
             val type: Int,
             val talker: String,
@@ -12,13 +13,13 @@ object MessageCache {
             val imgPath: String?
     )
 
-    // timeTable maps insert time to msgId
+    // timeTable maps insert time to msgId.
     private var timeTable: Map<Long, Long> = mapOf()
-    // msgTable maps msgId to message object
+    // msgTable maps msgId to message object.
     private var msgTable: Map<Long, WechatMessage> = mapOf()
 
+    // Clean cache for every 30 minutes
     init {
-        // Clean cache for every 30 minutes
         timer(period = 30 * 60 * 1000, action = {
             MessageCache.clear()
         })
@@ -39,7 +40,7 @@ object MessageCache {
 
     // clear removes all the messages received more than 2 minutes ago.
     // NOTE: One cannot recall these messages because Wechat have time
-    //       limit on recalling messages
+    //       limit on recalling messages.
     @Synchronized fun clear() {
         val now = System.currentTimeMillis()
         timeTable = timeTable.filter { now - it.key < 120000 }

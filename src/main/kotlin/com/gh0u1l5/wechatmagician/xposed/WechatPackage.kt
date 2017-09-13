@@ -60,7 +60,7 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
         )
     }
 
-    // getClassName parses the standard class name of the given DexClass
+    // getClassName parses the standard class name of the given DexClass.
     private fun getClassName(clazz: DexClass): String {
         return clazz.classType
                 .replace('/', '.') // replace delimiters
@@ -68,7 +68,7 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
                 .dropLast(1) //drop trailing ';'
     }
 
-    // findClassesFromPackage returns a list of all the classes contained in the given package
+    // findClassesFromPackage returns a list of all the classes contained in the given package.
     private fun findClassesFromPackage(apkFile: ApkFile, packageName: String, depth: Int = 0): List<DexClass> {
         return apkFile.dexClasses.filter predicate@ {
             if (depth == 0) {

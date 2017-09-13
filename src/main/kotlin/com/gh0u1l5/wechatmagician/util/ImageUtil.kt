@@ -8,6 +8,7 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
+// ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
 
     // blockTable records all the thumbnail files changed by ImageUtil
