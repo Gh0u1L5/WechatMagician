@@ -175,25 +175,19 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
-                val initialValues = param.args[2] as ContentValues?
-//                log("DB => insert table = $table, initialValues = $initialValues")
+                val values = param.args[2] as ContentValues? ?: return
+//                log("DB => insert table = $table, values = $values")
 
                 if (table == "message") {
-                    initialValues?.apply {
-                        if (this["isSend"] == 1) {
-                            return // ignore the message sent by myself
-                        }
-                        if (!containsKey("type") || !containsKey("talker")) {
-                            log("DB => skewed message $initialValues")
-                            return // ignore skewed message
-                        }
-                        val msgId = this["msgId"] as Long
-                        MessageCache[msgId] = WechatMessage(
-                                this["type"] as Int,
-                                this["talker"] as String,
-                                this["content"] as String?,
-                                this["imgPath"] as String?)
+                    if (values["isSend"] == 1) {
+                        return // ignore the message sent by myself
                     }
+                    val msgId = values["msgId"] as Long
+                    MessageCache[msgId] = WechatMessage(
+                            values["type"] as Int,
+                            values["talker"] as String,
+                            values["content"] as String?,
+                            values["imgPath"] as String?)
                 }
             }
         })
