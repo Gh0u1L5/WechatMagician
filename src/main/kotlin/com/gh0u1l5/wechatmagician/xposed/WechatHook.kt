@@ -155,7 +155,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     val replacemsg = this[".sysmsg.revokemsg.replacemsg"]
                     this[".sysmsg.revokemsg.replacemsg"] = replacemsg?.let {
                         if (it.startsWith("你") || it.startsWith("you", true)) it
-                        else MessageUtil.customize(it, res.easter_egg)
+                        else MessageUtil.applyEasterEgg(it, res.easter_egg)
                     }
                 }
             }

@@ -2,8 +2,8 @@ package com.gh0u1l5.wechatmagician.util
 
 object MessageUtil {
 
-    fun customize(str: String?, suffix: String?): String? {
-        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} $suffix" }
+    fun applyEasterEgg(str: String?, easter_egg: String?): String? {
+        return str?.let{ "${it.substring(1, it.indexOf("\"", 1))} $easter_egg" }
     }
 
     fun notifyMessageRecall(head: String, msg: String): String {
