@@ -216,9 +216,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (!containsKey("sourceType") || this["sourceType"] != 0) {
                             return
                         }
-                        remove("sourceType")
-                        val content =  this["content"] as ByteArray
-                        put("content", MessageUtil.notifyInfoDelete(res.label_deleted, content))
+                        val content =  values["content"] as ByteArray?
+                        handleMomentDelete(content, values)
                     }
                     "SnsComment" -> values?.apply { // delete moment comment
                         if (!containsKey("type") || this["type"] == 1) {
@@ -227,9 +226,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (!containsKey("commentflag") || this["commentflag"] != 1) {
                             return
                         }
-                        remove("commentflag")
-                        val curActionBuf = this["curActionBuf"] as ByteArray
-                        put("curActionBuf", MessageUtil.notifyCommentDelete(res.label_deleted, curActionBuf))
+                        val curActionBuf = this["curActionBuf"] as ByteArray?
+                        handleCommentDelete(curActionBuf, values)
                     }
                 }
             }
@@ -256,7 +254,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     // handleMessageRecall notifies user that someone has recalled the message
-    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues?) {
+    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues) {
         // Split speaker and message for chatrooms
         val speaker: String?; var message: String?
         if (origin.talker.contains("chatroom")) {
@@ -268,20 +266,36 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
 
         // Modify runtime data to notify user
-        values?.remove("type")
-        values?.remove("content")
+        values.remove("type")
+        values.remove("content")
         when (origin.type) {
             1 -> {
                 message = MessageUtil.notifyMessageRecall(res.label_recalled, message!!)
-                values?.put("content", speaker + message)
+                values.put("content", speaker + message)
             }
             3 -> {
                 ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmap_recalled)
             }
             49 -> {
                 message = MessageUtil.notifyLinkRecall(res.label_recalled, message!!)
-                values?.put("content", speaker + message)
+                values.put("content", speaker + message)
             }
+        }
+    }
+
+    // handleMomentDelete notifies user that someone has deleted the given moment
+    private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
+        MessageUtil.notifyInfoDelete(res.label_deleted, content)?.let {
+            values.remove("sourceType")
+            values.put("content", it)
+        }
+    }
+
+    // handleCommentDelete notifies user that someone has deleted the given comment in moments
+    private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
+        MessageUtil.notifyCommentDelete(res.label_deleted, curActionBuf)?.let {
+            values.remove("commentflag")
+            values.put("curActionBuf", it)
         }
     }
 }
