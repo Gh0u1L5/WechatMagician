@@ -1,10 +1,12 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.content.ContentValues
+import java.io.File
 
 object C {
     val Boolean = Boolean::class.java
     val ContentValues = ContentValues::class.java
+    val File = File::class.java
     val Int = Int::class.java
     val Map = Map::class.java
     val Object = Object::class.java
