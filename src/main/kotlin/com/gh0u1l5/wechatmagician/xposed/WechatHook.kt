@@ -14,6 +14,8 @@ import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import java.io.File
+import java.io.IOException
 
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
@@ -103,6 +105,18 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
                     pkg.ImgStorageObject = param.thisObject
+                }
+            }
+        })
+
+        findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val path = (param.args[0] as File).path
+                synchronized(ImageUtil.blockTable) {
+                    if (path in ImageUtil.blockTable) {
+                        param.throwable = IOException()
+                    }
                 }
             }
         })
