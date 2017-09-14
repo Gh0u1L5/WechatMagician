@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.xposed
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.Version
-import de.robv.android.xposed.XposedHelpers.findClass
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 
@@ -57,8 +56,8 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
                 C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
         )
         ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
-                findClass(ImgStorageClass, param.classLoader),
+                param.classLoader, ImgStorageClass,
                 "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
-        )[0].name
+        ).firstOrNull()?.name ?: ""
     }
 }

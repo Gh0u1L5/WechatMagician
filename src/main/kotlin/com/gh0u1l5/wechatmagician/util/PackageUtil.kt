@@ -32,12 +32,15 @@ object PackageUtil {
 
     // findClassWithMethod finds the class that have the given method from a list of classes.
     fun findClassWithMethod(
-            classLoader: ClassLoader, classes: List<DexClass>,
+            loader: ClassLoader, classes: List<DexClass>,
             returnType: Class<*>, methodName: String, vararg parameterTypes: Class<*>): String {
         for (clazz in classes) {
             try {
                 val className = getClassName(clazz)
-                val method = XposedHelpers.findMethodExact(className, classLoader, methodName, *parameterTypes)
+                val method = XposedHelpers.findMethodExact(
+                        className, loader,
+                        methodName, *parameterTypes
+                )
                 if (method.returnType == returnType) {
                     return className
                 }
@@ -51,17 +54,23 @@ object PackageUtil {
         return ""
     }
 
-    // findFieldsWithGenericType finds all the fields of the given type
-    fun findFieldsWithType(clazz: Class<*>, typeName: String): List<Field> {
-        return clazz.fields.filter {
-            it.type.name == typeName
+    // findFields returns all the fields that satisfy predicate of the given class
+    fun findFields(loader: ClassLoader, className: String, predicate: (Field) -> Boolean): List<Field> {
+        return try {
+            val clazz = XposedHelpers.findClass(className, loader)
+            clazz.fields.filter(predicate)
+        } catch (_: XposedHelpers.ClassNotFoundError) {
+            listOf()
         }
     }
 
+    // findFieldsWithGenericType finds all the fields of the given type
+    fun findFieldsWithType(loader: ClassLoader, className: String, typeName: String): List<Field> {
+        return findFields(loader, className, { it.type.name == typeName })
+    }
+
     // findFieldsWithGenericType finds all the fields of the given generic type
-    fun findFieldsWithGenericType(clazz: Class<*>, genericTypeName: String): List<Field> {
-        return clazz.fields.filter {
-            it.genericType.toString() == genericTypeName
-        }
+    fun findFieldsWithGenericType(loader: ClassLoader, className: String, genericTypeName: String): List<Field> {
+        return findFields(loader, className, { it.genericType.toString() == genericTypeName })
     }
 }
