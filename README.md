@@ -2,6 +2,12 @@
 
 Read this README.md in [English](https://github.com/Gh0u1L5/WechatMagician/blob/master/README.en.md).
 
+## 联系方式
+
+__官方交流QQ群：135955386__
+
+开发者个人邮箱：Em3rs0n@yahoo.com
+
 ## 实现功能
 * 防止微信好友撤回聊天消息
 * 防止微信好友删除朋友圈动态、评论
