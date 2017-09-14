@@ -13,8 +13,7 @@ import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import java.io.File
-import java.io.IOException
+import java.io.*
 
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
@@ -63,9 +62,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         tryHook(this::hookXMLParse, {
             pkg.XMLParserClass = ""
         })
-        tryHook(this::hookImgCache, {
-            pkg.CacheMapClass = ""
-        })
         tryHook(this::hookImgStorage, {
             pkg.ImgStorageClass = ""
         })
@@ -73,28 +69,6 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun tryHook(hook: () -> Unit, cleanup: (Throwable) -> Unit) {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
-    }
-
-    private fun hookImgCache() {
-        if (pkg.CacheMapClass == "" || pkg.CacheMapPutMethod == "") {
-            return
-        }
-
-        // Analyzes dynamically to find the cache map instance of thumbnails
-        findAndHookMethod(pkg.CacheMapClass, loader, pkg.CacheMapPutMethod, C.Object, C.Object, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.args[1] !is Bitmap) {
-                    return
-                }
-                val key = param.args[0] as String
-                if (key.startsWith("/")) {
-                    if (pkg.CacheMapObject !== param.thisObject) {
-                        pkg.CacheMapObject = param.thisObject
-                    }
-                }
-            }
-        })
     }
 
     private fun hookImgStorage() {

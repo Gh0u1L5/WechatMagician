@@ -56,8 +56,8 @@ object ImageUtil {
     // thumbnail with the given bitmap.
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Check if memory cache and image storage are established
-        val cache = WechatHook.pkg.CacheMapObject ?: return
         val storage = WechatHook.pkg.ImgStorageObject ?: return
+        val cache = getObjectField(storage, WechatHook.pkg.ImgStorageCacheField)
 
         // Update memory cache
         callMethod(cache, WechatHook.pkg.CacheMapRemoveMethod, path)

@@ -16,13 +16,13 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
     var XMLParserClass: String
     var XMLParseMethod: String
 
-    @Volatile var CacheMapObject: Any? = null
     var CacheMapClass: String
     var CacheMapPutMethod: String
     var CacheMapRemoveMethod: String
 
     @Volatile var ImgStorageObject: Any? = null
     var ImgStorageClass: String
+    var ImgStorageCacheField: String
     var ImgStorageLoadMethod: String
     var ImgStorageNotifyMethod: String
 
@@ -56,5 +56,9 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
                 PackageUtil.findClassesFromPackage(apkFile, "com.tencent.mm", 1),
                 C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
         )
+        ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
+                findClass(ImgStorageClass, param.classLoader),
+                "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
+        )[0].name
     }
 }
