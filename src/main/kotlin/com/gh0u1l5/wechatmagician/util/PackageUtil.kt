@@ -5,6 +5,8 @@ import de.robv.android.xposed.XposedHelpers
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
+import java.lang.reflect.Method
+import java.util.*
 
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
@@ -54,7 +56,7 @@ object PackageUtil {
         return ""
     }
 
-    // findFields returns all the fields that satisfy predicate of the given class
+    // findFields returns all the fields that satisfy predicate of the given class.
     fun findFields(loader: ClassLoader, className: String, predicate: (Field) -> Boolean): List<Field> {
         return try {
             val clazz = XposedHelpers.findClass(className, loader)
@@ -64,12 +66,12 @@ object PackageUtil {
         }
     }
 
-    // findFieldsWithGenericType finds all the fields of the given type
+    // findFieldsWithGenericType finds all the fields of the given type.
     fun findFieldsWithType(loader: ClassLoader, className: String, typeName: String): List<Field> {
         return findFields(loader, className, { it.type.name == typeName })
     }
 
-    // findFieldsWithGenericType finds all the fields of the given generic type
+    // findFieldsWithGenericType finds all the fields of the given generic type.
     fun findFieldsWithGenericType(loader: ClassLoader, className: String, genericTypeName: String): List<Field> {
         return findFields(loader, className, { it.genericType.toString() == genericTypeName })
     }
