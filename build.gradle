@@ -17,8 +17,8 @@ android {
     buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "com.gh0u1l5.wechatmagician"
-        minSdkVersion 21
-        maxSdkVersion 25
+        minSdkVersion 15
+        maxSdkVersion 26
         targetSdkVersion 26
     }
     compileOptions {
