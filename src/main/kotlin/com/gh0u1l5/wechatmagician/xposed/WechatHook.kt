@@ -125,7 +125,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
 
         // Hook FileOutputStream to prevent Wechat from overwriting disk cache
-        findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
+        val clazz = findClass("java.io.FileOutputStream", loader)
+        findAndHookConstructor(clazz, C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.args[0] as File).path
@@ -171,8 +172,10 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        val clazz = findClass(pkg.SQLiteDatabaseClass, loader)
+
         // Hook SQLiteDatabase.insert to update MessageCache
-        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(clazz, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -194,7 +197,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
 
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
-        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(clazz, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String?
@@ -234,7 +237,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
+//        findAndHookMethod(clazz, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String?
@@ -244,7 +247,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(pkg.SQLiteDatabaseClass, loader, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
+//        findAndHookMethod(clazz, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?
