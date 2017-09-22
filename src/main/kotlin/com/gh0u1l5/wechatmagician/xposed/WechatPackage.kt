@@ -15,6 +15,9 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
     var XMLParserClass: String
     var XMLParseMethod: String
 
+    var SelectConvUI: String
+    var SelectConvUIMaxLimitMethod: String
+
     var CacheMapClass: String
     var CacheMapPutMethod: String
     var CacheMapRemoveMethod: String
@@ -43,6 +46,12 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
                 PackageUtil.findClassesFromPackage(apkFile,"com.tencent.mm.sdk.platformtools"),
                 C.Map, XMLParseMethod, C.String , C.String
         )
+
+        SelectConvUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
+        SelectConvUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
+                param.classLoader, SelectConvUI,
+                C.Boolean, C.Boolean
+        ).firstOrNull()?.name ?: ""
 
         CacheMapClass =  "com.tencent.mm.a.f"
         CacheMapPutMethod = "k"

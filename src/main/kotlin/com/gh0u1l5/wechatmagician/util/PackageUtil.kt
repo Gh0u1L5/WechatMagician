@@ -73,4 +73,18 @@ object PackageUtil {
     fun findFieldsWithGenericType(loader: ClassLoader, className: String, genericTypeName: String): List<Field> {
         return findFields(loader, className, { it.genericType.toString() == genericTypeName })
     }
+
+    // findMethodsWithTypes finds all the methods with the given return type and parameter types.
+    fun findMethodsWithTypes(
+            loader: ClassLoader, className: String,
+            returnType: Class<*>, vararg parameterTypes: Class<*>): List<Method> {
+        return try {
+            val clazz = XposedHelpers.findClass(className, loader)
+            clazz.declaredMethods.filter { // Xposed Framework can only hook declared methods
+                it.returnType == returnType && Arrays.equals(it.parameterTypes, parameterTypes)
+            }
+        } catch (_: XposedHelpers.ClassNotFoundError) {
+            listOf()
+        }
+    }
 }

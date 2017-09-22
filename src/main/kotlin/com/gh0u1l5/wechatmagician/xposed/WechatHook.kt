@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.xposed
 
 import android.content.ContentValues
+import android.content.Intent
 import android.content.res.XModuleResources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -62,6 +63,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         tryHook(this::hookXMLParse, {
             pkg.XMLParserClass = ""
         })
+        tryHook(this::hookSelectConvUI, {
+            pkg.SelectConvUI = ""
+        })
         tryHook(this::hookImgStorage, {
             pkg.ImgStorageClass = ""
         })
@@ -69,6 +73,29 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun tryHook(hook: () -> Unit, cleanup: (Throwable) -> Unit) {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
+    }
+
+    private fun hookSelectConvUI() {
+        if (pkg.SelectConvUI == "" || pkg.SelectConvUIMaxLimitMethod == "") {
+            return
+        }
+
+        findAndHookMethod(pkg.SelectConvUI, loader, pkg.SelectConvUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                param.result = false
+            }
+        })
+
+        findAndHookMethod(pkg.MMFragmentActivity, loader, "startActivityForResult", C.Intent, C.Int, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val intent = param.args[0] as Intent? ?: return
+                if (intent.getIntExtra("max_limit_num", -1) == 9) {
+                    intent.putExtra("max_limit_num", 0x7FFFFFFF)
+                }
+            }
+        })
     }
 
     private fun hookImgStorage() {
