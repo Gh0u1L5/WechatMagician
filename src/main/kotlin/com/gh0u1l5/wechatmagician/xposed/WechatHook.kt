@@ -36,17 +36,24 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         WechatPackage.init(param)
         loader = param.classLoader
 
-        tryHook(this::hookDatabase, {
-            pkg.SQLiteDatabaseClass = ""
+
+        tryHook(this::hookOptionsMenu, {})
+
+        tryHook(this::hookSelectContactUI, {
+            pkg.SelectContactUI = ""
+        })
+        tryHook(this::hookSelectConversationUI, {
+            pkg.SelectConversationUI = ""
+        })
+
+        tryHook(this::hookImgStorage, {
+            pkg.ImgStorageClass = ""
         })
         tryHook(this::hookXMLParse, {
             pkg.XMLParserClass = ""
         })
-        tryHook(this::hookSelectConvUI, {
-            pkg.SelectConvUI = ""
-        })
-        tryHook(this::hookImgStorage, {
-            pkg.ImgStorageClass = ""
+        tryHook(this::hookDatabase, {
+            pkg.SQLiteDatabaseClass = ""
         })
     }
 
@@ -54,18 +61,42 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
     }
 
-    private fun hookSelectConvUI() {
-        if (pkg.SelectConvUI == "" || pkg.SelectConvUIMaxLimitMethod == "") {
+    private fun hookOptionsMenu() {
+        // Hook onCreateOptionsMenu to add new buttons in the OptionsMenu.
+        findAndHookMethod(pkg.MMActivity, loader, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val menu = param.args[0] as Menu
+                val button = WechatButtons[param.thisObject::class.java.name] ?: return
+                menu.add(button.groupId, button.itemId, button.order, button.title)
+                menu.findItem(button.itemId)?.setOnMenuItemClickListener(button.listener(param))
+            }
+        })
+    }
+
+    private fun hookSelectContactUI() {
+        if (pkg.SelectContactUI == "") {
             return
         }
 
-        findAndHookMethod(pkg.SelectConvUI, loader, pkg.SelectConvUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
+        // Hook SelectContactUI to help the "Select All" button.
+        findAndHookMethod(pkg.SelectContactUI, loader, "onActivityResult", C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                param.result = false
+                val requestCode = param.args[0] as Int
+                val resultCode = param.args[1] as Int
+                val data = param.args[2] as Intent?
+
+                if (requestCode == 5) {
+                    val activity = param.thisObject as Activity
+                    activity.setResult(resultCode, data)
+                    activity.finish()
+                    param.result = null
+                }
             }
         })
 
+        // Hook SelectContactUI to bypass the limitation in retransmitting messages.
         findAndHookMethod(pkg.MMFragmentActivity, loader, "startActivityForResult", C.Intent, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -73,6 +104,20 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 if (intent.getIntExtra("max_limit_num", -1) == 9) {
                     intent.putExtra("max_limit_num", 0x7FFFFFFF)
                 }
+            }
+        })
+    }
+
+    private fun hookSelectConversationUI() {
+        if (pkg.SelectConversationUI == "" || pkg.SelectConversationUIMaxLimitMethod == "") {
+            return
+        }
+
+        // Hook SelectConversationUI to bypass the limitation in retransmitting messages.
+        findAndHookMethod(pkg.SelectConversationUI, loader, pkg.SelectConversationUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                param.result = false
             }
         })
     }
