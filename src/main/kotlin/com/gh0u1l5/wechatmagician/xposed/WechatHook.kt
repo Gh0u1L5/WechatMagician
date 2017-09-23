@@ -1,11 +1,10 @@
 package com.gh0u1l5.wechatmagician.xposed
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.res.XModuleResources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import com.gh0u1l5.wechatmagician.R
+import android.view.Menu
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
