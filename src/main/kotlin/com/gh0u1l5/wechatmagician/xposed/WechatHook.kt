@@ -128,8 +128,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
 
         // Analyze dynamically to find the global image storage instance
-        val ImgInfoStorageClass = findClass(pkg.ImgStorageClass, loader)
-        hookAllConstructors(ImgInfoStorageClass, object : XC_MethodHook() {
+        val imgStorageClass = findClass(pkg.ImgStorageClass, loader)
+        hookAllConstructors(imgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
@@ -138,7 +138,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(ImgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
+//        findAndHookMethod(imgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun afterHookedMethod(param: MethodHookParam) {
 //                val imgId = param.args[0] as String?
