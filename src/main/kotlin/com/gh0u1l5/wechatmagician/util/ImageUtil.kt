@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
-import com.gh0u1l5.wechatmagician.xposed.WechatHook
+import com.gh0u1l5.wechatmagician.xposed.WechatPackage
 import de.robv.android.xposed.XposedHelpers.*
 import java.io.File
 import java.io.FileNotFoundException
@@ -18,8 +18,8 @@ object ImageUtil {
 
     // getPathFromImgId maps the given imgId to corresponding absolute path.
     private fun getPathFromImgId(imgId: String): String? {
-        val storage = WechatHook.pkg.ImgStorageObject ?: return null
-        val load = WechatHook.pkg.ImgStorageLoadMethod
+        val storage = WechatPackage.ImgStorageObject ?: return null
+        val load = WechatPackage.ImgStorageLoadMethod
         return callMethod(storage, load, imgId, "th_", "", false) as String
     }
 
@@ -56,15 +56,15 @@ object ImageUtil {
     // thumbnail with the given bitmap.
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Check if memory cache and image storage are established
-        val storage = WechatHook.pkg.ImgStorageObject ?: return
-        val cache = getObjectField(storage, WechatHook.pkg.ImgStorageCacheField)
+        val storage = WechatPackage.ImgStorageObject ?: return
+        val cache = getObjectField(storage, WechatPackage.ImgStorageCacheField)
 
         // Update memory cache
-        callMethod(cache, WechatHook.pkg.CacheMapRemoveMethod, path)
-        callMethod(cache, WechatHook.pkg.CacheMapPutMethod, "${path}hd", bitmap)
+        callMethod(cache, WechatPackage.CacheMapRemoveMethod, path)
+        callMethod(cache, WechatPackage.CacheMapPutMethod, "${path}hd", bitmap)
 
         // Notify storage update
-        callMethod(storage, WechatHook.pkg.ImgStorageNotifyMethod)
+        callMethod(storage, WechatPackage.ImgStorageNotifyMethod)
     }
 
     // replaceThumbnail replaces the memory cache and disk cache of a
