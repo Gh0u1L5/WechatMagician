@@ -20,4 +20,5 @@
     <string name="label_recalled">[已撤回]</string>
     <string name="label_deleted">[已删除]</string>
     <string name="easter_egg">妄图撤回一条消息，啧啧</string>
+    <string name="button_select_all">全选</string>
 </resources>
