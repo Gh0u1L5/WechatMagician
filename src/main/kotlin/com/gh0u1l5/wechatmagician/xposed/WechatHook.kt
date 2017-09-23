@@ -67,9 +67,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as Menu
-                val button = WechatButtons[param.thisObject::class.java.name] ?: return
-                menu.add(button.groupId, button.itemId, button.order, button.title)
-                menu.findItem(button.itemId)?.setOnMenuItemClickListener(button.listener(param))
+                val button = WechatButtons[param.thisObject.javaClass.name] ?: return
+
+                val item = menu.add(button.groupId, button.itemId, button.order, button.title)
+                button.decorate(item, param.thisObject)
+                val listener = button.listener(param.thisObject)
+                item.setOnMenuItemClickListener(listener)
             }
         })
     }
