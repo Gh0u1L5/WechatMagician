@@ -8,31 +8,47 @@ import net.dongliu.apk.parser.ApkFile
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
-class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
+object WechatPackage {
 
-    var SQLiteDatabaseClass: String
+    val MMActivity = "com.tencent.mm.ui.MMActivity"
+    val MMFragmentActivity = "com.tencent.mm.ui.MMFragmentActivity"
 
-    var XMLParserClass: String
-    var XMLParseMethod: String
+    var SelectContactUI = "com.tencent.mm.ui.contact.SelectContactUI"
+    var SelectConversationUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
+    var SelectConversationUIMaxLimitMethod = ""
 
-    var SelectConvUI: String
-    var SelectConvUIMaxLimitMethod: String
+    var ContactInfoClass = ""
+    var SQLiteDatabaseClass = ""
 
-    var CacheMapClass: String
-    var CacheMapPutMethod: String
-    var CacheMapRemoveMethod: String
+    var XMLParserClass = ""
+    val XMLParseMethod = "q"
+
+    private val CacheMapClass = "com.tencent.mm.a.f"
+    val CacheMapPutMethod = "k"
+    val CacheMapRemoveMethod = "remove"
 
     @Volatile var ImgStorageObject: Any? = null
-    var ImgStorageClass: String
-    var ImgStorageCacheField: String
-    var ImgStorageLoadMethod: String
-    var ImgStorageNotifyMethod: String
+    var ImgStorageClass = ""
+    var ImgStorageCacheField = ""
+    val ImgStorageLoadMethod = "a"
+    val ImgStorageNotifyMethod = "doNotify"
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
-    init {
+    fun init(param: XC_LoadPackage.LoadPackageParam) {
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
+
+        SelectConversationUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
+                param.classLoader, SelectConversationUI,
+                C.Boolean, C.Boolean
+        ).firstOrNull()?.name ?: ""
+
+        ContactInfoClass = PackageUtil.findFirstClassWithMethod(
+                PackageUtil.findClassesFromPackage(
+                        param.classLoader, apkFile, "com.tencent.mm.storage"),
+                C.String, "getCityCode"
+        )
 
         SQLiteDatabaseClass = when {
             version >= Version("6.5.8") -> "com.tencent.wcdb.database.SQLiteDatabase"
@@ -40,28 +56,15 @@ class WechatPackage(param: XC_LoadPackage.LoadPackageParam) {
             else -> throw Error("unsupported version")
         }
 
-        XMLParseMethod = "q"
-        XMLParserClass = PackageUtil.findClassWithMethod(
-                param.classLoader,
-                PackageUtil.findClassesFromPackage(apkFile,"com.tencent.mm.sdk.platformtools"),
+        XMLParserClass = PackageUtil.findFirstClassWithMethod(
+                PackageUtil.findClassesFromPackage(
+                        param.classLoader, apkFile,"com.tencent.mm.sdk.platformtools"),
                 C.Map, XMLParseMethod, C.String , C.String
         )
 
-        SelectConvUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
-        SelectConvUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
-                param.classLoader, SelectConvUI,
-                C.Boolean, C.Boolean
-        ).firstOrNull()?.name ?: ""
-
-        CacheMapClass =  "com.tencent.mm.a.f"
-        CacheMapPutMethod = "k"
-        CacheMapRemoveMethod = "remove"
-
-        ImgStorageLoadMethod = "a"
-        ImgStorageNotifyMethod = "doNotify"
-        ImgStorageClass = PackageUtil.findClassWithMethod(
-                param.classLoader,
-                PackageUtil.findClassesFromPackage(apkFile, "com.tencent.mm", 1),
+        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
+                PackageUtil.findClassesFromPackage(
+                        param.classLoader, apkFile, "com.tencent.mm", 1),
                 C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
         )
         ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
