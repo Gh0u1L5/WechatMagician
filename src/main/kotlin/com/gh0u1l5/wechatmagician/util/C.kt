@@ -11,6 +11,8 @@ object C {
 
     val ContentValues = android.content.ContentValues::class.java
     val Intent = android.content.Intent::class.java
+    val ListView = android.widget.ListView::class.java
+    val Menu = android.view.Menu::class.java
 
     val ObjectArray = Array<Any>::class.java
     val StringArray = Array<String>::class.java
