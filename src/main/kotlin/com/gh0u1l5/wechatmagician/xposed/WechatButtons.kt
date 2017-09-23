@@ -27,10 +27,16 @@ object WechatButtons {
     init {
         registries["com.tencent.mm.ui.contact.SelectContactUI"] = WechatButton(
             itemId = 2, title = ModuleResources.buttonSelectAll,
-            decorate = { item, thisObject ->
+            decorate = { menuItem, thisObject ->
                 val intent = (thisObject as Activity).intent
-                item.isCheckable = true
-                item.isChecked = intent.getBooleanExtra("select_all_checked", false)
+                menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
+                if (menuItem.isChecked) {
+                    menuItem.title = ModuleResources.buttonSelectAll + "  \u2611"
+                } else {
+                    menuItem.title = ModuleResources.buttonSelectAll + "  \u2610"
+                }
+                menuItem.isCheckable = true
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             },
             listener = { thisObject ->
                 val activity = thisObject as Activity
