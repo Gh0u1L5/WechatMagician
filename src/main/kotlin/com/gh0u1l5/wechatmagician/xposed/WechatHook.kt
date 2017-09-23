@@ -19,33 +19,13 @@ import java.io.*
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
-    data class LocalizedResources (
-            val easter_egg: String,
-            val label_deleted: String,
-            val label_recalled: String,
-            val bitmap_recalled: Bitmap
-    )
-
-    companion object {
-        lateinit var pkg: WechatPackage
-        lateinit var res: LocalizedResources
-        lateinit var loader: ClassLoader
-    }
+    private val pkg = WechatPackage
+    private val res = ModuleResources
+    private lateinit var loader: ClassLoader
 
     // Hook for initializing localized resources.
     override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
-        val _res = XModuleResources.createInstance(param?.modulePath, null)
-
-        val easter_egg = _res.getString(R.string.easter_egg)
-        val label_deleted = _res.getString(R.string.label_deleted)
-        val label_recalled = _res.getString(R.string.label_recalled)
-
-        val imgName = "image_recall_${_res.getString(R.string.language)}.jpg"
-        val imgStream = _res.assets.open(imgName)
-        val bitmap_recalled = BitmapFactory.decodeStream(imgStream)
-        imgStream.close()
-
-        res = LocalizedResources(easter_egg, label_deleted, label_recalled, bitmap_recalled)
+        ModuleResources.init(XModuleResources.createInstance(param?.modulePath, null))
     }
 
     // Hook for hacking Wechat application.
@@ -54,7 +34,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        pkg = WechatPackage(param)
+        WechatPackage.init(param)
         loader = param.classLoader
 
         tryHook(this::hookDatabase, {
@@ -160,7 +140,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     val msgtag = ".sysmsg.revokemsg.replacemsg"
                     val msg = this[msgtag] ?: return
                     if (msg.startsWith("\"")) {
-                        this[msgtag] = MessageUtil.applyEasterEgg(msg, res.easter_egg)
+                        this[msgtag] = MessageUtil.applyEasterEgg(msg, res.labelEasterEgg)
                     }
                 }
             }
@@ -274,14 +254,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         values.remove("content")
         when (origin.type) {
             1 -> {
-                message = MessageUtil.notifyMessageRecall(res.label_recalled, message!!)
+                message = MessageUtil.notifyMessageRecall(res.labelRecalled, message!!)
                 values.put("content", speaker + message)
             }
             3 -> {
-                ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmap_recalled)
+                ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmapRecalled)
             }
             49 -> {
-                message = MessageUtil.notifyLinkRecall(res.label_recalled, message!!)
+                message = MessageUtil.notifyLinkRecall(res.labelRecalled, message!!)
                 values.put("content", speaker + message)
             }
         }
@@ -289,7 +269,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     // handleMomentDelete notifies user that someone has deleted the given moment
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(res.label_deleted, content)?.let {
+        MessageUtil.notifyInfoDelete(res.labelDeleted, content)?.let {
             values.remove("sourceType")
             values.put("content", it)
         }
@@ -297,7 +277,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(res.label_deleted, curActionBuf)?.let {
+        MessageUtil.notifyCommentDelete(res.labelDeleted, curActionBuf)?.let {
             values.remove("commentflag")
             values.put("curActionBuf", it)
         }
