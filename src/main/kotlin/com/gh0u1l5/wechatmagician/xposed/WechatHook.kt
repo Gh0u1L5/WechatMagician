@@ -297,34 +297,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
     }
 
-    // handleMessageRecall notifies user that someone has recalled the message
-    private fun handleMessageRecall(origin: WechatMessage, values: ContentValues) {
-        // Split speaker and message for chatrooms
-        val speaker: String?; var message: String?
-        if (origin.talker.contains("chatroom")) {
-            val len = (origin.content?.indexOf(":\n") ?: 0) + 2
-            speaker = origin.content?.take(len)
-            message = origin.content?.drop(len)
-        } else {
-            speaker = ""; message = origin.content
+    // handleImageRecall notifies user that someone has recalled an image.
+    private fun handleImageRecall(origin: WechatMessage, values: ContentValues) {
+        if (origin.type != 3) {
+            return
         }
-
-        // Modify runtime data to notify user
         values.remove("type")
         values.remove("content")
-        when (origin.type) {
-            1 -> {
-                message = MessageUtil.notifyMessageRecall(res.labelRecalled, message!!)
-                values.put("content", speaker + message)
-            }
-            3 -> {
-                ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmapRecalled)
-            }
-            49 -> {
-                message = MessageUtil.notifyLinkRecall(res.labelRecalled, message!!)
-                values.put("content", speaker + message)
-            }
-        }
+        ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmapRecalled)
     }
 
     // handleMomentDelete notifies user that someone has deleted the given moment
