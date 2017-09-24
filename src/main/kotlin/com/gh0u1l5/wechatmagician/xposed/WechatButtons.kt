@@ -35,7 +35,6 @@ object WechatButtons {
                 } else {
                     menuItem.title = ModuleResources.buttonSelectAll + "  \u2610"
                 }
-                menuItem.isCheckable = true
                 menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             },
             listener = { thisObject ->
