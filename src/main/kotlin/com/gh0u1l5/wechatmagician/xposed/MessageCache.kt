@@ -1,20 +1,21 @@
 package com.gh0u1l5.wechatmagician.xposed
 
+import android.content.ContentValues
 import kotlin.concurrent.timer
 
 // MessageCache records the recent messages received from friends.
 object MessageCache {
 
     // WechatMessage stores important properties of a single message.
-    data class WechatMessage (
-            val type: Int,
-            val talker: String,
-            val content: String?,
-            val imgPath: String?
-    )
+    class WechatMessage(values: ContentValues) {
+        val type    = values["type"] as Int
+        val talker  = values["talker"] as String
+        val content = values["content"] as String?
+        val imgPath = values["imgPath"] as String?
 
-    // timeTable maps insert time to msgId.
-    private var timeTable: Map<Long, Long> = mapOf()
+        val createTime = System.currentTimeMillis()
+    }
+
     // msgTable maps msgId to message object.
     private var msgTable: Map<Long, WechatMessage> = mapOf()
 
@@ -31,7 +32,6 @@ object MessageCache {
 
     @Synchronized operator fun set(msgId: Long, msg: WechatMessage) {
         msgTable += Pair(msgId, msg)
-        timeTable += Pair(System.currentTimeMillis(), msgId)
     }
 
     @Synchronized operator fun contains(msgId: Long): Boolean {
@@ -39,11 +39,12 @@ object MessageCache {
     }
 
     // clear removes all the messages received more than 2 minutes ago.
-    // NOTE: One cannot recall these messages because Wechat have time
-    //       limit on recalling messages.
+    // NOTE: One cannot recall the removed messages because Wechat have
+    //       time limit on recalling messages.
     @Synchronized private fun clear() {
         val now = System.currentTimeMillis()
-        timeTable = timeTable.filter { now - it.key < 120000 }
-        msgTable = msgTable.filter { it.key in timeTable }
+        msgTable = msgTable.filter {
+            now - it.value.createTime < 120000
+        }
     }
 }
