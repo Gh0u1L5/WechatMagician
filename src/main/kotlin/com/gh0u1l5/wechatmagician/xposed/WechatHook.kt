@@ -307,7 +307,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmapRecalled)
     }
 
-    // handleMomentDelete notifies user that someone has deleted the given moment
+    // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
         MessageUtil.notifyInfoDelete(res.labelDeleted, content)?.let {
             values.remove("sourceType")
@@ -315,7 +315,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
     }
 
-    // handleCommentDelete notifies user that someone has deleted the given comment in moments
+    // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
         MessageUtil.notifyCommentDelete(res.labelDeleted, curActionBuf)?.let {
             values.remove("commentflag")
