@@ -40,7 +40,7 @@ object WechatPackage {
         val version = Version(apkFile.apkMeta.versionName)
 
         SelectConversationUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
-                param.classLoader, SelectConversationUI,
+                SelectConversationUI, param.classLoader,
                 C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 
@@ -68,7 +68,7 @@ object WechatPackage {
                 C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
         )
         ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
-                param.classLoader, ImgStorageClass,
+                ImgStorageClass, param.classLoader,
                 "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
         ).firstOrNull()?.name ?: ""
     }

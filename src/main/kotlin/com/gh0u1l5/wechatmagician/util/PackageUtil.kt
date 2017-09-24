@@ -2,6 +2,8 @@ package com.gh0u1l5.wechatmagician.util
 
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.ClassNotFoundError
+import de.robv.android.xposed.XposedHelpers.findMethodExact
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
@@ -19,8 +21,16 @@ object PackageUtil {
                 .dropLast(1) //drop trailing ';'
     }
 
+    // findClass finds a class based on its class name.
+    // This wraps XposedHelpers.findClass() in a Kotlin style.
+    private fun findClass(className: String, loader: ClassLoader): Class<*>? {
+        return try { XposedHelpers.findClass(className, loader) } catch (_: ClassNotFoundError) { null }
+    }
+
     // findClassesFromPackage returns a list of all the classes contained in the given package.
-    fun findClassesFromPackage(loader: ClassLoader, apkFile: ApkFile, packageName: String, depth: Int = 0): List<Class<*>> {
+    fun findClassesFromPackage(
+            loader: ClassLoader, apkFile: ApkFile, packageName: String, depth: Int = 0
+    ): List<Class<*>> {
         return apkFile.dexClasses.filter predicate@ {
             if (depth == 0) {
                 return@predicate it.packageName == packageName
@@ -29,18 +39,21 @@ object PackageUtil {
             val satisfyDepth =
                     it.packageName.drop(packageName.length).count{it == '.'} == depth
             return@predicate satisfyPrefix && satisfyDepth
-        }.map {XposedHelpers.findClass(getClassName(it), loader)}
+        }.map { findClass(getClassName(it), loader)!! }
     }
 
     // findFirstClassWithMethod finds the class that have the given method from a list of classes.
-    fun findFirstClassWithMethod(classes: List<Class<*>>, returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>): String {
+    fun findFirstClassWithMethod(
+            classes: List<Class<*>>,
+            returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
+    ): String {
         for (clazz in classes) {
             try {
-                val method = XposedHelpers.findMethodExact(clazz, methodName, *parameterTypes)
+                val method = findMethodExact(clazz, methodName, *parameterTypes)
                 if (method.returnType == returnType ?: method.returnType) {
                     return clazz.name
                 }
-            } catch (_: XposedHelpers.ClassNotFoundError) {
+            } catch (_: ClassNotFoundError) {
                 continue
             } catch (_: NoSuchMethodError) {
                 continue
@@ -55,58 +68,46 @@ object PackageUtil {
         return classes.filter { it.superclass == superClass }
     }
 
-    // findFields returns all the fields that satisfy predicate of the given class.
-    private fun findFields(clazz: Class<*>, predicate: (Field) -> Boolean): List<Field> {
-        return try {
-            clazz.declaredFields.filter(predicate)
-        } catch (_: XposedHelpers.ClassNotFoundError) {
-            listOf()
-        }
-    }
-    private fun findFields(loader: ClassLoader, className: String, predicate: (Field) -> Boolean): List<Field> {
-        return findFields(XposedHelpers.findClass(className, loader), predicate)
-    }
-
     // findFieldsWithGenericType finds all the fields of the given type.
-    fun findFieldsWithType(clazz: Class<*>, typeName: String): List<Field> {
-        return findFields(clazz, { it.type.name == typeName })
+    fun findFieldsWithType(clazz: Class<*>?, typeName: String): List<Field> {
+        return clazz?.declaredFields?.filter {
+            it.type.name == typeName
+        } ?: listOf()
     }
-    fun findFieldsWithType(loader: ClassLoader, className: String, typeName: String): List<Field> {
-        val clazz = XposedHelpers.findClass(className, loader)
+    fun findFieldsWithType(className: String, loader: ClassLoader, typeName: String): List<Field> {
+        val clazz = findClass(className, loader)
         return findFieldsWithType(clazz, typeName)
     }
 
     // findFieldsWithGenericType finds all the fields of the given generic type.
-    fun findFieldsWithGenericType(clazz: Class<*>, genericTypeName: String): List<Field> {
-        return findFields(clazz, { it.genericType.toString() == genericTypeName })
+    fun findFieldsWithGenericType(clazz: Class<*>?, genericTypeName: String): List<Field> {
+        return clazz?.declaredFields?.filter {
+            it.genericType.toString() == genericTypeName
+        } ?: listOf()
     }
-    fun findFieldsWithGenericType(loader: ClassLoader, className: String, genericTypeName: String): List<Field> {
-        val clazz = XposedHelpers.findClass(className, loader)
+    fun findFieldsWithGenericType(
+            className: String, loader: ClassLoader,
+            genericTypeName: String
+    ): List<Field> {
+        val clazz = findClass(className, loader)
         return findFieldsWithGenericType(clazz, genericTypeName)
-    }
-
-    fun findMethods(clazz: Class<*>, predicate: (Method) -> Boolean): List<Method> {
-        return try {
-            // Xposed Framework can only hook declared methods
-            clazz.declaredMethods.filter(predicate)
-        } catch (_: XposedHelpers.ClassNotFoundError) {
-            listOf()
-        }
     }
 
     // findMethodsWithTypes finds all the methods with the given return type and parameter types.
     fun findMethodsWithTypes(
-            clazz: Class<*>, returnType: Class<*>?, vararg parameterTypes: Class<*>): List<Method> {
-        return findMethods(clazz, {
+            clazz: Class<*>?, returnType: Class<*>?, vararg parameterTypes: Class<*>
+    ): List<Method> {
+        return clazz?.declaredMethods?.filter { // Xposed Framework can only hook declared methods
             val satisfyReturn = it.returnType == returnType ?: it.returnType
             val satisfyParams = Arrays.equals(it.parameterTypes, parameterTypes)
             satisfyReturn && satisfyParams
-        })
+        } ?: listOf()
     }
     fun findMethodsWithTypes(
-            loader: ClassLoader, className: String,
-            returnType: Class<*>?, vararg parameterTypes: Class<*>): List<Method> {
-        val clazz = XposedHelpers.findClass(className, loader)
+            className: String, loader: ClassLoader,
+            returnType: Class<*>?, vararg parameterTypes: Class<*>
+    ): List<Method> {
+        val clazz = findClass(className, loader)
         return findMethodsWithTypes(clazz, returnType, *parameterTypes)
     }
 }
