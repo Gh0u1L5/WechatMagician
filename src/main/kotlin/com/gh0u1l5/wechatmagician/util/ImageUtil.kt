@@ -14,7 +14,7 @@ object ImageUtil {
     // blockTable records all the thumbnail files changed by ImageUtil
     // In WechatHook.hookImgStorage, the module hooks FileOutputStream
     // to prevent anyone from overwriting these files.
-    var blockTable: Set<String> = setOf()
+    @Volatile var blockTable: Set<String> = setOf()
 
     // getPathFromImgId maps the given imgId to corresponding absolute path.
     private fun getPathFromImgId(imgId: String): String? {
@@ -45,9 +45,7 @@ object ImageUtil {
             // Ignore any other errors
         } finally {
             // Update block table and cleanup
-            synchronized(blockTable) {
-                blockTable += path
-            }
+            blockTable += path
             out?.close()
         }
     }

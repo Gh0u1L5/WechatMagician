@@ -157,10 +157,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.args[0] as File).path
-                synchronized(ImageUtil.blockTable) {
-                    if (path in ImageUtil.blockTable) {
-                        param.throwable = IOException()
-                    }
+                if (path in ImageUtil.blockTable) {
+                    param.throwable = IOException()
                 }
             }
         })
