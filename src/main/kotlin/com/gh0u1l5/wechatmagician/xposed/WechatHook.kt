@@ -231,29 +231,29 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 when (table) {
                     "message" -> values?.apply { // recall message
-                        if (!containsKey("type") || this["type"] != 10000) {
+                        if (!containsKey("type") || values["type"] != 10000) {
                             return
                         }
-                        val msgId = this["msgId"] as Long
+                        val msgId = values["msgId"] as Long
                         MessageCache[msgId]?.let {
                             handleMessageRecall(it, values)
                         }
                     }
                     "SnsInfo" -> values?.apply { // delete moment
-                        if (!containsKey("sourceType") || this["sourceType"] != 0) {
+                        if (!containsKey("sourceType") || values["sourceType"] != 0) {
                             return
                         }
                         val content =  values["content"] as ByteArray?
                         handleMomentDelete(content, values)
                     }
                     "SnsComment" -> values?.apply { // delete moment comment
-                        if (!containsKey("type") || this["type"] == 1) {
+                        if (!containsKey("type") || values["type"] == 1) {
                             return
                         }
-                        if (!containsKey("commentflag") || this["commentflag"] != 1) {
+                        if (!containsKey("commentflag") || values["commentflag"] != 1) {
                             return
                         }
-                        val curActionBuf = this["curActionBuf"] as ByteArray?
+                        val curActionBuf = values["curActionBuf"] as ByteArray?
                         handleCommentDelete(curActionBuf, values)
                     }
                 }
