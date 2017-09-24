@@ -9,6 +9,8 @@
         Supported Features:\n
         \t1. Prevent friends from recalling messages.\n
         \t2. Prevent friends from deleting moments or comments.\n
+        \t3. Bypass the limit on number of recipients when retransmit messages.\n
+        \t4. Add a button "Select All" in "Select Contacts" interface.\n
         \tSupport WeChat 6.5.13 and will keep updating.\n
         \n
         Credits:\n
@@ -18,6 +20,6 @@
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 
     <string name="label_deleted">[Deleted]</string>
-    <string name="easter_egg">want to recall a message, hmmm......</string>
+    <string name="easter_egg">is trying to recall a message, idiot (・ω・)</string>
     <string name="button_select_all">Select All</string>
 </resources>
