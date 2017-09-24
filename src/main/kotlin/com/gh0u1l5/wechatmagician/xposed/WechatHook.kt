@@ -211,7 +211,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 if (table == "message") {
                     if (values["isSend"] == 1) {
-                        return // ignore the message sent by myself
+                        return // ignore the messages sent by myself
                     }
                     val msgId = values["msgId"] as Long
                     MessageCache[msgId] = WechatMessage(values)
