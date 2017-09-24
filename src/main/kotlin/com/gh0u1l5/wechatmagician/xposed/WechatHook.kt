@@ -242,7 +242,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 when (table) {
                     "message" -> values?.apply { // recall message
-                        if (!containsKey("type") || values["type"] != 10000) {
+                        if (values["type"] != 10000) {
                             return
                         }
                         param.result = 1
@@ -256,17 +256,17 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         callMethod(db, "insert", "message", null, values)
                     }
                     "SnsInfo" -> values?.apply { // delete moment
-                        if (!containsKey("sourceType") || values["sourceType"] != 0) {
+                        if (values["sourceType"] != 0) {
                             return
                         }
                         val content =  values["content"] as ByteArray?
                         handleMomentDelete(content, values)
                     }
                     "SnsComment" -> values?.apply { // delete moment comment
-                        if (!containsKey("type") || values["type"] == 1) {
+                        if (values["type"] == 1) {
                             return
                         }
-                        if (!containsKey("commentflag") || values["commentflag"] != 1) {
+                        if (values["commentflag"] != 1) {
                             return
                         }
                         val curActionBuf = values["curActionBuf"] as ByteArray?
