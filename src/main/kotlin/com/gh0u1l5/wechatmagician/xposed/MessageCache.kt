@@ -16,6 +16,8 @@ object MessageCache {
         val createTime = System.currentTimeMillis()
     }
 
+    // nextMsgId records the next local msgId that should be used for insertion.
+    var nextMsgId: Long = -1
     // msgTable maps msgId to message object.
     private var msgTable: Map<Long, WechatMessage> = mapOf()
 
