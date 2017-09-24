@@ -10,14 +10,12 @@ import java.io.InputStream
 object ModuleResources {
     lateinit var labelEasterEgg: String
     lateinit var labelDeleted: String
-    lateinit var labelRecalled: String
     lateinit var buttonSelectAll: String
     lateinit var bitmapRecalled: Bitmap
 
     fun init(res: XModuleResources) {
         labelEasterEgg = res.getString(R.string.easter_egg)
         labelDeleted = res.getString(R.string.label_deleted)
-        labelRecalled = res.getString(R.string.label_recalled)
         buttonSelectAll = res.getString(R.string.button_select_all)
 
         var imgStream: InputStream? = null
