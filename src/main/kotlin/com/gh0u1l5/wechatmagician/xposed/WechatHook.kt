@@ -180,15 +180,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                log("XML => xml = $xml, tag = $tag")
 
                 @Suppress("UNCHECKED_CAST")
-                param.result = (param.result as MutableMap<String, String?>?)?.apply {
-                    if (this[".sysmsg.\$type"] != "revokemsg") {
-                        return
-                    }
-                    val msgtag = ".sysmsg.revokemsg.replacemsg"
-                    val msg = this[msgtag] ?: return
-                    if (msg.startsWith("\"")) {
-                        this[msgtag] = MessageUtil.applyEasterEgg(msg, res.labelEasterEgg)
-                    }
+                val result = param.result as MutableMap<String, String?>? ?: return
+                if (result[".sysmsg.\$type"] != "revokemsg") {
+                    return
+                }
+                val msgTag = ".sysmsg.revokemsg.replacemsg"
+                val msg = result[msgTag] ?: return
+                if (msg.startsWith("\"")) {
+                    result[msgTag] = MessageUtil.applyEasterEgg(msg, res.labelEasterEgg)
                 }
             }
         })
