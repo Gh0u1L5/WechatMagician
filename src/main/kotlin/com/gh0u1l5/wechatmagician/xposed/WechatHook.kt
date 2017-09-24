@@ -309,17 +309,17 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(res.labelDeleted, content)?.let {
+        MessageUtil.notifyInfoDelete(res.labelDeleted, content)?.let { msg ->
             values.remove("sourceType")
-            values.put("content", it)
+            values.put("content", msg)
         }
     }
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(res.labelDeleted, curActionBuf)?.let {
+        MessageUtil.notifyCommentDelete(res.labelDeleted, curActionBuf)?.let { msg ->
             values.remove("commentflag")
-            values.put("curActionBuf", it)
+            values.put("curActionBuf", msg)
         }
     }
 }
