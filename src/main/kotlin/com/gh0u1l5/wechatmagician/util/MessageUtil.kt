@@ -9,21 +9,6 @@ object MessageUtil {
         }
     }
 
-    fun notifyMessageRecall(head: String, msg: String): String {
-        if (msg.startsWith(head)) {
-            return msg
-        }
-        return "$head $msg"
-    }
-
-    fun notifyLinkRecall(head: String, msg: String): String {
-        val len = msg.indexOf("<title>") + "<title>".length
-        if (msg.startsWith(head, len)) {
-            return msg
-        }
-        return msg.replaceFirst("<title>", "<title>$head ")
-    }
-
     fun notifyInfoDelete(head: String?, msg: ByteArray?): ByteArray? {
         if (head == null || msg == null){
             return null

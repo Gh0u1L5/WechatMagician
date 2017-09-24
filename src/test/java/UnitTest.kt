@@ -11,24 +11,6 @@ class UnitTest {
                 MessageUtil.applyEasterEgg("\"test\" 撤回了一条消息", "妄图撤回一条消息，啧啧"))
     }
 
-    @Test fun NotifyMessageRecallTest() {
-        assertEquals("test", MessageUtil.notifyMessageRecall("", "test"))
-        assertEquals("[已撤回] test", MessageUtil.notifyMessageRecall("[已撤回]", "test"))
-        assertEquals("[已撤回] test", MessageUtil.notifyMessageRecall("[已撤回]", "[已撤回] test"))
-    }
-
-    @Test fun NotifyLinkRecallTest() {
-        assertEquals(
-                "<msg><title>test</title></msg>",
-                MessageUtil.notifyLinkRecall("", "<msg><title>test</title></msg>"))
-        assertEquals(
-                "<msg><title>[已撤回] test</title></msg>",
-                MessageUtil.notifyLinkRecall("[已撤回]", "<msg><title>test</title></msg>"))
-        assertEquals(
-                "<msg><title>[已撤回] test</title></msg>",
-                MessageUtil.notifyLinkRecall("[已撤回]", "<msg><title>[已撤回] test</title></msg>"))
-    }
-
     @Test fun NotifyInfoDeleteTest() {
         assertNull(MessageUtil.notifyInfoDelete(null, byteArrayOf()))
         assertNull(MessageUtil.notifyInfoDelete("", null))
