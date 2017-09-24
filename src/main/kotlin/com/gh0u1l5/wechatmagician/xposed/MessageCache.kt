@@ -10,7 +10,6 @@ object MessageCache {
     class WechatMessage(values: ContentValues) {
         val type    = values["type"] as Int
         val talker  = values["talker"] as String
-        val content = values["content"] as String?
         val imgPath = values["imgPath"] as String?
 
         val createTime = System.currentTimeMillis()
