@@ -210,10 +210,22 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //                log("DB => insert table = $table, values = $values")
 
                 if (table == "message") {
+                    var msgId = values["msgId"] as Long
+                    synchronized(MessageCache.nextMsgId) {
+                        if (MessageCache.nextMsgId == -1L) {
+                            MessageCache.nextMsgId = msgId + 1
+                        } else {
+                            msgId = MessageCache.nextMsgId++
+                            values.put("msgId", msgId)
+                        }
+                    }
+
                     if (values["isSend"] == 1) {
                         return // ignore the messages sent by myself
                     }
-                    val msgId = values["msgId"] as Long
+                    if (values["type"] == 10000) {
+                        return // ignore system messages
+                    }
                     MessageCache[msgId] = WechatMessage(values)
                 }
             }
@@ -234,10 +246,15 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (!containsKey("type") || values["type"] != 10000) {
                             return
                         }
+                        param.result = 1
+
                         val msgId = values["msgId"] as Long
-                        MessageCache[msgId]?.let {
-                            handleMessageRecall(it, values)
-                        }
+                        val msg = MessageCache[msgId] ?: return
+                        values.put("talker", msg.talker)
+                        values.put("createTime", msg.createTime + 1L)
+
+                        val db = param.thisObject
+                        callMethod(db, "insert", "message", null, values)
                     }
                     "SnsInfo" -> values?.apply { // delete moment
                         if (!containsKey("sourceType") || values["sourceType"] != 0) {
