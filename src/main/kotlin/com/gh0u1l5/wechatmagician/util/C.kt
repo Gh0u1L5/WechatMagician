@@ -5,6 +5,7 @@ object C {
     val Boolean = Boolean::class.java
     val File = java.io.File::class.java
     val Int = Int::class.java
+    val Long = Long::class.java
     val Map = Map::class.java
     val Object = Object::class.java
     val String = String::class.java
