@@ -5,12 +5,13 @@ WechatMagician is a cool Xposed module designed for Chinese social media applica
 2. Prevent friends from deleting moments or comments.
 3. Bypass the limit on number of recipients when retransmit messages.
 4. Add a button "Select All" in "Select Contacts" interface.
+5. _Planning to implement "share chatting history to moments" and "retweet other's moments" someday._
 
 Currently support the latest WeChat 6.5.14.
 
 ## Design
 After learning from the failure of the famous WeXposed module, this project want to do a better job in following aspects:
-* __Stability__: WeXposed crashes for almost every Wechat update. Currently the compatible version for WeXposed is Wechat 6.5.8 released in May, 2017, which has some attractive features missing.
+* __Stability__: WeXposed crashes for almost every Wechat update. Currently the compatible version for WeXposed is Wechat 6.5.8, which has some attractive features missing.
   - This project wraps each feature into a small "unit"; a single unit can crash safely without ruin the whole module.
   - This project has [a set of APIs](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/util/PackageUtil.kt) to analyze and match the signatures of critical classes/methods.
   - This project picks only [the signatures](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/xposed/WechatPackage.kt) that exist from Wechat 6.5.3 to 6.5.14. Even if a signature is broken in the coming Wechat updates, it can be fixed easily.

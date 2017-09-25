@@ -7,13 +7,14 @@ WechatMagician是一款炫酷的Xposed插件，致力于让用户彻底掌控微
 2. 防止微信好友删除朋友圈动态、评论。
 3. 移除转发人数上限为9人的限制。
 4. 在“选择联系人”界面增加全选按钮。
+5. _未来还会添加“一键转发消息到朋友圈”，“一键转发他人朋友圈”等功能，敬请期待。_
 
 目前支持最新微信 6.5.14 版， __官方交流QQ群：135955386__
 
 ## 设计理念
 
 本项目在吸取 微X模块 经验教训的基础上希望实现以下几个小目标：
-* __稳定__ —— 微X模块每逢更新必崩溃，目前能稳定使用微X模块的微信版本为2017年5月初发布的6.5.8，无法使用大量小程序API和多项新功能。
+* __稳定__ —— 微X模块每逢更新必崩溃，目前能稳定兼容微X模块的微信版本为6.5.8，无法使用大量小程序API和多项新功能。
   - 本项目将每个小功能都拆分到单独的模块中，单个模块失效不会影响其他功能的使用。
   - 本项目使用自行设计的一套[API](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/util/PackageUtil.kt)，通过比对特征来定位关键类、关键方法。
   - 本项目选用的[每一条特征](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/xposed/WechatPackage.kt)都保证在6.5.3至6.5.14版本中稳定存在，即使失效也能在短时间内进行修复。
