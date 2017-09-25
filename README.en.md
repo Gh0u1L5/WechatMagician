@@ -31,6 +31,4 @@ After learning from the failure of the famous WeXposed module, this project want
 
 ## Credits
 * Thanks @rovo89 for the awesome Xposed framework.
-* Thanks @rarnu for the prototype module wechat_no_revoke.
-
-Well, although I deleted almost all the codes written by @rarnu, I still want to give the credit for the nice structure. :>
+* Thanks @rarnu for the prototype module wechat_no_revoke. Although those codes are not helpful, it's a starting point for me.
