@@ -20,6 +20,6 @@
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 
     <string name="label_deleted">[Deleted]</string>
-    <string name="easter_egg">is trying to recall a message, idiot (・ω・)</string>
+    <string name="easter_egg">want to recall the message, idiot.</string>
     <string name="button_select_all">Select All</string>
 </resources>
