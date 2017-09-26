@@ -274,6 +274,17 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
+//        val cursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
+//        val cancellationSignal = findClass("com.tencent.wcdb.support.CancellationSignal", loader)
+//        findAndHookMethod(clazz, "rawQueryWithFactory", cursorFactory, C.String, C.StringArray, C.String, cancellationSignal, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun beforeHookedMethod(param: MethodHookParam) {
+//                val sql = param.args[1] as String? ?: return
+//                val selectionArgs = param.args[2] as Array<*>?
+//                log("DB => sql = $sql, selectionArgs = ${MessageUtil.argsToString(selectionArgs)}")
+//            }
+//        })
+
 //        findAndHookMethod(clazz, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
