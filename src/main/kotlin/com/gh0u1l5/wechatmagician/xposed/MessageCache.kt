@@ -16,6 +16,9 @@ object MessageCache {
 
     // nextMsgId records the next local msgId that should be used for insertion.
     var nextMsgId: Long = -1L
+    // msgIdTable maps original msgId to new msgId
+    @Volatile var msgIdTable: MutableMap<Long, Long> = mutableMapOf()
+
     // msgTable maps msgId to message object.
     private var msgTable: Map<Long, WechatMessage> = mapOf()
 
