@@ -212,6 +212,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (MessageCache.nextMsgId == -1L) {
                             MessageCache.nextMsgId = msgId + 1
                         } else {
+                            MessageCache.msgIdTable[msgId] = MessageCache.nextMsgId
                             msgId = MessageCache.nextMsgId++
                             values.put("msgId", msgId)
                         }
@@ -224,6 +225,24 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         return // ignore system messages
                     }
                     MessageCache[msgId] = WechatMessage(values)
+                }
+
+                if (values.containsKey("msglocalid")) {
+                    val fakeLocalId = values["msglocalid"]
+                    when (fakeLocalId) {
+                        is Int -> {
+                            val realLocalId = MessageCache.msgIdTable[fakeLocalId.toLong()]
+                            if (realLocalId != null) {
+                                values.put("msglocalid", realLocalId.toInt())
+                            }
+                        }
+                        is Long -> {
+                            val realLocalId = MessageCache.msgIdTable[fakeLocalId]
+                            if (realLocalId != null) {
+                                values.put("msglocalid", realLocalId)
+                            }
+                        }
+                    }
                 }
             }
         })
@@ -252,6 +271,18 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                         val db = param.thisObject
                         callMethod(db, "insert", "message", null, values)
+                    }
+                    "voiceinfo" -> { // handle voice message for skewed MsgLocalId
+                        if (!values.containsKey("MsgLocalId")) {
+                            return
+                        }
+                        val fakeLocalId = (values["MsgLocalId"] as Int).toLong()
+                        log("DB => fakeLocalId = $fakeLocalId")
+                        val realLocalId = MessageCache.msgIdTable[fakeLocalId]
+                        log("DB => realLocalId = $realLocalId")
+                        if (realLocalId != null) {
+                            values.put("MsgLocalId", realLocalId.toInt())
+                        }
                     }
                     "SnsInfo" -> { // delete moment
                         if (values["sourceType"] != 0) {
