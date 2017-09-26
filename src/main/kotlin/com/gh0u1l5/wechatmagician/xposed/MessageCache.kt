@@ -8,11 +8,10 @@ object MessageCache {
 
     // WechatMessage stores important properties of a single message.
     class WechatMessage(values: ContentValues) {
-        val type    = values["type"] as Int
-        val talker  = values["talker"] as String
-        val imgPath = values["imgPath"] as String?
-
-        val createTime = System.currentTimeMillis()
+        val type       = values["type"] as Int
+        val talker     = values["talker"] as String
+        val imgPath    = values["imgPath"] as String?
+        val createTime = values["createTime"] as Long
     }
 
     // nextMsgId records the next local msgId that should be used for insertion.
