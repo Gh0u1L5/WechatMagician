@@ -267,7 +267,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         val msgId = values["msgId"] as Long
                         val msg = MessageCache[msgId] ?: return
                         values.put("talker", msg.talker)
-                        values.put("createTime", msg.createTime + 500L)
+                        values.put("createTime", msg.createTime + 1L)
 
                         val db = param.thisObject
                         callMethod(db, "insert", "message", null, values)
