@@ -45,7 +45,9 @@ object ImageUtil {
             // Ignore any other errors
         } finally {
             // Update block table and cleanup
-            blockTable += path
+            synchronized(blockTable) {
+                blockTable += path
+            }
             out?.close()
         }
     }
