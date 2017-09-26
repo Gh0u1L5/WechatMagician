@@ -66,7 +66,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookMethod(pkg.MMActivity, loader, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val menu = param.args[0] as Menu
+                val menu = param.args[0] as Menu? ?: return
                 val button = WechatButtons[param.thisObject.javaClass.name] ?: return
 
                 val item = menu.add(button.groupId, button.itemId, button.order, button.title)
@@ -156,7 +156,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookConstructor(clazz, C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val path = (param.args[0] as File).path
+                val path = (param.args[0] as File?)?.path ?: return
                 if (path in ImageUtil.blockTable) {
                     param.throwable = IOException()
                 }
@@ -202,7 +202,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookMethod(clazz, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val table = param.args[0] as String?
+                val table = param.args[0] as String? ?: return
                 val values = param.args[2] as ContentValues? ?: return
 //                log("DB => insert table = $table, values = $values")
 
@@ -232,8 +232,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookMethod(clazz, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val table = param.args[0] as String?
-                val values = param.args[1] as ContentValues?
+                val table = param.args[0] as String? ?: return
+                val values = param.args[1] as ContentValues? ?: return
 //                val whereClause = param.args[2] as String?
 //                val whereArgs = param.args[3] as Array<*>?
 //                log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${MessageUtil.argsToString(whereArgs)}")
