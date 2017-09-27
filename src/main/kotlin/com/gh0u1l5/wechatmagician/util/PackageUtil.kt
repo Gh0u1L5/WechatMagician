@@ -13,6 +13,18 @@ import java.util.*
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
 
+    fun deepCopy(clazz: Class<*>?, obj: Any): Any {
+        if (clazz == null) {
+            return Any()
+        }
+        val copy = deepCopy(clazz.superclass, obj)
+        clazz.declaredFields.forEach {
+            it.isAccessible = true
+            it.set(copy, it.get(obj))
+        }
+        return copy
+    }
+
     // getClassName parses the standard class name of the given DexClass.
     private fun getClassName(clazz: DexClass): String {
         return clazz.classType
