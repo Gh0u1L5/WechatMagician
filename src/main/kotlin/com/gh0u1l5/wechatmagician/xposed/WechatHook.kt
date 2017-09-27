@@ -321,13 +321,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     // handleImageRecall notifies user that someone has recalled an image.
-    private fun handleImageRecall(origin: WechatMessage, values: ContentValues) {
-        if (origin.type != 3) {
+    private fun handleImageRecall(origin: Any, values: ContentValues) {
+        if (getIntField(origin, "field_type") != 3) {
             return
         }
         values.remove("type")
         values.remove("content")
-        ImageUtil.replaceThumbnail(origin.imgPath!!, res.bitmapRecalled)
+        val imgPath = getObjectField(origin, "field_imgPath")
+        ImageUtil.replaceThumbnail(imgPath as String, res.bitmapRecalled)
     }
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
