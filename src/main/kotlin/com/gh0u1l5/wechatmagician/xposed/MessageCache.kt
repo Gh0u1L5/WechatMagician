@@ -1,26 +1,13 @@
 package com.gh0u1l5.wechatmagician.xposed
 
-import android.content.ContentValues
+import de.robv.android.xposed.XposedHelpers.getLongField
 import kotlin.concurrent.timer
 
 // MessageCache records the recent messages received from friends.
 object MessageCache {
 
-    // WechatMessage stores important properties of a single message.
-    class WechatMessage(values: ContentValues) {
-        val type       = values["type"] as Int
-        val talker     = values["talker"] as String
-        val imgPath    = values["imgPath"] as String?
-        val createTime = values["createTime"] as Long
-    }
-
-    // nextMsgId records the next local msgId that should be used for insertion.
-    var nextMsgId: Long = -1L
-    // msgIdTable maps original msgId to new msgId
-    @Volatile var msgIdTable: MutableMap<Long, Long> = mutableMapOf()
-
     // msgTable maps msgId to message object.
-    private var msgTable: Map<Long, WechatMessage> = mapOf()
+    private var msgTable: Map<Long, Any> = mapOf()
 
     // Clean cache for every 30 minutes
     init {
@@ -29,11 +16,11 @@ object MessageCache {
         })
     }
 
-    @Synchronized operator fun get(msgId: Long): WechatMessage? {
+    @Synchronized operator fun get(msgId: Long): Any? {
         return msgTable[msgId]
     }
 
-    @Synchronized operator fun set(msgId: Long, msg: WechatMessage) {
+    @Synchronized operator fun set(msgId: Long, msg: Any) {
         msgTable += Pair(msgId, msg)
     }
 
@@ -47,7 +34,7 @@ object MessageCache {
     @Synchronized private fun clear() {
         val now = System.currentTimeMillis()
         msgTable = msgTable.filter {
-            now - it.value.createTime < 120000
+            now - getLongField(it.value, "field_createTime") < 120000
         }
     }
 }
