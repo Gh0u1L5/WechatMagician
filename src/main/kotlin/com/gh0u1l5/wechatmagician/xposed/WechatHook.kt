@@ -8,7 +8,7 @@ import android.view.Menu
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import com.gh0u1l5.wechatmagician.xposed.MessageCache.WechatMessage
+import com.gh0u1l5.wechatmagician.util.PackageUtil.deepCopy
 import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
@@ -46,6 +46,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             pkg.SelectConversationUI = ""
         })
 
+        tryHook(this::hookMsgStorage, {
+            pkg.MsgStorageClass = ""
+        })
         tryHook(this::hookImgStorage, {
             pkg.ImgStorageClass = ""
         })
@@ -125,6 +128,34 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
     }
 
+    private fun hookMsgStorage() {
+        if (pkg.MsgStorageClass == "" || pkg.MsgStorageInsertMethod == "") {
+            return
+        }
+
+        // Analyze dynamically to find the global message storage instance
+        val typeMsgStorage = findClass(pkg.MsgStorageClass, loader)
+        hookAllConstructors(typeMsgStorage, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (pkg.MsgStorageObject !== param.thisObject) {
+                    pkg.MsgStorageObject = param.thisObject
+                }
+            }
+        })
+
+        // Hook MsgStorage to record the received messages.
+        val typeMsgInfo = findClass(pkg.MsgInfoClass, loader)
+        findAndHookMethod(pkg.MsgStorageClass, loader, pkg.MsgStorageInsertMethod, typeMsgInfo, C.Boolean, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val msg = param.args[0]
+                val msgId = getLongField(msg, "field_msgId")
+                MessageCache[msgId] = msg
+            }
+        })
+    }
+
     private fun hookImgStorage() {
         if (pkg.ImgStorageClass == "") {
             return
@@ -198,54 +229,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         val typeSQLiteDatabase = findClass(pkg.SQLiteDatabaseClass, loader)
 
-        // Hook SQLiteDatabase.insert to update MessageCache
-        findAndHookMethod(typeSQLiteDatabase, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val table = param.args[0] as String? ?: return
-                val values = param.args[2] as ContentValues? ?: return
+//        findAndHookMethod(typeSQLiteDatabase, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun beforeHookedMethod(param: MethodHookParam) {
+//                val table = param.args[0] as String? ?: return
+//                val values = param.args[2] as ContentValues? ?: return
 //                log("DB => insert table = $table, values = $values")
-
-                if (table == "message") {
-                    var msgId = values["msgId"] as Long
-                    synchronized(MessageCache.nextMsgId) {
-                        if (MessageCache.nextMsgId == -1L) {
-                            MessageCache.nextMsgId = msgId + 1
-                        } else {
-                            MessageCache.msgIdTable[msgId] = MessageCache.nextMsgId
-                            msgId = MessageCache.nextMsgId++
-                            values.put("msgId", msgId)
-                        }
-                    }
-
-                    if (values["isSend"] == 1) {
-                        return // ignore the messages sent by myself
-                    }
-                    if (values["type"] == 10000) {
-                        return // ignore system messages
-                    }
-                    MessageCache[msgId] = WechatMessage(values)
-                }
-
-                if (values.containsKey("msglocalid")) {
-                    val fakeLocalId = values["msglocalid"]
-                    when (fakeLocalId) {
-                        is Int -> {
-                            val realLocalId = MessageCache.msgIdTable[fakeLocalId.toLong()]
-                            if (realLocalId != null) {
-                                values.put("msglocalid", realLocalId.toInt())
-                            }
-                        }
-                        is Long -> {
-                            val realLocalId = MessageCache.msgIdTable[fakeLocalId]
-                            if (realLocalId != null) {
-                                values.put("msglocalid", realLocalId)
-                            }
-                        }
-                    }
-                }
-            }
-        })
+//            }
+//        })
 
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
         findAndHookMethod(typeSQLiteDatabase, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
