@@ -39,16 +39,16 @@ object WechatButtons {
             },
             listener = { thisObject ->
                 val activity = thisObject as Activity
-                MenuItem.OnMenuItemClickListener { menuItem ->
+                MenuItem.OnMenuItemClickListener listener@ { menuItem ->
                     if (pkg.ContactInfoClass == "") {
-                        return@OnMenuItemClickListener false
+                        return@listener false
                     }
 
                     if (menuItem.isChecked) {
                         // Invoke new SelectContactUI without any selected contacts.
                         val intent = callMethod(
                                 activity, "getIntent"
-                        ) as Intent? ?: return@OnMenuItemClickListener false
+                        ) as Intent? ?: return@listener false
                         intent.putExtra("already_select_contact", "")
                         intent.putExtra("select_all_checked", !menuItem.isChecked)
                         activity.startActivityForResult(intent, 5)
@@ -77,13 +77,13 @@ object WechatButtons {
                         // Invoke new SelectContactUI with all contacts selected
                         val intent = callMethod(
                                 activity, "getIntent"
-                        ) as Intent? ?: return@OnMenuItemClickListener false
+                        ) as Intent? ?: return@listener false
                         intent.putExtra("already_select_contact", userList.joinToString(","))
                         intent.putExtra("select_all_checked", !menuItem.isChecked)
                         activity.startActivityForResult(intent, 5)
                     }
 
-                    return@OnMenuItemClickListener true
+                    return@listener true
                 }
             })
     }
