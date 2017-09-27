@@ -62,14 +62,14 @@ object WechatPackage {
                 C.Map, XMLParseMethod, C.String , C.String
         )
 
-        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
-                PackageUtil.findClassesFromPackage(
-                        param.classLoader, apkFile, "com.tencent.mm", 1),
-                C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
-        )
-        ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
-                ImgStorageClass, param.classLoader,
-                "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
-        ).firstOrNull()?.name ?: ""
+//        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
+//                PackageUtil.findClassesFromPackage(
+//                        param.classLoader, apkFile, "com.tencent.mm", 1),
+//                C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
+//        )
+//        ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
+//                ImgStorageClass, param.classLoader,
+//                "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
+//        ).firstOrNull()?.name ?: ""
     }
 }
