@@ -131,8 +131,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
 
         // Analyze dynamically to find the global image storage instance
-        val imgStorageClass = findClass(pkg.ImgStorageClass, loader)
-        hookAllConstructors(imgStorageClass, object : XC_MethodHook() {
+        val typeImgStorage = findClass(pkg.ImgStorageClass, loader)
+        hookAllConstructors(typeImgStorage, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
@@ -141,7 +141,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(imgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
+//        findAndHookMethod(typeImgStorage, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun afterHookedMethod(param: MethodHookParam) {
 //                val imgId = param.args[0] as String?
@@ -152,8 +152,8 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
 
         // Hook FileOutputStream to prevent Wechat from overwriting disk cache
-        val clazz = findClass("java.io.FileOutputStream", loader)
-        findAndHookConstructor(clazz, C.File, C.Boolean, object : XC_MethodHook() {
+        val typeFileOutputStream = findClass("java.io.FileOutputStream", loader)
+        findAndHookConstructor(typeFileOutputStream, C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.args[0] as File?)?.path ?: return
@@ -196,10 +196,10 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        val clazz = findClass(pkg.SQLiteDatabaseClass, loader)
+        val typeSQLiteDatabase = findClass(pkg.SQLiteDatabaseClass, loader)
 
         // Hook SQLiteDatabase.insert to update MessageCache
-        findAndHookMethod(clazz, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(typeSQLiteDatabase, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String? ?: return
@@ -248,7 +248,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
 
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
-        findAndHookMethod(clazz, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(typeSQLiteDatabase, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String? ?: return
@@ -305,9 +305,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        val cursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
-//        val cancellationSignal = findClass("com.tencent.wcdb.support.CancellationSignal", loader)
-//        findAndHookMethod(clazz, "rawQueryWithFactory", cursorFactory, C.String, C.StringArray, C.String, cancellationSignal, object : XC_MethodHook() {
+//        val typeCursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
+//        val typeCancellationSignal = findClass("com.tencent.wcdb.support.CancellationSignal", loader)
+//        findAndHookMethod(typeSQLiteDatabase, "rawQueryWithFactory", typeCursorFactory, C.String, C.StringArray, C.String, typeCancellationSignal, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[1] as String? ?: return
@@ -316,7 +316,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(clazz, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
+//        findAndHookMethod(typeSQLiteDatabase, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String?
@@ -326,7 +326,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(clazz, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
+//        findAndHookMethod(typeSQLiteDatabase, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?
