@@ -4,6 +4,7 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.ClassNotFoundError
 import de.robv.android.xposed.XposedHelpers.findMethodExact
+import de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
@@ -56,11 +57,18 @@ object PackageUtil {
     // findFirstClassWithMethod finds the class that have the given method from a list of classes.
     fun findFirstClassWithMethod(
             classes: List<Class<*>>,
-            returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
+            returnType: Class<*>?, methodName: String?, vararg parameterTypes: Class<*>
     ): String {
         for (clazz in classes) {
             try {
-                val method = findMethodExact(clazz, methodName, *parameterTypes)
+                val method = if (methodName != null) {
+                    findMethodExact(clazz, methodName, *parameterTypes)
+                } else {
+                    XposedHelpers.findMethodsByExactParameters(
+                            clazz, returnType, *parameterTypes
+                    ).firstOrNull() ?: continue
+                }
+
                 if (method.returnType == returnType ?: method.returnType) {
                     return clazz.name
                 }
