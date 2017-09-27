@@ -253,27 +253,20 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (values["type"] != 10000) {
                             return
                         }
-                        param.result = 1
 
                         val msgId = values["msgId"] as Long
                         val msg = MessageCache[msgId] ?: return
-                        values.put("talker", msg.talker)
-                        values.put("createTime", msg.createTime + 1L)
 
-                        val db = param.thisObject
-                        callMethod(db, "insert", "message", null, values)
-                    }
-                    "voiceinfo" -> { // handle voice message for skewed MsgLocalId
-                        if (!values.containsKey("MsgLocalId")) {
-                            return
-                        }
-                        val fakeLocalId = (values["MsgLocalId"] as Int).toLong()
-                        log("DB => fakeLocalId = $fakeLocalId")
-                        val realLocalId = MessageCache.msgIdTable[fakeLocalId]
-                        log("DB => realLocalId = $realLocalId")
-                        if (realLocalId != null) {
-                            values.put("MsgLocalId", realLocalId.toInt())
-                        }
+                        val copy = msg.javaClass.newInstance()
+                        deepCopy(msg, copy)
+
+                        val createTime = getLongField(msg, "field_createTime")
+                        setIntField(copy, "field_type", values["type"] as Int)
+                        setObjectField(copy, "field_content", values["content"])
+                        setLongField(copy, "field_createTime", createTime + 1L)
+
+                        callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+                        param.result = 1
                     }
                     "SnsInfo" -> { // delete moment
                         if (values["sourceType"] != 0) {
