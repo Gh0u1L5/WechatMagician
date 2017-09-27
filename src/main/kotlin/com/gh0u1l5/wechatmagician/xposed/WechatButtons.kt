@@ -54,24 +54,31 @@ object WechatButtons {
                         activity.startActivityForResult(intent, 5)
                     } else {
                         // Search for the ListView of contacts
-                        val listViewField = findFirstFieldByExactType(activity.javaClass, C.ListView)
-                        val listView = getObjectField(
-                                activity, listViewField.name
-                        ) as ListView? ?: return@OnMenuItemClickListener false
+                        val listView = findFirstFieldByExactType(activity.javaClass, C.ListView)
+                                .get(activity) as ListView? ?: return@listener false
                         val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
 
                         // Construct the list of user names
                         var contactField: Field? = null
+                        var usernameField: Field? = null
                         val userList = mutableListOf<String>()
                         repeat(adapter.count, next@ { index ->
                             val item = adapter.getItem(index)
+
                             if (contactField == null) {
                                 contactField = item.javaClass.fields.firstOrNull {
                                     it.type.name == pkg.ContactInfoClass
                                 } ?: return@next
                             }
-                            val contact = getObjectField(item, contactField!!.name) ?: return@next
-                            userList.add(getObjectField(contact, "field_username") as String)
+                            val contact = contactField?.get(item) ?: return@next
+
+                            if (usernameField == null) {
+                                usernameField = contact.javaClass.fields.firstOrNull {
+                                    it.name == "field_username"
+                                } ?: return@next
+                            }
+                            val username = usernameField?.get(contact) ?: return@next
+                            userList.add(username as String)
                         })
 
                         // Invoke new SelectContactUI with all contacts selected
