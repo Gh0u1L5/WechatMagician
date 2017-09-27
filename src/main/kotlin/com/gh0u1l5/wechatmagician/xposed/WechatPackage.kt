@@ -3,6 +3,8 @@ package com.gh0u1l5.wechatmagician.xposed
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.Version
+import de.robv.android.xposed.XposedHelpers.findClass
+import de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 
@@ -16,6 +18,11 @@ object WechatPackage {
     var SelectContactUI = "com.tencent.mm.ui.contact.SelectContactUI"
     var SelectConversationUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
     var SelectConversationUIMaxLimitMethod = ""
+
+    @Volatile var MsgStorageObject: Any? = null
+    var MsgInfoClass = ""
+    var MsgStorageClass = ""
+    var MsgStorageInsertMethod = ""
 
     var ContactInfoClass = ""
     var SQLiteDatabaseClass = ""
@@ -42,6 +49,21 @@ object WechatPackage {
         SelectConversationUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
                 SelectConversationUI, param.classLoader,
                 C.Boolean, C.Boolean
+        ).firstOrNull()?.name ?: ""
+
+        val storageClasses = PackageUtil.findClassesFromPackage(
+                param.classLoader, apkFile, "com.tencent.mm.storage"
+        )
+        MsgInfoClass = PackageUtil.findFirstClassWithMethod(
+                storageClasses, C.Boolean, "isSystem"
+        )
+        MsgStorageClass = PackageUtil.findFirstClassWithMethod(
+                storageClasses, C.Long, null,
+                findClass(MsgInfoClass, param.classLoader), C.Boolean
+        )
+        MsgStorageInsertMethod = findMethodsByExactParameters(
+                findClass(MsgStorageClass, param.classLoader),
+                C.Long, findClass(MsgInfoClass, param.classLoader), C.Boolean
         ).firstOrNull()?.name ?: ""
 
         ContactInfoClass = PackageUtil.findFirstClassWithMethod(
