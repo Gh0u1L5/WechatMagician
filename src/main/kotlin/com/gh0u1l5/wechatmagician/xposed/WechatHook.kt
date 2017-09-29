@@ -102,7 +102,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-        // Hook SelectContactUI to bypass the limitation in retransmitting messages.
+        // Hook SelectContactUI to bypass the limit on number of recipients.
         findAndHookMethod(pkg.MMFragmentActivity, loader, "startActivityForResult", C.Intent, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -119,7 +119,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        // Hook SelectConversationUI to bypass the limitation in retransmitting messages.
+        // Hook SelectConversationUI to bypass the limit on number of recipients.
         findAndHookMethod(pkg.SelectConversationUI, loader, pkg.SelectConversationUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
