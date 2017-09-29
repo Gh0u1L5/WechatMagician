@@ -4,7 +4,6 @@ import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.Version
 import de.robv.android.xposed.XposedHelpers.findClass
-import de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 
@@ -29,7 +28,7 @@ object WechatPackage {
     var SQLiteDatabaseClass = ""
 
     var XMLParserClass = ""
-    val XMLParseMethod = "q"
+    var XMLParseMethod = ""
 
     private val CacheMapClass = "com.tencent.mm.a.f"
     val CacheMapPutMethod = "k"
@@ -44,6 +43,8 @@ object WechatPackage {
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
     fun init(param: XC_LoadPackage.LoadPackageParam) {
+        var pair: Pair<String, String>
+
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
 
@@ -58,14 +59,11 @@ object WechatPackage {
         MsgInfoClass = PackageUtil.findFirstClassWithMethod(
                 storageClasses, C.Boolean, "isSystem"
         )
-        MsgStorageClass = PackageUtil.findFirstClassWithMethod(
-                storageClasses, C.Long, null,
-                findClass(MsgInfoClass, param.classLoader), C.Boolean
+        pair = PackageUtil.findFirstClassWithMethod(
+                storageClasses, C.Long, findClass(MsgInfoClass, param.classLoader), C.Boolean
         )
-        MsgStorageInsertMethod = findMethodsByExactParameters(
-                findClass(MsgStorageClass, param.classLoader),
-                C.Long, findClass(MsgInfoClass, param.classLoader), C.Boolean
-        ).firstOrNull()?.name ?: ""
+        MsgStorageClass = pair.first
+        MsgStorageInsertMethod = pair.second
 
         ContactInfoClass = PackageUtil.findFirstClassWithMethod(
                 PackageUtil.findClassesFromPackage(
@@ -79,11 +77,13 @@ object WechatPackage {
             else -> throw Error("unsupported version")
         }
 
-        XMLParserClass = PackageUtil.findFirstClassWithMethod(
+        pair = PackageUtil.findFirstClassWithMethod(
                 PackageUtil.findClassesFromPackage(
                         param.classLoader, apkFile,"com.tencent.mm.sdk.platformtools"),
-                C.Map, XMLParseMethod, C.String , C.String
+                C.Map, C.String , C.String
         )
+        XMLParserClass = pair.first
+        XMLParseMethod = pair.second
 
 //        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
 //                PackageUtil.findClassesFromPackage(
