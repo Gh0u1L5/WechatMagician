@@ -39,6 +39,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
         tryHook(this::hookOptionsMenu, {})
 
+        tryHook(this::hookAlbumPreviewUI, {
+            pkg.AlbumPreviewUI = ""
+        })
         tryHook(this::hookSelectContactUI, {
             pkg.SelectContactUI = ""
         })
@@ -76,6 +79,24 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 button.decorate(item, param.thisObject)
                 val listener = button.listener(param.thisObject)
                 item.setOnMenuItemClickListener(listener)
+            }
+        })
+    }
+
+    private fun hookAlbumPreviewUI() {
+        if (pkg.AlbumPreviewUI == "") {
+            return
+        }
+
+        // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
+        findAndHookMethod(pkg.AlbumPreviewUI, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                val intent = callMethod(obj, "getIntent") as Intent? ?: return
+                if (intent.getIntExtra("max_select_count", -1) == 9) {
+                    intent.putExtra("max_select_count", 1000)
+                }
             }
         })
     }

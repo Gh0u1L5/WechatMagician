@@ -19,6 +19,8 @@ object WechatPackage {
     var SelectConversationUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
     var SelectConversationUIMaxLimitMethod = ""
 
+    var AlbumPreviewUI = "com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
+
     @Volatile var MsgStorageObject: Any? = null
     var MsgInfoClass = ""
     var MsgStorageClass = ""
