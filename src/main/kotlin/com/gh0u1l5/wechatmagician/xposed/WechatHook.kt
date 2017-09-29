@@ -36,6 +36,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         WechatPackage.init(param)
         loader = param.classLoader
 
+//        tryHook(this::hookUIEvents, {})
 
         tryHook(this::hookOptionsMenu, {})
 
@@ -65,6 +66,28 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun tryHook(hook: () -> Unit, cleanup: (Throwable) -> Unit) {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
+    }
+
+    private fun hookUIEvents() {
+        // Hook Activity.onCreate to help analyze activities.
+        findAndHookMethod(pkg.MMActivity, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                val intent = callMethod(obj, "getIntent") as Intent?
+                val extras =  intent?.extras
+                log("MMActivity => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
+            }
+        })
+
+        // Hook View.onTouchEvent to help analyze UI objects.
+        findAndHookMethod("android.view.View", loader, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                log("onTouchEvent => obj.class = ${obj.javaClass}")
+            }
+        })
     }
 
     private fun hookOptionsMenu() {

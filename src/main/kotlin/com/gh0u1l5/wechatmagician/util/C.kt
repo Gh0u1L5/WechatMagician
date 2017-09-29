@@ -10,6 +10,7 @@ object C {
     val Object = Object::class.java
     val String = String::class.java
 
+    val Bundle = android.os.Bundle::class.java
     val ContentValues = android.content.ContentValues::class.java
     val Intent = android.content.Intent::class.java
     val ListView = android.widget.ListView::class.java
