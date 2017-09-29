@@ -8,7 +8,7 @@ WechatMagician is a cool Xposed module designed for Chinese social media applica
 5. Add a button "Select All" in "Select Contacts" interface.
 6. _Planning to implement "share chatting history to moments" and "retweet other's moments" someday._
 
-Currently this module supports WeChat 6.5.3 ~ 6.5.14.
+Currently this module supports WeChat 6.5.3 ~ 6.5.16.
 
 ## Design
 After learning from the failure of the famous WeXposed module, this project wants to do a better job in the following aspects:
