@@ -3,11 +3,12 @@
 WechatMagician is a cool Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. This module implemented following features:
 1. Prevent friends from recalling messages.
 2. Prevent friends from deleting moments or comments.
-3. Bypass the limit on number of recipients when retransmit messages.
-4. Add a button "Select All" in "Select Contacts" interface.
-5. _Planning to implement "share chatting history to moments" and "retweet other's moments" someday._
+3. Loose the limit on number of photos to send / post.
+4. Bypass the limit on number of recipients when retransmitting messages.
+5. Add a button "Select All" in "Select Contacts" interface.
+6. _Planning to implement "share chatting history to moments" and "retweet other's moments" someday._
 
-Currently support the latest WeChat 6.5.14.
+Currently this module supports WeChat 6.5.3 ~ 6.5.14.
 
 ## Design
 After learning from the failure of the famous WeXposed module, this project wants to do a better job in the following aspects:
@@ -32,4 +33,4 @@ After learning from the failure of the famous WeXposed module, this project want
 
 ## Credits
 * Thanks @rovo89 for the awesome Xposed framework.
-* Thanks @rarnu for the prototype module wechat_no_revoke. Although those codes are not helpful, it's a starting point for me.
+* Thanks @rarnu for the prototype wechat_no_revoke.
