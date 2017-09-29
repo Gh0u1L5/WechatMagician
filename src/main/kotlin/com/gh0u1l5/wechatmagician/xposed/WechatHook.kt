@@ -70,13 +70,13 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun hookUIEvents() {
         // Hook Activity.onCreate to help analyze activities.
-        findAndHookMethod(pkg.MMActivity, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MMFragmentActivity, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
                 val intent = callMethod(obj, "getIntent") as Intent?
                 val extras =  intent?.extras
-                log("MMActivity => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
+                log("Activity.onCreate => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
             }
         })
 
@@ -85,7 +85,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
-                log("onTouchEvent => obj.class = ${obj.javaClass}")
+                log("View.onTouchEvent => obj.class = ${obj.javaClass}")
             }
         })
     }
