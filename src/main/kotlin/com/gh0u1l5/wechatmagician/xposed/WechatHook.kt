@@ -124,10 +124,11 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
 
         // Hook SelectContactUI to bypass the limit on number of recipients.
-        findAndHookMethod(pkg.MMFragmentActivity, loader, "startActivityForResult", C.Intent, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SelectContactUI, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val intent = param.args[0] as Intent? ?: return
+                val obj = param.thisObject
+                val intent = callMethod(obj, "getIntent") as Intent? ?: return
                 if (intent.getIntExtra("max_limit_num", -1) == 9) {
                     intent.putExtra("max_limit_num", 0x7FFFFFFF)
                 }

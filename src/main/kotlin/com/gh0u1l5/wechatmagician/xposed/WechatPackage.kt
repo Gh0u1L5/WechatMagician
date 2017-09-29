@@ -15,11 +15,10 @@ object WechatPackage {
     val MMActivity = "com.tencent.mm.ui.MMActivity"
     val MMFragmentActivity = "com.tencent.mm.ui.MMFragmentActivity"
 
+    var AlbumPreviewUI = "com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
     var SelectContactUI = "com.tencent.mm.ui.contact.SelectContactUI"
     var SelectConversationUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
     var SelectConversationUIMaxLimitMethod = ""
-
-    var AlbumPreviewUI = "com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
 
     @Volatile var MsgStorageObject: Any? = null
     var MsgInfoClass = ""
