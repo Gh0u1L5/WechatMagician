@@ -405,25 +405,4 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             values.put("curActionBuf", msg)
         }
     }
-
-    // dumpViewGroup dumps the structure of a view group.
-    private fun dumpViewGroup(prefix: String, viewGroup: ViewGroup) {
-        repeat(viewGroup.childCount, {
-            var attrs = mapOf<String, Any>()
-            val child = viewGroup.getChildAt(it)
-
-            val getAttr = {getter: String ->
-                if (child.javaClass.methods.count{ it.name == getter } != 0) {
-                    attrs += getter to callMethod(child, getter)
-                }
-            }
-            getAttr("getText")
-            getAttr("isClickable")
-
-            log("$prefix[$it] => ${child.javaClass}, $attrs")
-            if (child is ViewGroup) {
-                dumpViewGroup("$prefix[$it]", child)
-            }
-        })
-    }
 }
