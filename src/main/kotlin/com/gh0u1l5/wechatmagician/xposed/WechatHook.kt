@@ -33,8 +33,13 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
-        WechatPackage.init(param)
-        loader = param.classLoader
+        try {
+            WechatPackage.init(param)
+            loader = param.classLoader
+        } catch (e: Throwable) {
+            log("INIT => ${e.message}")
+            return
+        }
 
 //        tryHook(this::hookUIEvents, {})
 
