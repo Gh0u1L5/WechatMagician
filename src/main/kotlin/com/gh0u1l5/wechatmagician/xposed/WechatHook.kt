@@ -8,7 +8,7 @@ import android.view.Menu
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import com.gh0u1l5.wechatmagician.util.PackageUtil.deepCopy
+import com.gh0u1l5.wechatmagician.util.PackageUtil.shadowCopy
 import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
@@ -317,7 +317,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         val msg = MessageCache[msgId] ?: return
 
                         val copy = msg.javaClass.newInstance()
-                        deepCopy(msg, copy)
+                        shadowCopy(msg, copy)
 
                         val createTime = getLongField(msg, "field_createTime")
                         setIntField(copy, "field_type", values["type"] as Int)

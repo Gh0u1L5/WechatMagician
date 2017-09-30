@@ -12,11 +12,12 @@ import java.util.*
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
 
-    fun deepCopy(obj: Any, copy: Any, clazz: Class<*>? = obj.javaClass) {
+    // shadowCopy copy all the fields of the object obj into the object copy.
+    fun shadowCopy(obj: Any, copy: Any, clazz: Class<*>? = obj.javaClass) {
         if (clazz == null) {
             return
         }
-        deepCopy(obj, copy, clazz.superclass)
+        shadowCopy(obj, copy, clazz.superclass)
         clazz.declaredFields.forEach {
             it.isAccessible = true
             it.set(copy, it.get(obj))
