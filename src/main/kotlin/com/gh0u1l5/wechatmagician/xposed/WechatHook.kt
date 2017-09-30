@@ -46,26 +46,26 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         tryHook(this::hookOptionsMenu, {})
 
         tryHook(this::hookAlbumPreviewUI, {
-            pkg.AlbumPreviewUI = ""
+            pkg.AlbumPreviewUI = null
         })
         tryHook(this::hookSelectContactUI, {
-            pkg.SelectContactUI = ""
+            pkg.SelectContactUI = null
         })
         tryHook(this::hookSelectConversationUI, {
-            pkg.SelectConversationUI = ""
+            pkg.SelectConversationUI = null
         })
 
         tryHook(this::hookMsgStorage, {
-            pkg.MsgStorageClass = ""
+            pkg.MsgStorageClass = null
         })
         tryHook(this::hookImgStorage, {
-            pkg.ImgStorageClass = ""
+            pkg.ImgStorageClass = null
         })
         tryHook(this::hookXMLParse, {
-            pkg.XMLParserClass = ""
+            pkg.XMLParserClass = null
         })
         tryHook(this::hookDatabase, {
-            pkg.SQLiteDatabaseClass = ""
+            pkg.SQLiteDatabaseClass = null
         })
     }
 
@@ -75,7 +75,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun hookUIEvents() {
         // Hook Activity.onCreate to help analyze activities.
-        findAndHookMethod(pkg.MMFragmentActivity, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MMFragmentActivity, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
@@ -97,7 +97,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private fun hookOptionsMenu() {
         // Hook onCreateOptionsMenu to add new buttons in the OptionsMenu.
-        findAndHookMethod(pkg.MMActivity, loader, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as Menu? ?: return
@@ -112,12 +112,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookAlbumPreviewUI() {
-        if (pkg.AlbumPreviewUI == "") {
+        if (pkg.AlbumPreviewUI == null) {
             return
         }
 
         // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
-        findAndHookMethod(pkg.AlbumPreviewUI, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
@@ -130,12 +130,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookSelectContactUI() {
-        if (pkg.SelectContactUI == "") {
+        if (pkg.SelectContactUI == null) {
             return
         }
 
         // Hook SelectContactUI to help the "Select All" button.
-        findAndHookMethod(pkg.SelectContactUI, loader, "onActivityResult", C.Int, C.Int, C.Intent, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SelectContactUI, "onActivityResult", C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val requestCode = param.args[0] as Int
@@ -152,7 +152,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
 
         // Hook SelectContactUI to bypass the limit on number of recipients.
-        findAndHookMethod(pkg.SelectContactUI, loader, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SelectContactUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
@@ -165,12 +165,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookSelectConversationUI() {
-        if (pkg.SelectConversationUI == "" || pkg.SelectConversationUIMaxLimitMethod == "") {
+        if (pkg.SelectConversationUI == null || pkg.SelectConversationUIMaxLimitMethod == "") {
             return
         }
 
         // Hook SelectConversationUI to bypass the limit on number of recipients.
-        findAndHookMethod(pkg.SelectConversationUI, loader, pkg.SelectConversationUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false
@@ -179,13 +179,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookMsgStorage() {
-        if (pkg.MsgStorageClass == "" || pkg.MsgStorageInsertMethod == "") {
+        if (pkg.MsgStorageClass == null || pkg.MsgStorageInsertMethod == "") {
             return
         }
 
         // Analyze dynamically to find the global message storage instance
-        val typeMsgStorage = findClass(pkg.MsgStorageClass, loader)
-        hookAllConstructors(typeMsgStorage, object : XC_MethodHook() {
+        hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.MsgStorageObject !== param.thisObject) {
@@ -195,8 +194,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         })
 
         // Hook MsgStorage to record the received messages.
-        val typeMsgInfo = findClass(pkg.MsgInfoClass, loader)
-        findAndHookMethod(pkg.MsgStorageClass, loader, pkg.MsgStorageInsertMethod, typeMsgInfo, C.Boolean, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, pkg.MsgInfoClass, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val msg = param.args[0]
@@ -207,13 +205,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookImgStorage() {
-        if (pkg.ImgStorageClass == "") {
+        if (pkg.ImgStorageClass == null) {
             return
         }
 
         // Analyze dynamically to find the global image storage instance
-        val typeImgStorage = findClass(pkg.ImgStorageClass, loader)
-        hookAllConstructors(typeImgStorage, object : XC_MethodHook() {
+        hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
@@ -233,8 +230,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
 
         // Hook FileOutputStream to prevent Wechat from overwriting disk cache
-        val typeFileOutputStream = findClass("java.io.FileOutputStream", loader)
-        findAndHookConstructor(typeFileOutputStream, C.File, C.Boolean, object : XC_MethodHook() {
+        findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.args[0] as File?)?.path ?: return
@@ -246,12 +242,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookXMLParse() {
-        if (pkg.XMLParserClass == "" || pkg.XMLParseMethod == "") {
+        if (pkg.XMLParserClass == null || pkg.XMLParseMethod == "") {
             return
         }
 
         // Hook XML Parser for the status bar easter egg
-        findAndHookMethod(pkg.XMLParserClass, loader, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
+        findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
 //                val xml = param.args[0] as String?
@@ -273,13 +269,12 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookDatabase() {
-        if (pkg.SQLiteDatabaseClass == ""){
+        if (pkg.SQLiteDatabaseClass == null){
             return
         }
 
-        val typeSQLiteDatabase = findClass(pkg.SQLiteDatabaseClass, loader)
 
-//        findAndHookMethod(typeSQLiteDatabase, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String? ?: return
@@ -289,7 +284,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
 
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
-        findAndHookMethod(typeSQLiteDatabase, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SQLiteDatabaseClass, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String? ?: return
@@ -341,7 +336,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
 //        val typeCursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
 //        val typeCancellationSignal = findClass("com.tencent.wcdb.support.CancellationSignal", loader)
-//        findAndHookMethod(typeSQLiteDatabase, "rawQueryWithFactory", typeCursorFactory, C.String, C.StringArray, C.String, typeCancellationSignal, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, "rawQueryWithFactory", typeCursorFactory, C.String, C.StringArray, C.String, typeCancellationSignal, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[1] as String? ?: return
@@ -350,7 +345,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(typeSQLiteDatabase, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, "delete", C.String, C.String, C.StringArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val table = param.args[0] as String?
@@ -360,7 +355,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //            }
 //        })
 
-//        findAndHookMethod(typeSQLiteDatabase, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.SQLiteDatabaseClass, "executeSql", C.String, C.ObjectArray, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val sql = param.args[0] as String?

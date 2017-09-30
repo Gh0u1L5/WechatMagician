@@ -3,96 +3,105 @@ package com.gh0u1l5.wechatmagician.xposed
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.Version
-import de.robv.android.xposed.XposedHelpers.findClass
+import de.robv.android.xposed.XposedHelpers.findClassIfExists
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
+import java.lang.reflect.Method
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
 
-    val MMActivity = "com.tencent.mm.ui.MMActivity"
-    val MMFragmentActivity = "com.tencent.mm.ui.MMFragmentActivity"
+    var MMActivity: Class<*>? = null
+    var MMFragmentActivity: Class<*>? = null
+    var MMListPopupWindow: Class<*>? = null
 
-    var AlbumPreviewUI = "com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI"
-    var SelectContactUI = "com.tencent.mm.ui.contact.SelectContactUI"
-    var SelectConversationUI = "com.tencent.mm.ui.transmit.SelectConversationUI"
+    var AlbumPreviewUI: Class<*>? = null
+    var SelectContactUI: Class<*>? = null
+    var SelectConversationUI: Class<*>? = null
     var SelectConversationUIMaxLimitMethod = ""
 
-    @Volatile var MsgStorageObject: Any? = null
-    var MsgInfoClass = ""
-    var MsgStorageClass = ""
+    var MsgInfoClass: Class<*>? = null
+    var ContactInfoClass: Class<*>? = null
+    var MsgStorageClass: Class<*>? = null
     var MsgStorageInsertMethod = ""
+    @Volatile var MsgStorageObject: Any? = null
 
-    var ContactInfoClass = ""
-    var SQLiteDatabaseClass = ""
+    var SQLiteDatabaseClass: Class<*>? = null
 
-    var XMLParserClass = ""
+    var XMLParserClass: Class<*>? = null
     var XMLParseMethod = ""
 
     private val CacheMapClass = "com.tencent.mm.a.f"
     val CacheMapPutMethod = "k"
     val CacheMapRemoveMethod = "remove"
 
-    @Volatile var ImgStorageObject: Any? = null
-    var ImgStorageClass = ""
+    var ImgStorageClass: Class<*>? = null
     var ImgStorageCacheField = ""
     val ImgStorageLoadMethod = "a"
     val ImgStorageNotifyMethod = "doNotify"
+    @Volatile var ImgStorageObject: Any? = null
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
     fun init(param: XC_LoadPackage.LoadPackageParam) {
-        var pair: Pair<String, String>
+        var pair: Pair<Class<*>?, Method?>
 
+        val loader = param.classLoader
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
 
+        MMActivity = findClassIfExists("com.tencent.mm.ui.MMActivity", loader)
+        MMFragmentActivity = findClassIfExists("com.tencent.mm.ui.MMFragmentActivity", loader)
+        MMListPopupWindow = findClassIfExists("com.tencent.mm.ui.base.MMListPopupWindow", loader)
+
+        AlbumPreviewUI = findClassIfExists("com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI", loader)
+        SelectContactUI = findClassIfExists("com.tencent.mm.ui.contact.SelectContactUI", loader)
+        SelectConversationUI = findClassIfExists("com.tencent.mm.ui.transmit.SelectConversationUI", loader)
         SelectConversationUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
-                SelectConversationUI, param.classLoader,
-                C.Boolean, C.Boolean
+                SelectConversationUI, C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 
         val storageClasses = PackageUtil.findClassesFromPackage(
-                param.classLoader, apkFile, "com.tencent.mm.storage"
+                loader, apkFile, "com.tencent.mm.storage"
         )
         MsgInfoClass = PackageUtil.findFirstClassWithMethod(
                 storageClasses, C.Boolean, "isSystem"
         )
-        pair = PackageUtil.findFirstClassWithMethod(
-                storageClasses, C.Long, findClass(MsgInfoClass, param.classLoader), C.Boolean
-        )
-        MsgStorageClass = pair.first
-        MsgStorageInsertMethod = pair.second
-
         ContactInfoClass = PackageUtil.findFirstClassWithMethod(
-                PackageUtil.findClassesFromPackage(
-                        param.classLoader, apkFile, "com.tencent.mm.storage"),
-                C.String, "getCityCode"
+                storageClasses, C.String, "getCityCode"
         )
+        if (MsgInfoClass != null) {
+            pair = PackageUtil.findFirstClassWithMethod(
+                    storageClasses, C.Long, MsgInfoClass!!, C.Boolean
+            )
+            MsgStorageClass = pair.first
+            MsgStorageInsertMethod = pair.second?.name ?: ""
+        }
 
         SQLiteDatabaseClass = when {
-            version >= Version("6.5.8") -> "com.tencent.wcdb.database.SQLiteDatabase"
-            version >= Version("6.5.3") -> "com.tencent.mmdb.database.SQLiteDatabase"
-            else -> throw Error("unsupported version")
+            version >= Version("6.5.8") ->
+                findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", loader)
+            version >= Version("6.5.3") ->
+                findClassIfExists("com.tencent.mmdb.database.SQLiteDatabase", loader)
+            else -> null
         }
 
         pair = PackageUtil.findFirstClassWithMethod(
                 PackageUtil.findClassesFromPackage(
-                        param.classLoader, apkFile,"com.tencent.mm.sdk.platformtools"),
-                C.Map, C.String , C.String
+                        loader, apkFile,"com.tencent.mm.sdk.platformtools"),
+                C.Map, C.String, C.String
         )
         XMLParserClass = pair.first
-        XMLParseMethod = pair.second
+        XMLParseMethod = pair.second?.name ?: ""
 
 //        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
 //                PackageUtil.findClassesFromPackage(
-//                        param.classLoader, apkFile, "com.tencent.mm", 1),
+//                        loader, apkFile, "com.tencent.mm", 1),
 //                C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
 //        )
 //        ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
-//                ImgStorageClass, param.classLoader,
-//                "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
+//                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
 //        ).firstOrNull()?.name ?: ""
     }
 }

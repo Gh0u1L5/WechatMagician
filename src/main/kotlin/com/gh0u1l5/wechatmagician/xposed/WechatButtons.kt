@@ -40,7 +40,7 @@ object WechatButtons {
             listener = { thisObject ->
                 val activity = thisObject as Activity
                 MenuItem.OnMenuItemClickListener listener@ { menuItem ->
-                    if (pkg.ContactInfoClass == "") {
+                    if (pkg.ContactInfoClass == null) {
                         return@listener false
                     }
 
@@ -67,7 +67,7 @@ object WechatButtons {
 
                             if (contactField == null) {
                                 contactField = item.javaClass.fields.firstOrNull {
-                                    it.type.name == pkg.ContactInfoClass
+                                    it.type.name == pkg.ContactInfoClass?.name
                                 } ?: return@next
                             }
                             val contact = contactField?.get(item) ?: return@next

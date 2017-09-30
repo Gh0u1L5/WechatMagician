@@ -31,12 +31,6 @@ object PackageUtil {
                 .dropLast(1) //drop trailing ';'
     }
 
-    // findClass finds a class based on its class name.
-    // This wraps XposedHelpers.findClass() in a Kotlin style.
-    private fun findClass(className: String, loader: ClassLoader): Class<*>? {
-        return try { XposedHelpers.findClass(className, loader) } catch (_: ClassNotFoundError) { null }
-    }
-
     // findClassesFromPackage returns a list of all the classes contained in the given package.
     fun findClassesFromPackage(
             loader: ClassLoader, apkFile: ApkFile, packageName: String, depth: Int = 0
@@ -54,33 +48,32 @@ object PackageUtil {
 
     // findFirstClassWithMethod finds the class that have the given method from a list of classes.
     fun findFirstClassWithMethod(
-            classes: List<Class<*>>,
-            returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
-    ): String {
+            classes: List<Class<*>>, returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
+    ): Class<*>? {
         for (clazz in classes) {
             val method = findMethodExactIfExists(
                     clazz, methodName, *parameterTypes
             ) ?: continue
             if (method.returnType == returnType ?: method.returnType) {
-                return clazz.name
+                return clazz
             }
         }
         XposedBridge.log("HOOK => Cannot find class with method $returnType $methodName($parameterTypes)")
-        return ""
+        return null
     }
     fun findFirstClassWithMethod(
             classes: List<Class<*>>, returnType: Class<*>?, vararg parameterTypes: Class<*>
-    ): Pair<String, String> {
+    ): Pair<Class<*>?, Method?> {
         for (clazz in classes) {
             val method = XposedHelpers.findMethodsByExactParameters(
                     clazz, returnType, *parameterTypes
             ).firstOrNull() ?: continue
             if (method.returnType == returnType ?: method.returnType) {
-                return clazz.name to method.name
+                return clazz to method
             }
         }
         XposedBridge.log("HOOK => Cannot find class with method signature $returnType fun($parameterTypes)")
-        return "" to ""
+        return null to null
     }
 
     // findClassesWithSuper finds the classes that have the given super class.
@@ -94,23 +87,12 @@ object PackageUtil {
             it.type.name == typeName
         } ?: listOf()
     }
-    fun findFieldsWithType(className: String, loader: ClassLoader, typeName: String): List<Field> {
-        val clazz = findClass(className, loader)
-        return findFieldsWithType(clazz, typeName)
-    }
 
     // findFieldsWithGenericType finds all the fields of the given generic type.
     fun findFieldsWithGenericType(clazz: Class<*>?, genericTypeName: String): List<Field> {
         return clazz?.declaredFields?.filter {
             it.genericType.toString() == genericTypeName
         } ?: listOf()
-    }
-    fun findFieldsWithGenericType(
-            className: String, loader: ClassLoader,
-            genericTypeName: String
-    ): List<Field> {
-        val clazz = findClass(className, loader)
-        return findFieldsWithGenericType(clazz, genericTypeName)
     }
 
     // findMethodsWithTypes finds all the methods with the given return type and parameter types.
@@ -122,12 +104,5 @@ object PackageUtil {
             val satisfyParams = Arrays.equals(it.parameterTypes, parameterTypes)
             satisfyReturn && satisfyParams
         } ?: listOf()
-    }
-    fun findMethodsWithTypes(
-            className: String, loader: ClassLoader,
-            returnType: Class<*>?, vararg parameterTypes: Class<*>
-    ): List<Method> {
-        val clazz = findClass(className, loader)
-        return findMethodsWithTypes(clazz, returnType, *parameterTypes)
     }
 }
