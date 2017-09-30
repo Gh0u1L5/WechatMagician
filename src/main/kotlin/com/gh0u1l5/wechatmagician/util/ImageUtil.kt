@@ -67,11 +67,11 @@ object ImageUtil {
         val cache = getObjectField(storage, WechatPackage.ImgStorageCacheField)
 
         // Update memory cache
-        callMethod(cache, WechatPackage.CacheMapRemoveMethod, path)
+        callMethod(cache, "remove", path)
         callMethod(cache, WechatPackage.CacheMapPutMethod, "${path}hd", bitmap)
 
         // Notify storage update
-        callMethod(storage, WechatPackage.ImgStorageNotifyMethod)
+        callMethod(storage, "doNotify")
     }
 
     // replaceThumbnail replaces the memory cache and disk cache of a

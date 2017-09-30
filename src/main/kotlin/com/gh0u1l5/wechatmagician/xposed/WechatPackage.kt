@@ -34,12 +34,10 @@ object WechatPackage {
 
     private val CacheMapClass = "com.tencent.mm.a.f"
     val CacheMapPutMethod = "k"
-    val CacheMapRemoveMethod = "remove"
 
     var ImgStorageClass: Class<*>? = null
     var ImgStorageCacheField = ""
     val ImgStorageLoadMethod = "a"
-    val ImgStorageNotifyMethod = "doNotify"
     @Volatile var ImgStorageObject: Any? = null
 
     // Analyzes Wechat package statically for the name of classes.
