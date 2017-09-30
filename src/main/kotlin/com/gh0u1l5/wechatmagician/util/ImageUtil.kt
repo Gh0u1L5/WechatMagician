@@ -23,32 +23,36 @@ object ImageUtil {
         return callMethod(storage, load, imgId, "th_", "", false) as String
     }
 
-    // replaceThumbDiskCache replaces the disk cache of a specific
-    // thumbnail with the given bitmap.
-    private fun replaceThumbDiskCache(path: String, bitmap: Bitmap, retry: Boolean = true) {
+    // writeBitmapToDisk writes the given bitmap to disk and returns the result.
+    fun writeBitmapToDisk(path: String, bitmap: Bitmap, retry: Boolean = true): Boolean {
         val file = File(path)
         var out: FileOutputStream? = null
-
         try {
-            // Write bitmap to disk cache
             out = FileOutputStream(file)
             bitmap.compress(JPEG, 100, out)
             out.flush()
+            return true
         } catch (_: FileNotFoundException) {
             if (!retry) {
-                return
+                return false
             }
-            // Create missing directories and try again
             file.parentFile.mkdirs()
-            replaceThumbDiskCache(path, bitmap, false)
+            return writeBitmapToDisk(path, bitmap, false)
         } catch (_: Throwable) {
-            // Ignore any other errors
+            return false
         } finally {
-            // Update block table and cleanup
+            out?.close()
+        }
+    }
+
+    // replaceThumbDiskCache replaces the disk cache of a specific
+    // thumbnail with the given bitmap.
+    private fun replaceThumbDiskCache(path: String, bitmap: Bitmap) {
+        if (writeBitmapToDisk(path, bitmap)) {
+            // Update block table after successful write.
             synchronized(blockTable) {
                 blockTable += path
             }
-            out?.close()
         }
     }
 
