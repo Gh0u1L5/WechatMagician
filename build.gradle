@@ -41,7 +41,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:design:26.1.0'
     provided 'de.robv.android.xposed:api:82'
-    compile 'net.dongliu:apk-parser:2.2.0'
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation files('apk-parser.jar')
 }
 
