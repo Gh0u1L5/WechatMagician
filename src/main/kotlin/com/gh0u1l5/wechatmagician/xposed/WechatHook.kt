@@ -43,7 +43,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
 //        tryHook(this::hookUIEvents, {})
 
-        tryHook(this::hookOptionsMenu, {})
+        tryHook(this::hookOptionsMenu, {
+            pkg.MMActivity = null
+        })
 
         tryHook(this::hookAlbumPreviewUI, {
             pkg.AlbumPreviewUI = null
@@ -96,6 +98,10 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookOptionsMenu() {
+        if (pkg.MMActivity == null) {
+            return
+        }
+
         // Hook onCreateOptionsMenu to add new buttons in the OptionsMenu.
         findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)

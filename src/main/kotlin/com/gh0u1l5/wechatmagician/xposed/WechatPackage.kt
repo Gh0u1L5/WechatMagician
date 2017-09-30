@@ -32,7 +32,7 @@ object WechatPackage {
     var XMLParserClass: Class<*>? = null
     var XMLParseMethod = ""
 
-    private val CacheMapClass = "com.tencent.mm.a.f"
+    val CacheMapClass = "com.tencent.mm.a.f"
     val CacheMapPutMethod = "k"
 
     var ImgStorageClass: Class<*>? = null
