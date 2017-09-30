@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.1.50'
+    ext.kotlin_version = '1.1.51'
     repositories {
         jcenter()
         google()
@@ -18,7 +18,7 @@ android {
     buildToolsVersion '26.0.1'
     defaultConfig {
         applicationId "com.gh0u1l5.wechatmagician"
-        minSdkVersion 15
+        minSdkVersion 19
         maxSdkVersion 26
         targetSdkVersion 26
     }
