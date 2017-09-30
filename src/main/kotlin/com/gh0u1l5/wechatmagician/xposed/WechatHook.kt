@@ -95,6 +95,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 log("View.onTouchEvent => obj.class = ${obj.javaClass}")
             }
         })
+
+        // Hook XLog to print internal errors into logcat.
+        XposedBridge.hookAllMethods(pkg.XLogSetup, "keep_setupXLog", object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                param.args[5] = true // enable logcat output
+            }
+        })
     }
 
     private fun hookOptionsMenu() {

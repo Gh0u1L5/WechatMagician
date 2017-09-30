@@ -12,6 +12,7 @@ import java.lang.reflect.Method
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
 
+    var XLogSetup: Class<*>? = null
     var MMActivity: Class<*>? = null
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
@@ -49,6 +50,7 @@ object WechatPackage {
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
 
+        XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
         MMActivity = findClassIfExists("com.tencent.mm.ui.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("com.tencent.mm.ui.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("com.tencent.mm.ui.base.MMListPopupWindow", loader)
