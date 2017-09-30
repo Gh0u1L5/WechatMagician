@@ -22,4 +22,7 @@
     <string name="label_deleted">[Deleted]</string>
     <string name="easter_egg">want to recall the message, idiot.</string>
     <string name="button_select_all">Select All</string>
+    <string name="menu_sns_forward">Forward</string>
+    <string name="menu_sns_screenshot">Screenshot</string>
+    <string name="screenshot_prompt">"The screenshot has been saved to "</string>
 </resources>

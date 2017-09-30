@@ -22,4 +22,7 @@
     <string name="label_deleted">[已删除]</string>
     <string name="easter_egg">妄图撤回一条消息，啧啧</string>
     <string name="button_select_all">全选</string>
+    <string name="menu_sns_forward">转发</string>
+    <string name="menu_sns_screenshot">截图</string>
+    <string name="screenshot_prompt">"截图已保存至 "</string>
 </resources>
