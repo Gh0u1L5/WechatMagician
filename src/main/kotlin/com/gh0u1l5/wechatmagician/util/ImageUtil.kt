@@ -2,6 +2,9 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.JPEG
+import android.graphics.Canvas
+import android.graphics.Color
+import android.view.View
 import com.gh0u1l5.wechatmagician.xposed.WechatPackage
 import de.robv.android.xposed.XposedHelpers.*
 import java.io.File
@@ -77,5 +80,15 @@ object ImageUtil {
         val path = getPathFromImgId(imgId) ?: return
         replaceThumbDiskCache("${path}hd", bitmap)
         replaceThumbMemoryCache(path, bitmap)
+    }
+
+    // drawView draws the content of a view to a bitmap.
+    fun drawView(view: View): Bitmap {
+        val width = view.width
+        val height = view.height
+        val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        b.eraseColor(Color.WHITE)
+        view.draw(Canvas(b))
+        return b
     }
 }
