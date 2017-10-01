@@ -46,7 +46,7 @@ object PackageUtil {
         }.map { findClass(getClassName(it), loader)!! }
     }
 
-    // findFirstClassWithMethod finds the class that have the given method from a list of classes.
+    // findFirstClassWithMethod finds the first class that have the given method from a list of classes.
     fun findFirstClassWithMethod(
             classes: List<Class<*>>, returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
     ): Class<*>? {

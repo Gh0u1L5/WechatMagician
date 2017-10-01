@@ -28,6 +28,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     // Hook for hacking Wechat application.
+    // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
         if (param.packageName != "com.tencent.mm") {
             return
