@@ -4,7 +4,12 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.res.XModuleResources
+import android.os.Environment
+import android.view.Gravity
 import android.view.Menu
+import android.widget.FrameLayout
+import android.widget.PopupMenu
+import android.widget.Toast
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -14,6 +19,10 @@ import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
+import com.gh0u1l5.wechatmagician.util.UIUtil
+
 
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
@@ -48,6 +57,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             pkg.MMActivity = null
         })
 
+        tryHook(this::hookSnsItemUI, {
+            pkg.AdFrameLayout = null
+        })
         tryHook(this::hookAlbumPreviewUI, {
             pkg.AlbumPreviewUI = null
         })
@@ -122,6 +134,48 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                 button.decorate(item, param.thisObject)
                 val listener = button.listener(param.thisObject)
                 item.setOnMenuItemClickListener(listener)
+            }
+        })
+    }
+
+    private fun hookSnsItemUI() {
+        if (pkg.AdFrameLayout == null) {
+            return
+        }
+
+        findAndHookConstructor(pkg.AdFrameLayout, C.Context, C.AttributeSet, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
+
+                val layout = param.thisObject as FrameLayout?
+                layout?.isLongClickable = true
+                layout?.setOnLongClickListener {
+                    val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+                    val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
+                    popup.menu.add(0, 1, 0, res.menuSnsForward)
+                    popup.menu.add(0, 2, 0, res.menuSnsScreenshot)
+                    popup.setOnMenuItemClickListener { item ->
+                        when (item.itemId) {
+                            1 -> {
+                                return@setOnMenuItemClickListener true
+                            }
+                            2 -> {
+                                val time = Calendar.getInstance().time
+                                val filename = "SNS-${formatter.format(time)}.jpg"
+                                val path = "$storage/screenshot/$filename"
+                                val bitmap = ImageUtil.drawView(layout)
+                                ImageUtil.writeBitmapToDisk(path, bitmap)
+                                Toast.makeText(
+                                        layout.context, res.promptScreenShot + path, Toast.LENGTH_SHORT
+                                ).show()
+                                return@setOnMenuItemClickListener true
+                            }
+                            else -> false
+                        }
+                    }
+                    popup.show(); true
+                }
             }
         })
     }
