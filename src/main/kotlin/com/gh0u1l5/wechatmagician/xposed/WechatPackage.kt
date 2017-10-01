@@ -1,12 +1,17 @@
 package com.gh0u1l5.wechatmagician.xposed
 
 import com.gh0u1l5.wechatmagician.util.C
-import com.gh0u1l5.wechatmagician.util.PackageUtil
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesWithSuper
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithField
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithMethod
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsWithTypes
 import com.gh0u1l5.wechatmagician.util.Version
 import de.robv.android.xposed.XposedHelpers.findClassIfExists
+import de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
-import java.lang.reflect.Method
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -43,40 +48,36 @@ object WechatPackage {
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
-    fun init(param: XC_LoadPackage.LoadPackageParam) {
-        var pair: Pair<Class<*>?, Method?>
-
+    @Synchronized fun init(param: XC_LoadPackage.LoadPackageParam) {
         val loader = param.classLoader
         val apkFile = ApkFile(param.appInfo.sourceDir)
         val version = Version(apkFile.apkMeta.versionName)
 
         XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
-        MMActivity = findClassIfExists("com.tencent.mm.ui.MMActivity", loader)
-        MMFragmentActivity = findClassIfExists("com.tencent.mm.ui.MMFragmentActivity", loader)
-        MMListPopupWindow = findClassIfExists("com.tencent.mm.ui.base.MMListPopupWindow", loader)
 
-        AlbumPreviewUI = findClassIfExists("com.tencent.mm.plugin.gallery.ui.AlbumPreviewUI", loader)
-        SelectContactUI = findClassIfExists("com.tencent.mm.ui.contact.SelectContactUI", loader)
-        SelectConversationUI = findClassIfExists("com.tencent.mm.ui.transmit.SelectConversationUI", loader)
-        SelectConversationUIMaxLimitMethod = PackageUtil.findMethodsWithTypes(
+        val pkgUI = "com.tencent.mm.ui"
+        MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
+        MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
+        MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
+
+        val pkgGalleryUI = "com.tencent.mm.plugin.gallery.ui"
+        AlbumPreviewUI = findClassIfExists("$pkgGalleryUI.AlbumPreviewUI", loader)
+        SelectContactUI = findClassIfExists("$pkgUI.contact.SelectContactUI", loader)
+        SelectConversationUI = findClassIfExists("$pkgUI.transmit.SelectConversationUI", loader)
+        SelectConversationUIMaxLimitMethod = findMethodsWithTypes(
                 SelectConversationUI, C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 
-        val storageClasses = PackageUtil.findClassesFromPackage(
-                loader, apkFile, "com.tencent.mm.storage"
-        )
-        MsgInfoClass = PackageUtil.findFirstClassWithMethod(
-                storageClasses, C.Boolean, "isSystem"
-        )
-        ContactInfoClass = PackageUtil.findFirstClassWithMethod(
-                storageClasses, C.String, "getCityCode"
-        )
+        val storageClasses = findClassesFromPackage(loader, apkFile, "com.tencent.mm.storage")
+        MsgInfoClass = findFirstClassWithMethod(storageClasses, C.Boolean, "isSystem")
+        ContactInfoClass = findFirstClassWithMethod(storageClasses, C.String, "getCityCode")
         if (MsgInfoClass != null) {
-            pair = PackageUtil.findFirstClassWithMethod(
+            MsgStorageClass = findFirstClassWithMethod(
                     storageClasses, C.Long, MsgInfoClass!!, C.Boolean
             )
-            MsgStorageClass = pair.first
-            MsgStorageInsertMethod = pair.second?.name ?: ""
+            MsgStorageInsertMethod = findMethodsByExactParameters(
+                    MsgStorageClass, C.Long, MsgInfoClass!!, C.Boolean
+            ).firstOrNull()?.name ?: ""
         }
 
         SQLiteDatabaseClass = when {
@@ -87,20 +88,19 @@ object WechatPackage {
             else -> null
         }
 
-        pair = PackageUtil.findFirstClassWithMethod(
-                PackageUtil.findClassesFromPackage(
-                        loader, apkFile,"com.tencent.mm.sdk.platformtools"),
-                C.Map, C.String, C.String
+        val platformClasses = findClassesFromPackage(loader, apkFile,"com.tencent.mm.sdk.platformtools")
+        XMLParserClass = findFirstClassWithMethod(
+                platformClasses, C.Map, C.String, C.String
         )
-        XMLParserClass = pair.first
-        XMLParseMethod = pair.second?.name ?: ""
+        XMLParseMethod = findMethodsByExactParameters(
+                XMLParserClass, C.Map, C.String, C.String
+        ).firstOrNull()?.name ?: ""
 
-//        ImgStorageClass = PackageUtil.findFirstClassWithMethod(
-//                PackageUtil.findClassesFromPackage(
-//                        loader, apkFile, "com.tencent.mm", 1),
+//        ImgStorageClass = findFirstClassWithMethod(
+//                findClassesFromPackage(loader, apkFile, "com.tencent.mm", 1),
 //                C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean
 //        )
-//        ImgStorageCacheField = PackageUtil.findFieldsWithGenericType(
+//        ImgStorageCacheField = findFieldsWithGenericType(
 //                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
 //        ).firstOrNull()?.name ?: ""
     }
