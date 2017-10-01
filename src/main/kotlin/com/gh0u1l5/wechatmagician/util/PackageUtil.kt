@@ -1,7 +1,6 @@
 package com.gh0u1l5.wechatmagician.util
 
 import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
@@ -51,30 +50,34 @@ object PackageUtil {
     fun findFirstClassWithMethod(
             classes: List<Class<*>>, returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
     ): Class<*>? {
-        for (clazz in classes) {
-            val method = findMethodExactIfExists(
-                    clazz, methodName, *parameterTypes
-            ) ?: continue
-            if (method.returnType == returnType ?: method.returnType) {
-                return clazz
-            }
+        val clazz = classes.firstOrNull {
+            val method = findMethodExactIfExists(it, methodName, *parameterTypes)
+            method != null && method.returnType == returnType ?: method.returnType
         }
-        XposedBridge.log("HOOK => Cannot find class with method $returnType $methodName($parameterTypes)")
-        return null
+        if (clazz == null) {
+            XposedBridge.log("HOOK => Cannot find class with method $returnType $methodName($parameterTypes)")
+        }
+        return clazz
     }
     fun findFirstClassWithMethod(
             classes: List<Class<*>>, returnType: Class<*>?, vararg parameterTypes: Class<*>
-    ): Pair<Class<*>?, Method?> {
-        for (clazz in classes) {
-            val method = XposedHelpers.findMethodsByExactParameters(
-                    clazz, returnType, *parameterTypes
-            ).firstOrNull() ?: continue
-            if (method.returnType == returnType ?: method.returnType) {
-                return clazz to method
-            }
+    ): Class<*>? {
+        val clazz = classes.firstOrNull {
+            findMethodsByExactParameters(it, returnType, *parameterTypes).isNotEmpty()
         }
-        XposedBridge.log("HOOK => Cannot find class with method signature $returnType fun($parameterTypes)")
-        return null to null
+        if (clazz == null) {
+            XposedBridge.log("HOOK => Cannot find class with method signature $returnType fun($parameterTypes)")
+        }
+        return clazz
+    }
+
+    // findFirstClassWithField finds the first class that have the given field type from a list of classes.
+    fun findFirstClassWithField(classes: List<Class<*>>, fieldType: String): Class<*>? {
+        val clazz = classes.firstOrNull { findFieldsWithType(it, fieldType).isNotEmpty() }
+        if (clazz == null) {
+            XposedBridge.log("HOOK => Cannot find class with field type $fieldType")
+        }
+        return clazz
     }
 
     // findClassesWithSuper finds the classes that have the given super class.
