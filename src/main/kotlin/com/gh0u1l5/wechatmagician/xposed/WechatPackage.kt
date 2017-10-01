@@ -22,6 +22,10 @@ object WechatPackage {
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
 
+    var SnsUploadUI: Class<*>? = null
+    var AdFrameLayout: Class<*>? = null
+    var SnsPostTextView: Class<*>? = null
+
     var AlbumPreviewUI: Class<*>? = null
     var SelectContactUI: Class<*>? = null
     var SelectConversationUI: Class<*>? = null
@@ -59,6 +63,17 @@ object WechatPackage {
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
+
+        val pkgSnsUI = "com.tencent.mm.plugin.sns.ui"
+        val snsUIClasses = findClassesFromPackage(loader, apkFile, pkgSnsUI)
+        if (MMActivity != null) {
+            SnsUploadUI = findFirstClassWithField(
+                    findClassesWithSuper(snsUIClasses, MMActivity!!),
+                    "$pkgSnsUI.SnsUploadSayFooter"
+            )
+        }
+        AdFrameLayout = findClassIfExists("$pkgSnsUI.AdFrameLayout", loader)
+        SnsPostTextView = findClassIfExists("$pkgSnsUI.widget.SnsPostDescPreloadTextView", loader)
 
         val pkgGalleryUI = "com.tencent.mm.plugin.gallery.ui"
         AlbumPreviewUI = findClassIfExists("$pkgGalleryUI.AlbumPreviewUI", loader)
