@@ -368,6 +368,19 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             return
         }
 
+        // Hook SQLiteDatabase constructors to capture the database instance for SNS.
+        hookAllConstructors(pkg.SQLiteDatabaseClass, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val path = param.thisObject.toString()
+                if (!path.endsWith("SnsMicroMsg.db")) {
+                    return
+                }
+                if (SnsCache.snsDB !== param.thisObject) {
+                    SnsCache.snsDB = param.thisObject
+                }
+            }
+        })
 
 //        findAndHookMethod(pkg.SQLiteDatabaseClass, "insertWithOnConflict", C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
