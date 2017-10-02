@@ -5,8 +5,6 @@ import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
-import java.lang.reflect.Method
-import java.util.*
 
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
