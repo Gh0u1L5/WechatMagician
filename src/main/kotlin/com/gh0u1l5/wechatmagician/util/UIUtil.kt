@@ -9,7 +9,7 @@ object UIUtil {
     // dumpViewGroup dumps the structure of a view group.
     fun dumpViewGroup(prefix: String, viewGroup: ViewGroup) {
         repeat(viewGroup.childCount, {
-            var attrs = mapOf<String, Any>()
+            var attrs = mapOf<String, Any?>()
             val child = viewGroup.getChildAt(it)
 
             val getAttr = {getter: String ->
@@ -17,6 +17,7 @@ object UIUtil {
                     attrs += getter to XposedHelpers.callMethod(child, getter)
                 }
             }
+            getAttr("getTag")
             getAttr("getText")
             getAttr("isClickable")
 
