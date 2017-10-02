@@ -6,9 +6,12 @@ WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控
 1. 防止微信好友撤回聊天消息。
 2. 防止微信好友删除朋友圈动态、评论。
 3. 发送消息或朋友圈时可选图片的上限从9张上调至1000张。
-4. 移除转发人数上限为9人的限制。
+4. 转发聊天消息时可选好友人数从9人上调至无限。
 5. 在“选择联系人”界面增加全选按钮。
-6. _未来还会添加“一键转发消息到朋友圈”，“一键转发他人朋友圈”等功能，敬请期待。_
+6. 一键转发他人朋友圈（仅限纯文字或图文）。
+7. 单条朋友圈一键截图。
+
+__注：使用朋友圈转发/截图功能时，请长按好友头像下方的空白处。__
 
 目前支持微信 6.5.3 ~ 6.5.16 版， __官方交流QQ群：135955386__
 
@@ -33,6 +36,10 @@ WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-1.zh.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-2.zh.png" width="40%" />
 
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-3.zh.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-4.zh.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-5.zh.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-6.zh.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-7.zh.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-8.zh.png" width="40%" />
 
 ## 特别鸣谢
 * 感谢 @rovo89 编写的Xposed框架

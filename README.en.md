@@ -6,7 +6,10 @@ WechatMagician is a cool Xposed module designed for Chinese social media applica
 3. Loose the limit on number of photos to send / post.
 4. Bypass the limit on number of recipients when retransmitting messages.
 5. Add a button "Select All" in "Select Contacts" interface.
-6. _Planning to implement "share chatting history to moments" and "retweet other's moments" someday._
+6. Retweet other's moments (only works for text moments or image moments).
+7. Take screenshot of a single moment.
+
+__P.S. If you want to retweet or take screenshot, please long press the blank area under others' avatar.__
 
 Currently this module supports WeChat 6.5.3 ~ 6.5.16.
 
@@ -30,6 +33,10 @@ After learning from the failure of the famous WeXposed module, this project want
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-1.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-2.en.png" width="40%" />
 
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-3.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-4.en.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-5.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-6.en.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-7.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-8.en.png" width="40%" />
 
 ## Credits
 * Thanks @rovo89 for the awesome Xposed framework.
