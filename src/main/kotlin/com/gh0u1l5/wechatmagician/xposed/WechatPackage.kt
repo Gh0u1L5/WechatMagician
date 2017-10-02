@@ -6,10 +6,8 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesWithSuper
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithField
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithMethod
-import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsWithTypes
 import com.gh0u1l5.wechatmagician.util.Version
-import de.robv.android.xposed.XposedHelpers.findClassIfExists
-import de.robv.android.xposed.XposedHelpers.findMethodsByExactParameters
+import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 
@@ -79,7 +77,7 @@ object WechatPackage {
         AlbumPreviewUI = findClassIfExists("$pkgGalleryUI.AlbumPreviewUI", loader)
         SelectContactUI = findClassIfExists("$pkgUI.contact.SelectContactUI", loader)
         SelectConversationUI = findClassIfExists("$pkgUI.transmit.SelectConversationUI", loader)
-        SelectConversationUIMaxLimitMethod = findMethodsWithTypes(
+        SelectConversationUIMaxLimitMethod = findMethodsByExactParameters(
                 SelectConversationUI, C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 

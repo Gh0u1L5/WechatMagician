@@ -98,15 +98,4 @@ object PackageUtil {
             it.genericType.toString() == genericTypeName
         } ?: listOf()
     }
-
-    // findMethodsWithTypes finds all the methods with the given return type and parameter types.
-    fun findMethodsWithTypes(
-            clazz: Class<*>?, returnType: Class<*>?, vararg parameterTypes: Class<*>
-    ): List<Method> {
-        return clazz?.declaredMethods?.filter { // Xposed Framework can only hook declared methods
-            val satisfyReturn = it.returnType == returnType ?: it.returnType
-            val satisfyParams = Arrays.equals(it.parameterTypes, parameterTypes)
-            satisfyReturn && satisfyParams
-        } ?: listOf()
-    }
 }
