@@ -45,7 +45,9 @@ object ImageUtil {
         val encEngine = newInstance(WechatPackage.EncEngine, media.key)
         callMethod(encEngine, WechatPackage.EncEngineEDMethod, content, content.size)
 
-        val out = FileOutputStream(path)
+        val file = File(path)
+        file.parentFile.mkdirs()
+        val out = FileOutputStream(file)
         out.write(content)
         out.close()
     }
