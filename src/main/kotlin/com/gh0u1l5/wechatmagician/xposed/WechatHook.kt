@@ -166,10 +166,10 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
                     popup.menu.add(0, 1, 0, res.menuSnsForward)
                     popup.menu.add(0, 2, 0, res.menuSnsScreenshot)
-                    popup.setOnMenuItemClickListener { item ->
+                    popup.setOnMenuItemClickListener listener@ { item ->
                         when (item.itemId) {
                             1 -> {
-                                return@setOnMenuItemClickListener true
+                                return@listener true
                             }
                             2 -> {
                                 val time = Calendar.getInstance().time
@@ -180,7 +180,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                                 Toast.makeText(
                                         layout.context, res.promptScreenShot + path, Toast.LENGTH_SHORT
                                 ).show()
-                                return@setOnMenuItemClickListener true
+                                return@listener true
                             }
                             else -> false
                         }
