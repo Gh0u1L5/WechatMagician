@@ -5,7 +5,7 @@ object MessageUtil {
 
     fun applyEasterEgg(str: String?, easter_egg: String?): String? {
         return str?.let{
-            "${it.substring(1, it.indexOf("\"", 1))} $easter_egg"
+            "${it.take(it.indexOf("\"", 1) + 1)} $easter_egg"
         }
     }
 

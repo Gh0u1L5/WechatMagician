@@ -7,7 +7,7 @@ class UnitTest {
     @Test fun EasterEggTest() {
         assertNull(MessageUtil.applyEasterEgg(null, ""))
         assertEquals(
-                "test 妄图撤回一条消息，啧啧",
+                "\"test\" 妄图撤回一条消息，啧啧",
                 MessageUtil.applyEasterEgg("\"test\" 撤回了一条消息", "妄图撤回一条消息，啧啧"))
     }
 
