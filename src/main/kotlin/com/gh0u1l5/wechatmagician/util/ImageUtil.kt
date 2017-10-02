@@ -29,6 +29,13 @@ object ImageUtil {
     }
 
     fun downloadImage(path: String, media: SnsCache.SnsMedia) {
+        if (media.type != "1") {
+            throw Error("Unsupported media type: ${media.type}")
+        }
+        if (media.token == null || media.idx == null) {
+            throw Error("Null token or idx.")
+        }
+
         val content = URL(
                 "${media.url}?tp=wxpc&token=${media.token}&idx=${media.idx}"
         ).readBytes()

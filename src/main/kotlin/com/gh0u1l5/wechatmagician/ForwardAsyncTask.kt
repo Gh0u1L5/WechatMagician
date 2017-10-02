@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
+import android.widget.Toast
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.xposed.SnsCache.SnsInfo
 import com.gh0u1l5.wechatmagician.xposed.WechatPackage
@@ -25,6 +26,9 @@ class ForwardAsyncTask(private val snsInfo: SnsInfo, private val context: Contex
     override fun onPostExecute(result: Throwable?) {
         if (result != null) {
             log("DOWNLOAD => $result")
+            Toast.makeText(
+                    context, result.toString(), Toast.LENGTH_SHORT
+            ).show()
             return
         }
         if (WechatPackage.SnsUploadUI == null) {
