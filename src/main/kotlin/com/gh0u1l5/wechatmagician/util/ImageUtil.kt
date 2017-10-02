@@ -5,11 +5,13 @@ import android.graphics.Bitmap.CompressFormat.JPEG
 import android.graphics.Canvas
 import android.graphics.Color
 import android.view.View
+import com.gh0u1l5.wechatmagician.xposed.SnsCache
 import com.gh0u1l5.wechatmagician.xposed.WechatPackage
 import de.robv.android.xposed.XposedHelpers.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
+import java.net.URL
 
 // ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
@@ -24,6 +26,21 @@ object ImageUtil {
         val storage = WechatPackage.ImgStorageObject ?: return null
         val load = WechatPackage.ImgStorageLoadMethod
         return callMethod(storage, load, imgId, "th_", "", false) as String
+    }
+
+    fun downloadImage(path: String, media: SnsCache.SnsMedia) {
+        val content = URL(
+                "${media.url}?tp=wxpc&token=${media.token}&idx=${media.idx}"
+        ).readBytes()
+        if (content.isEmpty()) {
+            return
+        }
+        val encEngine = newInstance(WechatPackage.EncEngine, media.key)
+        callMethod(encEngine, WechatPackage.EncEngineEDMethod, content, content.size)
+
+        val out = FileOutputStream(path)
+        out.write(content)
+        out.close()
     }
 
     // writeBitmapToDisk writes the given bitmap to disk and returns the result.
