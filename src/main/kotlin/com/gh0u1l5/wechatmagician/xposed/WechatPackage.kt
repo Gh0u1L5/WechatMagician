@@ -16,13 +16,19 @@ import net.dongliu.apk.parser.ApkFile
 object WechatPackage {
 
     var XLogSetup: Class<*>? = null
+    var SQLiteDatabaseClass: Class<*>? = null
+    var EncEngine: Class<*>? = null
+    var EncEngineEDMethod = ""
+
     var MMActivity: Class<*>? = null
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
+    var PLTextView: Class<*>? = null
 
     var SnsUploadUI: Class<*>? = null
     var AdFrameLayout: Class<*>? = null
     var SnsPostTextView: Class<*>? = null
+    var SnsPhotosContent: Class<*>? = null
 
     var AlbumPreviewUI: Class<*>? = null
     var SelectContactUI: Class<*>? = null
@@ -34,8 +40,6 @@ object WechatPackage {
     var MsgStorageClass: Class<*>? = null
     var MsgStorageInsertMethod = ""
     @Volatile var MsgStorageObject: Any? = null
-
-    var SQLiteDatabaseClass: Class<*>? = null
 
     var XMLParserClass: Class<*>? = null
     var XMLParseMethod = ""
@@ -56,11 +60,26 @@ object WechatPackage {
         val version = Version(apkFile.apkMeta.versionName)
 
         XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
+        SQLiteDatabaseClass = when {
+            version >= Version("6.5.8") ->
+                findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", loader)
+            version >= Version("6.5.3") ->
+                findClassIfExists("com.tencent.mmdb.database.SQLiteDatabase", loader)
+            else -> null
+        }
+        EncEngine = findFirstClassWithMethod(
+                findClassesFromPackage(loader, apkFile, "com.tencent.mm.modelsfs"),
+                null, "seek", C.Long
+        )
+        EncEngineEDMethod = findMethodsByExactParameters(
+                EncEngine, C.Int, C.ByteArray, C.Int
+        ).firstOrNull()?.name ?: ""
 
         val pkgUI = "com.tencent.mm.ui"
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
+        PLTextView = findClassIfExists("com.tencent.mm.kiss.widget.textview.PLSysTextView", loader)
 
         val pkgSnsUI = "com.tencent.mm.plugin.sns.ui"
         val snsUIClasses = findClassesFromPackage(loader, apkFile, pkgSnsUI)
@@ -72,6 +91,7 @@ object WechatPackage {
         }
         AdFrameLayout = findClassIfExists("$pkgSnsUI.AdFrameLayout", loader)
         SnsPostTextView = findClassIfExists("$pkgSnsUI.widget.SnsPostDescPreloadTextView", loader)
+        SnsPhotosContent = findClassIfExists("$pkgSnsUI.PhotosContent", loader)
 
         val pkgGalleryUI = "com.tencent.mm.plugin.gallery.ui"
         AlbumPreviewUI = findClassIfExists("$pkgGalleryUI.AlbumPreviewUI", loader)
@@ -91,14 +111,6 @@ object WechatPackage {
             MsgStorageInsertMethod = findMethodsByExactParameters(
                     MsgStorageClass, C.Long, MsgInfoClass!!, C.Boolean
             ).firstOrNull()?.name ?: ""
-        }
-
-        SQLiteDatabaseClass = when {
-            version >= Version("6.5.8") ->
-                findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", loader)
-            version >= Version("6.5.3") ->
-                findClassIfExists("com.tencent.mmdb.database.SQLiteDatabase", loader)
-            else -> null
         }
 
         val platformClasses = findClassesFromPackage(loader, apkFile,"com.tencent.mm.sdk.platformtools")
