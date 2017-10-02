@@ -89,7 +89,18 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     }
 
     private fun hookUIEvents() {
-        // Hook Activity.onCreate to help analyze activities.
+        // Hook Activity.startActivity to trace source activities.
+        findAndHookMethod("android.app.Activity", loader, "startActivity", C.Intent, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                val intent = param.args[0] as Intent?
+                val extras = intent?.extras
+                log("Activity.startActivity => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
+            }
+        })
+
+        // Hook Activity.onCreate to trace target activities.
         findAndHookMethod(pkg.MMFragmentActivity, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
