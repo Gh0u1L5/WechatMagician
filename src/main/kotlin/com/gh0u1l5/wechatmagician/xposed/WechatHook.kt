@@ -106,7 +106,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
                 val intent = callMethod(obj, "getIntent") as Intent?
-                val extras =  intent?.extras
+                val extras = intent?.extras
                 log("Activity.onCreate => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
             }
         })
