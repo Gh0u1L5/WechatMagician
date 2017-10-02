@@ -10,6 +10,7 @@ import android.view.Menu
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.ForwardAsyncTask
 import com.gh0u1l5.wechatmagician.util.C
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -21,7 +22,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
-import com.gh0u1l5.wechatmagician.util.UIUtil
+import com.gh0u1l5.wechatmagician.util.UIUtil.searchViewGroup
 
 
 // WechatHook contains the entry points and all the hooks.
@@ -169,6 +170,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     popup.setOnMenuItemClickListener listener@ { item ->
                         when (item.itemId) {
                             1 -> {
+                                if (pkg.PLTextView == null) {
+                                    return@listener false
+                                }
+                                val textView = searchViewGroup(layout, pkg.PLTextView!!.name)
+                                val rowId = textView?.tag as String?
+                                val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
+                                val snsInfo = SnsCache[snsId] ?: return@listener false
+                                ForwardAsyncTask(snsInfo, layout.context).execute()
                                 return@listener true
                             }
                             2 -> {
