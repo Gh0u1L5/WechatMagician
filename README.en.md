@@ -3,7 +3,7 @@
 WechatMagician is a cool Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. This module implemented following features:
 1. Prevent friends from recalling messages.
 2. Prevent friends from deleting moments or comments.
-3. Loose the limit on number of photos to send / post.
+3. Loose the limit on number of photos to send.
 4. Bypass the limit on number of recipients when retransmitting messages.
 5. Add a button "Select All" in "Select Contacts" interface.
 6. Retweet other's moments (only works for text moments or image moments).
