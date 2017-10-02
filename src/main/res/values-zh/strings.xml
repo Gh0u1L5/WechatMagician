@@ -25,4 +25,5 @@
     <string name="menu_sns_forward">转发</string>
     <string name="menu_sns_screenshot">截图</string>
     <string name="screenshot_prompt">"截图已保存至 "</string>
+    <string name="wait_prompt">请稍等片刻……</string>
 </resources>

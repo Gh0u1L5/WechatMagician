@@ -178,6 +178,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                                 val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
                                 val snsInfo = SnsCache[snsId] ?: return@listener false
                                 ForwardAsyncTask(snsInfo, layout.context).execute()
+                                Toast.makeText(
+                                        layout.context, res.promptWait, Toast.LENGTH_SHORT
+                                ).show()
                                 return@listener true
                             }
                             2 -> {
