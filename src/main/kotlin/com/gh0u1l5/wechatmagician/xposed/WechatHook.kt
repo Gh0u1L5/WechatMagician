@@ -308,7 +308,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             }
         })
 
-//        findAndHookMethod(typeImgStorage, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
+//        findAndHookMethod(pkg.ImgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
 //            @Throws(Throwable::class)
 //            override fun afterHookedMethod(param: MethodHookParam) {
 //                val imgId = param.args[0] as String?
