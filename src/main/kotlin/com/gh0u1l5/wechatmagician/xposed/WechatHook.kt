@@ -409,6 +409,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                         if (values["type"] != 10000) {
                             return
                         }
+                        if (!values.getAsString("content").startsWith("\"")) {
+                            return
+                        }
 
                         val msgId = values["msgId"] as Long
                         val msg = MessageCache[msgId] ?: return
