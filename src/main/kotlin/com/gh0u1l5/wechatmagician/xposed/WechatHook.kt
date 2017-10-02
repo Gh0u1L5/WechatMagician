@@ -345,13 +345,19 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
                 @Suppress("UNCHECKED_CAST")
                 val result = param.result as MutableMap<String, String?>? ?: return
-                if (result[".sysmsg.\$type"] != "revokemsg") {
-                    return
-                }
-                val msgTag = ".sysmsg.revokemsg.replacemsg"
-                val msg = result[msgTag] ?: return
-                if (msg.startsWith("\"")) {
+                if (result[".sysmsg.\$type"] == "revokemsg") {
+                    val msgTag = ".sysmsg.revokemsg.replacemsg"
+                    val msg = result[msgTag] ?: return
+                    if (!msg.startsWith("\"")) {
+                        return
+                    }
                     result[msgTag] = MessageUtil.applyEasterEgg(msg, res.labelEasterEgg)
+                }
+                if (result[".TimelineObject"] != null) {
+                    val id = result[".TimelineObject.id"]
+                    if (id != null) {
+                        SnsCache[id] = SnsCache.SnsInfo(result)
+                    }
                 }
             }
         })
