@@ -214,8 +214,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
                 val intent = callMethod(obj, "getIntent") as Intent? ?: return
-                if (intent.getIntExtra("max_select_count", -1) == 9) {
-                    intent.putExtra("max_select_count", 1000)
+                val max = intent.getIntExtra("max_select_count", 9)
+                if (max <= 9) {
+                    intent.putExtra("max_select_count", max + 991)
                 }
             }
         })
