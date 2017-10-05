@@ -48,9 +48,13 @@ object ImageUtil {
 
         val file = File(path)
         file.parentFile.mkdirs()
-        val out = FileOutputStream(file)
-        out.write(content)
-        out.close()
+        var out: OutputStream? = null
+        try {
+            out = FileOutputStream(file)
+            out.write(content)
+        } finally {
+            out?.close()
+        }
     }
 
     // writeBitmapToDisk writes the given bitmap to disk and returns the result.
