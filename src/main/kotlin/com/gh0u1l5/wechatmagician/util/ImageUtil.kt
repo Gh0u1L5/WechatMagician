@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat.JPEG
+import android.graphics.Bitmap.CompressFormat.PNG
 import android.graphics.Canvas
 import android.graphics.Color
 import android.view.View
@@ -48,7 +48,7 @@ object ImageUtil {
 
         val file = File(path)
         file.parentFile.mkdirs()
-        var out: OutputStream? = null
+        var out: FileOutputStream? = null
         try {
             out = FileOutputStream(file)
             out.write(content)
@@ -63,9 +63,7 @@ object ImageUtil {
         var out: FileOutputStream? = null
         try {
             out = FileOutputStream(file)
-            bitmap.compress(JPEG, 100, out)
-            out.flush()
-            return true
+            bitmap.compress(PNG, 100, out)
         } catch (_: FileNotFoundException) {
             if (!retry) {
                 return false
@@ -77,6 +75,7 @@ object ImageUtil {
         } finally {
             out?.close()
         }
+        return true
     }
 
     // replaceThumbDiskCache replaces the disk cache of a specific
