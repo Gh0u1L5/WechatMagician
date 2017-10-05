@@ -7,6 +7,7 @@ import android.content.res.XModuleResources
 import android.os.Environment
 import android.view.Gravity
 import android.view.Menu
+import android.view.View
 import android.widget.FrameLayout
 import android.widget.PopupMenu
 import android.widget.Toast
@@ -158,11 +159,22 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookConstructor(pkg.AdFrameLayout, C.Context, C.AttributeSet, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
-
                 val layout = param.thisObject as FrameLayout?
                 layout?.isLongClickable = true
-                layout?.setOnLongClickListener {
+                layout?.setOnLongClickListener { false }
+            }
+        })
+
+        findAndHookMethod("android.view.View", loader, "setOnLongClickListener", C.ViewOnLongClickListener, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                if (param.thisObject.javaClass != pkg.AdFrameLayout) {
+                    return
+                }
+
+                val layout = param.thisObject as FrameLayout? ?: return
+                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
+                param.args[0] = View.OnLongClickListener {
                     val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
                     val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
                     popup.menu.add(0, 1, 0, res.menuSnsForward)
