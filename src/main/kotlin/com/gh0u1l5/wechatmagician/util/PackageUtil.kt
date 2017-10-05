@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.util
 
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers.*
-import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
 
@@ -31,9 +30,9 @@ object PackageUtil {
 
     // findClassesFromPackage returns a list of all the classes contained in the given package.
     fun findClassesFromPackage(
-            loader: ClassLoader, apkFile: ApkFile, packageName: String, depth: Int = 0
+            loader: ClassLoader, classes: Array<DexClass>, packageName: String, depth: Int = 0
     ): List<Class<*>> {
-        return apkFile.dexClasses.filter predicate@ {
+        return classes.filter predicate@ {
             if (depth == 0) {
                 return@predicate it.packageName == packageName
             }

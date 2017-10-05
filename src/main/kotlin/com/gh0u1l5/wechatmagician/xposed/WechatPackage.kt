@@ -10,6 +10,7 @@ import com.gh0u1l5.wechatmagician.util.Version
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
+import net.dongliu.apk.parser.bean.DexClass
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -56,8 +57,17 @@ object WechatPackage {
     // WechatHook will do the runtime analysis and set the objects.
     @Synchronized fun init(param: XC_LoadPackage.LoadPackageParam) {
         val loader = param.classLoader
-        val apkFile = ApkFile(param.appInfo.sourceDir)
-        val version = Version(apkFile.apkMeta.versionName)
+        val version: Version
+        val classes: Array<DexClass>
+
+        var apkFile: ApkFile? = null
+        try {
+            apkFile = ApkFile(param.appInfo.sourceDir)
+            version = Version(apkFile.apkMeta.versionName)
+            classes = apkFile.dexClasses
+        } finally {
+            apkFile?.close()
+        }
 
         XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
         SQLiteDatabaseClass = when {
@@ -68,12 +78,12 @@ object WechatPackage {
             else -> null
         }
         EncEngine = findFirstClassWithMethod(
-                findClassesFromPackage(loader, apkFile, "com.tencent.mm.modelsfs"),
+                findClassesFromPackage(loader, classes, "com.tencent.mm.modelsfs"),
                 null, "seek", C.Long
         )
         EncEngineEDMethod = findMethodsByExactParameters(
                 EncEngine, C.Int, C.ByteArray, C.Int
-        ).firstOrNull()?.name ?: ""
+        ).firstOrNull()?.name ?: "" // NOTE: ED method may have duplicated entries.
 
         val pkgUI = "com.tencent.mm.ui"
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
@@ -82,7 +92,7 @@ object WechatPackage {
         PLTextView = findClassIfExists("com.tencent.mm.kiss.widget.textview.PLSysTextView", loader)
 
         val pkgSnsUI = "com.tencent.mm.plugin.sns.ui"
-        val snsUIClasses = findClassesFromPackage(loader, apkFile, pkgSnsUI)
+        val snsUIClasses = findClassesFromPackage(loader, classes, pkgSnsUI)
         if (MMActivity != null) {
             SnsUploadUI = findFirstClassWithField(
                     findClassesWithSuper(snsUIClasses, MMActivity!!),
@@ -101,7 +111,7 @@ object WechatPackage {
                 SelectConversationUI, C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 
-        val storageClasses = findClassesFromPackage(loader, apkFile, "com.tencent.mm.storage")
+        val storageClasses = findClassesFromPackage(loader, classes, "com.tencent.mm.storage")
         MsgInfoClass = findFirstClassWithMethod(storageClasses, C.Boolean, "isSystem")
         ContactInfoClass = findFirstClassWithMethod(storageClasses, C.String, "getCityCode")
         if (MsgInfoClass != null) {
@@ -113,7 +123,7 @@ object WechatPackage {
             ).firstOrNull()?.name ?: ""
         }
 
-        val platformClasses = findClassesFromPackage(loader, apkFile,"com.tencent.mm.sdk.platformtools")
+        val platformClasses = findClassesFromPackage(loader, classes,"com.tencent.mm.sdk.platformtools")
         XMLParserClass = findFirstClassWithMethod(
                 platformClasses, C.Map, C.String, C.String
         )
