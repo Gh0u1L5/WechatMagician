@@ -1,18 +1,16 @@
-package com.gh0u1l5.wechatmagician.xposed
+package com.gh0u1l5.wechatmagician.backend
 
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.res.XModuleResources
-import android.os.Environment
-import android.view.Gravity
 import android.view.Menu
-import android.view.View
+import android.view.MenuItem
 import android.widget.FrameLayout
-import android.widget.PopupMenu
-import android.widget.Toast
-import com.gh0u1l5.wechatmagician.ForwardAsyncTask
-import com.gh0u1l5.wechatmagician.util.C
+import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.storage.MessageCache
+import com.gh0u1l5.wechatmagician.storage.LocalizedResources
+import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.shadowCopy
@@ -21,21 +19,19 @@ import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
-import java.text.SimpleDateFormat
-import java.util.*
-import com.gh0u1l5.wechatmagician.util.UIUtil.searchViewGroup
 
 
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
-    private val res = ModuleResources
+    private val res = LocalizedResources
+    private val listeners = WechatListeners
     private lateinit var loader: ClassLoader
 
     // Hook for initializing localized resources.
     override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
-        ModuleResources.init(XModuleResources.createInstance(param?.modulePath, null))
+        res.init(XModuleResources.createInstance(param?.modulePath, null))
     }
 
     // Hook for hacking Wechat application.
@@ -46,7 +42,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         }
 
         try {
-            WechatPackage.init(param)
+            pkg.init(param)
             loader = param.classLoader
         } catch (e: Throwable) {
             log("INIT => ${e.message}")
@@ -141,12 +137,19 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as Menu? ?: return
-                val button = WechatButtons[param.thisObject.javaClass.name] ?: return
+                val menuItem = menu.add(0, 2, 0, res.buttonSelectAll)
 
-                val item = menu.add(button.groupId, button.itemId, button.order, button.title)
-                button.decorate(item, param.thisObject)
-                val listener = button.listener(param.thisObject)
-                item.setOnMenuItemClickListener(listener)
+                val intent = (param.thisObject as Activity).intent
+                menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
+                if (menuItem.isChecked) {
+                    menuItem.title = res.buttonSelectAll + "  \u2611"
+                } else {
+                    menuItem.title = res.buttonSelectAll + "  \u2610"
+                }
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menuItem.setOnMenuItemClickListener(
+                        listeners.onSelectContactUISelectAllListener(param.thisObject)
+                )
             }
         })
     }
@@ -159,57 +162,17 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
         findAndHookConstructor(pkg.AdFrameLayout, C.Context, C.AttributeSet, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val layout = param.thisObject as FrameLayout?
-                layout?.isLongClickable = true
-                layout?.setOnLongClickListener { false }
+                val layout = param.thisObject as FrameLayout
+                layout.isLongClickable = true
+                layout.setOnLongClickListener { false }
             }
         })
 
         findAndHookMethod("android.view.View", loader, "setOnLongClickListener", C.ViewOnLongClickListener, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                if (param.thisObject.javaClass != pkg.AdFrameLayout) {
-                    return
-                }
-
-                val layout = param.thisObject as FrameLayout? ?: return
-                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
-                param.args[0] = View.OnLongClickListener {
-                    val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
-                    val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
-                    popup.menu.add(0, 1, 0, res.menuSnsForward)
-                    popup.menu.add(0, 2, 0, res.menuSnsScreenshot)
-                    popup.setOnMenuItemClickListener listener@ { item ->
-                        when (item.itemId) {
-                            1 -> {
-                                if (pkg.PLTextView == null) {
-                                    return@listener false
-                                }
-                                val textView = searchViewGroup(layout, pkg.PLTextView!!.name)
-                                val rowId = textView?.tag as String?
-                                val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
-                                val snsInfo = SnsCache[snsId] ?: return@listener false
-                                ForwardAsyncTask(snsInfo, layout.context).execute()
-                                Toast.makeText(
-                                        layout.context, res.promptWait, Toast.LENGTH_SHORT
-                                ).show()
-                                return@listener true
-                            }
-                            2 -> {
-                                val time = Calendar.getInstance().time
-                                val filename = "SNS-${formatter.format(time)}.jpg"
-                                val path = "$storage/screenshot/$filename"
-                                val bitmap = ImageUtil.drawView(layout)
-                                ImageUtil.writeBitmapToDisk(path, bitmap)
-                                Toast.makeText(
-                                        layout.context, res.promptScreenShot + path, Toast.LENGTH_SHORT
-                                ).show()
-                                return@listener true
-                            }
-                            else -> false
-                        }
-                    }
-                    popup.show(); true
+                if (param.thisObject.javaClass == pkg.AdFrameLayout) {
+                    param.args[0] = listeners.onAdFrameLongClickListener(param.thisObject)
                 }
             }
         })

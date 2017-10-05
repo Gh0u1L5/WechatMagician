@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.util
+package com.gh0u1l5.wechatmagician
 
 // Version is a helper class for comparing version strings.
 class Version(versionName: String) {

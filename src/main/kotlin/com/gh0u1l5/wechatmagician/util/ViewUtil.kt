@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
-object UIUtil {
+object ViewUtil {
     // dumpViewGroup dumps the structure of a view group.
     fun dumpViewGroup(prefix: String, viewGroup: ViewGroup) {
         repeat(viewGroup.childCount, {

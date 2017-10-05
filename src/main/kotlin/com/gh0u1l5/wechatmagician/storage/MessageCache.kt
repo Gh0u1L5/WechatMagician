@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.xposed
+package com.gh0u1l5.wechatmagician.storage
 
 import de.robv.android.xposed.XposedHelpers.getLongField
 import kotlin.concurrent.timer
@@ -12,7 +12,7 @@ object MessageCache {
     // Clean cache for every 30 minutes
     init {
         timer(period = 30 * 60 * 1000, action = {
-            MessageCache.clear()
+            clear()
         })
     }
 

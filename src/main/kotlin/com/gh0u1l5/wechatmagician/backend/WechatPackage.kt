@@ -1,12 +1,11 @@
-package com.gh0u1l5.wechatmagician.xposed
+package com.gh0u1l5.wechatmagician.backend
 
-import com.gh0u1l5.wechatmagician.util.C
+import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesWithSuper
-import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithField
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFirstClassWithMethod
-import com.gh0u1l5.wechatmagician.util.Version
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
@@ -83,7 +82,7 @@ object WechatPackage {
         )
         EncEngineEDMethod = findMethodsByExactParameters(
                 EncEngine, C.Int, C.ByteArray, C.Int
-        ).firstOrNull()?.name ?: "" // NOTE: ED method may have duplicated entries.
+        ).firstOrNull()?.name ?: ""
 
         val pkgUI = "com.tencent.mm.ui"
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)

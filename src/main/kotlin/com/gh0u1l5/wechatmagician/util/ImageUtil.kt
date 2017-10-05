@@ -5,8 +5,8 @@ import android.graphics.Bitmap.CompressFormat.PNG
 import android.graphics.Canvas
 import android.graphics.Color
 import android.view.View
-import com.gh0u1l5.wechatmagician.xposed.SnsCache
-import com.gh0u1l5.wechatmagician.xposed.WechatPackage
+import com.gh0u1l5.wechatmagician.storage.SnsCache
+import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XposedHelpers.*
 import java.io.File
 import java.io.FileNotFoundException

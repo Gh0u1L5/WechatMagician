@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.xposed
+package com.gh0u1l5.wechatmagician.storage
 
 import android.content.res.XModuleResources
 import android.graphics.Bitmap
@@ -6,8 +6,8 @@ import android.graphics.BitmapFactory
 import com.gh0u1l5.wechatmagician.R
 import java.io.InputStream
 
-// ModuleResources describes the localized resources used by the module.
-object ModuleResources {
+// LocalizedResources describes the localized resources used by the module.
+object LocalizedResources {
     lateinit var menuSnsForward: String
     lateinit var promptWait: String
     lateinit var menuSnsScreenshot: String

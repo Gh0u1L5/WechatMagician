@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.xposed
+package com.gh0u1l5.wechatmagician.storage
 
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
@@ -30,10 +30,10 @@ object SnsCache {
                 return null
             }
             return SnsMedia(
-                    url   = raw["$mediaListKey.$key.url"],
-                    type  = raw["$mediaListKey.$key.url.\$type"],
-                    idx   = raw["$mediaListKey.$key.url.\$enc_idx"],
-                    key   = raw["$mediaListKey.$key.url.\$key"],
+                    url = raw["$mediaListKey.$key.url"],
+                    type = raw["$mediaListKey.$key.url.\$type"],
+                    idx = raw["$mediaListKey.$key.url.\$enc_idx"],
+                    key = raw["$mediaListKey.$key.url.\$key"],
                     token = raw["$mediaListKey.$key.url.\$token"]
             )
         }
