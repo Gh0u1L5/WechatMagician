@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.backend
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
-import android.content.res.XModuleResources
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -17,12 +16,14 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.shadowCopy
 import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
+import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
+import android.os.Build
 
 
 // WechatHook contains the entry points and all the hooks.
-class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
+class WechatHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
 
     private val pkg = WechatPackage
     private val res = LocalizedResources
@@ -30,8 +31,16 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
     private lateinit var loader: ClassLoader
 
     // Hook for initializing localized resources.
-    override fun initZygote(param: IXposedHookZygoteInit.StartupParam?) {
-        res.init(XModuleResources.createInstance(param?.modulePath, null))
+    override fun handleInitPackageResources(resparam: XC_InitPackageResources.InitPackageResourcesParam) {
+        if (resparam.packageName != "com.tencent.mm") {
+            return
+        }
+
+        res.language = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            resparam.res.configuration.locales[0]
+        } else {
+            resparam.res.configuration.locale
+        }.language
     }
 
     // Hook for hacking Wechat application.
@@ -137,14 +146,14 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as Menu? ?: return
-                val menuItem = menu.add(0, 2, 0, res.buttonSelectAll)
+                val menuItem = menu.add(0, 2, 0, res["button_select_all"])
 
                 val intent = (param.thisObject as Activity).intent
                 menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
                 if (menuItem.isChecked) {
-                    menuItem.title = res.buttonSelectAll + "  \u2611"
+                    menuItem.title = res["button_select_all"] + "  \u2611"
                 } else {
-                    menuItem.title = res.buttonSelectAll + "  \u2610"
+                    menuItem.title = res["button_select_all"] + "  \u2610"
                 }
                 menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 menuItem.setOnMenuItemClickListener(
@@ -330,7 +339,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
                     if (!msg.startsWith("\"")) {
                         return
                     }
-                    result[msgTag] = MessageUtil.applyEasterEgg(msg, res.labelEasterEgg)
+                    result[msgTag] = MessageUtil.applyEasterEgg(msg, res["label_easter_egg"])
                 }
                 if (result[".TimelineObject"] != null) {
                     val id = result[".TimelineObject.id"]
@@ -455,20 +464,9 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 //        })
     }
 
-    // handleImageRecall notifies user that someone has recalled an image.
-    private fun handleImageRecall(origin: Any, values: ContentValues) {
-        if (getIntField(origin, "field_type") != 3) {
-            return
-        }
-        values.remove("type")
-        values.remove("content")
-        val imgPath = getObjectField(origin, "field_imgPath")
-        ImageUtil.replaceThumbnail(imgPath as String, res.bitmapRecalled)
-    }
-
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(res.labelDeleted, content)?.let { msg ->
+        MessageUtil.notifyInfoDelete(res["label_deleted"], content)?.let { msg ->
             values.remove("sourceType")
             values.put("content", msg)
         }
@@ -476,7 +474,7 @@ class WechatHook : IXposedHookZygoteInit, IXposedHookLoadPackage {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(res.labelDeleted, curActionBuf)?.let { msg ->
+        MessageUtil.notifyCommentDelete(res["label_deleted"], curActionBuf)?.let { msg ->
             values.remove("commentflag")
             values.put("curActionBuf", msg)
         }

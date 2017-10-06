@@ -1,41 +1,39 @@
 package com.gh0u1l5.wechatmagician.storage
 
-import android.content.res.XModuleResources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import com.gh0u1l5.wechatmagician.R
-import java.io.InputStream
+import de.robv.android.xposed.XposedBridge.log
 
 // LocalizedResources describes the localized resources used by the module.
 object LocalizedResources {
-    lateinit var menuSnsForward: String
-    lateinit var promptWait: String
-    lateinit var menuSnsScreenshot: String
-    lateinit var promptScreenShot: String
 
-    lateinit var labelEasterEgg: String
-    lateinit var labelDeleted: String
-    lateinit var bitmapRecalled: Bitmap
+    @Volatile var language: String = "zh"
 
-    lateinit var buttonSelectAll: String
+    private val resources: Map<String, Map<String, String>> = mapOf(
+            "zh" to mapOf(
+                    "menu_sns_forward"    to "转发",
+                    "menu_sns_screenshot" to "截图",
+                    "prompt_wait"         to "请稍等片刻……",
+                    "prompt_screenshot"   to "截图已保存至 ",
+                    "label_easter_egg"    to "妄图撤回一条消息，啧啧",
+                    "label_deleted"       to "[已删除]",
+                    "button_select_all"   to "全选"
+            ),
+            "en" to mapOf(
+                    "menu_sns_forward"    to "Forward",
+                    "menu_sns_screenshot" to "Screenshot",
+                    "prompt_wait"         to "Please wait for a while......",
+                    "prompt_screenshot"   to "The screenshot has been saved to ",
+                    "label_easter_egg"    to "want to recall the message, idiot.",
+                    "label_deleted"       to "[Deleted]",
+                    "button_select_all"   to "All"
+            )
+    )
 
-    fun init(res: XModuleResources) {
-        menuSnsForward = res.getString(R.string.menu_sns_forward)
-        promptWait = res.getString(R.string.wait_prompt)
-        menuSnsScreenshot = res.getString(R.string.menu_sns_screenshot)
-        promptScreenShot = res.getString(R.string.screenshot_prompt)
-
-        labelEasterEgg = res.getString(R.string.easter_egg)
-        labelDeleted = res.getString(R.string.label_deleted)
-
-        buttonSelectAll = res.getString(R.string.button_select_all)
-
-        var imgStream: InputStream? = null
-        try {
-            imgStream = res.assets.open("image_recall_${res.getString(R.string.language)}.jpg")
-            bitmapRecalled = BitmapFactory.decodeStream(imgStream)
-        } finally {
-            imgStream?.close()
+    operator fun get(key: String): String {
+        val value = (resources[language] ?: resources["zh"])!![key]
+        if (value == null) {
+            log("RES => Unknown resource: $key")
+            return "???"
         }
+        return value
     }
 }

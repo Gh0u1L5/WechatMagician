@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="language">zh_cn</string>
     <string name="app_name">微信巫师</string>
     <string name="app_desc">防止微信撤回聊天消息或删除朋友圈动态、评论</string>
 
@@ -18,12 +17,4 @@
         \t感谢 @rarnu 编写的防撤回插件wechat_no_revoke
     </string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
-
-    <string name="label_deleted">[已删除]</string>
-    <string name="easter_egg">妄图撤回一条消息，啧啧</string>
-    <string name="button_select_all">全选</string>
-    <string name="menu_sns_forward">转发</string>
-    <string name="menu_sns_screenshot">截图</string>
-    <string name="screenshot_prompt">"截图已保存至 "</string>
-    <string name="wait_prompt">请稍等片刻……</string>
 </resources>

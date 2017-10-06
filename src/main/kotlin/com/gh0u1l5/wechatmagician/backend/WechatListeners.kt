@@ -85,8 +85,8 @@ object WechatListeners {
         return View.OnLongClickListener {
             val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
             val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
-            popup.menu.add(0, 1, 0, res.menuSnsForward)
-            popup.menu.add(0, 2, 0, res.menuSnsScreenshot)
+            popup.menu.add(0, 1, 0, res["menu_sns_forward"])
+            popup.menu.add(0, 2, 0, res["menu_sns_screenshot"])
             popup.setOnMenuItemClickListener listener@ { item ->
                 when (item.itemId) {
                     1 -> {
@@ -99,7 +99,7 @@ object WechatListeners {
                         val snsInfo = SnsCache[snsId] ?: return@listener false
                         ForwardAsyncTask(snsInfo, layout.context).execute()
                         Toast.makeText(
-                                layout.context, res.promptWait, Toast.LENGTH_SHORT
+                                layout.context, res["prompt_wait"], Toast.LENGTH_SHORT
                         ).show()
                         return@listener true
                     }
@@ -110,7 +110,7 @@ object WechatListeners {
                         val bitmap = ImageUtil.drawView(layout)
                         ImageUtil.writeBitmapToDisk(path, bitmap)
                         Toast.makeText(
-                                layout.context, res.promptScreenShot + path, Toast.LENGTH_SHORT
+                                layout.context, res["prompt_screenshot"] + path, Toast.LENGTH_SHORT
                         ).show()
                         return@listener true
                     }
