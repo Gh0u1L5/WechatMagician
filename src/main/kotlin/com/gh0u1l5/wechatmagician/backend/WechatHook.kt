@@ -130,6 +130,10 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
+                if (param.thisObject.javaClass != pkg.SelectContactUI) {
+                    return
+                }
+
                 val menu = param.args[0] as Menu? ?: return
                 val menuItem = menu.add(0, 2, 0, res["button_select_all"])
 
