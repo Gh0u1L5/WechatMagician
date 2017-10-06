@@ -107,7 +107,7 @@ object WechatListeners {
                         val time = Calendar.getInstance().time
                         val filename = "SNS-${formatter.format(time)}.jpg"
                         val path = "$storage/screenshot/$filename"
-                        val bitmap = ImageUtil.drawView(layout)
+                        val bitmap = ViewUtil.drawView(layout)
                         ImageUtil.writeBitmapToDisk(path, bitmap)
                         Toast.makeText(
                                 layout.context, res["prompt_screenshot"] + path, Toast.LENGTH_SHORT

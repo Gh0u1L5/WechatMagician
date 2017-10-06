@@ -1,5 +1,8 @@
 package com.gh0u1l5.wechatmagician.util
 
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import android.view.View
 import android.view.ViewGroup
 import de.robv.android.xposed.XposedBridge
@@ -43,5 +46,15 @@ object ViewUtil {
             }
         })
         return null
+    }
+
+    // drawView draws the content of a view to a bitmap.
+    fun drawView(view: View): Bitmap {
+        val width = view.width
+        val height = view.height
+        val b = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        b.eraseColor(Color.WHITE)
+        view.draw(Canvas(b))
+        return b
     }
 }
