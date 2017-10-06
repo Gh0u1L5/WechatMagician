@@ -16,32 +16,17 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.shadowCopy
 import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
-import de.robv.android.xposed.callbacks.XC_InitPackageResources
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
-import android.os.Build
 
 
 // WechatHook contains the entry points and all the hooks.
-class WechatHook : IXposedHookLoadPackage, IXposedHookInitPackageResources {
+class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
     private val res = LocalizedResources
     private val listeners = WechatListeners
     private lateinit var loader: ClassLoader
-
-    // Hook for initializing localized resources.
-    override fun handleInitPackageResources(resparam: XC_InitPackageResources.InitPackageResourcesParam) {
-        if (resparam.packageName != "com.tencent.mm") {
-            return
-        }
-
-        res.language = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            resparam.res.configuration.locales[0]
-        } else {
-            resparam.res.configuration.locale
-        }.language
-    }
 
     // Hook for hacking Wechat application.
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
