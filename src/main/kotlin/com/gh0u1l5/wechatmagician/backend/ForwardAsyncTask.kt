@@ -5,17 +5,26 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.storage.LocalizedResources
+import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
-import com.gh0u1l5.wechatmagician.storage.SnsCache.SnsInfo
 import de.robv.android.xposed.XposedBridge.log
+import java.lang.ref.WeakReference
 
 
-class ForwardAsyncTask(private val snsInfo: SnsInfo, private val context: Context) : AsyncTask<Void, Void, Throwable?>() {
+class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
+    private val res = LocalizedResources
+
+    private val snsInfo = SnsCache[snsId]
+    private val context = WeakReference(context)
     private val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
 
     override fun doInBackground(vararg params: Void): Throwable? {
         return try {
+            if (snsInfo == null) {
+                throw Error(res["prompt_sns_refresh"])
+            }
             snsInfo.medias.forEachIndexed { i, media ->
                 ImageUtil.downloadImage("$storage/.cache/$i", media)
             }; null
@@ -24,9 +33,9 @@ class ForwardAsyncTask(private val snsInfo: SnsInfo, private val context: Contex
 
     override fun onPostExecute(result: Throwable?) {
         if (result != null) {
-            log("DOWNLOAD => $result")
+            log("FORWARD => $result")
             Toast.makeText(
-                    context, result.toString(), Toast.LENGTH_SHORT
+                    context.get(), result.toString(), Toast.LENGTH_SHORT
             ).show()
             return
         }
@@ -34,12 +43,12 @@ class ForwardAsyncTask(private val snsInfo: SnsInfo, private val context: Contex
             return
         }
 
-        val intent = Intent(context, WechatPackage.SnsUploadUI)
+        val intent = Intent(context.get(), WechatPackage.SnsUploadUI)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                .putExtra("Kdescription", snsInfo.content)
+                .putExtra("Kdescription", snsInfo?.content)
                 .putExtra("Ksnsupload_type", 9)
-        if (snsInfo.medias.isNotEmpty()) {
+        if (snsInfo?.medias?.isEmpty() == false) {
             intent.putStringArrayListExtra(
                     "sns_kemdia_path_list",
                     ArrayList((0 until snsInfo.medias.size).map {
@@ -48,6 +57,6 @@ class ForwardAsyncTask(private val snsInfo: SnsInfo, private val context: Contex
             )
             intent.removeExtra("Ksnsupload_type")
         }
-        context.startActivity(intent)
+        context.get()?.startActivity(intent)
     }
 }

@@ -12,7 +12,6 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
-import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import java.lang.reflect.Field
 import java.text.SimpleDateFormat
@@ -97,16 +96,7 @@ object WechatListeners {
                         val textView = ViewUtil.searchViewGroup(layout, pkg.PLTextView!!.name)
                         val rowId = textView?.tag as String?
                         val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
-                        val snsInfo = SnsCache[snsId]
-                        if (snsInfo == null) {
-                            log("FORWARD => Cannot find record: id = $snsId")
-                            Toast.makeText(
-                                    layout.context, res["prompt_sns_refresh"], Toast.LENGTH_SHORT
-                            ).show()
-                            return@listener false
-                        }
-
-                        ForwardAsyncTask(snsInfo, layout.context).execute()
+                        ForwardAsyncTask(snsId, layout.context).execute()
                         Toast.makeText(
                                 layout.context, res["prompt_wait"], Toast.LENGTH_SHORT
                         ).show()
