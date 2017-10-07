@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.gh0u1l5.wechatmagician
 
 // C.[class] is a shortcut for [class]::class.java
