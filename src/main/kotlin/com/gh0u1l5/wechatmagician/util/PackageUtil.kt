@@ -4,6 +4,7 @@ import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
+import java.lang.reflect.Method
 
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
@@ -18,6 +19,14 @@ object PackageUtil {
             it.isAccessible = true
             it.set(copy, it.get(obj))
         }
+    }
+
+    fun findClassIfExists(className:String, classLoader: ClassLoader): Class<*>? {
+        return try { findClass(className, classLoader) } catch (_: Throwable) { null }
+    }
+
+    fun findMethodExactIfExists(clazz: Class<*>, methodName: String, vararg parameterTypes: Class<*>): Method? {
+        return try { findMethodExact(clazz, methodName, *parameterTypes) } catch (_: Throwable) { null }
     }
 
     // getClassName parses the standard class name of the given DexClass.
