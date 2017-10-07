@@ -13,6 +13,7 @@ object LocalizedResources {
                     "menu_sns_screenshot" to "截图",
                     "prompt_wait"         to "请稍等片刻……",
                     "prompt_screenshot"   to "截图已保存至 ",
+                    "prompt_sns_refresh"  to "数据未同步，请下拉刷新后重试",
                     "label_easter_egg"    to "妄图撤回一条消息，啧啧",
                     "label_deleted"       to "[已删除]",
                     "button_select_all"   to "全选"
@@ -22,6 +23,7 @@ object LocalizedResources {
                     "menu_sns_screenshot" to "Screenshot",
                     "prompt_wait"         to "Please wait for a while......",
                     "prompt_screenshot"   to "The screenshot has been saved to ",
+                    "prompt_sns_refresh"  to "Record not found, please retry after swiping.",
                     "label_easter_egg"    to "want to recall the message, idiot.",
                     "label_deleted"       to "[Deleted]",
                     "button_select_all"   to "All"
