@@ -91,9 +91,8 @@ class WechatHook : IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
-                val bundle = param.args[0] as Bundle?
                 val intent = param.args[0] as Intent?
-                log("Activity.startActivity => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
+                log("Activity.startActivity => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}")
             }
         })
 

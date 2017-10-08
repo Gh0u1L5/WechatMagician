@@ -47,11 +47,15 @@ object MessageUtil {
     }
 
     fun argsToString(args: Array<*>?): String? {
-        return args?.joinToString(", ")
+        val str = args?.joinToString(", ")
+        return "{$str}"
     }
 
     fun bundleToString(bundle: Bundle?): String? {
-        return bundle?.keySet()?.joinToString(", ") {"$it = ${bundle[it]}"}
+        val str = bundle?.keySet()?.joinToString(", ") {
+            "$it = ${bundle[it]}"
+        }
+        return "{$str}"
     }
 
     fun bytesToHexString(arg: ByteArray?): String {
