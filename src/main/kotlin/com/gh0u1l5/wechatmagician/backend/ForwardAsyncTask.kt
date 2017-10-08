@@ -47,17 +47,23 @@ class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void,
 
         val intent = Intent(context.get(), WechatPackage.SnsUploadUI)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                .addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                .putExtra("Kdescription", snsInfo?.content)
                 .putExtra("Ksnsupload_type", 9)
+                .putExtra("Kdescription", snsInfo?.content)
         if (snsInfo?.medias?.isEmpty() == false) {
-            intent.putStringArrayListExtra(
-                    "sns_kemdia_path_list",
-                    ArrayList((0 until snsInfo.medias.size).map {
-                        "$storage/.cache/$it"
-                    })
-            )
-            intent.removeExtra("Ksnsupload_type")
+            if (snsInfo.medias[0].type == "6") {
+                intent.putExtra("Ksnsupload_type", 14)
+                        .putExtra("sight_md5", snsInfo.medias[0].main?.md5)
+                        .putExtra("KSightPath", "$storage/.cache/0")
+                        .putExtra("KSightThumbPath", "$storage/.cache/0.thumb")
+            } else {
+                intent.putStringArrayListExtra(
+                        "sns_kemdia_path_list",
+                        ArrayList((0 until snsInfo.medias.size).map {
+                            "$storage/.cache/$it"
+                        })
+                )
+                intent.removeExtra("Ksnsupload_type")
+            }
         }
         context.get()?.startActivity(intent)
     }
