@@ -6,6 +6,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
@@ -26,6 +27,7 @@ object WechatPackage {
     var PLTextView: Class<*>? = null
 
     var SnsUploadUI: Class<*>? = null
+    var SnsUploadUIEditTextField = ""
     var AdFrameLayout: Class<*>? = null
     var SnsPostTextView: Class<*>? = null
     var SnsPhotosContent: Class<*>? = null
@@ -96,6 +98,9 @@ object WechatPackage {
                 .filterBySuper(MMActivity)
                 .filterByField("$pkgSnsUI.SnsUploadSayFooter")
                 .firstOrNull("SnsUploadUI")
+        SnsUploadUIEditTextField = findFieldsWithType(
+                SnsUploadUI, "$pkgSnsUI.SnsEditText"
+        ).firstOrNull()?.name ?: ""
         AdFrameLayout = findClassIfExists("$pkgSnsUI.AdFrameLayout", loader)
         SnsPostTextView = findClassIfExists("$pkgSnsUI.widget.SnsPostDescPreloadTextView", loader)
         SnsPhotosContent = findClassIfExists("$pkgSnsUI.PhotosContent", loader)

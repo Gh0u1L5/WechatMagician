@@ -51,6 +51,10 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(this::hookSnsItemUI, {
             pkg.AdFrameLayout = null
         })
+        tryHook(this::hookSnsUploadUI, {
+            pkg.SnsUploadUI = null
+        })
+
         tryHook(this::hookAlbumPreviewUI, {
             pkg.AlbumPreviewUI = null
         })
@@ -170,6 +174,25 @@ class WechatHook : IXposedHookLoadPackage {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 if (param.thisObject.javaClass == pkg.AdFrameLayout) {
                     param.args[0] = listeners.onAdFrameLongClickListener(param.thisObject)
+                }
+            }
+        })
+    }
+
+    private fun hookSnsUploadUI() {
+        if (pkg.SnsUploadUI == null) {
+            return
+        }
+
+        // Hook SnsUploadUI.onPause to destroy the activity properly when forwarding moments.
+        findAndHookMethod(pkg.SnsUploadUI, "onPause", object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                val intent = callMethod(obj, "getIntent") as Intent?
+                if (intent?.extras?.getBoolean("Ksnsforward") == true) {
+                    val editText = getObjectField(obj, pkg.SnsUploadUIEditTextField)
+                    callMethod(editText, "setText", "")
                 }
             }
         })

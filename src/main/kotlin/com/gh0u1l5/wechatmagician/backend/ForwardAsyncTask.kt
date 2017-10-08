@@ -47,6 +47,7 @@ class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void,
 
         val intent = Intent(context.get(), WechatPackage.SnsUploadUI)
                 .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                .putExtra("Ksnsforward", true)
                 .putExtra("Ksnsupload_type", 9)
                 .putExtra("Kdescription", snsInfo?.content)
         if (snsInfo?.medias?.isEmpty() == false) {
