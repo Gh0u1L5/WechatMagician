@@ -92,12 +92,10 @@ object WechatPackage {
         PLTextView = findClassIfExists("com.tencent.mm.kiss.widget.textview.PLSysTextView", loader)
 
         val pkgSnsUI = "com.tencent.mm.plugin.sns.ui"
-        if (MMActivity != null) {
-            SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
-                    .filterBySuper(MMActivity)
-                    .filterByField("$pkgSnsUI.SnsUploadSayFooter")
-                    .firstOrNull("SnsUploadUI")
-        }
+        SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
+                .filterBySuper(MMActivity)
+                .filterByField("$pkgSnsUI.SnsUploadSayFooter")
+                .firstOrNull("SnsUploadUI")
         AdFrameLayout = findClassIfExists("$pkgSnsUI.AdFrameLayout", loader)
         SnsPostTextView = findClassIfExists("$pkgSnsUI.widget.SnsPostDescPreloadTextView", loader)
         SnsPhotosContent = findClassIfExists("$pkgSnsUI.PhotosContent", loader)

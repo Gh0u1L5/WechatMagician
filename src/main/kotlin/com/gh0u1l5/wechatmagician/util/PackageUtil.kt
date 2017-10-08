@@ -12,6 +12,9 @@ object PackageUtil {
 
     class Classes(private val classes: List<Class<*>>) {
         fun filterBySuper(superClass: Class<*>?): Classes {
+            if (superClass == null) {
+                return Classes(listOf())
+            }
             return Classes(classes.filter { it.superclass == superClass })
         }
 
@@ -97,7 +100,9 @@ object PackageUtil {
         if (clazz == null) {
             return listOf()
         }
-        return XposedHelpers.findMethodsByExactParameters(clazz, returnType, *parameterTypes).toList()
+        return XposedHelpers.findMethodsByExactParameters(
+                clazz, returnType, *parameterTypes
+        ).toList()
     }
 
     // findFieldsWithGenericType finds all the fields of the given type.
