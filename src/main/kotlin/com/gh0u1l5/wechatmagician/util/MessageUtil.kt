@@ -1,5 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
+import android.os.Bundle
+
 // MessageUtil is a helper object for processing Wechat internal strings / byte arrays.
 object MessageUtil {
 
@@ -44,9 +46,12 @@ object MessageUtil {
         return msg.copyOfRange(0, start) + len + "$head ".toByteArray() + msg.copyOfRange(start + lenSize, msg.size)
     }
 
-    fun argsToString(arg: Array<*>?): String {
-        if (arg == null) return ""
-        return arg.joinToString(", ")
+    fun argsToString(args: Array<*>?): String? {
+        return args?.joinToString(", ")
+    }
+
+    fun bundleToString(bundle: Bundle?): String? {
+        return bundle?.keySet()?.joinToString(", ") {"$it = ${bundle[it]}"}
     }
 
     fun bytesToHexString(arg: ByteArray?): String {

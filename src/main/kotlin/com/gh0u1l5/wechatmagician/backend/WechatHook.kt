@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.backend
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
@@ -12,6 +13,7 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.MessageUtil.bundleToString
 import com.gh0u1l5.wechatmagician.util.PackageUtil.shadowCopy
 import de.robv.android.xposed.*
 import de.robv.android.xposed.XposedBridge.*
@@ -89,9 +91,9 @@ class WechatHook : IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
+                val bundle = param.args[0] as Bundle?
                 val intent = param.args[0] as Intent?
-                val extras = intent?.extras
-                log("Activity.startActivity => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
+                log("Activity.startActivity => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
             }
         })
 
@@ -100,9 +102,9 @@ class WechatHook : IXposedHookLoadPackage {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
+                val bundle = param.args[0] as Bundle?
                 val intent = callMethod(obj, "getIntent") as Intent?
-                val extras = intent?.extras
-                log("Activity.onCreate => ${obj.javaClass}, intent => ${extras?.keySet()?.map{"$it = ${extras[it]}"}}")
+                log("Activity.onCreate => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
             }
         })
 
