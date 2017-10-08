@@ -2,13 +2,11 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
-import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XposedHelpers.*
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.net.URL
 
 // ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
@@ -23,35 +21,6 @@ object ImageUtil {
         val storage = WechatPackage.ImgStorageObject ?: return null
         val load = WechatPackage.ImgStorageLoadMethod
         return callMethod(storage, load, imgId, "th_", "", false) as String
-    }
-
-    fun downloadImage(path: String, media: SnsCache.SnsMedia) {
-        if (media.type != "1") {
-            throw Error("Unsupported media type: ${media.type}")
-        }
-        if (media.token == null || media.idx == null) {
-            throw Error("Null token or idx.")
-        }
-
-        val content = URL(
-                "${media.url}?tp=wxpc&token=${media.token}&idx=${media.idx}"
-        ).readBytes()
-        if (content.isEmpty()) {
-            return
-        }
-        val encEngine = newInstance(WechatPackage.EncEngine, media.key)
-        callMethod(encEngine, WechatPackage.EncEngineEDMethod, content, content.size)
-        callMethod(encEngine, "free")
-
-        val file = File(path)
-        file.parentFile.mkdirs()
-        var out: FileOutputStream? = null
-        try {
-            out = FileOutputStream(file)
-            out.write(content)
-        } finally {
-            out?.close()
-        }
     }
 
     // writeBitmapToDisk writes the given bitmap to disk and returns the result.

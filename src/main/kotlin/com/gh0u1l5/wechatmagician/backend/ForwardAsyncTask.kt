@@ -7,7 +7,7 @@ import android.os.Environment
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
-import com.gh0u1l5.wechatmagician.util.ImageUtil
+import com.gh0u1l5.wechatmagician.util.DownloadUtil
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 
@@ -25,7 +25,10 @@ class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void,
                 throw Error(res["prompt_sns_refresh"])
             }
             snsInfo.medias.forEachIndexed { i, media ->
-                ImageUtil.downloadImage("$storage/.cache/$i", media)
+                when(media.type) {
+                    "2" -> DownloadUtil.downloadImage("$storage/.cache/$i", media)
+                    "6" -> DownloadUtil.downloadVideo("$storage/.cache/$i", media)
+                }
             }; null
         } catch (e: Throwable) { e }
     }

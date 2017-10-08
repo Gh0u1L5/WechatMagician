@@ -7,12 +7,18 @@ import java.math.BigInteger
 // SnsCache records the timeline objects browsed by the user.
 object SnsCache {
 
-    data class SnsMedia(
+    data class SnsMediaURL(
             val url: String?,
-            val type: String?,
+            val md5: String?,
             val idx: String?,
             val key: String?,
             val token: String?
+    )
+
+    data class SnsMedia(
+            val type: String?,
+            val main: SnsMediaURL?,
+            val thumb: SnsMediaURL?
     )
 
     class SnsInfo(raw: MutableMap<String, String?>) {
@@ -20,6 +26,19 @@ object SnsCache {
 
         val content = raw[".TimelineObject.contentDesc"]
         val medias = parseMedias(raw)
+
+        private fun parseMediaURL(key: String, raw: MutableMap<String, String?>): SnsMediaURL? {
+            if (!raw.containsKey("$mediaListKey.$key")) {
+                return null
+            }
+            return SnsMediaURL(
+                    url   = raw["$mediaListKey.$key"],
+                    md5   = raw["$mediaListKey.$key.\$md5"],
+                    idx   = raw["$mediaListKey.$key.\$enc_idx"],
+                    key   = raw["$mediaListKey.$key.\$key"],
+                    token = raw["$mediaListKey.$key.\$token"]
+            )
+        }
 
         private fun parseMedia(key: String, raw: MutableMap<String, String?>): SnsMedia? {
             if (key == "media0") {
@@ -29,11 +48,9 @@ object SnsCache {
                 return null
             }
             return SnsMedia(
-                    url = raw["$mediaListKey.$key.url"],
-                    type = raw["$mediaListKey.$key.url.\$type"],
-                    idx = raw["$mediaListKey.$key.url.\$enc_idx"],
-                    key = raw["$mediaListKey.$key.url.\$key"],
-                    token = raw["$mediaListKey.$key.url.\$token"]
+                    type  = raw["$mediaListKey.$key.type"],
+                    main  = parseMediaURL("$key.url", raw),
+                    thumb = parseMediaURL("$key.thumb", raw)
             )
         }
 
