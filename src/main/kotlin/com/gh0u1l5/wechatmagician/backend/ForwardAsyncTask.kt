@@ -23,7 +23,7 @@ class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void,
     override fun doInBackground(vararg params: Void): Throwable? {
         return try {
             if (snsInfo == null) {
-                throw Error(res["prompt_sns_refresh"])
+                throw Error(res["prompt_sns_invalid"])
             }
             snsInfo.medias.forEachIndexed { i, media ->
                 when(media.type) {
