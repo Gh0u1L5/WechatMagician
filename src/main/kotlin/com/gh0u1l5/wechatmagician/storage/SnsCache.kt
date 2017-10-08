@@ -59,9 +59,8 @@ object SnsCache {
                 return listOf()
             }
             val result = mutableListOf<SnsMedia>()
-            for (i in 0 until 1000) {
-                val media = parseMedia("media$i", raw) ?: break
-                result += media
+            for (i in 0 until 9) {
+                result += parseMedia("media$i", raw) ?: break
             }
             return result.toList()
         }
@@ -102,14 +101,14 @@ object SnsCache {
     }
 
     // snsTable maps snsId to SNS object.
-    private var snsTable: Map<String, SnsInfo> = mapOf()
+    private var snsTable: MutableMap<String, SnsInfo> = mutableMapOf()
 
     @Synchronized operator fun get(snsId: String?): SnsInfo? {
         return snsTable[snsId]
     }
 
     @Synchronized operator fun set(snsId: String, record: SnsInfo) {
-        snsTable += Pair(snsId, record)
+        snsTable[snsId] = record
     }
 
     @Synchronized operator fun contains(snsId: String): Boolean {

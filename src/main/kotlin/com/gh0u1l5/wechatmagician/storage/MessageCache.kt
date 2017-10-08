@@ -7,7 +7,7 @@ import kotlin.concurrent.timer
 object MessageCache {
 
     // msgTable maps msgId to message object.
-    private var msgTable: Map<Long, Any> = mapOf()
+    private var msgTable: MutableMap<Long, Any> = mutableMapOf()
 
     // Clean cache for every 30 minutes
     init {
@@ -21,7 +21,7 @@ object MessageCache {
     }
 
     @Synchronized operator fun set(msgId: Long, msg: Any) {
-        msgTable += Pair(msgId, msg)
+        msgTable[msgId] = msg
     }
 
     @Synchronized operator fun contains(msgId: Long): Boolean {
@@ -35,6 +35,6 @@ object MessageCache {
         val now = System.currentTimeMillis()
         msgTable = msgTable.filter {
             now - getLongField(it.value, "field_createTime") < 120000
-        }
+        }.toMutableMap()
     }
 }
