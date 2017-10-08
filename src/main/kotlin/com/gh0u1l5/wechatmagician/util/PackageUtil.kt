@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
 import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
@@ -96,7 +97,7 @@ object PackageUtil {
         if (clazz == null) {
             return listOf()
         }
-        return findMethodsByExactParameters(clazz, returnType, *parameterTypes).toList()
+        return XposedHelpers.findMethodsByExactParameters(clazz, returnType, *parameterTypes).toList()
     }
 
     // findFieldsWithGenericType finds all the fields of the given type.
