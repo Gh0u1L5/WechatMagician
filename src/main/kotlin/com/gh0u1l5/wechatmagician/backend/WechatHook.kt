@@ -385,19 +385,7 @@ class WechatHook : IXposedHookLoadPackage {
                         if (!values.getAsString("content").startsWith("\"")) {
                             return
                         }
-
-                        val msgId = values["msgId"] as Long
-                        val msg = MessageCache[msgId] ?: return
-
-                        val copy = msg.javaClass.newInstance()
-                        shadowCopy(msg, copy)
-
-                        val createTime = getLongField(msg, "field_createTime")
-                        setIntField(copy, "field_type", values["type"] as Int)
-                        setObjectField(copy, "field_content", values["content"])
-                        setLongField(copy, "field_createTime", createTime + 1L)
-
-                        callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+                        handleMessageRecall(values)
                         param.result = 1
                     }
                     "SnsInfo" -> { // delete moment
@@ -450,6 +438,22 @@ class WechatHook : IXposedHookLoadPackage {
 //                log("DB => executeSql sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}")
 //            }
 //        })
+    }
+
+    // handleMessageRecall notifies user that someone has recalled the given message.
+    private fun handleMessageRecall(values: ContentValues) {
+        val msgId = values["msgId"] as Long
+        val msg = MessageCache[msgId] ?: return
+
+        val copy = msg.javaClass.newInstance()
+        shadowCopy(msg, copy)
+
+        val createTime = getLongField(msg, "field_createTime")
+        setIntField(copy, "field_type", values["type"] as Int)
+        setObjectField(copy, "field_content", values["content"])
+        setLongField(copy, "field_createTime", createTime + 1L)
+
+        callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
     }
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
