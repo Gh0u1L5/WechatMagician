@@ -131,7 +131,7 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-        // Hook onCreateOptionsMenu to add new buttons in the OptionsMenu.
+        // Hook MMActivity.onCreateOptionsMenu to add new buttons in the OptionsMenu.
         findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -162,6 +162,7 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
+        // Hook AdFrameLayout constructors to add onLongClickListeners.
         findAndHookConstructor(pkg.AdFrameLayout, C.Context, C.AttributeSet, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -171,6 +172,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
+        // Hook AdFrameLayout.setOnLongClickListener to prevent someone else from overwriting the listener.
         findAndHookMethod("android.view.View", loader, "setOnLongClickListener", C.ViewOnLongClickListener, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -273,7 +275,7 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-        // Analyze dynamically to find the global message storage instance
+        // Analyze dynamically to find the global message storage instance.
         hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -299,7 +301,7 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-        // Analyze dynamically to find the global image storage instance
+        // Analyze dynamically to find the global image storage instance.
         hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -319,7 +321,7 @@ class WechatHook : IXposedHookLoadPackage {
 //            }
 //        })
 
-        // Hook FileOutputStream to prevent Wechat from overwriting disk cache
+        // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
         findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -336,7 +338,7 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-        // Hook XML Parser for the status bar easter egg
+        // Hook XML Parser for the status bar easter egg.
         findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -392,7 +394,7 @@ class WechatHook : IXposedHookLoadPackage {
 //            }
 //        })
 
-        // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments
+        // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments.
         findAndHookMethod(pkg.SQLiteDatabaseClass, "updateWithOnConflict", C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {

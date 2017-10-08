@@ -7,6 +7,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
 
+// DownloadUtil is a helper object for downloading contents from Tencent CDN servers.
 object DownloadUtil {
 
     // writeBytesToDisk writes the given bytes to specific path.
@@ -22,7 +23,7 @@ object DownloadUtil {
         }
     }
 
-    // downloadImage downloads and decrypts the images from Tencent CDS server.
+    // downloadImage downloads and decrypts the images from Tencent CDN servers.
     fun downloadImage(path: String, media: SnsCache.SnsMedia) {
         if (media.type != "2") {
             throw Error("Unsupported media type: ${media.type}")
@@ -46,7 +47,7 @@ object DownloadUtil {
         writeBytesToDisk(path, content)
     }
 
-    // downloadVideo downloads the videos from Tencent CDS server.
+    // downloadVideo downloads the videos from Tencent CDN servers.
     fun downloadVideo(path: String, media: SnsCache.SnsMedia) {
         if (media.type != "6") {
             throw Error("Unsupported media type: ${media.type}")

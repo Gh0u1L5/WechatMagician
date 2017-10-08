@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
+// ViewUtil is a helper object for debugging / handling UI operations.
 object ViewUtil {
     // dumpViewGroup dumps the structure of a view group.
     fun dumpViewGroup(prefix: String, viewGroup: ViewGroup) {

@@ -23,6 +23,7 @@ object WechatListeners {
     private val pkg = WechatPackage
     private val res = LocalizedResources
 
+    // Handle the logic about "select all" button in SelectContactUI
     fun onSelectContactUISelectAllListener(thisObject: Any): MenuItem.OnMenuItemClickListener {
         val activity = thisObject as Activity
         return MenuItem.OnMenuItemClickListener listener@ { menuItem ->
@@ -80,6 +81,7 @@ object WechatListeners {
         }
     }
 
+    // Handle the logic about popup menu in SnsTimelineUI
     fun onAdFrameLongClickListener(thisObject: Any): View.OnLongClickListener {
         val layout = thisObject as FrameLayout
         val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())

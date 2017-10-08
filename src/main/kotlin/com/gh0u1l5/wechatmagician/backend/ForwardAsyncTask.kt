@@ -11,6 +11,7 @@ import com.gh0u1l5.wechatmagician.util.DownloadUtil
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 
+// ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
 class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
     private val res = LocalizedResources
