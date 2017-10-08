@@ -19,7 +19,6 @@ import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
 
-
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookLoadPackage {
 

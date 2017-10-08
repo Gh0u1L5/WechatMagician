@@ -4,7 +4,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.math.BigInteger
 
-
 // SnsCache records the timeline objects browsed by the user.
 object SnsCache {
 

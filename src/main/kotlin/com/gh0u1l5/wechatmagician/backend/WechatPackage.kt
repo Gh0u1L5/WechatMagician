@@ -1,3 +1,5 @@
+@file:Suppress("MemberVisibilityCanPrivate")
+
 package com.gh0u1l5.wechatmagician.backend
 
 import com.gh0u1l5.wechatmagician.C

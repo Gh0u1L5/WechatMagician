@@ -11,7 +11,6 @@ import com.gh0u1l5.wechatmagician.util.ImageUtil
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 
-
 class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
     private val res = LocalizedResources
