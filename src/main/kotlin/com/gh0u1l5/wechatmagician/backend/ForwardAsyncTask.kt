@@ -12,7 +12,7 @@ import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 
 // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
-class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
+class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
     private val res = LocalizedResources
 
@@ -23,7 +23,7 @@ class ForwardAsyncTask(snsId: String?, context: Context) : AsyncTask<Void, Void,
     override fun doInBackground(vararg params: Void): Throwable? {
         return try {
             if (snsInfo == null) {
-                throw Error(res["prompt_sns_invalid"])
+                throw Error(res["prompt_sns_invalid"] + "(snsId: $snsId)")
             }
             snsInfo.medias.forEachIndexed { i, media ->
                 when(media.type) {
