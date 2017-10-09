@@ -97,6 +97,19 @@ class WechatHook : IXposedHookLoadPackage {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
     }
 
+    private fun hookTouchEvents() {
+        // Hook View.onTouchEvent to help analyze UI layouts.
+        findAndHookMethod("android.view.View", loader, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val obj = param.thisObject
+                log("View.onTouchEvent => obj.class = ${obj.javaClass}")
+            }
+        })
+
+        HookStatus += "TouchEvents"
+    }
+
     private fun hookCreateActivity() {
         // Hook Activity.startActivity to trace source activities.
         findAndHookMethod("android.app.Activity", loader, "startActivity", C.Intent, object : XC_MethodHook() {
@@ -120,19 +133,6 @@ class WechatHook : IXposedHookLoadPackage {
         })
 
         HookStatus += "CreateActivity"
-    }
-
-    private fun hookTouchEvents() {
-        // Hook View.onTouchEvent to help analyze UI layouts.
-        findAndHookMethod("android.view.View", loader, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
-                log("View.onTouchEvent => obj.class = ${obj.javaClass}")
-            }
-        })
-
-        HookStatus += "TouchEvents"
     }
 
     private fun hookXLogSetup() {
