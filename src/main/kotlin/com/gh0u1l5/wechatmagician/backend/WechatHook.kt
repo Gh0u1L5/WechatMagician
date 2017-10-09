@@ -46,10 +46,6 @@ class WechatHook : IXposedHookLoadPackage {
 
 //        tryHook(this::hookUIEvents, {})
 
-        tryHook(this::hookOptionsMenu, {
-            pkg.MMActivity = null
-        })
-
         tryHook(this::hookSnsItemUI, {
             pkg.AdFrameLayout = null
         })
@@ -125,37 +121,6 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    private fun hookOptionsMenu() {
-        if (pkg.MMActivity == null) {
-            return
-        }
-
-        // Hook MMActivity.onCreateOptionsMenu to add new buttons in the OptionsMenu.
-        findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.thisObject.javaClass != pkg.SelectContactUI) {
-                    return
-                }
-
-                val menu = param.args[0] as Menu? ?: return
-                val menuItem = menu.add(0, 2, 0, res["button_select_all"])
-
-                val intent = (param.thisObject as Activity).intent
-                menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
-                if (menuItem.isChecked) {
-                    menuItem.title = res["button_select_all"] + "  \u2611"
-                } else {
-                    menuItem.title = res["button_select_all"] + "  \u2610"
-                }
-                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                menuItem.setOnMenuItemClickListener(
-                        listeners.onSelectContactUISelectAllListener(param.thisObject)
-                )
-            }
-        })
-    }
-
     private fun hookSnsItemUI() {
         if (pkg.AdFrameLayout == null) {
             return
@@ -183,7 +148,7 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private fun hookSnsUploadUI() {
-        if (pkg.SnsUploadUI == null) {
+        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
             return
         }
 
@@ -221,9 +186,34 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private fun hookSelectContactUI() {
-        if (pkg.SelectContactUI == null) {
+        if (pkg.MMActivity == null || pkg.SelectContactUI == null) {
             return
         }
+
+        // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
+        findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (param.thisObject.javaClass != pkg.SelectContactUI) {
+                    return
+                }
+
+                val menu = param.args[0] as Menu? ?: return
+                val menuItem = menu.add(0, 2, 0, res["button_select_all"])
+
+                val intent = (param.thisObject as Activity).intent
+                menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
+                if (menuItem.isChecked) {
+                    menuItem.title = res["button_select_all"] + "  \u2611"
+                } else {
+                    menuItem.title = res["button_select_all"] + "  \u2610"
+                }
+                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menuItem.setOnMenuItemClickListener(
+                        listeners.onSelectContactUISelectAllListener(param.thisObject)
+                )
+            }
+        })
 
         // Hook SelectContactUI to help the "Select All" button.
         findAndHookMethod(pkg.SelectContactUI, "onActivityResult", C.Int, C.Int, C.Intent, object : XC_MethodHook() {
@@ -474,6 +464,10 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleMessageRecall notifies user that someone has recalled the given message.
     private fun handleMessageRecall(values: ContentValues) {
+        if (pkg.MsgStorageObject == null || pkg.MsgStorageInsertMethod == "") {
+            return
+        }
+
         val msgId = values["msgId"] as Long
         val msg = MessageCache[msgId] ?: return
 
