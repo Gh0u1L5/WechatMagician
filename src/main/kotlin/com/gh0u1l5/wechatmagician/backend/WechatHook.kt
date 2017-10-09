@@ -370,16 +370,23 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-        // Hook SQLiteDatabase constructors to capture the database instance for SNS.
-        hookAllConstructors(pkg.SQLiteDatabaseClass, object : XC_MethodHook() {
+        val typeSQLiteCipherSpec = findClass("com.tencent.wcdb.database.SQLiteCipherSpec", loader)
+        val typeCursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
+        val typeDatabaseErrorHandler = findClass("com.tencent.wcdb.DatabaseErrorHandler", loader)
+        // Hook SQLiteDatabase.openDatabase to capture the database instance for SNS.
+        findAndHookMethod(pkg.SQLiteDatabaseClass, "openDatabase", C.String, C.ByteArray, typeSQLiteCipherSpec, typeCursorFactory, C.Int, typeDatabaseErrorHandler, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val path = param.thisObject.toString()
-                if (!path.endsWith("SnsMicroMsg.db")) {
+                val path = param.args[0] as String?
+                if (path?.endsWith("SnsMicroMsg.db") != true) {
                     return
                 }
-                if (SnsCache.snsDB !== param.thisObject) {
-                    SnsCache.snsDB = param.thisObject
+                if (SnsCache.snsDB !== param.result) {
+                    SnsCache.snsDB = param.result
+                    // Force Wechat to retrieve existing SNS data online.
+                    callMethod(SnsCache.snsDB, "delete",
+                            "snsExtInfo3", "local_flag=0", null
+                    )
                 }
             }
         })
@@ -435,7 +442,6 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
-//        val typeCursorFactory = findClass("com.tencent.wcdb.database.SQLiteDatabase.CursorFactory", loader)
 //        val typeCancellationSignal = findClass("com.tencent.wcdb.support.CancellationSignal", loader)
 //        findAndHookMethod(pkg.SQLiteDatabaseClass, "rawQueryWithFactory", typeCursorFactory, C.String, C.StringArray, C.String, typeCancellationSignal, object : XC_MethodHook() {
 //            @Throws(Throwable::class)

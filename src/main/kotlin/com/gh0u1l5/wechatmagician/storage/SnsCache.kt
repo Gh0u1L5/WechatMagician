@@ -94,7 +94,7 @@ object SnsCache {
             log("DB => Unexpected count $count for rowId $rowId in table SnsInfo")
             return null
         }
-        callMethod(cursor, "moveToNext")
+        callMethod(cursor, "moveToFirst")
         val snsId = callMethod(cursor, "getLong", 0)
         callMethod(cursor, "close")
         return toDecimalString(snsId as Long)
