@@ -44,7 +44,11 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
-//        tryHook(this::hookUIEvents, {})
+//        tryHook(this::hookTouchEvents, {})
+//        tryHook(this::hookCreateActivity, {})
+//        tryHook(this::hookXLogSetup, {
+//            pkg.XLogSetup = null
+//        })
 
         tryHook(this::hookSnsItemUI, {
             pkg.AdFrameLayout = null
@@ -81,7 +85,7 @@ class WechatHook : IXposedHookLoadPackage {
         try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
     }
 
-    private fun hookUIEvents() {
+    private fun hookCreateActivity() {
         // Hook Activity.startActivity to trace source activities.
         findAndHookMethod("android.app.Activity", loader, "startActivity", C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -93,7 +97,7 @@ class WechatHook : IXposedHookLoadPackage {
         })
 
         // Hook Activity.onCreate to trace target activities.
-        findAndHookMethod(pkg.MMFragmentActivity, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod("android.app.Activity", loader, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val obj = param.thisObject
@@ -102,8 +106,10 @@ class WechatHook : IXposedHookLoadPackage {
                 log("Activity.onCreate => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
             }
         })
+    }
 
-        // Hook View.onTouchEvent to help analyze UI objects.
+    private fun hookTouchEvents() {
+        // Hook View.onTouchEvent to help analyze UI layouts.
         findAndHookMethod("android.view.View", loader, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -111,6 +117,12 @@ class WechatHook : IXposedHookLoadPackage {
                 log("View.onTouchEvent => obj.class = ${obj.javaClass}")
             }
         })
+    }
+
+    private fun hookXLogSetup() {
+        if (pkg.XLogSetup == null) {
+            return
+        }
 
         // Hook XLog to print internal errors into logcat.
         XposedBridge.hookAllMethods(pkg.XLogSetup, "keep_setupXLog", object : XC_MethodHook() {
