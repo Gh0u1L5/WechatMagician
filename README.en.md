@@ -6,7 +6,7 @@ WechatMagician is a cool Xposed module designed for Chinese social media applica
 3. Loose the limit on number of photos to send.
 4. Bypass the limit on number of recipients when retransmitting messages.
 5. Add a button "Select All" in "Select Contacts" interface.
-6. Retweet other's moments (only works for text moments or image moments).
+6. Retweet other's moments (supports text, image and video moments).
 7. Take screenshot of a single moment.
 
 __P.S. If you want to retweet or take screenshots, please long press the blank area under others' avatar.__

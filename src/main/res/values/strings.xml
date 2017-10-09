@@ -11,7 +11,7 @@
         \t3. Loose the limit on number of photos to send.\n
         \t4. Bypass the limit on number of recipients when retransmitting messages.\n
         \t5. Add a button "Select All" in "Select Contacts" interface.\n
-        \t6. Retweet other's moments (only works for text moments or image moments).\n
+        \t6. Retweet other's moments (supports text, image and video moments).\n
         \t7. Take screenshot of a single moment.\n
         \tSupport WeChat 6.5.3 ~ 6.5.16 and will keep updating.\n
         \n
