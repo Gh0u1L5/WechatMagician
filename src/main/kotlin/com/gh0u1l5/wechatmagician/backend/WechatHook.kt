@@ -8,6 +8,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.FrameLayout
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
@@ -44,12 +45,14 @@ class WechatHook : IXposedHookLoadPackage {
             return
         }
 
+        // Hooks for Debug
 //        tryHook(this::hookTouchEvents, {})
 //        tryHook(this::hookCreateActivity, {})
 //        tryHook(this::hookXLogSetup, {
 //            pkg.XLogSetup = null
 //        })
 
+        // Hooks for SNS
         tryHook(this::hookSnsItemLongPress, {
             pkg.AdFrameLayout = null
         })
@@ -57,6 +60,7 @@ class WechatHook : IXposedHookLoadPackage {
             pkg.SnsUploadUI = null
         })
 
+        // Hooks for Selecting
         tryHook(this::hookAlbumPreviewUI, {
             pkg.AlbumPreviewUI = null
         })
@@ -67,6 +71,7 @@ class WechatHook : IXposedHookLoadPackage {
             pkg.SelectConversationUI = null
         })
 
+        // Hooks for Storage / XML / Database
         tryHook(this::hookMsgStorage, {
             pkg.MsgStorageClass = null
         })
@@ -106,6 +111,8 @@ class WechatHook : IXposedHookLoadPackage {
                 log("Activity.onCreate => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
             }
         })
+
+        HookStatus += "CreateActivity"
     }
 
     private fun hookTouchEvents() {
@@ -117,6 +124,8 @@ class WechatHook : IXposedHookLoadPackage {
                 log("View.onTouchEvent => obj.class = ${obj.javaClass}")
             }
         })
+
+        HookStatus += "TouchEvents"
     }
 
     private fun hookXLogSetup() {
@@ -131,6 +140,8 @@ class WechatHook : IXposedHookLoadPackage {
                 param.args[5] = true // enable logcat output
             }
         })
+
+        HookStatus += "XLogSetup"
     }
 
     private fun hookSnsItemLongPress() {
@@ -157,6 +168,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "SnsItemLongPress"
     }
 
     private fun hookSnsUploadUI() {
@@ -176,6 +189,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "SnsUploadUI"
     }
 
     private fun hookAlbumPreviewUI() {
@@ -195,6 +210,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "AlbumPreviewUI"
     }
 
     private fun hookSelectContactUI() {
@@ -255,6 +272,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "SelectContactUI"
     }
 
     private fun hookSelectConversationUI() {
@@ -269,6 +288,8 @@ class WechatHook : IXposedHookLoadPackage {
                 param.result = false
             }
         })
+
+        HookStatus += "SelectConversationUI"
     }
 
     private fun hookMsgStorage() {
@@ -295,6 +316,8 @@ class WechatHook : IXposedHookLoadPackage {
                 MessageCache[msgId] = msg
             }
         })
+
+        HookStatus += "MsgStorage"
     }
 
     private fun hookImgStorage() {
@@ -332,6 +355,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "ImgStorage"
     }
 
     private fun hookXMLParse() {
@@ -365,6 +390,8 @@ class WechatHook : IXposedHookLoadPackage {
                 }
             }
         })
+
+        HookStatus += "XMLParse"
     }
 
     private fun hookDatabase() {
@@ -472,6 +499,8 @@ class WechatHook : IXposedHookLoadPackage {
 //                log("DB => executeSql sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}")
 //            }
 //        })
+
+        HookStatus += "Database"
     }
 
     // handleMessageRecall notifies user that someone has recalled the given message.
