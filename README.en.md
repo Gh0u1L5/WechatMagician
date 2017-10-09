@@ -1,6 +1,6 @@
 # WechatMagician
 
-WechatMagician is a cool Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. This module implemented following features:
+WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. Currently this module supports WeChat 6.5.3 ~ 6.5.16. It implemented following features:
 1. Prevent friends from recalling messages.
 2. Prevent friends from deleting moments or comments.
 3. Loose the limit on number of photos to send.
@@ -11,7 +11,9 @@ WechatMagician is a cool Xposed module designed for Chinese social media applica
 
 __P.S. If you want to retweet or take screenshots, please long press the blank area under others' avatar.__
 
-Currently this module supports WeChat 6.5.3 ~ 6.5.16.
+## QQ Group / Wechat Group
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.png" width="40%" />
 
 ## Design
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:

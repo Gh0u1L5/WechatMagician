@@ -2,7 +2,7 @@
 
 _Read this README.md in other languages:_  [English](https://github.com/Gh0u1L5/WechatMagician/blob/master/README.en.md).
 
-WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控微信上的聊天消息及朋友圈内容，目前它实现的功能有：
+WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控微信上的聊天消息及朋友圈内容，目前支持微信 6.5.3 ~ 6.5.16 版，实现的功能有：
 1. 防止微信好友撤回聊天消息。
 2. 防止微信好友删除朋友圈动态、评论。
 3. 发送消息时可选图片的上限从9张上调至1000张。
@@ -13,7 +13,9 @@ WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控
 
 __注：使用朋友圈转发/截图功能时，请长按好友头像下方的空白处。__
 
-目前支持微信 6.5.3 ~ 6.5.16 版， __官方交流QQ群：135955386__
+## QQ群 / 微信群
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.png" width="40%" />
 
 ## 设计理念
 
