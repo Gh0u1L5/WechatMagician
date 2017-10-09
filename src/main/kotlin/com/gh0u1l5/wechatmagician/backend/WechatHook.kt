@@ -462,6 +462,9 @@ class WechatHook : IXposedHookLoadPackage {
                         param.result = 1
                     }
                     "SnsInfo" -> { // delete moment
+                        if (values["type"] != 1 || values["type"] != 3) {
+                            return
+                        }
                         if (values["sourceType"] != 0) {
                             return
                         }
