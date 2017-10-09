@@ -318,9 +318,11 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, pkg.MsgInfoClass, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val msg = param.args[0]
-                val msgId = getLongField(msg, "field_msgId")
-                MessageCache[msgId] = msg
+                thread(start = true) {
+                    val msg = param.args[0]
+                    val msgId = getLongField(msg, "field_msgId")
+                    MessageCache[msgId] = msg
+                }
             }
         })
 
@@ -390,9 +392,11 @@ class WechatHook : IXposedHookLoadPackage {
                     result[msgTag] = MessageUtil.applyEasterEgg(msg, res["label_easter_egg"])
                 }
                 if (result[".TimelineObject"] != null) {
-                    val id = result[".TimelineObject.id"]
-                    if (id != null) {
-                        SnsCache[id] = SnsCache.SnsInfo(result)
+                    thread(start = true) {
+                        val id = result[".TimelineObject.id"]
+                        if (id != null) {
+                            SnsCache[id] = SnsCache.SnsInfo(result)
+                        }
                     }
                 }
             }
