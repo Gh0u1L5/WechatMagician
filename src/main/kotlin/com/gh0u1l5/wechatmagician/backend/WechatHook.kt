@@ -50,7 +50,7 @@ class WechatHook : IXposedHookLoadPackage {
 //            pkg.XLogSetup = null
 //        })
 
-        tryHook(this::hookSnsItemUI, {
+        tryHook(this::hookSnsItemLongPress, {
             pkg.AdFrameLayout = null
         })
         tryHook(this::hookSnsUploadUI, {
@@ -133,7 +133,7 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    private fun hookSnsItemUI() {
+    private fun hookSnsItemLongPress() {
         if (pkg.AdFrameLayout == null) {
             return
         }
