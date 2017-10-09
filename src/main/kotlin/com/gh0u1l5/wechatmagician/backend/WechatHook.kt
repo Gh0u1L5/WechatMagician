@@ -21,6 +21,7 @@ import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.*
+import kotlin.concurrent.thread
 
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookLoadPackage {
@@ -40,6 +41,12 @@ class WechatHook : IXposedHookLoadPackage {
         try {
             pkg.init(param)
             loader = param.classLoader
+            val process = param.processName
+            if (process == "com.tencent.mm") {
+                thread(start = true) {
+                    pkg.dumpPackage()
+                }
+            }
         } catch (e: Throwable) {
             log("INIT => ${e.message}")
             return

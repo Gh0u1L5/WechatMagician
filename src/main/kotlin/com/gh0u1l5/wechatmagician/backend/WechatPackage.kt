@@ -8,6 +8,7 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
+import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
@@ -145,5 +146,20 @@ object WechatPackage {
 //        ImgStorageCacheField = findFieldsWithGenericType(
 //                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
 //        ).firstOrNull()?.name ?: ""
+    }
+
+    // dumpFlag is used to ensure we only dump the package once.
+    private var dumpFlag = false
+
+    // dumpPackage dumps the content of WechatPackage to Xposed log.
+    fun dumpPackage() {
+        synchronized(dumpFlag) {
+            if (dumpFlag) return else dumpFlag = true
+        }
+        this.javaClass.declaredFields.filter {
+            it.name != "INSTANCE" && it.name != "dumpFlag"
+        }.forEach {
+            log("PKG => ${it.name} = ${it.get(this)}")
+        }
     }
 }
