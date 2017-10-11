@@ -32,7 +32,7 @@ class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
     private val res = LocalizedResources
-    private val listeners = WechatListeners
+    private val listeners = WechatEvents
     private lateinit var loader: ClassLoader
 
     // Hook for hacking Wechat application.
