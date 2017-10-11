@@ -20,4 +20,5 @@
         \t@rarnu for the prototype module wechat_no_revoke.
     </string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
+    <string name="dummy">Dummy</string>
 </resources>

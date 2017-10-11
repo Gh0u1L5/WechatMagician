@@ -20,4 +20,5 @@
         \t感谢 @rarnu 编写的防撤回插件wechat_no_revoke
     </string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
+    <string name="dummy">伪物</string>
 </resources>
