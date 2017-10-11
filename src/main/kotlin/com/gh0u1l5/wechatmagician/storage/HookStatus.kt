@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.storage
 
 // HookStatus records the status of all the hooks.
 object HookStatus {
-    private val status: MutableMap<String, Boolean> = mutableMapOf()
+    private val status = mutableMapOf("ModuleLoaded" to true)
 
     @Synchronized operator fun get(func: String?): Boolean {
         return status[func] ?: false
