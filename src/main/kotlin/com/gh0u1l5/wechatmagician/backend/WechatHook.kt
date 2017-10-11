@@ -106,8 +106,7 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod("android.view.View", loader, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
-                log("View.onTouchEvent => obj.class = ${obj.javaClass}")
+                log("View.onTouchEvent => obj.class = ${param.thisObject.javaClass}")
             }
         })
 
@@ -119,9 +118,8 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod("android.app.Activity", loader, "startActivity", C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
                 val intent = param.args[0] as Intent?
-                log("Activity.startActivity => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}")
+                log("Activity.startActivity => ${param.thisObject.javaClass}, intent => ${bundleToString(intent?.extras)}")
             }
         })
 
@@ -129,10 +127,9 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod("android.app.Activity", loader, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
                 val bundle = param.args[0] as Bundle?
-                val intent = callMethod(obj, "getIntent") as Intent?
-                log("Activity.onCreate => ${obj.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
+                val intent = (param.thisObject as Activity).intent
+                log("Activity.onCreate => ${param.thisObject.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
             }
         })
 
@@ -192,10 +189,11 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod(pkg.SnsUploadUI, "onPause", object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
-                val intent = callMethod(obj, "getIntent") as Intent?
+                val intent = (param.thisObject as Activity).intent
                 if (intent?.extras?.getBoolean("Ksnsforward") == true) {
-                    val editText = getObjectField(obj, pkg.SnsUploadUIEditTextField)
+                    val editText = getObjectField(
+                            param.thisObject, pkg.SnsUploadUIEditTextField
+                    )
                     callMethod(editText, "setText", "")
                 }
             }
@@ -213,8 +211,7 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod(pkg.AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
-                val intent = callMethod(obj, "getIntent") as Intent? ?: return
+                val intent = (param.thisObject as Activity).intent ?: return
                 val max = intent.getIntExtra("max_select_count", 9)
                 if (max <= 9) {
                     intent.putExtra("max_select_count", max + 991)
@@ -293,8 +290,7 @@ class WechatHook : IXposedHookLoadPackage {
         findAndHookMethod(pkg.SelectContactUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val obj = param.thisObject
-                val intent = callMethod(obj, "getIntent") as Intent? ?: return
+                val intent = (param.thisObject as Activity).intent ?: return
                 if (intent.getIntExtra("max_limit_num", -1) == 9) {
                     intent.putExtra("max_limit_num", 0x7FFFFFFF)
                 }
