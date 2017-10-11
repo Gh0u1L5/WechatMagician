@@ -13,7 +13,7 @@ __P.S. If you want to retweet or take screenshots, please long press the blank a
 
 ## QQ Group / Wechat Group
 
-<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.png" width="40%" />
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.jpg" width="40%" />
 
 ## Design
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:

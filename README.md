@@ -15,7 +15,7 @@ __注：使用朋友圈转发/截图功能时，请长按好友头像下方的�
 
 ## QQ群 / 微信群
 
-<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.png" width="40%" />
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.jpg" width="40%" />
 
 ## 设计理念
 
