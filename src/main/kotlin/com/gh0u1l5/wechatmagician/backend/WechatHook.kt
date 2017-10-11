@@ -163,16 +163,12 @@ class WechatHook : IXposedHookLoadPackage {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val layout = param.thisObject as FrameLayout
                 layout.isLongClickable = true
-                layout.setOnLongClickListener { false }
-            }
-        })
-
-        // Hook AdFrameLayout.setOnLongClickListener to prevent someone else from overwriting the listener.
-        findAndHookMethod("android.view.View", loader, "setOnLongClickListener", C.ViewOnLongClickListener, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                if (param.thisObject.javaClass == pkg.AdFrameLayout) {
-                    param.args[0] = listeners.onAdFrameLongClickListener(param.thisObject)
+                var x: Float? = null; var y: Float? = null
+                layout.setOnTouchListener { _, motion ->
+                    x = motion.rawX; y = motion.rawY; false
+                }
+                layout.setOnLongClickListener {
+                    listeners.onAdFrameLongClick(layout, x, y)
                 }
             }
         })

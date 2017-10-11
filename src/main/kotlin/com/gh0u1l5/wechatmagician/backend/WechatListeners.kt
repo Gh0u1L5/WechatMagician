@@ -3,9 +3,9 @@ package com.gh0u1l5.wechatmagician.backend
 import android.app.Activity
 import android.os.Environment
 import android.view.Gravity
-import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.frontend.WechatListPopupAdapter
 import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
@@ -62,45 +62,64 @@ object WechatListeners {
         activity.startActivityForResult(intent, 5)
     }
 
-    // Handle the logic about popup menu in SnsTimelineUI
-    fun onAdFrameLongClickListener(thisObject: Any): View.OnLongClickListener {
-        val layout = thisObject as FrameLayout
+    // Show a popup menu in SnsTimelineUI
+    fun onAdFrameLongClick(layout: FrameLayout, x: Float?, y: Float?): Boolean {
+        if (x == null || y == null) {
+            return false
+        }
+
+        val popup = ListPopupWindow(layout.context)
+        popup.width = 320
+        popup.anchorView = layout
+
+        val location = IntArray(2)
+        layout.getLocationOnScreen(location)
+        popup.horizontalOffset = (x - location[0] - layout.width).toInt()
+        popup.verticalOffset = (y - location[1] - layout.height).toInt()
+
+        popup.setDropDownGravity(Gravity.BOTTOM or Gravity.END)
+        popup.setAdapter(WechatListPopupAdapter(
+                layout.context, listOf(res["menu_sns_forward"], res["menu_sns_screenshot"])
+        ))
+        popup.setOnItemClickListener { _, _, itemId, _ ->
+            onAdFramePopupMenuSelected(layout, itemId)
+            popup.dismiss()
+        }
+
+        popup.show()
+        return true
+    }
+
+    // Handle the logic about the popup menu in SnsTimelineUI
+    private fun onAdFramePopupMenuSelected(layout: FrameLayout, itemId: Int): Boolean {
         val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
-        return View.OnLongClickListener {
-            val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
-            val popup = PopupMenu(layout.context, layout, Gravity.CENTER)
-            popup.menu.add(0, 1, 0, res["menu_sns_forward"])
-            popup.menu.add(0, 2, 0, res["menu_sns_screenshot"])
-            popup.setOnMenuItemClickListener listener@ { item ->
-                when (item.itemId) {
-                    1 -> {
-                        if (pkg.PLTextView == null) {
-                            return@listener false
-                        }
-                        val textView = ViewUtil.searchViewGroup(layout, pkg.PLTextView!!.name)
-                        val rowId = textView?.tag as String?
-                        val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
-                        ForwardAsyncTask(snsId, layout.context).execute()
-                        Toast.makeText(
-                                layout.context, res["prompt_wait"], Toast.LENGTH_SHORT
-                        ).show()
-                        return@listener true
-                    }
-                    2 -> {
-                        val time = Calendar.getInstance().time
-                        val filename = "SNS-${formatter.format(time)}.jpg"
-                        val path = "$storage/screenshot/$filename"
-                        val bitmap = ViewUtil.drawView(layout)
-                        ImageUtil.writeBitmapToDisk(path, bitmap)
-                        Toast.makeText(
-                                layout.context, res["prompt_screenshot"] + path, Toast.LENGTH_SHORT
-                        ).show()
-                        return@listener true
-                    }
-                    else -> false
+        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+        when (itemId) {
+            0 -> {
+                if (pkg.PLTextView == null) {
+                    return false
                 }
+                val textView = ViewUtil.searchViewGroup(layout, pkg.PLTextView!!.name)
+                val rowId = textView?.tag as String?
+                val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
+                ForwardAsyncTask(snsId, layout.context).execute()
+                Toast.makeText(
+                        layout.context, res["prompt_wait"], Toast.LENGTH_SHORT
+                ).show()
+                return true
             }
-            popup.show(); true
+            1 -> {
+                val time = Calendar.getInstance().time
+                val filename = "SNS-${formatter.format(time)}.jpg"
+                val path = "$storage/screenshot/$filename"
+                val bitmap = ViewUtil.drawView(layout)
+                ImageUtil.writeBitmapToDisk(path, bitmap)
+                Toast.makeText(
+                        layout.context, res["prompt_screenshot"] + path, Toast.LENGTH_SHORT
+                ).show()
+                return true
+            }
+            else -> return false
         }
     }
 }
