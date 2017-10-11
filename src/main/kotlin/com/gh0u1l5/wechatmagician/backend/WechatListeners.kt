@@ -1,10 +1,8 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.app.Activity
-import android.content.Intent
 import android.os.Environment
 import android.view.Gravity
-import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
@@ -12,7 +10,6 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedResources
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
-import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 import java.lang.reflect.Field
 import java.text.SimpleDateFormat
@@ -23,62 +20,46 @@ object WechatListeners {
     private val pkg = WechatPackage
     private val res = LocalizedResources
 
-    // Handle the logic about "select all" button in SelectContactUI
-    fun onSelectContactUISelectAllListener(thisObject: Any): MenuItem.OnMenuItemClickListener {
-        val activity = thisObject as Activity
-        return MenuItem.OnMenuItemClickListener listener@ { menuItem ->
-            if (pkg.ContactInfoClass == null) {
-                return@listener false
-            }
-
-            if (menuItem.isChecked) {
-                // Invoke new SelectContactUI without any selected contacts.
-                val intent = callMethod(
-                        activity, "getIntent"
-                ) as Intent? ?: return@listener false
-                intent.putExtra("already_select_contact", "")
-                intent.putExtra("select_all_checked", !menuItem.isChecked)
-                activity.startActivityForResult(intent, 5)
-            } else {
-                // Search for the ListView of contacts
-                val listView = findFirstFieldByExactType(activity.javaClass, C.ListView)
-                        .get(activity) as ListView? ?: return@listener false
-                val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
-
-                // Construct the list of user names
-                var contactField: Field? = null
-                var usernameField: Field? = null
-                val userList = mutableListOf<String>()
-                repeat(adapter.count, next@ { index ->
-                    val item = adapter.getItem(index)
-
-                    if (contactField == null) {
-                        contactField = item.javaClass.fields.firstOrNull {
-                            it.type.name == pkg.ContactInfoClass?.name
-                        } ?: return@next
-                    }
-                    val contact = contactField?.get(item) ?: return@next
-
-                    if (usernameField == null) {
-                        usernameField = contact.javaClass.fields.firstOrNull {
-                            it.name == "field_username"
-                        } ?: return@next
-                    }
-                    val username = usernameField?.get(contact) ?: return@next
-                    userList.add(username as String)
-                })
-
-                // Invoke new SelectContactUI with all contacts selected
-                val intent = callMethod(
-                        activity, "getIntent"
-                ) as Intent? ?: return@listener false
-                intent.putExtra("already_select_contact", userList.joinToString(","))
-                intent.putExtra("select_all_checked", !menuItem.isChecked)
-                activity.startActivityForResult(intent, 5)
-            }
-
-            return@listener true
+    // Handle the logic about "select all" check box in SelectContactUI
+    fun onSelectContactUISelectAll(activity: Activity, isChecked: Boolean) {
+        if (pkg.ContactInfoClass == null) {
+            return
         }
+
+        val intent = activity.intent ?: return
+        intent.putExtra("select_all_checked", isChecked)
+        intent.putExtra("already_select_contact", "")
+        if (isChecked) {
+            // Search for the ListView of contacts
+            val listView = findFirstFieldByExactType(activity.javaClass, C.ListView)
+                    .get(activity) as ListView? ?: return
+            val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
+
+            // Construct the list of user names
+            var contactField: Field? = null
+            var usernameField: Field? = null
+            val userList = mutableListOf<String>()
+            repeat(adapter.count, next@ { index ->
+                val item = adapter.getItem(index)
+
+                if (contactField == null) {
+                    contactField = item.javaClass.fields.firstOrNull {
+                        it.type.name == pkg.ContactInfoClass?.name
+                    } ?: return@next
+                }
+                val contact = contactField?.get(item) ?: return@next
+
+                if (usernameField == null) {
+                    usernameField = contact.javaClass.fields.firstOrNull {
+                        it.name == "field_username"
+                    } ?: return@next
+                }
+                val username = usernameField?.get(contact) ?: return@next
+                userList.add(username as String)
+            })
+            intent.putExtra("already_select_contact", userList.joinToString(","))
+        }
+        activity.startActivityForResult(intent, 5)
     }
 
     // Handle the logic about popup menu in SnsTimelineUI

@@ -3,11 +3,15 @@ package com.gh0u1l5.wechatmagician.backend
 import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.CheckBox
 import android.widget.FrameLayout
+import android.widget.TextView
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.LocalizedResources
@@ -235,19 +239,36 @@ class WechatHook : IXposedHookLoadPackage {
                 }
 
                 val menu = param.args[0] as Menu? ?: return
-                val menuItem = menu.add(0, 2, 0, res["button_select_all"])
+                val activity = param.thisObject as Activity
+                val checked = activity.intent?.getBooleanExtra(
+                        "select_all_checked", false
+                ) ?: false
 
-                val intent = (param.thisObject as Activity).intent
-                menuItem.isChecked = intent.getBooleanExtra("select_all_checked", false)
-                if (menuItem.isChecked) {
-                    menuItem.title = res["button_select_all"] + "  \u2611"
+                val selectAll = menu.add(0, 2, 0, "")
+                selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                if (WechatResHook.MODULE_RES == null) {
+                    selectAll.isChecked = checked
+                    selectAll.title = res["button_select_all"] + "  " +
+                            if (checked) "\u2611" else "\u2610"
+                    selectAll.setOnMenuItemClickListener {
+                        listeners.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
+                    }
                 } else {
-                    menuItem.title = res["button_select_all"] + "  \u2610"
+                    val checkedTextView = activity.layoutInflater.inflate(
+                            WechatResHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview), null
+                    )
+                    checkedTextView.findViewById<TextView>(R.id.ctvTextView).apply {
+                        setTextColor(Color.WHITE)
+                        text = res["button_select_all"]
+                    }
+                    checkedTextView.findViewById<CheckBox>(R.id.ctvCheckBox).apply {
+                        isChecked = checked
+                        setOnCheckedChangeListener {_, checked ->
+                            listeners.onSelectContactUISelectAll(activity, checked)
+                        }
+                    }
+                    selectAll.actionView = checkedTextView
                 }
-                menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                menuItem.setOnMenuItemClickListener(
-                        listeners.onSelectContactUISelectAllListener(param.thisObject)
-                )
             }
         })
 
