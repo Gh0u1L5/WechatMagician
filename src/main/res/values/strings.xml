@@ -1,24 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Wechat Magician</string>
-    <string name="app_desc">Prevent Wechat from recalling chat messages or deleting moments.</string>
-
-    <string name="view_about_project_github">Project Source: Gh0u1L5/WechatMagician</string>
-    <string name="view_about_intro">
-        Supported Features:\n
-        \t1. Prevent friends from recalling messages.\n
-        \t2. Prevent friends from deleting moments or comments.\n
-        \t3. Loose the limit on number of photos to send.\n
-        \t4. Bypass the limit on number of recipients when retransmitting messages.\n
-        \t5. Add a button "Select All" in "Select Contacts" interface.\n
-        \t6. Retweet other's moments (supports text, image and video moments).\n
-        \t7. Take screenshot of a single moment.\n
-        \tSupport WeChat 6.5.3 ~ 6.5.16 and will keep updating.\n
-        \n
-        Credits:\n
-        \t@rovo89 for the awesome Xposed framework.\n
-        \t@rarnu for the prototype module wechat_no_revoke.
-    </string>
-    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
     <string name="dummy">Dummy</string>
+    <string name="app_name">Wechat Magician</string>
+    <string name="app_desc">Make you the master of your Wechat.</string>
+    <string name="view_about_project_github">GitHub: Gh0u1L5/WechatMagician</string>
+    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="status">Status</string>
+    <string name="settings">Settings</string>
+    <string name="developer">Developer</string>
+    <string name="support">Support</string>
+    <string name="donate">Donate</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="pref_category_ui">UI Debug Options</string>
+    <string name="pref_toggle_touch_event">Trace Touch Events</string>
+    <string name="pref_toggle_trace_activities">Trace Activities</string>
+    <string name="pref_toggle_xlog">Toggle Tencent XLog</string>
+
+    <string name="pref_category_database">Database Debug Options</string>
+    <string name="pref_toggle_database_query">Trace Query</string>
+    <string name="pref_toggle_database_insert">Trace Insert</string>
+    <string name="pref_toggle_database_update">Trace Update</string>
+    <string name="pref_toggle_database_delete">Trace Delete</string>
+    <string name="pref_toggle_database_execute">Trace Execute</string>
+
+    <string name="pref_category_miscellaneous">Miscellaneous</string>
+    <string name="pref_toggle_xml_parser">Trace XML Parser</string>
+
+    <string name="pref_category_chatting">Chatting</string>
+    <string name="pref_toggle_prevent_recall">Prevent Recalling</string>
+    <string name="pref_text_recall_prompt">Custom Recalling Prompt</string>
+    <string name="pref_text_recall_prompt_default">want to recall the message, idiot.</string>
+    <string name="pref_text_select_photos_limit">Limit on Sending Photos</string>
+
+    <string name="pref_category_sns">Moments</string>
+    <string name="pref_toggle_prevent_moment_delete">Prevent Deleting Moments</string>
+    <string name="pref_toggle_prevent_comment_delete">Prevent Deleting Comments</string>
+    <string name="pref_textlist_keyword_blacklist">Keyword Blacklist</string>
+
 </resources>

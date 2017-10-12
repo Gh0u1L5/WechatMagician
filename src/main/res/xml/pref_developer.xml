@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_ui">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_ui_touch_event"
+            android:title="@string/pref_toggle_touch_event" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_ui_trace_activities"
+            android:title="@string/pref_toggle_trace_activities" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_ui_xlog"
+            android:title="@string/pref_toggle_xlog" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_database">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_database_query"
+            android:title="@string/pref_toggle_database_query" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_database_insert"
+            android:title="@string/pref_toggle_database_insert" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_database_update"
+            android:title="@string/pref_toggle_database_update" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_database_delete"
+            android:title="@string/pref_toggle_database_delete" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_database_execute"
+            android:title="@string/pref_toggle_database_execute" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_miscellaneous">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_xml_parser"
+            android:title="@string/pref_toggle_xml_parser" />
+    </PreferenceCategory>
+</PreferenceScreen>

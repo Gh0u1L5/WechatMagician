@@ -1,24 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">微信巫师</string>
-    <string name="app_desc">防止微信撤回聊天消息或删除朋友圈动态、评论</string>
-
-    <string name="view_about_project_github">项目源码 Gh0u1L5/WechatMagician</string>
-    <string name="view_about_intro">
-        实现功能：\n
-        \t1.防止微信好友撤回聊天消息\n
-        \t2.防止微信好友删除朋友圈动态、评论\n
-        \t3.发送消息时可选图片的上限从9张上调至1000张。\n
-        \t4.转发聊天消息时可选好友人数从9人上调至无限。\n
-        \t5.在“选择联系人”界面增加全选按钮。\n
-        \t6.一键转发他人朋友圈（支持纯文字、图文或视频）。\n
-        \t7.单条朋友圈一键截图。\n
-        \t支持微信 6.5.3 ~ 6.5.16 并将持续更新。\n
-        \n
-        特别鸣谢：\n
-        \t感谢 @rovo89 编写的Xposed框架\n
-        \t感谢 @rarnu 编写的防撤回插件wechat_no_revoke
-    </string>
-    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
     <string name="dummy">伪物</string>
+    <string name="app_name">微信巫师</string>
+    <string name="app_desc">让你玩转微信聊天与朋友圈</string>
+    <string name="view_about_project_github">项目源码 Gh0u1L5/WechatMagician</string>
+    <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
+
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="navigation_drawer_close">关闭导航栏</string>
+
+    <string name="status">运行状态</string>
+    <string name="settings">插件设置</string>
+    <string name="developer">开发模式</string>
+    <string name="support">帮助</string>
+    <string name="donate">捐赠</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="pref_category_ui">UI逆向工具</string>
+    <string name="pref_toggle_touch_event">跟踪触摸事件</string>
+    <string name="pref_toggle_trace_activities">跟踪Activity调用</string>
+    <string name="pref_toggle_xlog">启用腾讯XLog模块</string>
+
+    <string name="pref_category_database">数据库逆向工具</string>
+    <string name="pref_toggle_database_query">跟踪查询操作</string>
+    <string name="pref_toggle_database_insert">跟踪插入操作</string>
+    <string name="pref_toggle_database_update">跟踪更新操作</string>
+    <string name="pref_toggle_database_delete">跟踪删除操作</string>
+    <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
+
+
+    <string name="pref_category_miscellaneous">其他逆向工具</string>
+    <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
+
+    <string name="pref_category_chatting">聊天消息</string>
+    <string name="pref_toggle_prevent_recall">启用防撤回</string>
+    <string name="pref_text_recall_prompt">自定义防撤回提示</string>
+    <string name="pref_text_recall_prompt_default">妄图撤回一条消息，啧啧</string>
+    <string name="pref_text_select_photos_limit">自定义发送图片上限</string>
+
+    <string name="pref_category_sns">朋友圈</string>
+    <string name="pref_toggle_prevent_moment_delete">启用动态防删除</string>
+    <string name="pref_toggle_prevent_comment_delete">启用评论防删除</string>
+    <string name="pref_textlist_keyword_blacklist">关键字黑名单</string>
 </resources>

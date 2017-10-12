@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_chatting">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="settings_chatting_recall"
+            android:title="@string/pref_toggle_prevent_recall" />
+        <EditTextPreference
+            android:defaultValue="@string/pref_text_recall_prompt_default"
+            android:key="settings_chatting_recall_prompt"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_text_recall_prompt" />
+        <EditTextPreference
+            android:defaultValue="1000"
+            android:inputType="number"
+            android:key="settings_select_photos_limit"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_text_select_photos_limit" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_sns">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="settings_sns_delete_moment"
+            android:title="@string/pref_toggle_prevent_moment_delete" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="settings_sns_delete_comment"
+            android:title="@string/pref_toggle_prevent_comment_delete" />
+        <EditTextPreference
+            android:key="settings_sns_keyword_blacklist"
+            android:selectAllOnFocus="true"
+            android:singleLine="false"
+            android:title="@string/pref_textlist_keyword_blacklist" />
+    </PreferenceCategory>
+</PreferenceScreen>
