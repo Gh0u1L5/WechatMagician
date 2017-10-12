@@ -18,6 +18,7 @@ import net.dongliu.apk.parser.bean.DexClass
 object WechatPackage {
 
     var XLogSetup: Class<*>? = null
+    var SQLiteDatabasePkg = ""
     var SQLiteDatabaseClass: Class<*>? = null
     var EncEngine: Class<*>? = null
     var EncEngineEDMethod = ""
@@ -72,13 +73,13 @@ object WechatPackage {
         }
 
         XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
-        SQLiteDatabaseClass = when {
-            version >= Version("6.5.8") ->
-                findClassIfExists("com.tencent.wcdb.database.SQLiteDatabase", loader)
-            version >= Version("6.5.3") ->
-                findClassIfExists("com.tencent.mmdb.database.SQLiteDatabase", loader)
-            else -> null
+        SQLiteDatabasePkg = when {
+            version >= Version("6.5.8") ->"com.tencent.wcdb"
+            else ->"com.tencent.mmdb"
         }
+        SQLiteDatabaseClass = findClassIfExists(
+                "$SQLiteDatabasePkg.database.SQLiteDatabase", loader
+        )
 
         EncEngine = findClassesFromPackage(loader, classes, "com.tencent.mm.modelsfs")
                 .filterByMethod(null, "seek", C.Long)

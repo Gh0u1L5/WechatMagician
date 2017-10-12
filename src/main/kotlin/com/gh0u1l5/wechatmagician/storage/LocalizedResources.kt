@@ -14,7 +14,7 @@ object LocalizedResources {
                     "prompt_wait"         to "请稍等片刻……",
                     "prompt_screenshot"   to "截图已保存至 ",
                     "prompt_sns_invalid"  to "数据失效或已删除",
-                    "label_easter_egg"    to "妄图撤回一条消息，啧啧",
+                    "prompt_recall"       to "妄图撤回一条消息，啧啧",
                     "label_deleted"       to "[已删除]",
                     "button_select_all"   to "全选"
             ),
@@ -24,7 +24,7 @@ object LocalizedResources {
                     "prompt_wait"         to "Please wait for a while......",
                     "prompt_screenshot"   to "The screenshot has been saved to ",
                     "prompt_sns_invalid"  to "Record is invalid or deleted.",
-                    "label_easter_egg"    to "want to recall the message, idiot.",
+                    "prompt_recall"       to "want to recall the message, idiot.",
                     "label_deleted"       to "[Deleted]",
                     "button_select_all"   to "All"
             )
