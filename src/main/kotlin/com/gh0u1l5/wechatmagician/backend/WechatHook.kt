@@ -24,8 +24,8 @@ import kotlin.concurrent.thread
 // WechatHook contains the entry points and all the hooks.
 class WechatHook : IXposedHookLoadPackage {
 
+    private val str = Strings
     private val pkg = WechatPackage
-    private val res = LocalizedResources
     private val preferences = Preferences()
     @Volatile private lateinit var loader: ClassLoader
 
@@ -201,7 +201,7 @@ class WechatHook : IXposedHookLoadPackage {
                         return
                     }
                     val prompt = preferences.getString(
-                            "settings_chatting_recall_prompt", res["prompt_recall"])
+                            "settings_chatting_recall_prompt", str["prompt_recall"])
                     result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
                 }
                 if (result[".TimelineObject"] != null) {
@@ -373,7 +373,7 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(res["label_deleted"], content)?.let { msg ->
+        MessageUtil.notifyInfoDelete(str["label_deleted"], content)?.let { msg ->
             values.remove("sourceType")
             values.put("content", msg)
         }
@@ -381,7 +381,7 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(res["label_deleted"], curActionBuf)?.let { msg ->
+        MessageUtil.notifyCommentDelete(str["label_deleted"], curActionBuf)?.let { msg ->
             values.remove("commentflag")
             values.put("curActionBuf", msg)
         }

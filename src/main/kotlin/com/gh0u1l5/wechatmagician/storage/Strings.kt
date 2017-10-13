@@ -2,8 +2,10 @@ package com.gh0u1l5.wechatmagician.storage
 
 import de.robv.android.xposed.XposedBridge.log
 
-// LocalizedResources describes the localized resources used by the module.
-object LocalizedResources {
+// Strings describes the localized strings used by the module.
+// NOTE: we use this object instead of Android default localized resources
+// to support devices that cannot use resource hooks.
+object Strings {
 
     @Volatile var language: String = "zh"
 

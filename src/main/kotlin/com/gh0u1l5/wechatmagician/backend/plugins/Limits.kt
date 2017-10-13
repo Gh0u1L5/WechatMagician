@@ -13,15 +13,15 @@ import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatResHook
 import com.gh0u1l5.wechatmagician.storage.HookStatus
-import com.gh0u1l5.wechatmagician.storage.LocalizedResources
+import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 
 class Limits(private val preferences: Preferences) {
 
+    private val str = Strings
     private val pkg = WechatPackage
-    private val res = LocalizedResources
     private val events = WechatEvents
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
@@ -72,7 +72,7 @@ class Limits(private val preferences: Preferences) {
                 selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 if (WechatResHook.MODULE_RES == null) {
                     selectAll.isChecked = checked
-                    selectAll.title = res["button_select_all"] + "  " +
+                    selectAll.title = str["button_select_all"] + "  " +
                             if (checked) "\u2611" else "\u2610"
                     selectAll.setOnMenuItemClickListener {
                         events.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
@@ -83,7 +83,7 @@ class Limits(private val preferences: Preferences) {
                     )
                     checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)
-                        text = res["button_select_all"]
+                        text = str["button_select_all"]
                     }
                     checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
                         isChecked = checked

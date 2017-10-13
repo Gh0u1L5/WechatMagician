@@ -6,7 +6,7 @@ import android.view.Gravity
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.frontend.WechatListPopupAdapter
-import com.gh0u1l5.wechatmagician.storage.LocalizedResources
+import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
@@ -17,8 +17,8 @@ import java.util.*
 
 object WechatEvents {
 
+    private val str = Strings
     private val pkg = WechatPackage
-    private val res = LocalizedResources
 
     // Handle the logic about "select all" check box in SelectContactUI
     fun onSelectContactUISelectAll(activity: Activity, isChecked: Boolean) {
@@ -79,7 +79,7 @@ object WechatEvents {
 
         popup.setDropDownGravity(Gravity.BOTTOM or Gravity.END)
         popup.setAdapter(WechatListPopupAdapter(
-                layout.context, listOf(res["menu_sns_forward"], res["menu_sns_screenshot"])
+                layout.context, listOf(str["menu_sns_forward"], str["menu_sns_screenshot"])
         ))
         popup.setOnItemClickListener { _, _, itemId, _ ->
             onAdFramePopupMenuSelected(layout, itemId)
@@ -104,7 +104,7 @@ object WechatEvents {
                 val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
                 ForwardAsyncTask(snsId, layout.context).execute()
                 Toast.makeText(
-                        layout.context, res["prompt_wait"], Toast.LENGTH_SHORT
+                        layout.context, str["prompt_wait"], Toast.LENGTH_SHORT
                 ).show()
                 return true
             }
@@ -115,7 +115,7 @@ object WechatEvents {
                 val bitmap = ViewUtil.drawView(layout)
                 ImageUtil.writeBitmapToDisk(path, bitmap)
                 Toast.makeText(
-                        layout.context, res["prompt_screenshot"] + path, Toast.LENGTH_SHORT
+                        layout.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
                 ).show()
                 return true
             }

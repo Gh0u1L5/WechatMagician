@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.storage.LocalizedResources
+import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.util.DownloadUtil
 import de.robv.android.xposed.XposedBridge.log
@@ -14,7 +14,7 @@ import java.lang.ref.WeakReference
 // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
 class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
-    private val res = LocalizedResources
+    private val str = Strings
 
     private val snsInfo = SnsCache[snsId]
     private val context = WeakReference(context)
@@ -23,7 +23,7 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
     override fun doInBackground(vararg params: Void): Throwable? {
         return try {
             if (snsInfo == null) {
-                throw Error(res["prompt_sns_invalid"] + "(snsId: $snsId)")
+                throw Error(str["prompt_sns_invalid"] + "(snsId: $snsId)")
             }
             snsInfo.medias.forEachIndexed { i, media ->
                 when(media.type) {
