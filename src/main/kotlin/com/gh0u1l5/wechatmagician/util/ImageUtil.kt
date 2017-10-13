@@ -3,7 +3,8 @@ package com.gh0u1l5.wechatmagician.util
 import android.graphics.Bitmap
 import android.graphics.Bitmap.CompressFormat.PNG
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import de.robv.android.xposed.XposedHelpers.*
+import de.robv.android.xposed.XposedHelpers.callMethod
+import de.robv.android.xposed.XposedHelpers.getObjectField
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream

@@ -2,7 +2,8 @@ package com.gh0u1l5.wechatmagician.util
 
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.XposedHelpers.*
+import de.robv.android.xposed.XposedHelpers.findClass
+import de.robv.android.xposed.XposedHelpers.findMethodExact
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
 import java.lang.reflect.Method

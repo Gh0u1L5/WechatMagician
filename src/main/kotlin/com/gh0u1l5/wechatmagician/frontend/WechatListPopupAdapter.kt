@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.LinearLayout.LayoutParams
-import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout.LayoutParams.MATCH_PARENT
+import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
 
 class WechatListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<String>(context, 0, strings) {
