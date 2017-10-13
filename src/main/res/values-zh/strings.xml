@@ -12,7 +12,6 @@
     <string name="support">帮助</string>
     <string name="donate">捐赠</string>
 
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="navigation_drawer_open">打开导航栏</string>
     <string name="navigation_drawer_close">关闭导航栏</string>
     <string name="status_ok">插件已加载并启动</string>
@@ -31,7 +30,6 @@
     <string name="pref_toggle_database_update">跟踪更新操作</string>
     <string name="pref_toggle_database_delete">跟踪删除操作</string>
     <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
-
 
     <string name="pref_category_miscellaneous">其他逆向工具</string>
     <string name="pref_toggle_xml_parser">跟踪XML解释器</string>

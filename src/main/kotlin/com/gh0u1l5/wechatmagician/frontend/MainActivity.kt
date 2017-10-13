@@ -12,6 +12,10 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.View
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.frontend.fragments.DonateFragment
+import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
+import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment
+import com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -64,10 +68,10 @@ class MainActivity : Activity(),
                 PrefFragment.newInstance(R.xml.pref_developer)
             }
             R.id.nav_support -> {
-                StatusFragment.newInstance()
+                SupportFragment.newInstance()
             }
             R.id.nav_donate -> {
-                StatusFragment.newInstance()
+                DonateFragment.newInstance()
             }
             else ->
                 throw Error("Unknown navigation item: ${item.itemId}")

@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.frontend
+package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.app.Fragment
 import android.os.Build

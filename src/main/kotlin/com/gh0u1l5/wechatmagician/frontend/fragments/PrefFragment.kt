@@ -1,11 +1,9 @@
-package com.gh0u1l5.wechatmagician.frontend
+package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.Context.MODE_WORLD_READABLE
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.*
 import android.os.Bundle
 import android.preference.PreferenceFragment

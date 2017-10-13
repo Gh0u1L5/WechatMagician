@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.SnsCache
+import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.DownloadUtil
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
