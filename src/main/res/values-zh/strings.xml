@@ -43,4 +43,6 @@
     <string name="pref_toggle_prevent_moment_delete">启用动态防删除</string>
     <string name="pref_toggle_prevent_comment_delete">启用评论防删除</string>
     <string name="pref_textlist_keyword_blacklist">关键字黑名单</string>
+    <string name="status_ok">插件已加载并启动</string>
+    <string name="status_error">插件未能加载，请检查Xposed框架</string>
 </resources>

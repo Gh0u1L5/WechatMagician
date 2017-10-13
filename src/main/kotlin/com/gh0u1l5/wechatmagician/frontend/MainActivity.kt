@@ -14,11 +14,9 @@ import android.view.View
 import com.gh0u1l5.wechatmagician.R
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
-import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : Activity(),
-        NavigationView.OnNavigationItemSelectedListener,
-        StatusFragment.OnFragmentInteractionListener {
+        NavigationView.OnNavigationItemSelectedListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +55,7 @@ class MainActivity : Activity(),
         findViewById<ConstraintLayout?>(R.id.main_container) ?: return false
         val fragment: Fragment = when (item.itemId) {
             R.id.nav_status -> {
-                StatusFragment()
+                StatusFragment.newInstance()
             }
             R.id.nav_settings -> {
                 PrefFragment.newInstance(R.xml.pref_settings)
@@ -66,10 +64,10 @@ class MainActivity : Activity(),
                 PrefFragment.newInstance(R.xml.pref_developer)
             }
             R.id.nav_support -> {
-                StatusFragment()
+                StatusFragment.newInstance()
             }
             R.id.nav_donate -> {
-                StatusFragment()
+                StatusFragment.newInstance()
             }
             else ->
                 throw Error("Unknown navigation item: ${item.itemId}")
@@ -80,9 +78,5 @@ class MainActivity : Activity(),
 
         drawer_layout.closeDrawer(Gravity.START)
         return true
-    }
-
-    override fun onFragmentInteraction(uri: Uri) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

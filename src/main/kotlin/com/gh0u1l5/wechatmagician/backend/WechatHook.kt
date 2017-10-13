@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.backend.plugins.Frontend
 import com.gh0u1l5.wechatmagician.backend.plugins.Limits
 import com.gh0u1l5.wechatmagician.backend.plugins.SnsUI
 import com.gh0u1l5.wechatmagician.backend.plugins.System
@@ -27,6 +28,11 @@ class WechatHook : IXposedHookLoadPackage {
     // Hook for hacking Wechat application.
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(param: XC_LoadPackage.LoadPackageParam) {
+        if (param.packageName == "com.gh0u1l5.wechatmagician") {
+            val pluginFrontend = Frontend(param.classLoader)
+            tryHook(pluginFrontend::notifyStatus, {})
+        }
+
         if (param.packageName != "com.tencent.mm") {
             return
         }

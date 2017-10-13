@@ -4,4 +4,7 @@
     <color name="primary">#0079f1</color>
     <color name="primary_dark">#0059b0</color>
     <color name="primary_light">#238cf4</color>
+
+    <color name="ok">#4CAF50</color>
+    <color name="error">#F44336</color>
 </resources>
