@@ -1,18 +1,12 @@
 package com.gh0u1l5.wechatmagician.storage
 
-// HookStatus records the status of all the hooks.
-object HookStatus {
-    private val status = mutableMapOf("ModuleLoaded" to true)
+import java.io.Serializable
 
-    @Synchronized operator fun get(func: String?): Boolean {
-        return status[func] ?: false
-    }
+object HookStatus : Serializable {
+    @Volatile var MsgStorage: Boolean = false
+    @Volatile var ImgStorage: Boolean = false
 
-    @Synchronized operator fun plusAssign(func: String) {
-        status[func] = true
-    }
-
-    @Synchronized operator fun minusAssign(func: String) {
-        status[func] = false
-    }
+    @Volatile var Resources: Boolean = false
+    @Volatile var Database:  Boolean = false
+    @Volatile var XMLParser: Boolean = false
 }

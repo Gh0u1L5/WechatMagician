@@ -6,7 +6,6 @@ import android.widget.FrameLayout
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
@@ -37,8 +36,6 @@ class SnsUI(private val preferences: Preferences) {
                 }
             }
         })
-
-        HookStatus += "SetItemLongPressPopupMenu"
     }
 
     // Hook SnsUploadUI.onPause to clean text view properly for forwarding.
@@ -59,7 +56,5 @@ class SnsUI(private val preferences: Preferences) {
                 }
             }
         })
-
-        HookStatus += "CleanTextViewForForwarding"
     }
 }

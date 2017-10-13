@@ -132,7 +132,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
-        HookStatus += "MsgStorage"
+        HookStatus.MsgStorage = true
     }
 
     private fun hookImgStorage() {
@@ -171,7 +171,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
-        HookStatus += "ImgStorage"
+        HookStatus.ImgStorage = true
     }
 
     private fun hookXMLParse() {
@@ -215,7 +215,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
-        HookStatus += "XMLParser"
+        HookStatus.XMLParser = true
     }
 
     private fun hookDatabase() {
@@ -348,7 +348,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         })
 
-        HookStatus += "Database"
+        HookStatus.Database = true
     }
 
     // handleMessageRecall notifies user that someone has recalled the given message.

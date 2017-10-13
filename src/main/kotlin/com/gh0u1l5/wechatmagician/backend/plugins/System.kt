@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -28,8 +27,6 @@ class System(private val loader: ClassLoader, private val preferences: Preferenc
                 }
             }
         })
-
-        HookStatus += "TraceTouchEvents"
     }
 
     // Hook Activity.startActivity and Activity.onCreate to trace activities.
@@ -58,8 +55,6 @@ class System(private val loader: ClassLoader, private val preferences: Preferenc
                 }
             }
         })
-
-        HookStatus += "TraceActivities"
     }
 
     // Hook XLog to print internal errors into logcat.
@@ -76,7 +71,5 @@ class System(private val loader: ClassLoader, private val preferences: Preferenc
                 }
             }
         })
-
-        HookStatus += "EnableXLog"
     }
 }

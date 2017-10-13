@@ -12,7 +12,6 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatResHook
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
@@ -45,8 +44,6 @@ class Limits(private val preferences: Preferences) {
                 }
             }
         })
-
-        HookStatus += "BreakSelectPhotosLimit"
     }
 
     fun breakSelectContactLimit() {
@@ -123,8 +120,6 @@ class Limits(private val preferences: Preferences) {
                 }
             }
         })
-
-        HookStatus += "BreakSelectContactLimit"
     }
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
@@ -139,7 +134,5 @@ class Limits(private val preferences: Preferences) {
                 param.result = false
             }
         })
-
-        HookStatus += "BreakSelectConversationLimit"
     }
 }
