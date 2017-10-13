@@ -45,4 +45,5 @@
     <string name="pref_textlist_keyword_blacklist">关键字黑名单</string>
     <string name="status_ok">插件已加载并启动</string>
     <string name="status_error">插件未能加载，请检查Xposed框架</string>
+    <string name="prompt_need_reboot">重启后生效</string>
 </resources>

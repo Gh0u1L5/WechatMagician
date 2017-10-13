@@ -44,5 +44,6 @@
     <string name="pref_textlist_keyword_blacklist">Keyword Blacklist</string>
     <string name="status_ok">The module is loaded properly.</string>
     <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
+    <string name="prompt_need_reboot">Take effect after reboot.</string>
 
 </resources>
