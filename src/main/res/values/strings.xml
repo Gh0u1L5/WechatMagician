@@ -6,9 +6,6 @@
     <string name="view_about_project_github">GitHub: Gh0u1L5/WechatMagician</string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="status">Status</string>
     <string name="settings">Settings</string>
     <string name="developer">Developer</string>
@@ -16,6 +13,12 @@
     <string name="donate">Donate</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="status_ok">The module is loaded properly.</string>
+    <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
+    <string name="prompt_need_reboot">Take effect after reboot.</string>
+    <string name="pref_warning_developer">These options will significantly slow down the Wechat, use them only if you know what are they.</string>
 
     <string name="pref_category_ui">UI Debug Options</string>
     <string name="pref_toggle_touch_event">Trace Touch Events</string>
@@ -42,9 +45,6 @@
     <string name="pref_toggle_prevent_moment_delete">Prevent Deleting Moments</string>
     <string name="pref_toggle_prevent_comment_delete">Prevent Deleting Comments</string>
     <string name="pref_textlist_keyword_blacklist">Keyword Blacklist</string>
-    <string name="status_ok">The module is loaded properly.</string>
-    <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
-    <string name="prompt_need_reboot">Take effect after reboot.</string>
 
     <string name="pref_category_interface">Interface</string>
     <string name="pref_toggle_hide_icon">Hide Launcher Icon</string>
