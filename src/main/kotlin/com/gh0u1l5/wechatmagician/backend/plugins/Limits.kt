@@ -81,11 +81,11 @@ class Limits(private val preferences: Preferences) {
                     val checkedTextView = activity.layoutInflater.inflate(
                             WechatResHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview), null
                     )
-                    checkedTextView.findViewById<TextView>(R.id.ctvTextView).apply {
+                    checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)
                         text = res["button_select_all"]
                     }
-                    checkedTextView.findViewById<CheckBox>(R.id.ctvCheckBox).apply {
+                    checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
                         isChecked = checked
                         setOnCheckedChangeListener { _, checked ->
                             events.onSelectContactUISelectAll(activity, checked)
