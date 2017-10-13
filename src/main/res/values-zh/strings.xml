@@ -46,4 +46,7 @@
     <string name="status_ok">插件已加载并启动</string>
     <string name="status_error">插件未能加载，请检查Xposed框架</string>
     <string name="prompt_need_reboot">重启后生效</string>
+
+    <string name="pref_category_interface">用户界面</string>
+    <string name="pref_toggle_hide_icon">隐藏启动图标</string>
 </resources>
