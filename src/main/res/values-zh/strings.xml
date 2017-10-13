@@ -34,6 +34,9 @@
     <string name="pref_category_miscellaneous">其他逆向工具</string>
     <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 
+    <string name="pref_category_interface">用户界面</string>
+    <string name="pref_toggle_hide_icon">隐藏启动图标</string>
+
     <string name="pref_category_chatting">聊天消息</string>
     <string name="pref_toggle_prevent_recall">启用防撤回</string>
     <string name="pref_text_recall_prompt">自定义防撤回提示</string>
@@ -43,8 +46,8 @@
     <string name="pref_category_sns">朋友圈</string>
     <string name="pref_toggle_prevent_moment_delete">启用动态防删除</string>
     <string name="pref_toggle_prevent_comment_delete">启用评论防删除</string>
-    <string name="pref_textlist_keyword_blacklist">关键字黑名单</string>
-
-    <string name="pref_category_interface">用户界面</string>
-    <string name="pref_toggle_hide_icon">隐藏启动图标</string>
+    <string name="pref_toggle_keyword_blacklist">启用关键字黑名单</string>
+    <string name="pref_toggle_keyword_blacklist_summary">使你免除七夕不敢开朋友圈的苦恼</string>
+    <string name="pref_list_keyword_blacklist">关键字黑名单</string>
+    <string name="pref_list_keyword_blacklist_summary">使用空格分隔，性能较差的手机注意不要写太长</string>
 </resources>

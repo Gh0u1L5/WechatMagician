@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_category_interface">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="settings_interface_hide_icon"
+            android:summary="@string/prompt_need_reboot"
+            android:title="@string/pref_toggle_hide_icon" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_chatting">
         <SwitchPreference
             android:defaultValue="true"
@@ -7,6 +14,7 @@
             android:title="@string/pref_toggle_prevent_recall" />
         <EditTextPreference
             android:defaultValue="@string/pref_text_recall_prompt_default"
+            android:dependency="settings_chatting_recall"
             android:key="settings_chatting_recall_prompt"
             android:selectAllOnFocus="true"
             android:singleLine="true"
@@ -28,18 +36,17 @@
             android:defaultValue="true"
             android:key="settings_sns_delete_comment"
             android:title="@string/pref_toggle_prevent_comment_delete" />
-        <EditTextPreference
-            android:key="settings_sns_keyword_blacklist"
-            android:selectAllOnFocus="true"
-            android:singleLine="false"
-            android:title="@string/pref_textlist_keyword_blacklist" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_interface">
-
         <SwitchPreference
             android:defaultValue="false"
-            android:key="settings_interface_hide_icon"
-            android:summary="@string/prompt_need_reboot"
-            android:title="@string/pref_toggle_hide_icon" />
+            android:key="settings_sns_keyword_blacklist"
+            android:summary="@string/pref_toggle_keyword_blacklist_summary"
+            android:title="@string/pref_toggle_keyword_blacklist" />
+        <EditTextPreference
+            android:dependency="settings_sns_keyword_blacklist"
+            android:key="settings_sns_keyword_blacklist_content"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_list_keyword_blacklist_summary"
+            android:title="@string/pref_list_keyword_blacklist" />
     </PreferenceCategory>
 </PreferenceScreen>
