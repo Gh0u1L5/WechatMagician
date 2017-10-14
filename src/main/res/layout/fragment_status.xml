@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/card_background"
     android:orientation="vertical"
     tools:context="com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment">
 
@@ -12,7 +13,6 @@
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
-        card_view:cardBackgroundColor="@color/card_background"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="5dp">
 
