@@ -3,10 +3,12 @@ package com.gh0u1l5.wechatmagician.backend
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import de.robv.android.xposed.IXposedHookLoadPackage
+import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import de.robv.android.xposed.*
-import de.robv.android.xposed.XposedHelpers.*
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -47,6 +49,7 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
         pkg.init(lpparam)
+        pkg.dumpPackage()
         preferences.load(XSharedPreferences("com.gh0u1l5.wechatmagician"))
 
         tryHook({
