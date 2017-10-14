@@ -7,26 +7,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
-import android.widget.LinearLayout.LayoutParams
 import android.widget.LinearLayout.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout.LayoutParams.WRAP_CONTENT
 import android.widget.TextView
+import de.robv.android.xposed.XposedHelpers
 
 class WechatListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<String>(context, 0, strings) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView as LinearLayout?
         if (view == null) {
+            val containerLayout = XposedHelpers.callMethod(parent, "generateDefaultLayoutParams")
+            XposedHelpers.setIntField(containerLayout, "height", 140)
             view = LinearLayout(context).apply {
                 orientation = LinearLayout.HORIZONTAL
-                layoutParams = ViewGroup.LayoutParams(MATCH_PARENT, 140)
+                if (containerLayout is ViewGroup.LayoutParams) {
+                    layoutParams = containerLayout
+                }
 
-                val params = LayoutParams(WRAP_CONTENT, MATCH_PARENT)
-                params.setMargins(50, 0, 0, 0)
+                val textLayout = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
+                textLayout.setMargins(50, 0, 0, 0)
                 addView(TextView(context).apply {
                     textSize = 16F
                     gravity = Gravity.CENTER_VERTICAL
                     setTextColor(Color.BLACK)
-                }, params)
+                }, textLayout)
                 setBackgroundColor(Color.WHITE)
             }
         }
