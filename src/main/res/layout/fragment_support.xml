@@ -1,12 +1,80 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/support_github_card"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="140dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        card_view:cardBackgroundColor="@color/card_background"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="5dp">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/support_github_mark"
+                android:src="@drawable/ic_github_mark" />
+
+            <ImageView
+                android:layout_width="120dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/support_github_logo"
+                android:src="@drawable/ic_github_logo" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+    <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/support_email_card"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        card_view:cardBackgroundColor="@color/card_background"
+        card_view:cardCornerRadius="4dp"
+        card_view:cardElevation="5dp">
+
+        <LinearLayout
+            android:layout_width="180dp"
+            android:layout_height="90dp"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:contentDescription="@string/support_github_mark"
+                android:src="@drawable/ic_email" />
+
+            <android.support.v7.widget.AppCompatTextView
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingLeft="6dp"
+                android:text="@string/support_send_email"
+                android:textColor="@android:color/black"
+                android:textStyle="bold"
+                app:autoSizeTextType="uniform" />
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
