@@ -2,10 +2,8 @@
 
 package com.gh0u1l5.wechatmagician.backend
 
-import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Version
-import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
@@ -13,7 +11,6 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
-import kotlin.concurrent.thread
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -163,16 +160,11 @@ object WechatPackage {
 //        ).firstOrNull()?.name ?: ""
     }
 
-    // dumpPackage dumps the content of WechatPackage to Xposed log.
-    fun dumpPackage() {
-        thread(start = true) {
-            val status = this.javaClass.declaredFields.filter {
-                it.name != "INSTANCE"
-            }.joinToString("\n") {
-                it.isAccessible = true; "${it.name} = ${it.get(this)}"
-            }
-            val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
-            FileUtil.dumpStatusToFile("$storage/.status/pkg", status.toByteArray())
+    override fun toString(): String {
+        return this.javaClass.declaredFields.filter {
+            it.name != "INSTANCE"
+        }.joinToString("\n") {
+            it.isAccessible = true; "${it.name} = ${it.get(this)}"
         }
     }
 }

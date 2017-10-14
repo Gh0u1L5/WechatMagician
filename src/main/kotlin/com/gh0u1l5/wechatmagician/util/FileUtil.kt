@@ -2,10 +2,7 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.os.SystemClock.elapsedRealtime
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
+import java.io.*
 import java.lang.System.currentTimeMillis
 
 // FileUtil is a helper object for file I/O.
@@ -34,6 +31,15 @@ object FileUtil {
         }
     }
 
+    // writeObjectToDisk writes a serializable object to disk.
+    fun writeObjectToDisk(path: String, obj: Serializable) {
+        val out = ByteArrayOutputStream()
+        ObjectOutputStream(out).apply {
+            writeObject(obj); close()
+        }
+        writeBytesToDisk(path, out.toByteArray())
+    }
+
     // writeBitmapToDisk writes the given bitmap to disk.
     fun writeBitmapToDisk(path: String, bitmap: Bitmap) {
         val out = ByteArrayOutputStream()
@@ -41,17 +47,17 @@ object FileUtil {
         FileUtil.writeBytesToDisk(path, out.toByteArray())
     }
 
-    // dumpStatusToFile dumps status to a file once per boot.
-    fun dumpStatusToFile(path: String, status: ByteArray) {
+    // writeOnce ensures that the writeCallback will only be executed once for each boot.
+    fun writeOnce(path: String, writeCallback: (String) -> Unit) {
         val file = File(path)
         if (!file.exists()) {
-            writeBytesToDisk(path, status)
+            writeCallback(path)
             return
         }
         val bootAt = currentTimeMillis() - elapsedRealtime()
         val modifiedAt = file.lastModified()
         if (modifiedAt < bootAt) {
-            writeBytesToDisk(path, status)
+            writeCallback(path)
         }
     }
 }

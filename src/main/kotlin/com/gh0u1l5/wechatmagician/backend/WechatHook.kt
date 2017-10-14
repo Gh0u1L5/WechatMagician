@@ -1,14 +1,18 @@
 package com.gh0u1l5.wechatmagician.backend
 
+import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.*
+import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -49,7 +53,6 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
         pkg.init(lpparam)
-        pkg.dumpPackage()
         preferences.load(XSharedPreferences("com.gh0u1l5.wechatmagician"))
 
         tryHook({
@@ -79,5 +82,14 @@ class WechatHook : IXposedHookLoadPackage {
             val pluginDatabase = Database(loader, preferences)
             pluginDatabase.hookDatabase()
         })
+        thread(start = true) {
+            val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+            FileUtil.writeOnce("$storage/.status/pkg", { path->
+                FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
+            })
+            FileUtil.writeOnce("$storage/.status/hooks", { path ->
+                FileUtil.writeObjectToDisk(path, HookStatus)
+            })
+        }
     }
 }
