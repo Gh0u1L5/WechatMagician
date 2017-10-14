@@ -17,7 +17,6 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="developer_ui_xlog"
-            android:summary="@string/prompt_need_reboot"
             android:title="@string/pref_toggle_xlog" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_database">

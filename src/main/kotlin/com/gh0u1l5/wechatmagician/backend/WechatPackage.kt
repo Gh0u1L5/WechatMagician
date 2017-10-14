@@ -22,6 +22,9 @@ object WechatPackage {
     var XLogSetup: Class<*>? = null
     var SQLiteDatabasePkg = ""
     var SQLiteDatabaseClass: Class<*>? = null
+    var SQLiteCursorFactory: Class<*>? = null
+    var SQLiteErrorHandler: Class<*>? = null
+    var SQLiteCancellationSignal: Class<*>? = null
     var EncEngine: Class<*>? = null
     var EncEngineEDMethod = ""
 
@@ -81,6 +84,15 @@ object WechatPackage {
         }
         SQLiteDatabaseClass = findClassIfExists(
                 "$SQLiteDatabasePkg.database.SQLiteDatabase", loader
+        )
+        SQLiteCursorFactory = findClassIfExists(
+                "$SQLiteDatabasePkg.database.SQLiteDatabase.CursorFactory", loader
+        )
+        SQLiteErrorHandler = findClassIfExists(
+                "$SQLiteDatabasePkg.DatabaseErrorHandler", loader
+        )
+        SQLiteCancellationSignal = findClassIfExists(
+                "$SQLiteDatabasePkg.support.CancellationSignal", loader
         )
 
         EncEngine = findClassesFromPackage(loader, classes, "com.tencent.mm.modelsfs")

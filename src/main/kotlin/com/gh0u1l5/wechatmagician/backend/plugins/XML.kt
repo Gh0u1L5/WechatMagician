@@ -26,12 +26,6 @@ class XML(private val preferences: Preferences) {
         XposedHelpers.findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (preferences.getBoolean("developer_xml_parser", false)) {
-                    val xml = param.args[0] as String?
-                    val tag = param.args[1] as String?
-                    XposedBridge.log("XML => xml = $xml, tag = $tag")
-                }
-
                 @Suppress("UNCHECKED_CAST")
                 val result = param.result as MutableMap<String, String?>? ?: return
                 if (result[".sysmsg.\$type"] == "revokemsg") {

@@ -32,7 +32,9 @@ class Storage(private val loader: ClassLoader) {
         })
 
         // Hook MsgStorage to record the received messages.
-        XposedHelpers.findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, pkg.MsgInfoClass, C.Boolean, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.MsgStorageClass, pkg.MsgStorageInsertMethod,
+                pkg.MsgInfoClass, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 thread(start = true) {
@@ -72,7 +74,9 @@ class Storage(private val loader: ClassLoader) {
 //        })
 
         // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
-        XposedHelpers.findAndHookConstructor("java.io.FileOutputStream", loader, C.File, C.Boolean, object : XC_MethodHook() {
+        XposedHelpers.findAndHookConstructor(
+                "java.io.FileOutputStream", loader,
+                C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.args[0] as File?)?.path ?: return

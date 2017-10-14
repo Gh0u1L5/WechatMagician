@@ -53,10 +53,12 @@ class WechatHook : IXposedHookLoadPackage {
         preferences.load(XSharedPreferences("com.gh0u1l5.wechatmagician"))
 
         tryHook({
-            val pluginSystem = System(loader, preferences)
-            pluginSystem.traceTouchEvents()
-            pluginSystem.traceActivities()
-            pluginSystem.enableXLog()
+            val pluginDeveloper = Developer(loader, preferences)
+            pluginDeveloper.traceTouchEvents()
+            pluginDeveloper.traceActivities()
+            pluginDeveloper.enableXLog()
+            pluginDeveloper.traceXMLParse()
+            pluginDeveloper.traceDatabase()
 
             val pluginSnsUI = SnsUI(preferences)
             pluginSnsUI.setItemLongPressPopupMenu()

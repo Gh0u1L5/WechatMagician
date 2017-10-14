@@ -29,7 +29,9 @@ class Limits(private val preferences: Preferences) {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.AlbumPreviewUI, "onCreate",
+                C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val intent = (param.thisObject as Activity).intent ?: return
@@ -52,7 +54,9 @@ class Limits(private val preferences: Preferences) {
         }
 
         // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
-        XposedHelpers.findAndHookMethod(pkg.MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.MMActivity, "onCreateOptionsMenu",
+                C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (param.thisObject.javaClass != pkg.SelectContactUI) {
@@ -75,9 +79,8 @@ class Limits(private val preferences: Preferences) {
                         events.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
                     }
                 } else {
-                    val checkedTextView = activity.layoutInflater.inflate(
-                            WechatResHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview), null
-                    )
+                    val layout = WechatResHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview)
+                    val checkedTextView = activity.layoutInflater.inflate(layout, null)
                     checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)
                         text = str["button_select_all"]
@@ -94,7 +97,9 @@ class Limits(private val preferences: Preferences) {
         })
 
         // Hook SelectContactUI to help the "Select All" button.
-        XposedHelpers.findAndHookMethod(pkg.SelectContactUI, "onActivityResult", C.Int, C.Int, C.Intent, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.SelectContactUI, "onActivityResult",
+                C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val requestCode = param.args[0] as Int
@@ -111,7 +116,9 @@ class Limits(private val preferences: Preferences) {
         })
 
         // Hook SelectContactUI to bypass the limit on number of recipients.
-        XposedHelpers.findAndHookMethod(pkg.SelectContactUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.SelectContactUI, "onCreate",
+                C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val intent = (param.thisObject as Activity).intent ?: return
@@ -128,7 +135,9 @@ class Limits(private val preferences: Preferences) {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod, C.Boolean, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(
+                pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod,
+                C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false

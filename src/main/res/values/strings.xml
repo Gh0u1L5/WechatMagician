@@ -20,7 +20,7 @@
     <string name="status_ok">The module is loaded properly.</string>
     <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
     <string name="prompt_need_reboot">Take effect after reboot.</string>
-    <string name="pref_warning_developer">These options will significantly slow down the Wechat, use them only if you know what are they.</string>
+    <string name="pref_warning_developer">These options will significantly slow down the Wechat, use them only if you know what are they. You need to reboot the device to perform any modifications.</string>
 
     <string name="pref_category_ui">UI Debug Options</string>
     <string name="pref_toggle_touch_event">Trace Touch Events</string>

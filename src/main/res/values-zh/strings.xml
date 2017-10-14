@@ -20,7 +20,7 @@
     <string name="status_ok">插件已加载并启动</string>
     <string name="status_error">插件未能加载，请检查Xposed框架</string>
     <string name="prompt_need_reboot">重启后生效</string>
-    <string name="pref_warning_developer">这些调试选项会显著拖慢微信运行速度，请在开发者指导下选择性开启。</string>
+    <string name="pref_warning_developer">这些调试选项会显著拖慢微信运行速度，请在开发者指导下选择性开启，修改后重启生效。</string>
 
     <string name="pref_category_ui">UI逆向工具</string>
     <string name="pref_toggle_touch_event">跟踪触摸事件</string>
