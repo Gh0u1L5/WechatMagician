@@ -13,6 +13,7 @@ import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadVideo
 import com.gh0u1l5.wechatmagician.util.FileUtil.readBytesFromDisk
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
+import kotlin.concurrent.thread
 
 // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
 class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
@@ -35,12 +36,14 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
                 }
                 return null
             }
-            snsInfo.medias.forEachIndexed { i, media ->
-                when(media.type) {
-                    "2" -> downloadImage("$storage/.cache/$i", media)
-                    "6" -> downloadVideo("$storage/.cache/$i", media)
+            snsInfo.medias.mapIndexed { i, media ->
+                thread(start = true) {
+                    when(media.type) {
+                        "2" -> downloadImage("$storage/.cache/$i", media)
+                        "6" -> downloadVideo("$storage/.cache/$i", media)
+                    }
                 }
-            }; null
+            }.forEach { it.join() }; null
         } catch (e: Throwable) { e }
     }
 
