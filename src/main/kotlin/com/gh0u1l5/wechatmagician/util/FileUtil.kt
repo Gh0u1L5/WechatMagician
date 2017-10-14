@@ -21,6 +21,7 @@ object FileUtil {
         }
     }
 
+    // readBytesFromDisk returns all the bytes of a binary file.
     fun readBytesFromDisk(path: String): ByteArray {
         var ins: FileInputStream? = null
         try {

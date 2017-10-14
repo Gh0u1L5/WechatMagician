@@ -3,13 +3,10 @@ package com.gh0u1l5.wechatmagician.backend
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import de.robv.android.xposed.IXposedHookLoadPackage
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import kotlin.concurrent.thread
+import de.robv.android.xposed.*
+import de.robv.android.xposed.XposedHelpers.*
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -26,8 +23,8 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    private fun tryHook(hook: () -> Unit, cleanup: (Throwable) -> Unit) {
-        try { hook() } catch (e: Throwable) { log("HOOK => $e"); cleanup(e) }
+    private fun tryHook(hook: () -> Unit) {
+        try { hook() } catch (e: Throwable) { log("HOOK => $e") }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -37,16 +34,14 @@ class WechatHook : IXposedHookLoadPackage {
                 "com.gh0u1l5.wechatmagician" ->
                     hookApplicationAttach(lpparam.classLoader, {
                         val pluginFrontend = Frontend(lpparam.classLoader)
-                        tryHook(pluginFrontend::notifyStatus, {})
+                        tryHook(pluginFrontend::notifyStatus)
                     })
                 "com.tencent.mm" ->
                     hookApplicationAttach(lpparam.classLoader, {
                         handleLoadWechat(lpparam)
                     })
             }
-        } catch (e: Throwable) {
-            log("INIT => ${e.stackTrace}")
-        }
+        } catch (e: Throwable) { log(e) }
     }
 
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
@@ -54,55 +49,30 @@ class WechatHook : IXposedHookLoadPackage {
         pkg.init(lpparam)
         preferences.load(XSharedPreferences("com.gh0u1l5.wechatmagician"))
 
-        val process = lpparam.processName
-        if (process == "com.tencent.mm") {
-            thread(start = true) {
-                pkg.dumpPackage()
-            }
-        }
+        tryHook({
+            val pluginSystem = System(loader, preferences)
+            pluginSystem.traceTouchEvents()
+            pluginSystem.traceActivities()
+            pluginSystem.enableXLog()
 
-        val pluginSystem = System(loader, preferences)
-        tryHook(pluginSystem::traceTouchEvents, {})
-        tryHook(pluginSystem::traceActivities, {})
-        tryHook(pluginSystem::enableXLog, {
-            pkg.XLogSetup = null
-        })
+            val pluginSnsUI = SnsUI(preferences)
+            pluginSnsUI.setItemLongPressPopupMenu()
+            pluginSnsUI.cleanTextViewForForwarding()
 
-        val pluginSnsUI = SnsUI(preferences)
-        tryHook(pluginSnsUI::setItemLongPressPopupMenu, {
-            pkg.AdFrameLayout = null
-        })
-        tryHook(pluginSnsUI::cleanTextViewForForwarding, {
-            pkg.SnsUploadUI = null
-        })
+            val pluginLimits = Limits(preferences)
+            pluginLimits.breakSelectPhotosLimit()
+            pluginLimits.breakSelectContactLimit()
+            pluginLimits.breakSelectConversationLimit()
 
-        val pluginLimits = Limits(preferences)
-        tryHook(pluginLimits::breakSelectPhotosLimit, {
-            pkg.AlbumPreviewUI = null
-        })
-        tryHook(pluginLimits::breakSelectContactLimit, {
-            pkg.SelectContactUI = null
-        })
-        tryHook(pluginLimits::breakSelectConversationLimit, {
-            pkg.SelectConversationUI = null
-        })
+            val pluginStorage = Storage(loader)
+            pluginStorage.hookMsgStorage()
+            pluginStorage.hookImgStorage()
 
-        val pluginStorage = Storage(loader)
-        tryHook(pluginStorage::hookMsgStorage, {
-            pkg.MsgStorageClass = null
-        })
-        tryHook(pluginStorage::hookImgStorage, {
-            pkg.ImgStorageClass = null
-        })
+            val pluginXML = XML(preferences)
+            pluginXML.hookXMLParse()
 
-        val pluginXML = XML(preferences)
-        tryHook(pluginXML::hookXMLParse, {
-            pkg.XMLParserClass = null
-        })
-
-        val pluginDatabase = Database(loader, preferences)
-        tryHook(pluginDatabase::hookDatabase, {
-            pkg.SQLiteDatabaseClass = null
+            val pluginDatabase = Database(loader, preferences)
+            pluginDatabase.hookDatabase()
         })
     }
 }
