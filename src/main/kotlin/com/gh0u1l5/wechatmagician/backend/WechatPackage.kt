@@ -60,7 +60,7 @@ object WechatPackage {
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
-    @Synchronized fun init(param: XC_LoadPackage.LoadPackageParam) {
+    fun init(param: XC_LoadPackage.LoadPackageParam) {
         val loader = param.classLoader
         val version: Version
         val classes: Array<DexClass>

@@ -3,6 +3,9 @@ package com.gh0u1l5.wechatmagician.storage
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.math.BigInteger
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 // SnsCache records the timeline objects browsed by the user.
 object SnsCache {
@@ -113,17 +116,24 @@ object SnsCache {
     }
 
     // snsTable maps snsId to SNS object.
+    private val lock = ReentrantReadWriteLock()
     private var snsTable: MutableMap<String, SnsInfo> = mutableMapOf()
 
-    @Synchronized operator fun get(snsId: String?): SnsInfo? {
-        return snsTable[snsId]
+    operator fun get(snsId: String?): SnsInfo? {
+        lock.read {
+            return snsTable[snsId]
+        }
     }
 
-    @Synchronized operator fun set(snsId: String, record: SnsInfo) {
-        snsTable[snsId] = record
+    operator fun set(snsId: String, record: SnsInfo) {
+        lock.write {
+            snsTable[snsId] = record
+        }
     }
 
-    @Synchronized operator fun contains(snsId: String): Boolean {
-        return snsId in snsTable
+    operator fun contains(snsId: String): Boolean {
+        lock.read {
+            return snsId in snsTable
+        }
     }
 }

@@ -7,14 +7,16 @@ class Preferences {
 
     @Volatile private var preferences: XSharedPreferences? = null
 
-    @Synchronized fun load(preferences: XSharedPreferences?) {
+    fun load(preferences: XSharedPreferences?) {
         // NOTE: FileObserver returns 32768 in some devices,
         //       so we have to watch the file manually.
         this.preferences = preferences
         timer(period = 1000, action = { reload() })
     }
 
-    @Synchronized private fun reload() {
+    private fun reload() {
+        // NOTE: reload will check if the file has been modified,
+        //       so it shouldn't cause too much overhead.
         this.preferences?.reload()
     }
 
