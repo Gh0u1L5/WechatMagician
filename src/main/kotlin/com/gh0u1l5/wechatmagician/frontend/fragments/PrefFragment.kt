@@ -2,12 +2,12 @@ package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context.MODE_WORLD_READABLE
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.PackageManager.*
 import android.os.Bundle
 import android.preference.PreferenceFragment
+import java.io.File
 
 class PrefFragment : PreferenceFragment() {
 
@@ -38,10 +38,8 @@ class PrefFragment : PreferenceFragment() {
         }
     }
 
-    @SuppressLint("WorldReadableFiles")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        preferenceManager.sharedPreferencesMode = MODE_WORLD_READABLE
         if (arguments != null) {
             val preferencesResId = arguments.getInt(ARG_PREF_RES)
             addPreferencesFromResource(preferencesResId)
@@ -51,5 +49,14 @@ class PrefFragment : PreferenceFragment() {
         }
     }
 
+    // NOTE: On Android N, the support of MODE_WORLD_READABLE has been removed.
+    //       So whenever the user exits from the PrefFragment we set file permissions manually.
+    @SuppressLint("SetWorldReadable")
+    override fun onPause() {
+        super.onPause()
+        val prefDir = "${activity.applicationInfo.dataDir}/shared_prefs/"
+        val filename = "${preferenceManager.sharedPreferencesName}.xml"
+        File("$prefDir$filename").setReadable(true, false)
+    }
 
 }
