@@ -53,6 +53,8 @@
     <string name="pref_toggle_keyword_blacklist_summary">See goodbye to those PDA couples!</string>
     <string name="pref_list_keyword_blacklist">Keyword Blacklist</string>
     <string name="pref_list_keyword_blacklist_summary">Separated by spaces. Don\'t make a long list on an old phone</string>
+
     <string name="support_report_subject">Wechat Magician Report</string>
+    <string name="support_report_text">Dear Developer,\nThe Xposed log and WechatPackage status has been attached. Currently my issue is:</string>
 
 </resources>
