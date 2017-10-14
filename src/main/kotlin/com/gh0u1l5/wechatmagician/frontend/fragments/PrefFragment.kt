@@ -26,18 +26,6 @@ class PrefFragment : PreferenceFragment() {
         }
     }
 
-    companion object {
-        private val ARG_PREF_RES = "preferencesResId"
-
-        fun newInstance(preferencesResId: Int): PrefFragment {
-            val fragment = PrefFragment()
-            fragment.arguments = Bundle().apply {
-                putInt(ARG_PREF_RES, preferencesResId)
-            }
-            return fragment
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
@@ -59,4 +47,15 @@ class PrefFragment : PreferenceFragment() {
         File("$prefDir$filename").setReadable(true, false)
     }
 
+    companion object {
+        private val ARG_PREF_RES = "preferencesResId"
+
+        fun newInstance(preferencesResId: Int): PrefFragment {
+            val fragment = PrefFragment()
+            fragment.arguments = Bundle().apply {
+                putInt(ARG_PREF_RES, preferencesResId)
+            }
+            return fragment
+        }
+    }
 }
