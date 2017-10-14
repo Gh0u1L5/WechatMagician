@@ -1,13 +1,9 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
-import android.graphics.Bitmap.CompressFormat.PNG
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.getObjectField
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.FileOutputStream
 
 // ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
@@ -24,35 +20,17 @@ object ImageUtil {
         return callMethod(storage, load, imgId, "th_", "", false) as String
     }
 
-    // writeBitmapToDisk writes the given bitmap to disk and returns the result.
-    fun writeBitmapToDisk(path: String, bitmap: Bitmap, retry: Boolean = true): Boolean {
-        val file = File(path)
-        var out: FileOutputStream? = null
-        try {
-            out = FileOutputStream(file)
-            bitmap.compress(PNG, 100, out)
-        } catch (_: FileNotFoundException) {
-            if (!retry) {
-                return false
-            }
-            file.parentFile.mkdirs()
-            return writeBitmapToDisk(path, bitmap, false)
-        } catch (_: Throwable) {
-            return false
-        } finally {
-            out?.close()
-        }
-        return true
-    }
-
     // replaceThumbDiskCache replaces the disk cache of a specific
     // thumbnail with the given bitmap.
     private fun replaceThumbDiskCache(path: String, bitmap: Bitmap) {
-        if (writeBitmapToDisk(path, bitmap)) {
-            // Update block table after successful write.
-            synchronized(blockTable) {
-                blockTable += path
-            }
+        try {
+            FileUtil.writeBitmapToDisk(path, bitmap)
+        } catch (_: Throwable) {
+            return
+        }
+        // Update block table after successful write.
+        synchronized(blockTable) {
+            blockTable += path
         }
     }
 

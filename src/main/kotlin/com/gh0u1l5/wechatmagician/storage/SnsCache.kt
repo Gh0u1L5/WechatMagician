@@ -23,9 +23,21 @@ object SnsCache {
 
     class SnsInfo(raw: MutableMap<String, String?>) {
         private val mediaListKey = ".TimelineObject.ContentObject.mediaList"
+        private val wechatSupportDomain = "https://support.weixin.qq.com"
 
+        val title = raw[".TimelineObject.ContentObject.title"]
         val content = raw[".TimelineObject.contentDesc"]
+        val contentUrl: String?
         val medias = parseMedias(raw)
+
+        init {
+            val url = raw[".TimelineObject.ContentObject.contentUrl"]
+            this.contentUrl = when {
+                url == null || url == "" -> null
+                url.startsWith(wechatSupportDomain) -> null
+                else -> url
+            }
+        }
 
         private fun parseMediaURL(key: String, raw: MutableMap<String, String?>): SnsMediaURL? {
             if (!raw.containsKey("$mediaListKey.$key")) {

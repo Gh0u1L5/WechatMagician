@@ -8,7 +8,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.frontend.WechatListPopupAdapter
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.util.ImageUtil
+import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
 import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 import java.lang.reflect.Field
@@ -113,7 +113,7 @@ object WechatEvents {
                 val filename = "SNS-${formatter.format(time)}.jpg"
                 val path = "$storage/screenshot/$filename"
                 val bitmap = ViewUtil.drawView(layout)
-                ImageUtil.writeBitmapToDisk(path, bitmap)
+                FileUtil.writeBitmapToDisk(path, bitmap)
                 Toast.makeText(
                         layout.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
                 ).show()

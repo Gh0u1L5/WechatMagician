@@ -7,7 +7,10 @@ import android.os.Environment
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.util.DownloadUtil
+import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadImage
+import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadThumb
+import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadVideo
+import com.gh0u1l5.wechatmagician.util.FileUtil.readBytesFromDisk
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 
@@ -25,10 +28,17 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
             if (snsInfo == null) {
                 throw Error(str["prompt_sns_invalid"] + "(snsId: $snsId)")
             }
+            if (snsInfo.contentUrl != null) {
+                if (snsInfo.medias.isNotEmpty()) {
+                    val media = snsInfo.medias[0]
+                    downloadThumb("$storage/.cache/0.thumb", media.thumb)
+                }
+                return null
+            }
             snsInfo.medias.forEachIndexed { i, media ->
                 when(media.type) {
-                    "2" -> DownloadUtil.downloadImage("$storage/.cache/$i", media)
-                    "6" -> DownloadUtil.downloadVideo("$storage/.cache/$i", media)
+                    "2" -> downloadImage("$storage/.cache/$i", media)
+                    "6" -> downloadVideo("$storage/.cache/$i", media)
                 }
             }; null
         } catch (e: Throwable) { e }
@@ -51,20 +61,32 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
                 .putExtra("Ksnsforward", true)
                 .putExtra("Ksnsupload_type", 9)
                 .putExtra("Kdescription", snsInfo?.content)
-        if (snsInfo?.medias?.isEmpty() == false) {
-            if (snsInfo.medias[0].type == "6") {
-                intent.putExtra("Ksnsupload_type", 14)
-                        .putExtra("sight_md5", snsInfo.medias[0].main?.md5)
-                        .putExtra("KSightPath", "$storage/.cache/0")
-                        .putExtra("KSightThumbPath", "$storage/.cache/0.thumb")
-            } else {
-                intent.putStringArrayListExtra(
-                        "sns_kemdia_path_list",
-                        ArrayList((0 until snsInfo.medias.size).map {
-                            "$storage/.cache/$it"
-                        })
-                )
-                intent.removeExtra("Ksnsupload_type")
+        when {
+            snsInfo?.contentUrl != null -> {
+                val imgbuf = readBytesFromDisk("$storage/.cache/0.thumb")
+                intent.putExtra("Ksnsupload_type", 1)
+                        .putExtra("Ksnsupload_title", snsInfo.title)
+                        .putExtra("Ksnsupload_link", snsInfo.contentUrl)
+                        .putExtra("Ksnsupload_imgbuf", imgbuf)
+            }
+            snsInfo?.medias?.isEmpty() == false -> {
+                when (snsInfo.medias[0].type) {
+                    "2" -> {
+                        intent.putStringArrayListExtra(
+                                "sns_kemdia_path_list",
+                                ArrayList((0 until snsInfo.medias.size).map {
+                                    "$storage/.cache/$it"
+                                })
+                        )
+                        intent.removeExtra("Ksnsupload_type")
+                    }
+                    "6" -> {
+                        intent.putExtra("Ksnsupload_type", 14)
+                                .putExtra("sight_md5", snsInfo.medias[0].main?.md5)
+                                .putExtra("KSightPath", "$storage/.cache/0")
+                                .putExtra("KSightThumbPath", "$storage/.cache/0.thumb")
+                    }
+                }
             }
         }
         context.get()?.startActivity(intent)
