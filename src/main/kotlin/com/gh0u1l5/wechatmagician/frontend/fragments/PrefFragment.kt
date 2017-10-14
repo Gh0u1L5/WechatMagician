@@ -35,6 +35,7 @@ class PrefFragment : PreferenceFragment() {
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             val preferencesResId = arguments.getInt(ARG_PREF_RES)
+            preferenceManager.sharedPreferencesName = arguments.getString(ARG_PREF_NAME)
             addPreferencesFromResource(preferencesResId)
             preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(
                     OnSharedPreferenceChangeListener(activity.applicationContext)
@@ -68,11 +69,13 @@ class PrefFragment : PreferenceFragment() {
 
     companion object {
         private val ARG_PREF_RES = "preferencesResId"
+        private val ARG_PREF_NAME = "preferencesFileName"
 
-        fun newInstance(preferencesResId: Int): PrefFragment {
+        fun newInstance(preferencesResId: Int, preferencesName: String): PrefFragment {
             val fragment = PrefFragment()
             fragment.arguments = Bundle().apply {
                 putInt(ARG_PREF_RES, preferencesResId)
+                putString(ARG_PREF_NAME, preferencesName)
             }
             return fragment
         }

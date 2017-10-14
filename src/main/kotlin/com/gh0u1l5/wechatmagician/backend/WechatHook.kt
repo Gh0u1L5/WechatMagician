@@ -18,7 +18,8 @@ import kotlin.concurrent.thread
 class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
-    private val preferences = Preferences()
+    private val settings = Preferences()
+    private val developer = Preferences()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
@@ -53,21 +54,26 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
         pkg.init(lpparam)
-        preferences.load(XSharedPreferences("com.gh0u1l5.wechatmagician"))
+        settings.load(XSharedPreferences(
+                "com.gh0u1l5.wechatmagician", "settings"
+        ))
+        developer.load(XSharedPreferences(
+                "com.gh0u1l5.wechatmagician", "developer"
+        ), false)
 
         tryHook({
-            val pluginDeveloper = Developer(loader, preferences)
+            val pluginDeveloper = Developer(loader, developer)
             pluginDeveloper.traceTouchEvents()
             pluginDeveloper.traceActivities()
             pluginDeveloper.enableXLog()
             pluginDeveloper.traceXMLParse()
             pluginDeveloper.traceDatabase()
 
-            val pluginSnsUI = SnsUI(preferences)
+            val pluginSnsUI = SnsUI(settings)
             pluginSnsUI.setItemLongPressPopupMenu()
             pluginSnsUI.cleanTextViewForForwarding()
 
-            val pluginLimits = Limits(preferences)
+            val pluginLimits = Limits(settings)
             pluginLimits.breakSelectPhotosLimit()
             pluginLimits.breakSelectContactLimit()
             pluginLimits.breakSelectConversationLimit()
@@ -76,10 +82,10 @@ class WechatHook : IXposedHookLoadPackage {
             pluginStorage.hookMsgStorage()
             pluginStorage.hookImgStorage()
 
-            val pluginXML = XML(preferences)
+            val pluginXML = XML(settings)
             pluginXML.hookXMLParse()
 
-            val pluginDatabase = Database(loader, preferences)
+            val pluginDatabase = Database(loader, settings)
             pluginDatabase.hookDatabase()
         })
         thread(start = true) {

@@ -7,11 +7,13 @@ class Preferences {
 
     @Volatile private var preferences: XSharedPreferences? = null
 
-    fun load(preferences: XSharedPreferences?) {
+    fun load(preferences: XSharedPreferences?, watchUpdate: Boolean = true) {
         // NOTE: FileObserver returns 32768 in some devices,
         //       so we have to watch the file manually.
         this.preferences = preferences
-        timer(period = 1000, action = { reload() })
+        if (watchUpdate) {
+            timer(period = 1000, action = { reload() })
+        }
     }
 
     private fun reload() {
