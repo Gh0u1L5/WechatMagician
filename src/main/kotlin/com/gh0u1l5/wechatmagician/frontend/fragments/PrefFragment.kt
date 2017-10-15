@@ -11,6 +11,7 @@ import android.preference.PreferenceFragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.gh0u1l5.wechatmagician.R
 import java.io.File
 
@@ -20,13 +21,17 @@ class PrefFragment : PreferenceFragment() {
         override fun onSharedPreferenceChanged(preferences: SharedPreferences, key: String) {
             if (key == "settings_interface_hide_icon") {
                 // Hide/Show the icon as required.
-                val hide = preferences.getBoolean(key, false)
-                val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
-                val pkg = context.packageName
-                val componentName = ComponentName(pkg, "$pkg.frontend.MainActivityAlias")
-                context.packageManager.setComponentEnabledSetting(
-                        componentName, newState, DONT_KILL_APP
-                )
+                try {
+                    val hide = preferences.getBoolean(key, false)
+                    val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
+                    val pkg = context.packageName
+                    val componentName = ComponentName(pkg, "$pkg.frontend.MainActivityAlias")
+                    context.packageManager.setComponentEnabledSetting(
+                            componentName, newState, DONT_KILL_APP
+                    )
+                } catch (e: Throwable) {
+                    Toast.makeText(context, e.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

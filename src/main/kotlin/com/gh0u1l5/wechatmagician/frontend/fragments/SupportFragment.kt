@@ -9,6 +9,7 @@ import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import com.gh0u1l5.wechatmagician.R
 import kotlinx.android.synthetic.main.fragment_support.*
 import java.io.File
@@ -34,13 +35,17 @@ class SupportFragment : Fragment() {
             val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
             val pkgLog = Uri.fromFile(File("$storage/.status/pkg"))
             val xposedLog = Uri.fromFile(File("/data/data/$XPOSED_PKG/log/error.log"))
-            view?.context?.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
-                type = "text/plain"
-                putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(pkgLog, xposedLog))
-                putExtra(Intent.EXTRA_EMAIL, arrayOf("WechatMagician@yahoo.com"))
-                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_report_subject))
-                putExtra(Intent.EXTRA_TEXT, getString(R.string.support_report_text))
-            })
+            try {
+                view?.context?.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+                    type = "text/plain"
+                    putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(pkgLog, xposedLog))
+                    putExtra(Intent.EXTRA_EMAIL, arrayOf("WechatMagician@yahoo.com"))
+                    putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_report_subject))
+                    putExtra(Intent.EXTRA_TEXT, getString(R.string.support_report_text))
+                })
+            } catch (e: Throwable) {
+                Toast.makeText(view?.context, e.message, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
