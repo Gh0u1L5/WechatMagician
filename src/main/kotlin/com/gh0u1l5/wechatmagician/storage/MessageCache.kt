@@ -10,7 +10,7 @@ import kotlin.concurrent.write
 object MessageCache {
 
     // msgTable maps msgId to message object.
-    private val lock = ReentrantReadWriteLock()
+    private val msgTableLock = ReentrantReadWriteLock()
     private var msgTable: MutableMap<Long, Any> = mutableMapOf()
 
     // Clean cache for every 10 minutes
@@ -21,19 +21,19 @@ object MessageCache {
     }
 
     operator fun get(msgId: Long): Any? {
-        lock.read {
+        msgTableLock.read {
             return msgTable[msgId]
         }
     }
 
     operator fun set(msgId: Long, msg: Any) {
-        lock.write {
+        msgTableLock.write {
             msgTable[msgId] = msg
         }
     }
 
     operator fun contains(msgId: Long): Boolean {
-        lock.read {
+        msgTableLock.read {
             return msgId in msgTable
         }
     }
@@ -42,7 +42,7 @@ object MessageCache {
     // NOTE: One cannot recall the removed messages because Wechat have
     //       time limit on recalling messages.
     private fun clear() {
-        lock.write {
+        msgTableLock.write {
             val now = System.currentTimeMillis()
             msgTable = msgTable.filter {
                 now - getLongField(it.value, "field_createTime") < 120000
