@@ -87,7 +87,7 @@ class WechatHook : IXposedHookLoadPackage {
             val pluginXML = XML(settings)
             pluginXML.hookXMLParse()
 
-            val pluginDatabase = Database(loader, settings)
+            val pluginDatabase = Database(settings)
             pluginDatabase.hookDatabase()
 
             val pluginCustomScheme = CustomScheme()

@@ -14,7 +14,7 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
-class Database(private val loader: ClassLoader, private val preferences: Preferences) {
+class Database(private val preferences: Preferences) {
 
     private val str = Strings
     private val pkg = WechatPackage
@@ -31,7 +31,7 @@ class Database(private val loader: ClassLoader, private val preferences: Prefere
                 pkg.SQLiteDatabaseClass, "openDatabase",
                 C.String, pkg.SQLiteCursorFactory, C.Int, pkg.SQLiteErrorHandler, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun afterHookedMethod(param: de.robv.android.xposed.XC_MethodHook.MethodHookParam) {
+            override fun afterHookedMethod(param: MethodHookParam) {
                 val path = param.args[0] as String?
                 if (path?.endsWith("SnsMicroMsg.db") != true) {
                     return
@@ -46,16 +46,14 @@ class Database(private val loader: ClassLoader, private val preferences: Prefere
             }
         })
 
-
-
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments.
         findAndHookMethod(
                 pkg.SQLiteDatabaseClass, "updateWithOnConflict",
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: de.robv.android.xposed.XC_MethodHook.MethodHookParam) {
+            override fun beforeHookedMethod(param: MethodHookParam) {
                 val table = param.args[0] as String? ?: return
-                val values = param.args[1] as android.content.ContentValues? ?: return
+                val values = param.args[1] as ContentValues? ?: return
 
                 when (table) {
                     "message" -> { // recall message
