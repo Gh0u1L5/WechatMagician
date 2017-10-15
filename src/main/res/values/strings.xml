@@ -17,9 +17,13 @@
     <string name="support_github_mark">Github Mark</string>
     <string name="support_github_logo">Github</string>
     <string name="support_send_email">Email</string>
+    <string name="donate_alipay">Alipay</string>
+    <string name="donate_wepay">Wechat Pay</string>
     <string name="status_ok">The module is loaded properly.</string>
     <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
+    <string name="prompt_alipay_not_found">Alipay Not Found</string>
     <string name="prompt_need_reboot">Take effect after reboot.</string>
+    <string name="prompt_wait">Please wait for a while.....</string>
     <string name="pref_warning_developer">These options will significantly slow down the Wechat, use them only if you know what are they. You need to reboot the device to perform any modifications.</string>
 
     <string name="pref_category_ui">UI Debug Options</string>

@@ -9,4 +9,5 @@ object HookStatus : Serializable {
     @Volatile var Resources: Boolean = false
     @Volatile var Database:  Boolean = false
     @Volatile var XMLParser: Boolean = false
+    @Volatile var CustomScheme: Boolean = false
 }

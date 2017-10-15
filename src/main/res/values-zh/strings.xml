@@ -17,9 +17,13 @@
     <string name="support_github_mark">Github图标</string>
     <string name="support_github_logo">Github</string>
     <string name="support_send_email">电子邮件</string>
+    <string name="donate_alipay">支付宝</string>
+    <string name="donate_wepay">微信支付</string>
     <string name="status_ok">插件已加载并启动</string>
     <string name="status_error">插件未能加载，请检查Xposed框架</string>
+    <string name="prompt_alipay_not_found">未发现支付宝手机客户端</string>
     <string name="prompt_need_reboot">重启后生效</string>
+    <string name="prompt_wait">请稍候片刻……</string>
     <string name="pref_warning_developer">这些调试选项会显著拖慢微信运行速度，请在开发者指导下选择性开启，修改后重启生效。</string>
 
     <string name="pref_category_ui">UI逆向工具</string>

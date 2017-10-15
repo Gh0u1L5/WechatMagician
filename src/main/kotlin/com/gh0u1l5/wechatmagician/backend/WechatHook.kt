@@ -87,6 +87,9 @@ class WechatHook : IXposedHookLoadPackage {
 
             val pluginDatabase = Database(loader, settings)
             pluginDatabase.hookDatabase()
+
+            val pluginCustomScheme = CustomScheme()
+            pluginCustomScheme.registerCustomSchemes()
         })
         thread(start = true) {
             val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"

@@ -17,18 +17,23 @@ import net.dongliu.apk.parser.bean.DexClass
 object WechatPackage {
 
     var XLogSetup: Class<*>? = null
+    var WXCustomSchemeEntry: Class<*>? = null
+    var WXCustomSchemeEntryStart = ""
+    var EncEngine: Class<*>? = null
+    var EncEngineEDMethod = ""
+
     var SQLiteDatabasePkg = ""
     var SQLiteDatabaseClass: Class<*>? = null
     var SQLiteCursorFactory: Class<*>? = null
     var SQLiteErrorHandler: Class<*>? = null
     var SQLiteCancellationSignal: Class<*>? = null
-    var EncEngine: Class<*>? = null
-    var EncEngineEDMethod = ""
 
     var MMActivity: Class<*>? = null
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
     var PLTextView: Class<*>? = null
+
+    var RemittanceAdapter: Class<*>? = null
 
     var SnsUploadUI: Class<*>? = null
     var SnsUploadUIEditTextField = ""
@@ -75,6 +80,19 @@ object WechatPackage {
         }
 
         XLogSetup = findClassIfExists("com.tencent.mm.xlog.app.XLogSetup", loader)
+        WXCustomSchemeEntry = findClassIfExists("com.tencent.mm.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
+        WXCustomSchemeEntryStart = findMethodsByExactParameters(
+                WXCustomSchemeEntry, C.Boolean, C.Intent
+        ).firstOrNull()?.name ?: ""
+
+        EncEngine = findClassesFromPackage(loader, classes, "com.tencent.mm.modelsfs")
+                .filterByMethod(null, "seek", C.Long)
+                .filterByMethod(null, "free")
+                .firstOrNull("EncEngine")
+        EncEngineEDMethod = findMethodsByExactParameters(
+                EncEngine, C.Int, C.ByteArray, C.Int
+        ).firstOrNull()?.name ?: ""
+
         SQLiteDatabasePkg = when {
             version >= Version("6.5.8") ->"com.tencent.wcdb"
             else ->"com.tencent.mmdb"
@@ -92,19 +110,13 @@ object WechatPackage {
                 "$SQLiteDatabasePkg.support.CancellationSignal", loader
         )
 
-        EncEngine = findClassesFromPackage(loader, classes, "com.tencent.mm.modelsfs")
-                .filterByMethod(null, "seek", C.Long)
-                .filterByMethod(null, "free")
-                .firstOrNull("EncEngine")
-        EncEngineEDMethod = findMethodsByExactParameters(
-                EncEngine, C.Int, C.ByteArray, C.Int
-        ).firstOrNull()?.name ?: ""
-
         val pkgUI = "com.tencent.mm.ui"
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
         PLTextView = findClassIfExists("com.tencent.mm.kiss.widget.textview.PLSysTextView", loader)
+
+        RemittanceAdapter = findClassIfExists("com.tencent.mm.plugin.remittance.ui.RemittanceAdapterUI", loader)
 
         val pkgSnsUI = "com.tencent.mm.plugin.sns.ui"
         SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
