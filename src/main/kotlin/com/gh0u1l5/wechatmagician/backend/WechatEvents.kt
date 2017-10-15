@@ -6,7 +6,7 @@ import android.view.Gravity
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.frontend.WechatListPopupAdapter
-import com.gh0u1l5.wechatmagician.storage.SnsCache
+import com.gh0u1l5.wechatmagician.storage.SnsDatabase
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
@@ -101,7 +101,7 @@ object WechatEvents {
                 }
                 val textView = ViewUtil.searchViewGroup(layout, pkg.PLTextView!!.name)
                 val rowId = textView?.tag as String?
-                val snsId = SnsCache.getSnsId(rowId?.drop("sns_table_".length))
+                val snsId = SnsDatabase.getSnsId(rowId?.drop("sns_table_".length))
                 ForwardAsyncTask(snsId, layout.context).execute()
                 Toast.makeText(
                         layout.context, str["prompt_wait"], Toast.LENGTH_SHORT

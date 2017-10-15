@@ -5,7 +5,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.SnsCache
+import com.gh0u1l5.wechatmagician.storage.SnsDatabase.snsDB
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
@@ -36,10 +36,10 @@ class Database(private val loader: ClassLoader, private val preferences: Prefere
                 if (path?.endsWith("SnsMicroMsg.db") != true) {
                     return
                 }
-                if (SnsCache.snsDB !== param.result) {
-                    SnsCache.snsDB = param.result
+                if (snsDB !== param.result) {
+                    snsDB = param.result
                     // Force Wechat to retrieve existing SNS data online.
-                    callMethod(SnsCache.snsDB, "delete",
+                    callMethod(snsDB, "delete",
                             "snsExtInfo3", "local_flag=0", null
                     )
                 }
