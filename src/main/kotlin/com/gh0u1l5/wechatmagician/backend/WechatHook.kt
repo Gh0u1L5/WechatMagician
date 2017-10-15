@@ -8,7 +8,6 @@ import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -19,7 +18,7 @@ import kotlin.concurrent.thread
 class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
-    private val settings = Preferences(listOf("settings_sns_keyword_blacklist_content"))
+    private val settings = Preferences()
     private val developer = Preferences()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
@@ -55,13 +54,11 @@ class WechatHook : IXposedHookLoadPackage {
     @SuppressLint("SetWorldReadable")
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
+        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+
         pkg.init(lpparam)
-        settings.load(XSharedPreferences(
-                "com.gh0u1l5.wechatmagician", "settings"
-        ))
-        developer.load(XSharedPreferences(
-                "com.gh0u1l5.wechatmagician", "developer"
-        ), false)
+        settings.load("$storage/.prefs/settings")
+        developer.load("$storage/.prefs/developer", false)
 
         tryHook({
             val pluginDeveloper = Developer(loader, developer)
@@ -94,7 +91,6 @@ class WechatHook : IXposedHookLoadPackage {
             pluginCustomScheme.registerCustomSchemes()
         })
         thread(start = true) {
-            val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
             FileUtil.writeOnce("$storage/.status/pkg", { path->
                 FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
                 File(path).setReadable(true, false)

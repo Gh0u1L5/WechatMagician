@@ -1,6 +1,6 @@
 package com.gh0u1l5.wechatmagician.frontend
 
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.Fragment
 import android.content.Intent
@@ -37,16 +37,19 @@ class MainActivity : Activity(),
         nav_view.setNavigationItemSelectedListener(this)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
-                requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), 0)
+            if (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(WRITE_EXTERNAL_STORAGE), 0)
             } else {
                 loadHomeFragment()
             }
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (grantResults[0] != PERMISSION_GRANTED) {
+            finish()
+        }
         loadHomeFragment()
     }
 
@@ -77,7 +80,9 @@ class MainActivity : Activity(),
                 StatusFragment.newInstance()
             }
             R.id.nav_settings -> {
-                PrefFragment.newInstance(R.xml.pref_settings, "settings")
+                PrefFragment.newInstance(
+                        R.xml.pref_settings, "settings",
+                        hashMapOf("settings_sns_keyword_blacklist_content" to true))
             }
             R.id.nav_developer -> {
                 PrefFragment.newInstance(R.xml.pref_developer, "developer")

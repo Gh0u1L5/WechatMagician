@@ -1,20 +1,30 @@
 package com.gh0u1l5.wechatmagician.storage
 
-import de.robv.android.xposed.XSharedPreferences
-import kotlin.concurrent.thread
+import com.gh0u1l5.wechatmagician.util.FileUtil
+import de.robv.android.xposed.XposedBridge.log
+import java.io.File
+import java.io.FileNotFoundException
 import kotlin.concurrent.timer
 
-class Preferences(private val lists: List<String> = listOf()) {
+@Suppress("UNCHECKED_CAST")
+class Preferences {
 
-    @Volatile private var preferences: XSharedPreferences? = null
-    private val listCache: MutableMap<String, List<String>> = mutableMapOf()
+    @Volatile private var preferences: HashMap<String, Any?>? = null
+    @Volatile private var preferencesPath: String = ""
+    @Volatile private var preferencesLastModified: Long = 0L
 
-    fun load(preferences: XSharedPreferences?, watchUpdate: Boolean = true) {
+    fun load(path: String, watchUpdate: Boolean = true) {
         // NOTE: FileObserver returns 32768 in some devices,
         //       so we have to watch the file manually.
-        this.preferences = preferences
-        thread(start = true) {
-            lists.forEach { cacheList(it) }
+        preferencesPath = path
+        try {
+            preferences = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
+            preferencesLastModified = File(path).lastModified()
+        } catch (_: FileNotFoundException) {
+            // Ignore this one
+        } catch (e: Throwable) {
+            log("PREF => ${e.message}")
+            return
         }
         if (watchUpdate) {
             timer(period = 1000, action = { reload() })
@@ -24,30 +34,34 @@ class Preferences(private val lists: List<String> = listOf()) {
     private fun reload() {
         // NOTE: reload will check if the file has been modified,
         //       so it shouldn't cause too much overhead.
-        if (this.preferences?.hasFileChanged() == true) {
-            this.preferences?.reload()
-            lists.forEach { cacheList(it) }
+        if (!isModified()) {
+            return
         }
+        load(preferencesPath, false) // prevent creating infinite threads
     }
 
-    private fun cacheList(key: String, delimiter: String = " ") {
-        val list = getString(key, "").split(delimiter)
-        synchronized(listCache) {
-            listCache[key] = list
+    private fun isModified(): Boolean {
+        val file = File(preferencesPath)
+        try {
+            if (!file.exists()) {
+                return false
+            }
+            return file.lastModified() != preferencesLastModified
+        } catch (e: Throwable) {
+            log("PREF => ${e.message}")
+            return false
         }
     }
 
     fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return preferences?.getBoolean(key, defValue) ?: defValue
+        return preferences?.get(key) as? Boolean ?: defValue
     }
 
     fun getString(key: String, defValue: String = ""): String {
-        return preferences?.getString(key, defValue) ?: defValue
+        return preferences?.get(key) as? String ?: defValue
     }
 
     fun getStringList(key: String, defValue: List<String> = listOf()): List<String> {
-        synchronized(listCache) {
-            return listCache[key] ?: defValue
-        }
+        return preferences?.get(key) as? List<String> ?: defValue
     }
 }
