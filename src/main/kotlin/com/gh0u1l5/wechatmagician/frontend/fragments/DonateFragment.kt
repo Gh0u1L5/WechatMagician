@@ -30,11 +30,11 @@ class DonateFragment : Fragment() {
         donate_alipay.setOnClickListener { view ->
             if (!AlipayUtil.hasInstalledAlipayClient(view.context)) {
                 Toast.makeText(
-                        view.context, getString(R.string.prompt_alipay_not_found), Toast.LENGTH_SHORT
+                        view.context, R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT
                 ).show()
                 return@setOnClickListener
             }
-            Toast.makeText(view.context, getString(R.string.prompt_wait), Toast.LENGTH_SHORT).show()
+            Toast.makeText(view.context, R.string.prompt_wait, Toast.LENGTH_SHORT).show()
             AlipayUtil.startAlipayClient(view.context, alipayCode)
         }
         donate_tenpay.setOnClickListener { view ->
@@ -46,7 +46,7 @@ class DonateFragment : Fragment() {
                     data = Uri.parse("weixin://magician/donate/$tenpayCode")
                     flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
                 })
-                Toast.makeText(view.context, getString(R.string.prompt_wait), Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context, R.string.prompt_wait, Toast.LENGTH_SHORT).show()
             } catch (e: Throwable) {
                 Toast.makeText(view.context, e.message, Toast.LENGTH_SHORT).show()
             }

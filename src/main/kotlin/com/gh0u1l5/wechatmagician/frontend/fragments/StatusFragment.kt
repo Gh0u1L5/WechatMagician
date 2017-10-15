@@ -51,7 +51,7 @@ class StatusFragment : Fragment() {
             }
         } catch (e: Throwable) {
             Toast.makeText(
-                    activity, getString(R.string.prompt_load_component_status_failed), Toast.LENGTH_SHORT
+                    activity, R.string.prompt_load_component_status_failed, Toast.LENGTH_SHORT
             ).show()
         }
         return HookStatus()
