@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dummy">Dummy</string>
     <string name="app_name">Wechat Magician</string>
     <string name="app_desc">Make you the master of your Wechat.</string>
     <string name="view_about_project_github">GitHub: Gh0u1L5/WechatMagician</string>

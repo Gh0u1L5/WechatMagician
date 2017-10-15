@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="dummy">伪物</string>
     <string name="app_name">微信巫师</string>
     <string name="app_desc">让你玩转微信聊天与朋友圈</string>
     <string name="view_about_project_github">项目源码 Gh0u1L5/WechatMagician</string>
