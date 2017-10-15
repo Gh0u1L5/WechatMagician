@@ -27,29 +27,50 @@ class XML(private val preferences: Preferences) {
                 @Suppress("UNCHECKED_CAST")
                 val result = param.result as MutableMap<String, String?>? ?: return
                 if (result[".sysmsg.\$type"] == "revokemsg") {
-                    val msgTag = ".sysmsg.revokemsg.replacemsg"
-                    val msg = result[msgTag] ?: return
-                    if (!msg.startsWith("\"")) {
-                        return
-                    }
-                    if (!preferences.getBoolean("settings_chatting_recall", true)) {
-                        return
-                    }
-                    val prompt = preferences.getString(
-                            "settings_chatting_recall_prompt", str["prompt_recall"])
-                    result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
+                    handleRevokeCommand(result)
                 }
                 if (result[".TimelineObject"] != null) {
-                    thread(start = true) {
-                        val id = result[".TimelineObject.id"]
-                        if (id != null) {
-                            SnsCache[id] = SnsCache.SnsInfo(result)
-                        }
-                    }
+                    matchKeywordBlackList(result)
+                    recordTimelineObject(result)
                 }
             }
         })
 
         pkg.status.XMLParser = true
+    }
+
+    private fun handleRevokeCommand(result: MutableMap<String, String?>) {
+        val msgTag = ".sysmsg.revokemsg.replacemsg"
+        val msg = result[msgTag] ?: return
+        if (!msg.startsWith("\"")) {
+            return
+        }
+        if (!preferences.getBoolean("settings_chatting_recall", true)) {
+            return
+        }
+        val prompt = preferences.getString(
+                "settings_chatting_recall_prompt", str["prompt_recall"])
+        result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
+    }
+
+    private fun matchKeywordBlackList(result: MutableMap<String, String?>) {
+        if (!preferences.getBoolean("settings_sns_keyword_blacklist", false)) {
+            return
+        }
+        val content = result[".TimelineObject.contentDesc"] ?: return
+        val list = preferences.getStringList("settings_sns_keyword_blacklist_content")
+        list.filter { content.contains(it) }.forEach {
+            result[".TimelineObject.private"] = "1"
+            return
+        }
+    }
+
+    private fun recordTimelineObject(result: MutableMap<String, String?>) {
+        thread(start = true) {
+            val id = result[".TimelineObject.id"]
+            if (id != null) {
+                SnsCache[id] = SnsCache.SnsInfo(result)
+            }
+        }
     }
 }
