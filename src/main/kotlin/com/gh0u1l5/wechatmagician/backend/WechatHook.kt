@@ -19,7 +19,7 @@ import kotlin.concurrent.thread
 class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
-    private val settings = Preferences()
+    private val settings = Preferences(listOf("settings_sns_keyword_blacklist_content"))
     private val developer = Preferences()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
