@@ -1,13 +1,14 @@
 # WechatMagician
 
-WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. Currently this module supports WeChat 6.5.3 ~ 6.5.16. It implemented following features:
-1. Prevent friends from recalling messages.
+WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. Currently this module supports WeChat version up to 6.5.16. It has implemented following features:
+1. Prevent friends from recalling messages (with customizable notification).
 2. Prevent friends from deleting moments or comments.
-3. Loose the limit on number of photos to send.
+3. Allow user to set the limit on number of photos to send (default value is 1000).
 4. Bypass the limit on number of recipients when retransmitting messages.
 5. Add a button "Select All" in "Select Contacts" interface.
-6. Retweet other's moments (supports text, image and video moments).
+6. Retweet other's moments (which can be text, image, video or links).
 7. Take screenshot of a single moment.
+8. Set blacklist for moments, and say goodbye to ads and PDA couples.
 
 __P.S. If you want to retweet or take screenshots, please long press the blank area under others' avatar.__
 
@@ -39,6 +40,10 @@ After learning from the failure of other Wechat modules, this project wants to d
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-5.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-6.en.png" width="40%" />
 
 <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-7.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/sample-8.en.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/interface-1.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/interface-2.en.png" width="40%" />
+
+<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/interface-3.en.png" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/interface-4.en.png" width="40%" />
 
 ## Credits
 * Thanks @rovo89 for the awesome Xposed framework.
