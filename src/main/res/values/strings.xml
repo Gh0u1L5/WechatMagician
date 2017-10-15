@@ -31,8 +31,8 @@
     <string name="status_component_invalid">Invalid</string>
     <string name="status_component_msg_storage">Message Storage Cache</string>
     <string name="status_component_resources">UI Resource Hooks</string>
-    <string name="status_component_database">SQLite Database</string>
-    <string name="status_component_xml_parser">XML Parser</string>
+    <string name="status_component_database">SQLite Database Hijacking</string>
+    <string name="status_component_xml_parser">XML Parser Hijacking</string>
     <string name="status_component_custom_scheme">URI Router Hijacking</string>
 
     <string name="pref_category_ui">UI Debug Options</string>
