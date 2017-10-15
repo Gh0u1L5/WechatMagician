@@ -24,7 +24,17 @@
     <string name="prompt_alipay_not_found">未发现支付宝手机客户端</string>
     <string name="prompt_need_reboot">重启后生效</string>
     <string name="prompt_wait">请稍候片刻……</string>
+    <string name="prompt_load_component_status_failed">组件状态检查失败</string>
     <string name="pref_warning_developer">这些调试选项会显著拖慢微信运行速度，请在开发者指导下选择性开启，修改后重启生效。</string>
+
+    <string name="status_component_title">组件运行状态</string>
+    <string name="status_component_valid">运行中</string>
+    <string name="status_component_invalid">已失效</string>
+    <string name="status_component_msg_storage">消息存储器缓存</string>
+    <string name="status_component_resources">UI资源钩子</string>
+    <string name="status_component_database">SQLite数据库</string>
+    <string name="status_component_xml_parser">XML解析器</string>
+    <string name="status_component_custom_scheme">URI路由劫持</string>
 
     <string name="pref_category_ui">UI逆向工具</string>
     <string name="pref_toggle_touch_event">跟踪触摸事件</string>

@@ -40,6 +40,16 @@ object FileUtil {
         writeBytesToDisk(path, out.toByteArray())
     }
 
+    // readObjectFromDisk reads a serializable object from disk.
+    fun readObjectFromDisk(path: String): Any {
+        val bytes = readBytesFromDisk(path)
+        val ins = ByteArrayInputStream(bytes)
+        return ObjectInputStream(ins).use {
+            val obj = it.readObject()
+            it.close(); obj
+        }
+    }
+
     // writeBitmapToDisk writes the given bitmap to disk.
     fun writeBitmapToDisk(path: String, bitmap: Bitmap) {
         val out = ByteArrayOutputStream()

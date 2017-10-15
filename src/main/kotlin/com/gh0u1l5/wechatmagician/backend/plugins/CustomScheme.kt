@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
@@ -46,6 +45,6 @@ class CustomScheme {
             }
         })
 
-        HookStatus.CustomScheme = true
+        pkg.status.CustomScheme = true
     }
 }

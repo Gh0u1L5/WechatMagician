@@ -8,9 +8,7 @@ class Frontend(private val loader: ClassLoader) {
         findAndHookMethod(
                 "com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment", loader,
                 "isModuleLoaded", object : XC_MethodReplacement() {
-            override fun replaceHookedMethod(param: MethodHookParam): Any {
-                return true
-            }
+            override fun replaceHookedMethod(param: MethodHookParam): Any = true
         })
     }
 }

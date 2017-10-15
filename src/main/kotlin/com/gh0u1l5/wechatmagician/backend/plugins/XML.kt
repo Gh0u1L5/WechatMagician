@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
@@ -51,6 +50,6 @@ class XML(private val preferences: Preferences) {
             }
         })
 
-        HookStatus.XMLParser = true
+        pkg.status.XMLParser = true
     }
 }

@@ -1,9 +1,12 @@
 package com.gh0u1l5.wechatmagician.frontend
 
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.Fragment
 import android.content.Intent
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.NavigationView
@@ -33,13 +36,18 @@ class MainActivity : Activity(),
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        findViewById<ConstraintLayout?>(R.id.main_container) ?: return
-        if (savedInstanceState != null) {
-            return // avoid overlapping
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) {
+                requestPermissions(arrayOf(READ_EXTERNAL_STORAGE), 0)
+            } else {
+                loadHomeFragment()
+            }
         }
-        fragmentManager.beginTransaction()
-                .add(R.id.main_container, StatusFragment())
-                .commit()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>?, grantResults: IntArray?) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        loadHomeFragment()
     }
 
     override fun onBackPressed() {
@@ -53,6 +61,13 @@ class MainActivity : Activity(),
     fun onGithubLinkClick(view: View?) {
         val url = Uri.parse(view?.context?.getString(R.string.view_about_project_github_url))
         view?.context?.startActivity(Intent(Intent.ACTION_VIEW).setData(url))
+    }
+
+    private fun loadHomeFragment() {
+        findViewById<ConstraintLayout?>(R.id.main_container) ?: return
+        fragmentManager.beginTransaction()
+                .replace(R.id.main_container, StatusFragment.newInstance())
+                .commit()
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

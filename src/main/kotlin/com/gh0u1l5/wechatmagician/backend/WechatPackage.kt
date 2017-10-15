@@ -4,6 +4,7 @@ package com.gh0u1l5.wechatmagician.backend
 
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Version
+import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
@@ -15,6 +16,8 @@ import net.dongliu.apk.parser.bean.DexClass
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
+
+    val status = HookStatus()
 
     var XLogSetup: Class<*>? = null
     var WXCustomSchemeEntry: Class<*>? = null

@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -45,7 +44,7 @@ class Storage(private val loader: ClassLoader) {
             }
         })
 
-        HookStatus.MsgStorage = true
+        pkg.status.MsgStorage = true
     }
 
     fun hookImgStorage() {
@@ -86,6 +85,6 @@ class Storage(private val loader: ClassLoader) {
             }
         })
 
-        HookStatus.ImgStorage = true
+        pkg.status.ImgStorage = true
     }
 }

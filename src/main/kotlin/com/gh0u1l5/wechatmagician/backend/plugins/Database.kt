@@ -3,7 +3,10 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.*
+import com.gh0u1l5.wechatmagician.storage.MessageCache
+import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.SnsCache
+import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -98,7 +101,7 @@ class Database(private val loader: ClassLoader, private val preferences: Prefere
             }
         })
 
-        HookStatus.Database = true
+        pkg.status.Database = true
     }
 
     // handleMessageRecall notifies user that someone has recalled the given message.

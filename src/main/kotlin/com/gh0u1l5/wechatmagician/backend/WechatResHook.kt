@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.res.XModuleResources
 import android.os.Build
-import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.storage.Strings
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookZygoteInit
@@ -35,7 +34,7 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
             // Load resources
             MODULE_RES = XModuleResources.createInstance(MODULE_PATH, resparam.res)
-            HookStatus.Resources = true
+            WechatPackage.status.Resources = true
         } catch (e: Throwable) { log(e) }
     }
 }

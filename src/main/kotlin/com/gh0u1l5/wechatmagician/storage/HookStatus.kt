@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.storage
 
 import java.io.Serializable
 
-object HookStatus : Serializable {
+class HookStatus : Serializable {
     @Volatile var MsgStorage: Boolean = false
     @Volatile var ImgStorage: Boolean = false
 
