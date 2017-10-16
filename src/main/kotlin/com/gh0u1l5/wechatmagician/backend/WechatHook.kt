@@ -60,36 +60,35 @@ class WechatHook : IXposedHookLoadPackage {
         settings.load("$storage/.prefs/settings")
         developer.load("$storage/.prefs/developer", false)
 
-        tryHook({
-            val pluginDeveloper = Developer(loader, developer)
-            pluginDeveloper.traceTouchEvents()
-            pluginDeveloper.traceActivities()
-            pluginDeveloper.enableXLog()
-            pluginDeveloper.traceXMLParse()
-            pluginDeveloper.traceDatabase()
+        val pluginDeveloper = Developer(loader, developer)
+        tryHook(pluginDeveloper::traceTouchEvents)
+        tryHook(pluginDeveloper::traceActivities)
+        tryHook(pluginDeveloper::enableXLog)
+        tryHook(pluginDeveloper::traceXMLParse)
+        tryHook(pluginDeveloper::traceDatabase)
 
-            val pluginSnsUI = SnsUI(settings)
-            pluginSnsUI.setItemLongPressPopupMenu()
-            pluginSnsUI.cleanTextViewForForwarding()
+        val pluginSnsUI = SnsUI(settings)
+        tryHook(pluginSnsUI::setItemLongPressPopupMenu)
+        tryHook(pluginSnsUI::cleanTextViewForForwarding)
 
-            val pluginLimits = Limits(settings)
-            pluginLimits.breakSelectPhotosLimit()
-            pluginLimits.breakSelectContactLimit()
-            pluginLimits.breakSelectConversationLimit()
+        val pluginLimits = Limits(settings)
+        tryHook(pluginLimits::breakSelectPhotosLimit)
+        tryHook(pluginLimits::breakSelectContactLimit)
+        tryHook(pluginLimits::breakSelectConversationLimit)
 
-            val pluginStorage = Storage(loader)
-            pluginStorage.hookMsgStorage()
-            pluginStorage.hookImgStorage()
+        val pluginStorage = Storage(loader)
+        tryHook(pluginStorage::hookMsgStorage)
+        tryHook(pluginStorage::hookImgStorage)
 
-            val pluginXML = XML(settings)
-            pluginXML.hookXMLParse()
+        val pluginXML = XML(settings)
+        tryHook(pluginXML::hookXMLParse)
 
-            val pluginDatabase = Database(settings)
-            pluginDatabase.hookDatabase()
+        val pluginDatabase = Database(settings)
+        tryHook(pluginDatabase::hookDatabase)
 
-            val pluginCustomScheme = CustomScheme()
-            pluginCustomScheme.registerCustomSchemes()
-        })
+        val pluginCustomScheme = CustomScheme()
+        tryHook(pluginCustomScheme::registerCustomSchemes)
+
         thread(start = true) {
             FileUtil.writeOnce("$storage/.status/pkg", { path->
                 FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
