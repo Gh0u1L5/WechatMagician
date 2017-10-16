@@ -2,6 +2,7 @@
 
 package com.gh0u1l5.wechatmagician.backend
 
+import android.app.AndroidAppHelper
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.storage.HookStatus
@@ -12,6 +13,9 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
+import android.content.Context
+import de.robv.android.xposed.XposedHelpers.*
+
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -68,15 +72,14 @@ object WechatPackage {
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
-    fun init(param: XC_LoadPackage.LoadPackageParam) {
-        val loader = param.classLoader
-        val version: Version
-        val classes: Array<DexClass>
+    fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
+        val loader = lpparam.classLoader
+        val version = getVersion(lpparam)
 
         var apkFile: ApkFile? = null
+        val classes: Array<DexClass>
         try {
-            apkFile = ApkFile(param.appInfo.sourceDir)
-            version = Version(apkFile.apkMeta.versionName)
+            apkFile = ApkFile(lpparam.appInfo.sourceDir)
             classes = apkFile.dexClasses
         } finally {
             apkFile?.close()
@@ -173,6 +176,14 @@ object WechatPackage {
 //        ImgStorageCacheField = findFieldsWithGenericType(
 //                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
 //        ).firstOrNull()?.name ?: ""
+    }
+
+    private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
+        val activityThreadClass = findClass("android.app.ActivityThread", null)
+        val activityThread = callStaticMethod(activityThreadClass, "currentActivityThread")
+        val context = callMethod(activityThread, "getSystemContext") as Context?
+        val versionName = context?.packageManager?.getPackageInfo(lpparam.packageName, 0)?.versionName
+        return Version(versionName ?: throw Error("Cannot get Wechat version"))
     }
 
     override fun toString(): String {
