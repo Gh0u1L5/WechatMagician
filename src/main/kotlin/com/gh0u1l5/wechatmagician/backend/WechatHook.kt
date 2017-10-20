@@ -57,8 +57,9 @@ class WechatHook : IXposedHookLoadPackage {
         val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
 
         pkg.init(lpparam)
-        settings.load("$storage/.prefs/settings")
-        developer.load("$storage/.prefs/developer", false)
+        Preferences.setPreferenceFolder("$storage/.prefs/")
+        settings.load("settings")
+        developer.load("developer")
 
         val pluginDeveloper = Developer(loader, developer)
         tryHook(pluginDeveloper::traceTouchEvents)

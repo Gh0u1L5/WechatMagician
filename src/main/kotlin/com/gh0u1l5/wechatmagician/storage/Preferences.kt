@@ -1,55 +1,51 @@
 package com.gh0u1l5.wechatmagician.storage
 
+import android.os.FileObserver
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.XposedBridge.log
 import java.io.File
 import java.io.FileNotFoundException
-import kotlin.concurrent.timer
 
 @Suppress("UNCHECKED_CAST")
 class Preferences {
 
-    @Volatile private var preferences: HashMap<String, Any?>? = null
-    @Volatile private var preferencesPath: String = ""
-    @Volatile private var preferencesLastModified: Long = 0L
+    // NOTE: Only one instance of FileObserver will get notified.
+    //       https://issuetracker.google.com/issues/37017033
+    companion object {
+        private lateinit var PREF_PATH: String
+        private lateinit var observer: FileObserver
+        val entries: MutableMap<String, Preferences> = mutableMapOf()
 
-    fun load(path: String, watchUpdate: Boolean = true) {
-        // NOTE: FileObserver returns 32768 in some devices,
-        //       so we have to watch the file manually.
-        preferencesPath = path
+        // NOTE: This should only be called once, before any initialization happens.
+        fun setPreferenceFolder(folder: String) {
+            PREF_PATH = folder
+            File(folder).mkdirs()
+            observer = object : FileObserver(folder, CREATE or MODIFY or CLOSE_WRITE) {
+                override fun onEvent(event: Int, filename: String) {
+                    if (filename !in entries) {
+                        return
+                    }
+                    entries[filename]?.loadFile("$folder/$filename")
+                }
+            }
+            observer.startWatching()
+        }
+    }
+
+    @Volatile private var preferences: HashMap<String, Any?>? = null
+
+    fun load(filename: String) {
+        loadFile("$PREF_PATH/$filename")
+        entries[filename] = this
+    }
+
+    private fun loadFile(path: String) {
         try {
             preferences = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
-            preferencesLastModified = File(path).lastModified()
         } catch (_: FileNotFoundException) {
             // Ignore this one
         } catch (e: Throwable) {
             log("PREF => ${e.message}")
-            return
-        }
-        if (watchUpdate) {
-            timer(period = 1000, action = { reload() })
-        }
-    }
-
-    private fun reload() {
-        // NOTE: reload will check if the file has been modified,
-        //       so it shouldn't cause too much overhead.
-        if (!isModified()) {
-            return
-        }
-        load(preferencesPath, false) // prevent creating infinite threads
-    }
-
-    private fun isModified(): Boolean {
-        val file = File(preferencesPath)
-        try {
-            if (!file.exists()) {
-                return false
-            }
-            return file.lastModified() != preferencesLastModified
-        } catch (e: Throwable) {
-            log("PREF => ${e.message}")
-            return false
         }
     }
 
