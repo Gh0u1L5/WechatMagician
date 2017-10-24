@@ -93,7 +93,7 @@ object WechatEvents {
     // Handle the logic about the popup menu in SnsTimelineUI
     private fun onAdFramePopupMenuSelected(layout: FrameLayout, itemId: Int): Boolean {
         val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
-        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
         when (itemId) {
             0 -> {
                 if (pkg.PLTextView == null) {

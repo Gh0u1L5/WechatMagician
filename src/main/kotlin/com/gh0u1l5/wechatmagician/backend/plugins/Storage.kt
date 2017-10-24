@@ -78,7 +78,7 @@ class Storage(private val loader: ClassLoader) {
                 C.File, C.Boolean, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val path = (param.args[0] as File?)?.path ?: return
+                val path = (param.args[0] as File?)?.absolutePath ?: return
                 if (path in ImageUtil.blockTable) {
                     param.throwable = IOException()
                 }

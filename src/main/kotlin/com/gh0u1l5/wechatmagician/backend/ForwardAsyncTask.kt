@@ -22,7 +22,7 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
 
     private val snsInfo = SnsCache[snsId]
     private val context = WeakReference(context)
-    private val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+    private val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
 
     override fun doInBackground(vararg params: Void): Throwable? {
         return try {

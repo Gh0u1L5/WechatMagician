@@ -43,7 +43,7 @@ class StatusFragment : Fragment() {
     }
 
     private fun readComponentStatus(): HookStatus {
-        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
         try {
             val status = FileUtil.readObjectFromDisk("$storage/.status/hooks")
             if (status is HookStatus) {

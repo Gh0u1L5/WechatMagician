@@ -32,7 +32,7 @@ class SupportFragment : Fragment() {
             view?.context?.startActivity(Intent(Intent.ACTION_VIEW).setData(url))
         }
         support_email_card.setOnClickListener { view ->
-            val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+            val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
             val pkgLog = Uri.fromFile(File("$storage/.status/pkg"))
             val xposedLog = Uri.fromFile(File("/data/data/$XPOSED_PKG/log/error.log"))
             try {

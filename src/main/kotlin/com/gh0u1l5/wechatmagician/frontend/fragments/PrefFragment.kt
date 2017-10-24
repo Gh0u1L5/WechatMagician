@@ -80,7 +80,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     @SuppressLint("SetWorldReadable")
     override fun onPause() {
         super.onPause()
-        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
         val prefName = preferenceManager.sharedPreferencesName
         thread(start = true) {
             try {

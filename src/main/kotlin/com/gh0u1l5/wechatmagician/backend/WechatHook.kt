@@ -54,7 +54,7 @@ class WechatHook : IXposedHookLoadPackage {
     @SuppressLint("SetWorldReadable")
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
-        val storage = Environment.getExternalStorageDirectory().path + "/WechatMagician"
+        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
 
         pkg.init(lpparam)
         Preferences.setPreferenceFolder("$storage/.prefs/")
