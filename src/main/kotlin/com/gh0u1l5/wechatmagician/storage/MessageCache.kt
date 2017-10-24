@@ -13,9 +13,9 @@ object MessageCache {
     private val msgTableLock = ReentrantReadWriteLock()
     private var msgTable: MutableMap<Long, Any> = mutableMapOf()
 
-    // Clean cache for every 10 minutes
+    // Clean cache for every 60 minutes
     init {
-        timer(period = 10 * 60 * 1000, action = {
+        timer(period = 60 * 60 * 1000, action = {
             clear()
         })
     }
@@ -42,11 +42,12 @@ object MessageCache {
     // NOTE: One cannot recall the removed messages because Wechat have
     //       time limit on recalling messages.
     private fun clear() {
+        val new = msgTable.filter { entry ->
+            val createTime = getLongField(entry.value, "field_createTime")
+            System.currentTimeMillis() - createTime < 120000
+        }
         msgTableLock.write {
-            val now = System.currentTimeMillis()
-            msgTable = msgTable.filter {
-                now - getLongField(it.value, "field_createTime") < 120000
-            }.toMutableMap()
+            msgTable = new.toMutableMap()
         }
     }
 }
