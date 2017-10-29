@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.util.FileUtil
@@ -41,12 +43,12 @@ class WechatHook : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
             when (lpparam.packageName) {
-                "com.gh0u1l5.wechatmagician" ->
+                MAGICIAN_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, {
                         val pluginFrontend = Frontend(lpparam.classLoader)
                         tryHook(pluginFrontend::notifyStatus)
                     })
-                "com.tencent.mm" ->
+                WECHAT_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         handleLoadWechat(lpparam, context)
                     })

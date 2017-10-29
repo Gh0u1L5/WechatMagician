@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.AlipayUtil
 import kotlinx.android.synthetic.main.fragment_donate.*
@@ -38,8 +39,8 @@ class DonateFragment : Fragment() {
             AlipayUtil.startAlipayClient(view.context, alipayCode)
         }
         donate_tenpay.setOnClickListener { view ->
-            val pkg = "com.tencent.mm"
-            val componentName = ComponentName(pkg, "$pkg.plugin.base.stub.WXCustomSchemeEntryActivity")
+            val className = "$WECHAT_PACKAGE_NAME.plugin.base.stub.WXCustomSchemeEntryActivity"
+            val componentName = ComponentName(WECHAT_PACKAGE_NAME, className)
             try {
                 view.context.startActivity(Intent(Intent.ACTION_VIEW).apply {
                     component = componentName

@@ -15,6 +15,7 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 
@@ -43,8 +44,8 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
             try {
                 val hide = preferences.getBoolean(key, false)
                 val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
-                val pkg = activity.packageName
-                val componentName = ComponentName(pkg, "$pkg.frontend.MainActivityAlias")
+                val className = "$MAGICIAN_PACKAGE_NAME.frontend.MainActivityAlias"
+                val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
                 activity.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
             } catch (e: Throwable) {
                 Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
