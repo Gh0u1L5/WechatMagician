@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager.*
-import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.util.Log
@@ -17,6 +16,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 
 class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -33,7 +33,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return super.onCreateView(inflater, container, savedInstanceState).apply {
-            setBackgroundColor(getColor(R.color.card_background))
+            setBackgroundColor(getColor(activity, resources, R.color.card_background))
         }
     }
 
@@ -63,14 +63,6 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     override fun onDestroy() {
         preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
         super.onDestroy()
-    }
-
-    private fun getColor(resId: Int): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            resources.getColor(resId, context.theme)
-        } else {
-            resources.getColor(resId)
-        }
     }
 
     companion object {

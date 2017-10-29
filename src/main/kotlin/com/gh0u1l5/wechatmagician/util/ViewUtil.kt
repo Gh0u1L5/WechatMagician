@@ -1,8 +1,11 @@
 package com.gh0u1l5.wechatmagician.util
 
+import android.content.Context
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.os.Build
 import android.view.View
 import android.view.ViewGroup
 import de.robv.android.xposed.XposedBridge
@@ -57,5 +60,14 @@ object ViewUtil {
         b.eraseColor(Color.WHITE)
         view.draw(Canvas(b))
         return b
+    }
+
+    // getColor finds the color according to the given resId.
+    fun getColor(context: Context, resources: Resources, resId: Int): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            resources.getColor(resId, context.theme)
+        } else {
+            resources.getColor(resId)
+        }
     }
 }

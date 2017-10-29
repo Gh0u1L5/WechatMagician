@@ -1,7 +1,6 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.app.Fragment
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.view.LayoutInflater
@@ -12,6 +11,7 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.storage.HookStatus
 import com.gh0u1l5.wechatmagician.util.FileUtil
+import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 import kotlinx.android.synthetic.main.fragment_status.*
 
 class StatusFragment : Fragment() {
@@ -25,7 +25,7 @@ class StatusFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        val colorOk = getColor(R.color.ok)
+        val colorOk = getColor(activity, resources, R.color.ok)
         if (isModuleLoaded()) {
             status_text.setTextColor(colorOk)
             status_text.text = getString(R.string.status_ok)
@@ -78,14 +78,6 @@ class StatusFragment : Fragment() {
     private fun setComponentIconValid(icon: ImageView) {
         icon.setImageResource(R.drawable.ic_component_valid)
         icon.contentDescription = getString(R.string.status_component_valid)
-    }
-
-    private fun getColor(resId: Int): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            resources.getColor(resId, context.theme)
-        } else {
-            resources.getColor(resId)
-        }
     }
 
     companion object {
