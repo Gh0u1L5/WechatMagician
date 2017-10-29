@@ -1,63 +1,60 @@
 package com.gh0u1l5.wechatmagician.storage
 
-import android.os.FileObserver
-import com.gh0u1l5.wechatmagician.util.FileUtil
-import de.robv.android.xposed.XposedBridge.log
-import java.io.File
-import java.io.FileNotFoundException
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import com.gh0u1l5.wechatmagician.Global.ACTION_DESIRE_PREF
+import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
+import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
+import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_NAME
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
-@Suppress("UNCHECKED_CAST")
 class Preferences {
 
-    // NOTE: Only one instance of FileObserver will get notified.
-    //       https://issuetracker.google.com/issues/37017033
-    companion object {
-        private lateinit var PREF_PATH: String
-        private lateinit var observer: FileObserver
-        val entries: MutableMap<String, Preferences> = mutableMapOf()
+    // content stores a map that sync to the settings from frontend.
+    private val contentLock = ReentrantReadWriteLock()
+    private val content= mutableMapOf<String, Any?>()
 
-        // NOTE: This should only be called once, before any initialization happens.
-        fun setPreferenceFolder(folder: String) {
-            PREF_PATH = folder
-            File(folder).mkdirs()
-            observer = object : FileObserver(folder, CREATE or MODIFY or CLOSE_WRITE) {
-                override fun onEvent(event: Int, filename: String) {
-                    if (filename !in entries) {
-                        return
-                    }
-                    entries[filename]?.loadFile("$folder/$filename")
+    // receiver listens the frontend and updates content as needed.
+    private val receiver: BroadcastReceiver? = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            val keys = intent?.getStringArrayExtra(INTENT_PREF_KEYS)
+            keys?.forEach { key ->
+                contentLock.write {
+                    content[key] = intent.extras[key]
                 }
             }
-            observer.startWatching()
         }
     }
 
-    @Volatile private var preferences: HashMap<String, Any?>? = null
-
-    fun load(filename: String) {
-        loadFile("$PREF_PATH/$filename")
-        entries[filename] = this
-    }
-
-    private fun loadFile(path: String) {
-        try {
-            preferences = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
-        } catch (_: FileNotFoundException) {
-            // Ignore this one
-        } catch (e: Throwable) {
-            log("PREF => ${e.message}")
-        }
+    // load registers the receiver and requires the latest settings from frontend.
+    fun load(context: Context?, preferencesName: String) {
+        context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+        context?.sendBroadcast(Intent(ACTION_DESIRE_PREF).apply {
+            putExtra(INTENT_PREF_KEYS, arrayOf("*"))
+            putExtra(INTENT_PREF_NAME, preferencesName)
+        })
     }
 
     fun getBoolean(key: String, defValue: Boolean): Boolean {
-        return preferences?.get(key) as? Boolean ?: defValue
+        contentLock.read {
+            return content[key] as Boolean? ?: defValue
+        }
     }
 
     fun getString(key: String, defValue: String = ""): String {
-        return preferences?.get(key) as? String ?: defValue
+        contentLock.read {
+            return content[key] as String? ?: defValue
+        }
     }
 
-    fun getStringList(key: String, defValue: List<String> = listOf()): List<String> {
-        return preferences?.get(key) as? List<String> ?: defValue
+    @Suppress("UNCHECKED_CAST")
+    fun getStringList(key: String, defValue: Array<String> = arrayOf()): Array<String> {
+        contentLock.read {
+            return content[key] as Array<String>? ?: defValue
+        }
     }
 }

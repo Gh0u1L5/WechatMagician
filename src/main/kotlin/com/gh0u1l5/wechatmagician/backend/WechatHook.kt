@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.*
@@ -24,9 +25,11 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
-    private fun hookApplicationAttach(loader: ClassLoader, callback: () -> Unit) {
+    private fun hookApplicationAttach(loader: ClassLoader, callback: (Context?) -> Unit) {
         findAndHookMethod("android.app.Application",loader, "attach", C.Context, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam?) { callback() }
+            override fun afterHookedMethod(param: MethodHookParam) {
+                callback(param.thisObject as Context?)
+            }
         })
     }
 
@@ -44,22 +47,20 @@ class WechatHook : IXposedHookLoadPackage {
                         tryHook(pluginFrontend::notifyStatus)
                     })
                 "com.tencent.mm" ->
-                    hookApplicationAttach(lpparam.classLoader, {
-                        handleLoadWechat(lpparam)
+                    hookApplicationAttach(lpparam.classLoader, { context ->
+                        handleLoadWechat(lpparam, context)
                     })
             }
         } catch (e: Throwable) { log(e) }
     }
 
     @SuppressLint("SetWorldReadable")
-    private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam) {
+    private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context?) {
         val loader = lpparam.classLoader
-        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
 
         pkg.init(lpparam)
-        Preferences.setPreferenceFolder("$storage/.prefs/")
-        settings.load("settings")
-        developer.load("developer")
+        settings.load(context, "settings")
+        developer.load(context, "developer")
 
         val pluginDeveloper = Developer(loader, developer)
         tryHook(pluginDeveloper::traceTouchEvents)
@@ -91,6 +92,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginCustomScheme::registerCustomSchemes)
 
         thread(start = true) {
+            val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
             FileUtil.writeOnce("$storage/.status/pkg", { path->
                 FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
                 File(path).setReadable(true, false)

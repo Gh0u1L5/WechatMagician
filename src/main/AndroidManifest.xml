@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.gh0u1l5.wechatmagician"
     android:versionCode="27"
     android:versionName="2.5.2">
@@ -13,28 +14,32 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+
         <activity
             android:name=".frontend.MainActivity"
-            android:label="@string/app_name"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="de.robv.android.xposed.category.MODULE_SETTINGS" />
             </intent-filter>
         </activity>
 
         <activity-alias
             android:name=".frontend.MainActivityAlias"
-            android:label="@string/app_name"
-            android:enabled="true"
             android:targetActivity=".frontend.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity-alias>
+
+        <receiver
+            android:name=".frontend.PreferenceProvider"
+            tools:ignore="ExportedReceiver">
+            <intent-filter>
+                <action android:name="com.gh0u1l5.wechatmagician.ACTION_DESIRE_PREF" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="xposedmodule"

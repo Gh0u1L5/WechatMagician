@@ -2,7 +2,7 @@
 
 package com.gh0u1l5.wechatmagician.backend
 
-import android.app.AndroidAppHelper
+import android.content.Context
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.storage.HookStatus
@@ -10,12 +10,10 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
+import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
-import android.content.Context
-import de.robv.android.xposed.XposedHelpers.*
-
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -188,7 +186,7 @@ object WechatPackage {
 
     override fun toString(): String {
         return this.javaClass.declaredFields.filter {
-            it.name != "INSTANCE"
+            it.name != "INSTANCE" && it.name != "status"
         }.joinToString("\n") {
             it.isAccessible = true; "${it.name} = ${it.get(this)}"
         }

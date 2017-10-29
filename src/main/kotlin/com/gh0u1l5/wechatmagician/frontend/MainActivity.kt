@@ -80,9 +80,7 @@ class MainActivity : Activity(),
                 StatusFragment.newInstance()
             }
             R.id.nav_settings -> {
-                PrefFragment.newInstance(
-                        R.xml.pref_settings, "settings",
-                        hashMapOf("settings_sns_keyword_blacklist_content" to true))
+                PrefFragment.newInstance(R.xml.pref_settings, "settings")
             }
             R.id.nav_developer -> {
                 PrefFragment.newInstance(R.xml.pref_developer, "developer")
