@@ -114,7 +114,7 @@ object WechatEvents {
                 val path = "$storage/screenshot/$filename"
                 val bitmap = ViewUtil.drawView(layout)
                 FileUtil.writeBitmapToDisk(path, bitmap)
-                FileUtil.galleryAddPic(path, layout.context)
+                FileUtil.notifyNewMediaFile(path, layout.context)
                 Toast.makeText(
                         layout.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
                 ).show()

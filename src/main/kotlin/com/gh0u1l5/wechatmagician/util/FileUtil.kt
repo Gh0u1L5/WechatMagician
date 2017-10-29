@@ -74,11 +74,11 @@ object FileUtil {
         }
     }
 
-    fun galleryAddPic(path: String, context: Context) {
-        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
-        val f = File(path)
-        val contentUri = Uri.fromFile(f)
-        mediaScanIntent.data = contentUri
-        context.sendBroadcast(mediaScanIntent)
+    // notifyNewMediaFile notifies all the gallery apps that there is a new file to scan.
+    fun notifyNewMediaFile(path: String, context: Context?) {
+        val intent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        context?.sendBroadcast(intent.apply {
+            data = Uri.fromFile(File(path))
+        })
     }
 }
