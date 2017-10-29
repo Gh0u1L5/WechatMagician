@@ -3,7 +3,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.app.Activity
 import android.content.Intent
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
@@ -45,6 +47,6 @@ class CustomScheme {
             }
         })
 
-        pkg.status.CustomScheme = true
+        WechatStatus[STATUS_FLAG_CUSTOM_SCHEME] = true
     }
 }

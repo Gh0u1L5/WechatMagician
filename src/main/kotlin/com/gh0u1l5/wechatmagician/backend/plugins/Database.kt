@@ -2,7 +2,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.SnsDatabase.snsDB
@@ -99,7 +101,7 @@ class Database(private val preferences: Preferences) {
             }
         })
 
-        pkg.status.Database = true
+        WechatStatus[STATUS_FLAG_DATABASE] = true
     }
 
     // handleMessageRecall notifies user that someone has recalled the given message.

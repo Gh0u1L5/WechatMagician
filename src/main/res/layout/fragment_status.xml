@@ -7,12 +7,21 @@
     android:orientation="vertical"
     tools:context="com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment">
 
+    <ProgressBar
+        android:id="@+id/status_progress_bar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_marginTop="20dp" />
+
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/status_banner"
         android:layout_width="match_parent"
         android:layout_height="160dp"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="5dp">
 
@@ -36,11 +45,13 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/status_components"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         card_view:cardCornerRadius="4dp"
         card_view:cardElevation="5dp">
 

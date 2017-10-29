@@ -4,8 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_HOOKING
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
-import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.util.FileUtil
@@ -21,6 +21,7 @@ import kotlin.concurrent.thread
 class WechatHook : IXposedHookLoadPackage {
 
     private val pkg = WechatPackage
+    private val status = WechatStatus
     private val settings = Preferences()
     private val developer = Preferences()
 
@@ -42,16 +43,10 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
-            when (lpparam.packageName) {
-                MAGICIAN_PACKAGE_NAME ->
-                    hookApplicationAttach(lpparam.classLoader, {
-                        val pluginFrontend = Frontend(lpparam.classLoader)
-                        tryHook(pluginFrontend::notifyStatus)
-                    })
-                WECHAT_PACKAGE_NAME ->
-                    hookApplicationAttach(lpparam.classLoader, { context ->
-                        handleLoadWechat(lpparam, context)
-                    })
+            if (lpparam.packageName == WECHAT_PACKAGE_NAME) {
+                hookApplicationAttach(lpparam.classLoader, { context ->
+                    handleLoadWechat(lpparam, context)
+                })
             }
         } catch (e: Throwable) { log(e) }
     }
@@ -61,6 +56,8 @@ class WechatHook : IXposedHookLoadPackage {
         val loader = lpparam.classLoader
 
         pkg.init(lpparam)
+        status.listen(context)
+        status[STATUS_FLAG_HOOKING] = true
         settings.load(context, "settings")
         developer.load(context, "developer")
 

@@ -1,7 +1,9 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
@@ -36,7 +38,7 @@ class XML(private val preferences: Preferences) {
             }
         })
 
-        pkg.status.XMLParser = true
+        WechatStatus[STATUS_FLAG_XML_PARSER] = true
     }
 
     private fun handleRevokeCommand(result: MutableMap<String, String?>) {
