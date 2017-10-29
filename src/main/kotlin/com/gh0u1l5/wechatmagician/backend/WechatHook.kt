@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.backend
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
@@ -14,7 +13,6 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import java.io.File
 import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
@@ -51,7 +49,6 @@ class WechatHook : IXposedHookLoadPackage {
         } catch (e: Throwable) { log(e) }
     }
 
-    @SuppressLint("SetWorldReadable")
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context?) {
         val loader = lpparam.classLoader
 
@@ -90,15 +87,13 @@ class WechatHook : IXposedHookLoadPackage {
         val pluginCustomScheme = CustomScheme()
         tryHook(pluginCustomScheme::registerCustomSchemes)
 
+        // Note: This operation may fail if the Wechat does not have the permission to
+        //       write external storage. So we put this at the end to make sure it will
+        //       not interrupt the hooking logic.
         thread(start = true) {
             val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
             FileUtil.writeOnce("$storage/.status/pkg", { path->
                 FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
-                File(path).setReadable(true, false)
-            })
-            FileUtil.writeOnce("$storage/.status/hooks", { path ->
-                FileUtil.writeObjectToDisk(path, pkg.status)
-                File(path).setReadable(true, false)
             })
         }
     }
