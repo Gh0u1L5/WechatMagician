@@ -1,6 +1,9 @@
 package com.gh0u1l5.wechatmagician.util
 
+import android.content.Intent
+import android.content.Context
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.SystemClock.elapsedRealtime
 import java.io.*
 import java.lang.System.currentTimeMillis
@@ -69,5 +72,13 @@ object FileUtil {
         if (modifiedAt < bootAt) {
             writeCallback(path)
         }
+    }
+
+    fun galleryAddPic(path: String, context: Context) {
+        val mediaScanIntent = Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE)
+        val f = File(path)
+        val contentUri = Uri.fromFile(f)
+        mediaScanIntent.data = contentUri
+        context.sendBroadcast(mediaScanIntent)
     }
 }
