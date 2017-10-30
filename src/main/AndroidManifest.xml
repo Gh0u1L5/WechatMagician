@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.gh0u1l5.wechatmagician"
-    android:versionCode="27"
-    android:versionName="2.5.2">
+    android:versionCode="28"
+    android:versionName="2.5.3">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
