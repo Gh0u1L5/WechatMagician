@@ -7,6 +7,7 @@ import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.SnsBlacklist
 import com.gh0u1l5.wechatmagician.storage.SnsDatabase.snsDB
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -76,6 +77,9 @@ class Database(private val preferences: Preferences) {
                             return
                         }
                         if (values["sourceType"] != 0) {
+                            return
+                        }
+                        if (values["stringSeq"] in SnsBlacklist) {
                             return
                         }
                         if (!preferences.getBoolean("settings_sns_delete_moment", true)) {

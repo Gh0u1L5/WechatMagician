@@ -5,6 +5,7 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.SnsBlacklist
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -63,6 +64,7 @@ class XML(private val preferences: Preferences) {
         val list = preferences.getStringList("settings_sns_keyword_blacklist_content")
         list.filter { content.contains(it) }.forEach {
             result[".TimelineObject.private"] = "1"
+            SnsBlacklist += result[".TimelineObject.id"]
             return
         }
     }
