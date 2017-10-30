@@ -16,8 +16,10 @@ class Preferences {
 
     // content stores a map that sync to the settings from frontend.
     private val contentLock = ReentrantReadWriteLock()
-    private val content= mutableMapOf<String, Any?>()
+    private val content = mutableMapOf<String, Any?>()
 
+    // loaded indicates whether
+    @Volatile var loaded: Boolean = false
     // receiver listens the frontend and updates content as needed.
     private val receiver: BroadcastReceiver? = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -27,6 +29,7 @@ class Preferences {
                     content[key] = intent.extras[key]
                 }
             }
+            loaded = true
         }
     }
 

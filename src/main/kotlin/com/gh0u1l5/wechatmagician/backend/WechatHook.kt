@@ -58,34 +58,41 @@ class WechatHook : IXposedHookLoadPackage {
         settings.load(context, "settings")
         developer.load(context, "developer")
 
-        val pluginDeveloper = Developer(loader, developer)
-        tryHook(pluginDeveloper::traceTouchEvents)
-        tryHook(pluginDeveloper::traceActivities)
-        tryHook(pluginDeveloper::enableXLog)
-        tryHook(pluginDeveloper::traceXMLParse)
-        tryHook(pluginDeveloper::traceDatabase)
+        thread(start = true) {
+            // Note: The developer settings must be valid before hooking the functions,
+            //       so we write a “spinlock" here to wait the update.
+            while (!developer.loaded);
+            val pluginDeveloper = Developer(loader, developer)
+            tryHook(pluginDeveloper::traceTouchEvents)
+            tryHook(pluginDeveloper::traceActivities)
+            tryHook(pluginDeveloper::enableXLog)
+            tryHook(pluginDeveloper::traceXMLParse)
+            tryHook(pluginDeveloper::traceDatabase)
+        }
 
-        val pluginSnsUI = SnsUI(settings)
-        tryHook(pluginSnsUI::setItemLongPressPopupMenu)
-        tryHook(pluginSnsUI::cleanTextViewForForwarding)
+        thread(start = true) {
+            val pluginSnsUI = SnsUI(settings)
+            tryHook(pluginSnsUI::setItemLongPressPopupMenu)
+            tryHook(pluginSnsUI::cleanTextViewForForwarding)
 
-        val pluginLimits = Limits(settings)
-        tryHook(pluginLimits::breakSelectPhotosLimit)
-        tryHook(pluginLimits::breakSelectContactLimit)
-        tryHook(pluginLimits::breakSelectConversationLimit)
+            val pluginLimits = Limits(settings)
+            tryHook(pluginLimits::breakSelectPhotosLimit)
+            tryHook(pluginLimits::breakSelectContactLimit)
+            tryHook(pluginLimits::breakSelectConversationLimit)
 
-        val pluginStorage = Storage(loader)
-        tryHook(pluginStorage::hookMsgStorage)
-        tryHook(pluginStorage::hookImgStorage)
+            val pluginStorage = Storage(loader)
+            tryHook(pluginStorage::hookMsgStorage)
+            tryHook(pluginStorage::hookImgStorage)
 
-        val pluginXML = XML(settings)
-        tryHook(pluginXML::hookXMLParse)
+            val pluginXML = XML(settings)
+            tryHook(pluginXML::hookXMLParse)
 
-        val pluginDatabase = Database(settings)
-        tryHook(pluginDatabase::hookDatabase)
+            val pluginDatabase = Database(settings)
+            tryHook(pluginDatabase::hookDatabase)
 
-        val pluginCustomScheme = CustomScheme()
-        tryHook(pluginCustomScheme::registerCustomSchemes)
+            val pluginCustomScheme = CustomScheme()
+            tryHook(pluginCustomScheme::registerCustomSchemes)
+        }
 
         // Note: This operation may fail if the Wechat does not have the permission to
         //       write external storage. So we put this at the end to make sure it will
