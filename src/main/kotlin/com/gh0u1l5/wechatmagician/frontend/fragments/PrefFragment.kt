@@ -16,6 +16,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 
@@ -53,11 +54,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
             return // this setting is useless for backend part.
         }
 
-        var value = preferences.all[key]
-        if (key.startsWith("pref_list") && value is String) {
-            // Split value into an Array<String> if it's a list.
-            value = value.split(' ').toTypedArray()
-        }
+        val value = preferences.all[key]
         notifyPreferenceChange(activity, mapOf(key to value))
     }
 
@@ -84,7 +81,11 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
             context?.sendBroadcast(Intent(ACTION_UPDATE_PREF).apply {
                 putExtra(INTENT_PREF_KEYS, data.keys.toTypedArray())
                 for (entry in data) {
-                    val key = entry.key; val value = entry.value
+                    val key = entry.key; var value = entry.value
+                    if (key in PREFERENCE_STRING_LIST_KEYS && value is String) {
+                        // Split value into an Array<String> if it's a list.
+                        value = value.split(' ').toTypedArray()
+                    }
                     // Note: Here's a trick called "smart cast"
                     when(value) {
                         is String ->   putExtra(key, value)
