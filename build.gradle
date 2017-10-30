@@ -1,8 +1,11 @@
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.2.0-beta-88'
     repositories {
         jcenter()
         google()
+        maven {
+            url "http://dl.bintray.com/kotlin/kotlin-eap-1.2"
+        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.0-alpha01'
@@ -24,8 +27,8 @@ android {
         targetSdkVersion 26
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -35,6 +38,9 @@ android {
 repositories {
     jcenter()
     google()
+    maven {
+        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
+    }
 }
 
 dependencies {
