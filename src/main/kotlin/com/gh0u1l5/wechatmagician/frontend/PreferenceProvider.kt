@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment.Companion.notifyPreferenceChange
 
 class PreferenceProvider : BroadcastReceiver() {

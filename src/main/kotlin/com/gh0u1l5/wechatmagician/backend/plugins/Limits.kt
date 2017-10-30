@@ -17,7 +17,13 @@ import com.gh0u1l5.wechatmagician.storage.Strings
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 
-class Limits(private val preferences: Preferences) {
+object Limits {
+
+    private var preferences: Preferences? = null
+
+    fun init(_preferences: Preferences) {
+        preferences = _preferences
+    }
 
     private val str = Strings
     private val pkg = WechatPackage
@@ -37,7 +43,7 @@ class Limits(private val preferences: Preferences) {
                 val intent = (param.thisObject as Activity).intent ?: return
                 val current = intent.getIntExtra("max_select_count", 9)
                 val limit = try {
-                    preferences.getString(
+                    preferences!!.getString(
                             "settings_select_photos_limit", "1000"
                     ).toInt()
                 } catch (_: Throwable) { 1000 }

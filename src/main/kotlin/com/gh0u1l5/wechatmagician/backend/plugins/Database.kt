@@ -17,7 +17,13 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
-class Database(private val preferences: Preferences) {
+object Database {
+
+    private var preferences: Preferences? = null
+
+    fun init(_preferences: Preferences) {
+        preferences = _preferences
+    }
 
     private val str = Strings
     private val pkg = WechatPackage
@@ -66,7 +72,7 @@ class Database(private val preferences: Preferences) {
                         if (!values.getAsString("content").startsWith("\"")) {
                             return
                         }
-                        if (!preferences.getBoolean("settings_chatting_recall", true)) {
+                        if (!preferences!!.getBoolean("settings_chatting_recall", true)) {
                             return
                         }
                         handleMessageRecall(values)
@@ -82,7 +88,7 @@ class Database(private val preferences: Preferences) {
                         if (values["stringSeq"] in SnsBlacklist) {
                             return
                         }
-                        if (!preferences.getBoolean("settings_sns_delete_moment", true)) {
+                        if (!preferences!!.getBoolean("settings_sns_delete_moment", true)) {
                             return
                         }
                         val content = values["content"] as ByteArray?
@@ -95,7 +101,7 @@ class Database(private val preferences: Preferences) {
                         if (values["commentflag"] != 1) {
                             return
                         }
-                        if (!preferences.getBoolean("settings_sns_delete_comment", true)) {
+                        if (!preferences!!.getBoolean("settings_sns_delete_comment", true)) {
                             return
                         }
                         val curActionBuf = values["curActionBuf"] as ByteArray?

@@ -9,7 +9,7 @@ import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
-class CustomScheme {
+object CustomScheme {
 
     val pkg = WechatPackage
 

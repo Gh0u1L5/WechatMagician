@@ -12,13 +12,21 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
-class Developer(private val loader: ClassLoader, private val preferences: Preferences) {
+object Developer {
+
+    private var loader: ClassLoader? = null
+    private var preferences: Preferences? = null
+
+    fun init(_loader: ClassLoader, _preferences: Preferences) {
+        loader = _loader
+        preferences = _preferences
+    }
 
     private val pkg = WechatPackage
 
     // Hook View.onTouchEvent to trace touch events.
     fun traceTouchEvents() {
-        if (preferences.getBoolean("developer_ui_touch_event", false)) {
+        if (preferences!!.getBoolean("developer_ui_touch_event", false)) {
             XposedHelpers.findAndHookMethod(
                     "android.view.View", loader,
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
@@ -32,7 +40,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
 
     // Hook Activity.startActivity and Activity.onCreate to trace activities.
     fun traceActivities() {
-        if (preferences.getBoolean("developer_ui_trace_activities", false)) {
+        if (preferences!!.getBoolean("developer_ui_trace_activities", false)) {
             XposedHelpers.findAndHookMethod(
                     "android.app.Activity", loader,
                     "startActivity", C.Intent, object : XC_MethodHook() {
@@ -62,7 +70,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             return
         }
 
-        if (preferences.getBoolean("developer_ui_xlog", false)) {
+        if (preferences!!.getBoolean("developer_ui_xlog", false)) {
             XposedBridge.hookAllMethods(
                     pkg.XLogSetup, "keep_setupXLog", object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -79,7 +87,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             return
         }
 
-        if (preferences.getBoolean("developer_xml_parser", false)) {
+        if (preferences!!.getBoolean("developer_xml_parser", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.XMLParserClass, pkg.XMLParseMethod,
                     C.String, C.String, object : XC_MethodHook() {
@@ -101,7 +109,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             pkg.SQLiteCancellationSignal -> return
         }
 
-        if (preferences.getBoolean("developer_database_query", false)) {
+        if (preferences!!.getBoolean("developer_database_query", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "rawQueryWithFactory",
                     pkg.SQLiteCursorFactory, C.String, C.StringArray, C.String, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
@@ -114,7 +122,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             })
         }
 
-        if (preferences.getBoolean("developer_database_insert", false)) {
+        if (preferences!!.getBoolean("developer_database_insert", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "insertWithOnConflict",
                     C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
@@ -127,7 +135,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             })
         }
 
-        if (preferences.getBoolean("developer_database_update", false)) {
+        if (preferences!!.getBoolean("developer_database_update", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "updateWithOnConflict",
                     C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
@@ -142,7 +150,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             })
         }
 
-        if (preferences.getBoolean("developer_database_delete", false)) {
+        if (preferences!!.getBoolean("developer_database_delete", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "delete",
                     C.String, C.String, C.StringArray, object : XC_MethodHook() {
@@ -156,7 +164,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
             })
         }
 
-        if (preferences.getBoolean("developer_database_execute", false)) {
+        if (preferences!!.getBoolean("developer_database_execute", false)) {
             XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "executeSql",
                     C.String, C.ObjectArray, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {

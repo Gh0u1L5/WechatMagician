@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
-import android.content.Intent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.SystemClock.elapsedRealtime

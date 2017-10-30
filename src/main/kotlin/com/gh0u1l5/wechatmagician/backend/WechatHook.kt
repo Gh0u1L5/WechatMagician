@@ -1,13 +1,11 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
-import android.os.Environment
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_HOOKING
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
@@ -24,7 +22,7 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
-    private fun hookApplicationAttach(loader: ClassLoader, callback: (Context?) -> Unit) {
+    inline private fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context?) -> Unit) {
         findAndHookMethod("android.app.Application",loader, "attach", C.Context, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 callback(param.thisObject as Context?)
@@ -32,7 +30,7 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    private fun tryHook(hook: () -> Unit) {
+    inline private fun tryHook(hook: () -> Unit) {
         try { hook() } catch (e: Throwable) { log("HOOK => $e") }
     }
 
@@ -60,7 +58,9 @@ class WechatHook : IXposedHookLoadPackage {
             // Note: The developer settings must be valid before hooking the functions,
             //       so we write a “spinlock" here to wait the update.
             while (!developer.loaded);
-            val pluginDeveloper = Developer(loader, developer)
+
+            val pluginDeveloper = Developer
+            pluginDeveloper.init(loader, developer)
             tryHook(pluginDeveloper::traceTouchEvents)
             tryHook(pluginDeveloper::traceActivities)
             tryHook(pluginDeveloper::enableXLog)
@@ -69,37 +69,30 @@ class WechatHook : IXposedHookLoadPackage {
         }
 
         thread(start = true) {
-            val pluginSnsUI = SnsUI(settings)
+            val pluginSnsUI = SnsUI
             tryHook(pluginSnsUI::setItemLongPressPopupMenu)
             tryHook(pluginSnsUI::cleanTextViewForForwarding)
 
-            val pluginLimits = Limits(settings)
+            val pluginLimits = Limits
+            pluginLimits.init(settings)
             tryHook(pluginLimits::breakSelectPhotosLimit)
             tryHook(pluginLimits::breakSelectContactLimit)
             tryHook(pluginLimits::breakSelectConversationLimit)
 
-            val pluginStorage = Storage(loader)
+            val pluginStorage = Storage
             tryHook(pluginStorage::hookMsgStorage)
             tryHook(pluginStorage::hookImgStorage)
 
-            val pluginXML = XML(settings)
+            val pluginXML = XML
+            pluginXML.init(settings)
             tryHook(pluginXML::hookXMLParse)
 
-            val pluginDatabase = Database(settings)
+            val pluginDatabase = Database
+            pluginDatabase.init(settings)
             tryHook(pluginDatabase::hookDatabase)
 
-            val pluginCustomScheme = CustomScheme()
+            val pluginCustomScheme = CustomScheme
             tryHook(pluginCustomScheme::registerCustomSchemes)
-        }
-
-        // Note: This operation may fail if the Wechat does not have the permission to
-        //       write external storage. So we put this at the end to make sure it will
-        //       not interrupt the hooking logic.
-        thread(start = true) {
-            val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
-            FileUtil.writeOnce("$storage/.status/pkg", { path->
-                FileUtil.writeBytesToDisk(path, WechatPackage.toString().toByteArray())
-            })
         }
     }
 }

@@ -13,7 +13,13 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import kotlin.concurrent.thread
 
-class XML(private val preferences: Preferences) {
+object XML {
+
+    private var preferences: Preferences? = null
+
+    fun init(_preferences: Preferences) {
+        preferences = _preferences
+    }
 
     private val str = Strings
     private val pkg = WechatPackage
@@ -48,20 +54,20 @@ class XML(private val preferences: Preferences) {
         if (!msg.startsWith("\"")) {
             return
         }
-        if (!preferences.getBoolean("settings_chatting_recall", true)) {
+        if (!preferences!!.getBoolean("settings_chatting_recall", true)) {
             return
         }
-        val prompt = preferences.getString(
+        val prompt = preferences!!.getString(
                 "settings_chatting_recall_prompt", str["prompt_recall"])
         result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
     }
 
     private fun matchKeywordBlackList(result: MutableMap<String, String?>) {
-        if (!preferences.getBoolean("settings_sns_keyword_blacklist", false)) {
+        if (!preferences!!.getBoolean("settings_sns_keyword_blacklist", false)) {
             return
         }
         val content = result[".TimelineObject.contentDesc"] ?: return
-        val list = preferences.getStringList("settings_sns_keyword_blacklist_content")
+        val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content")
         list.filter { content.contains(it) }.forEach {
             result[".TimelineObject.private"] = "1"
             SnsBlacklist += result[".TimelineObject.id"]

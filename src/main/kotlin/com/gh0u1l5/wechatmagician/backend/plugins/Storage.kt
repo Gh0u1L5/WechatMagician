@@ -6,15 +6,12 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatStatus
 import com.gh0u1l5.wechatmagician.storage.MessageCache
-import com.gh0u1l5.wechatmagician.util.ImageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
-import java.io.File
-import java.io.IOException
 import kotlin.concurrent.thread
 
-class Storage(private val loader: ClassLoader) {
+object Storage {
 
     private val pkg = WechatPackage
 
@@ -75,18 +72,18 @@ class Storage(private val loader: ClassLoader) {
 //            }
 //        })
 
-        // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
-        XposedHelpers.findAndHookConstructor(
-                "java.io.FileOutputStream", loader,
-                C.File, C.Boolean, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val path = (param.args[0] as File?)?.absolutePath ?: return
-                if (path in ImageUtil.blockTable) {
-                    param.throwable = IOException()
-                }
-            }
-        })
+//        // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
+//        XposedHelpers.findAndHookConstructor(
+//                "java.io.FileOutputStream", loader,
+//                C.File, C.Boolean, object : XC_MethodHook() {
+//            @Throws(Throwable::class)
+//            override fun beforeHookedMethod(param: MethodHookParam) {
+//                val path = (param.args[0] as File?)?.absolutePath ?: return
+//                if (path in ImageUtil.blockTable) {
+//                    param.throwable = IOException()
+//                }
+//            }
+//        })
 
         WechatStatus[STATUS_FLAG_IMG_STORAGE] = true
     }
