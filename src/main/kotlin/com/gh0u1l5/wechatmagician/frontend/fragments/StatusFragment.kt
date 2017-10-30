@@ -49,6 +49,10 @@ class StatusFragment : Fragment() {
         }
         activity.sendOrderedBroadcast(intent, null, object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                if (activity == null) {
+                    return // this fragment has been detached, so ignore
+                }
+
                 status_progress_bar.visibility = GONE
                 status_banner.visibility = VISIBLE
                 status_components.visibility = VISIBLE
