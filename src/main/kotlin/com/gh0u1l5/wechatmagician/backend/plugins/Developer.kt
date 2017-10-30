@@ -11,7 +11,6 @@ import com.gh0u1l5.wechatmagician.util.MessageUtil.bundleToString
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 class Developer(private val loader: ClassLoader, private val preferences: Preferences) {
 
@@ -103,7 +102,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
         }
 
         if (preferences.getBoolean("developer_database_query", false)) {
-            findAndHookMethod(
+            XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "rawQueryWithFactory",
                     pkg.SQLiteCursorFactory, C.String, C.StringArray, C.String, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -116,7 +115,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
         }
 
         if (preferences.getBoolean("developer_database_insert", false)) {
-            findAndHookMethod(
+            XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "insertWithOnConflict",
                     C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -129,7 +128,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
         }
 
         if (preferences.getBoolean("developer_database_update", false)) {
-            findAndHookMethod(
+            XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "updateWithOnConflict",
                     C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -144,7 +143,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
         }
 
         if (preferences.getBoolean("developer_database_delete", false)) {
-            findAndHookMethod(
+            XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "delete",
                     C.String, C.String, C.StringArray, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -158,7 +157,7 @@ class Developer(private val loader: ClassLoader, private val preferences: Prefer
         }
 
         if (preferences.getBoolean("developer_database_execute", false)) {
-            findAndHookMethod(
+            XposedHelpers.findAndHookMethod(
                     pkg.SQLiteDatabaseClass, "executeSql",
                     C.String, C.ObjectArray, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)

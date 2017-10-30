@@ -18,8 +18,6 @@ import kotlin.concurrent.thread
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
 
-    private val pkg = WechatPackage
-    private val status = WechatStatus
     private val settings = Preferences()
     private val developer = Preferences()
 
@@ -52,9 +50,9 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context?) {
         val loader = lpparam.classLoader
 
-        pkg.init(lpparam)
-        status.listen(context)
-        status[STATUS_FLAG_HOOKING] = true
+        WechatPackage.init(lpparam)
+        WechatStatus.listen(context)
+        WechatStatus[STATUS_FLAG_HOOKING] = true
         settings.load(context, "settings")
         developer.load(context, "developer")
 
@@ -100,7 +98,7 @@ class WechatHook : IXposedHookLoadPackage {
         thread(start = true) {
             val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
             FileUtil.writeOnce("$storage/.status/pkg", { path->
-                FileUtil.writeBytesToDisk(path, pkg.toString().toByteArray())
+                FileUtil.writeBytesToDisk(path, WechatPackage.toString().toByteArray())
             })
         }
     }
