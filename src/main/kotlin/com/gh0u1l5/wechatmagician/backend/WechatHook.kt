@@ -2,15 +2,17 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_HOOKING
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -36,10 +38,17 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
-            if (lpparam.packageName == WECHAT_PACKAGE_NAME) {
-                hookApplicationAttach(lpparam.classLoader, { context ->
-                    handleLoadWechat(lpparam, context)
-                })
+            when (lpparam.packageName) {
+                "com.gh0u1l5.wechatmagician" ->
+                    hookApplicationAttach(lpparam.classLoader, { context ->
+                        val pluginFrontend = Frontend(lpparam.classLoader)
+                        tryHook(pluginFrontend::notifyStatus)
+                        pluginFrontend.setDirectoryPermissions(context)
+                    })
+                "com.tencent.mm" ->
+                    hookApplicationAttach(lpparam.classLoader, { context ->
+                        handleLoadWechat(lpparam, context)
+                    })
             }
         } catch (e: Throwable) { log(e) }
     }
@@ -83,5 +92,11 @@ class WechatHook : IXposedHookLoadPackage {
 
         val pluginCustomScheme = CustomScheme
         tryHook(pluginCustomScheme::registerCustomSchemes)
+
+        thread(start = true) {
+            val wechatDataDir = getApplicationDataDir(context)
+            val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
+            WechatPackage.writeStatus("$magicianDataDir/cache/status")
+        }
     }
 }

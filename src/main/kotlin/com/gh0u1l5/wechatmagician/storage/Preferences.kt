@@ -57,9 +57,9 @@ class Preferences {
                 legacy = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
             } else {
                 // Otherwise, load the preferences from device protected storage.
-                var dataDir = getApplicationDataDir(context)
-                dataDir = dataDir?.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-                content = XSharedPreferences(File("$dataDir/shared_prefs/$preferencesName.xml"))
+                val wechatDataDir = getApplicationDataDir(context)
+                val magicianDataDir = wechatDataDir?.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
+                content = XSharedPreferences(File("$magicianDataDir/shared_prefs/$preferencesName.xml"))
                 context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
             }
         } catch (_: FileNotFoundException) {

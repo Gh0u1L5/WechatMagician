@@ -6,6 +6,7 @@ import android.content.Context
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
+import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
@@ -14,15 +15,17 @@ import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
-import java.util.concurrent.locks.ReentrantLock
-import kotlin.concurrent.withLock
+import java.io.File
+import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.read
+import kotlin.concurrent.write
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
 
     // status stores the working status of all the hooks.
-    private val statusLock = ReentrantLock()
+    private val statusLock = ReentrantReadWriteLock()
     private val status: HashMap<String, Boolean> = hashMapOf()
 
     var XLogSetup: Class<*>? = null
@@ -188,10 +191,24 @@ object WechatPackage {
         return Version(versionName ?: throw Error("Cannot get Wechat version"))
     }
 
-    // setStatus update current status of the Wechat hooks.
+    // setStatus updates current status of the Wechat hooks.
     fun setStatus(key: String, value: Boolean) {
-        statusLock.withLock {
+        statusLock.write {
             status[key] = value
+        }
+    }
+
+    // writeStatus writes current status to the given path.
+    fun writeStatus(path: String) {
+        statusLock.read {
+            try {
+                FileUtil.writeOnce(path, {
+                    FileUtil.writeObjectToDisk(it, status)
+                })
+                FileUtil.setWorldReadable(File(path))
+            } catch (_: Throwable) {
+                // Ignore this one
+            }
         }
     }
 

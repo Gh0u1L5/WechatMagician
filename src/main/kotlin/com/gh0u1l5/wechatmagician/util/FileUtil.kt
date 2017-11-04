@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.util
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -45,7 +46,7 @@ object FileUtil {
     }
 
     // readObjectFromDisk reads a serializable object from disk.
-    fun readObjectFromDisk(path: String): Any {
+    fun readObjectFromDisk(path: String): Any? {
         val bytes = readBytesFromDisk(path)
         val ins = ByteArrayInputStream(bytes)
         return ObjectInputStream(ins).use {
@@ -84,11 +85,19 @@ object FileUtil {
     }
 
     // getApplicationDataDir returns the data directory of the given context for file operations.
-    fun getApplicationDataDir(context: Context?): String? {
+    fun getApplicationDataDir(context: Context?): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             context?.applicationInfo?.deviceProtectedDataDir
         } else {
             context?.applicationInfo?.dataDir
-        }
+        } ?: ""
     }
+
+    @SuppressLint("SetWorldReadable")
+    fun setWorldReadable(file: File) = file.setReadable(true, false)
+
+    @SuppressLint("SetWorldWritable")
+    fun setWorldWritable(file: File) = file.setWritable(true, false)
+
+    fun setWorldExecutable(file: File) = file.setExecutable(true, false)
 }
