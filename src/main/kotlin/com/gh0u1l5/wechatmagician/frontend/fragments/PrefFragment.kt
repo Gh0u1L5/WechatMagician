@@ -26,13 +26,21 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val manager = preferenceManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // Move old shared preferences to device protected storage if it exists
+            val oldPrefDir = activity?.applicationInfo?.dataDir + "/shared_prefs"
+            val newPrefDir = activity?.applicationInfo?.deviceProtectedDataDir + "/shared_prefs"
+            try {
+                File(oldPrefDir).renameTo(File(newPrefDir))
+            } catch (e: Throwable) {
+                // Ignore this one
+            }
+            manager.setStorageDeviceProtected()
+        }
         if (arguments != null) {
             val preferencesResId = arguments.getInt(ARG_PREF_RES)
             manager.sharedPreferencesName = arguments.getString(ARG_PREF_NAME)
             addPreferencesFromResource(preferencesResId)
-        }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            manager.setStorageDeviceProtected()
         }
         manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
