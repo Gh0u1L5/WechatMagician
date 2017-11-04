@@ -6,10 +6,12 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.R
 import kotlinx.android.synthetic.main.fragment_support.*
 import java.io.File
@@ -44,7 +46,8 @@ class SupportFragment : Fragment() {
                     putExtra(Intent.EXTRA_TEXT, getString(R.string.support_report_text))
                 })
             } catch (e: Throwable) {
-                Toast.makeText(view?.context, e.message, Toast.LENGTH_SHORT).show()
+                Log.e(LOG_TAG, "Cannot send email: $e")
+                Toast.makeText(view?.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

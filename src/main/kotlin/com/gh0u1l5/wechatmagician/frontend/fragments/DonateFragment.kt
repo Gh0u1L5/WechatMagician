@@ -30,9 +30,7 @@ class DonateFragment : Fragment() {
         super.onStart()
         donate_alipay.setOnClickListener { view ->
             if (!AlipayUtil.hasInstalledAlipayClient(view.context)) {
-                Toast.makeText(
-                        view.context, R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(view.context, R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             Toast.makeText(view.context, R.string.prompt_wait, Toast.LENGTH_SHORT).show()
@@ -49,7 +47,7 @@ class DonateFragment : Fragment() {
                 })
                 Toast.makeText(view.context, R.string.prompt_wait, Toast.LENGTH_SHORT).show()
             } catch (e: Throwable) {
-                Toast.makeText(view.context, e.message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(view.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

@@ -51,7 +51,7 @@ class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask
         if (result != null) {
             log("FORWARD => $result")
             Toast.makeText(
-                    context.get(), result.toString(), Toast.LENGTH_SHORT
+                    context.get(), result.localizedMessage, Toast.LENGTH_SHORT
             ).show()
             return
         }

@@ -49,7 +49,8 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                 val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
                 activity.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
             } catch (e: Throwable) {
-                Toast.makeText(activity, e.message, Toast.LENGTH_SHORT).show()
+                Log.e(LOG_TAG, "Cannot hide icon: $e")
+                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
             return // this setting is useless for backend part.
         }
