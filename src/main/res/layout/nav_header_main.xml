@@ -26,11 +26,11 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
+        android:id="@+id/project_github_link"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onGithubLinkClick"
         android:text="@string/view_about_project_github" />
 
 </LinearLayout>

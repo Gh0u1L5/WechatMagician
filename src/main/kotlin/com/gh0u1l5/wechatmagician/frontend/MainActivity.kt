@@ -3,12 +3,11 @@ package com.gh0u1l5.wechatmagician.frontend
 import android.app.Activity
 import android.app.Fragment
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.design.widget.NavigationView
 import android.support.v7.app.ActionBarDrawerToggle
 import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
+import android.widget.TextView
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.frontend.fragments.DonateFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
@@ -17,6 +16,7 @@ import com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment
 import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : Activity(),
         NavigationView.OnNavigationItemSelectedListener {
@@ -26,16 +26,24 @@ class MainActivity : Activity(),
         setContentView(R.layout.activity_main)
 
         val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+                this, drawer_layout, toolbar,
+                R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        findViewById<ConstraintLayout?>(R.id.main_container) ?: return
-        fragmentManager.beginTransaction()
-                .replace(R.id.main_container, StatusFragment.newInstance())
-                .commit()
+        val headerView = nav_view.getHeaderView(0)
+        headerView.findViewById<TextView>(R.id.project_github_link).setOnClickListener {
+            openURL(this, getString(R.string.view_about_project_github_url))
+        }
+
+        if (main_container != null) {
+            fragmentManager.beginTransaction()
+                    .replace(R.id.main_container, StatusFragment.newInstance())
+                    .commit()
+        }
     }
 
     override fun onBackPressed() {
@@ -46,12 +54,11 @@ class MainActivity : Activity(),
         }
     }
 
-    fun onGithubLinkClick(view: View?) {
-        openURL(view?.context, view?.context?.getString(R.string.view_about_project_github_url))
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        findViewById<ConstraintLayout?>(R.id.main_container) ?: return false
+        if (main_container == null) {
+            return false
+        }
+
         val fragment: Fragment = when (item.itemId) {
             R.id.nav_status -> {
                 StatusFragment.newInstance()
