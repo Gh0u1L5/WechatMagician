@@ -37,21 +37,22 @@ object SnsUI {
         })
     }
 
-    // Hook SnsUploadUI.onPause to clean text view properly for forwarding.
-    fun cleanTextViewForForwarding() {
+    // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
+    fun cleanTextViewBeforeForwarding() {
         if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.SnsUploadUI, "onPause", object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(pkg.SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val intent = (param.thisObject as Activity).intent
-                if (intent?.extras?.getBoolean("Ksnsforward") == true) {
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val intent = (param.thisObject as Activity).intent ?: return
+                if (intent.getBooleanExtra("Ksnsforward", false)) {
+                    val content = intent.getStringExtra("Kdescription")
                     val editText = XposedHelpers.getObjectField(
                             param.thisObject, pkg.SnsUploadUIEditTextField
                     )
-                    XposedHelpers.callMethod(editText, "setText", "")
+                    XposedHelpers.callMethod(editText, "setText", content)
                 }
             }
         })

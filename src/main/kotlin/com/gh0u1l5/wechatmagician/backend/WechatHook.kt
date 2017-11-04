@@ -70,7 +70,7 @@ class WechatHook : IXposedHookLoadPackage {
 
         val pluginSnsUI = SnsUI
         tryHook(pluginSnsUI::setItemLongPressPopupMenu)
-        tryHook(pluginSnsUI::cleanTextViewForForwarding)
+        tryHook(pluginSnsUI::cleanTextViewBeforeForwarding)
 
         val pluginLimits = Limits
         pluginLimits.init(settings)
