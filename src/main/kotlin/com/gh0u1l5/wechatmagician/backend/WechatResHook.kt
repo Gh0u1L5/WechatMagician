@@ -36,7 +36,7 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
             // Load resources
             MODULE_RES = XModuleResources.createInstance(MODULE_PATH, resparam.res)
-            WechatStatus[STATUS_FLAG_RESOURCES] = true
+            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
         } catch (e: Throwable) { log(e) }
     }
 }

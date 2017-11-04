@@ -48,8 +48,6 @@ class WechatHook : IXposedHookLoadPackage {
         val loader = lpparam.classLoader
 
         WechatPackage.init(lpparam)
-        WechatStatus.listen(context)
-        WechatStatus[STATUS_FLAG_HOOKING] = true
         settings.load(context, "settings")
         developer.load(context, "developer")
 

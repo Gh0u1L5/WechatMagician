@@ -14,10 +14,16 @@ import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
+
+    // status stores the working status of all the hooks.
+    private val statusLock = ReentrantLock()
+    private val status: HashMap<String, Boolean> = hashMapOf()
 
     var XLogSetup: Class<*>? = null
     var WXCustomSchemeEntry: Class<*>? = null
@@ -173,6 +179,7 @@ object WechatPackage {
 //        ).firstOrNull()?.name ?: ""
     }
 
+    // getVersion returns the version of current package / application
     private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
         val activityThreadClass = findClass("android.app.ActivityThread", null)
         val activityThread = callStaticMethod(activityThreadClass, "currentActivityThread")
@@ -181,9 +188,19 @@ object WechatPackage {
         return Version(versionName ?: throw Error("Cannot get Wechat version"))
     }
 
+    // setStatus update current status of the Wechat hooks.
+    fun setStatus(key: String, value: Boolean) {
+        statusLock.withLock {
+            status[key] = value
+        }
+    }
+
     override fun toString(): String {
         return this.javaClass.declaredFields.filter {
-            it.name != "INSTANCE"
+            when(it.name) {
+                "INSTANCE", "status", "statusLock" -> false
+                else -> true
+            }
         }.joinToString("\n") {
             it.isAccessible = true; "${it.name} = ${it.get(this)}"
         }
