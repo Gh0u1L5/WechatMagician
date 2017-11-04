@@ -22,11 +22,8 @@ import java.io.File
 
 class SupportFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_support, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater!!.inflate(R.layout.fragment_support, container, false)
 
     @SuppressLint("SdCardPath")
     override fun onStart() {
@@ -55,8 +52,6 @@ class SupportFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): SupportFragment {
-            return SupportFragment()
-        }
+        fun newInstance(): SupportFragment = SupportFragment()
     }
 }

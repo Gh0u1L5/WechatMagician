@@ -20,11 +20,8 @@ class DonateFragment : Fragment() {
     private val alipayCode = "FKX04114Q6YBQLKYU0KS09"
     private val tenpayCode = "f2f00-2YC_1Sfo3jM1G--Zj8kC2Z7koDXC8r"
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_donate, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater!!.inflate(R.layout.fragment_donate, container, false)
 
     override fun onStart() {
         super.onStart()
@@ -53,8 +50,6 @@ class DonateFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): DonateFragment {
-            return DonateFragment()
-        }
+        fun newInstance(): DonateFragment = DonateFragment()
     }
 }

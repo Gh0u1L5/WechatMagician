@@ -5,16 +5,12 @@ class Version(versionName: String) {
 
     val version: List<Int> = versionName.split('.').map(String::toInt)
 
-    override fun hashCode(): Int{
-        return version.hashCode()
-    }
+    override fun hashCode(): Int = version.hashCode()
 
-    override fun equals(other: Any?): Boolean {
-        return when (other) {
-            null -> false
-            !is Version -> false
-            else -> this.version == other.version
-        }
+    override fun equals(other: Any?): Boolean = when (other) {
+        null -> false
+        !is Version -> false
+        else -> this.version == other.version
     }
 
     operator fun compareTo(other: Version): Int {

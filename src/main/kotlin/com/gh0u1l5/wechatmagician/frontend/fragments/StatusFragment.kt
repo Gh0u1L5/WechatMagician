@@ -34,11 +34,8 @@ class StatusFragment : Fragment() {
             STATUS_FLAG_CUSTOM_SCHEME to R.id.component_custom_scheme_status
     )
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_status, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater!!.inflate(R.layout.fragment_status, container, false)
 
     override fun onStart() {
         super.onStart()
@@ -89,8 +86,6 @@ class StatusFragment : Fragment() {
     }
 
     companion object {
-        fun newInstance(): StatusFragment {
-            return StatusFragment()
-        }
+        fun newInstance(): StatusFragment = StatusFragment()
     }
 }

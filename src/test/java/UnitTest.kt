@@ -3,6 +3,7 @@ import com.gh0u1l5.wechatmagician.Version
 import org.junit.Test as Test
 import org.junit.Assert.*
 
+@Suppress("FunctionName")
 class UnitTest {
     @Test fun EasterEggTest() {
         assertNull(MessageUtil.applyEasterEgg(null, ""))

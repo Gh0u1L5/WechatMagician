@@ -60,9 +60,8 @@ object PackageUtil {
     }
 
     // findClassIfExists looks up and returns a class if it exists, otherwise it returns null.
-    fun findClassIfExists(className:String, classLoader: ClassLoader): Class<*>? {
-        return try { findClass(className, classLoader) } catch (_: Throwable) { null }
-    }
+    fun findClassIfExists(className:String, classLoader: ClassLoader): Class<*>? =
+            try { findClass(className, classLoader) } catch (_: Throwable) { null }
 
     // getClassName parses the standard class name of the given DexClass.
     private fun getClassName(clazz: DexClass): String {
@@ -90,9 +89,8 @@ object PackageUtil {
     // findMethodExactIfExists looks up and returns a method if it exists, otherwise it returns null.
     fun findMethodExactIfExists(
             clazz: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
-    ): Method? {
-        return try { findMethodExact(clazz, methodName, *parameterTypes) } catch (_: Throwable) { null }
-    }
+    ): Method? =
+            try { findMethodExact(clazz, methodName, *parameterTypes) } catch (_: Throwable) { null }
 
     // findMethodsByExactParameters returns a list of all methods declared/overridden in a class with the specified parameter types.
     fun findMethodsByExactParameters(
