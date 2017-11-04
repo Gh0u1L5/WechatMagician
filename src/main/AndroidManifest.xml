@@ -32,14 +32,6 @@
             </intent-filter>
         </activity-alias>
 
-        <receiver
-            android:name=".frontend.PreferenceProvider"
-            tools:ignore="ExportedReceiver">
-            <intent-filter>
-                <action android:name="com.gh0u1l5.wechatmagician.ACTION_DESIRE_PREF" />
-            </intent-filter>
-        </receiver>
-
         <meta-data
             android:name="xposedmodule"
             android:value="true" />

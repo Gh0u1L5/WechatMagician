@@ -4,60 +4,65 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import com.gh0u1l5.wechatmagician.Global.ACTION_DESIRE_PREF
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
-import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
-import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_NAME
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
+import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
+import de.robv.android.xposed.XSharedPreferences
+import de.robv.android.xposed.XposedBridge.log
+import java.io.File
+import java.io.FileNotFoundException
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
 class Preferences {
 
-    // content stores a map that sync to the settings from frontend.
-    private val contentLock = ReentrantReadWriteLock()
-    private val content = mutableMapOf<String, Any?>()
+    private val listCacheLock = ReentrantReadWriteLock()
+    private val listCache = mutableMapOf<String, List<String>>()
 
-    // loaded indicates whether
-    @Volatile var loaded: Boolean = false
-    // receiver listens the frontend and updates content as needed.
-    private val receiver: BroadcastReceiver? = object : BroadcastReceiver() {
+    private var content: XSharedPreferences? = null
+
+    private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            val keys = intent?.getStringArrayExtra(INTENT_PREF_KEYS)
-            keys?.forEach { key ->
-                contentLock.write {
-                    content[key] = intent.extras[key]
-                }
-            }
-            loaded = true
+            content?.reload()
+            cacheStringList()
         }
     }
 
-    // load registers the receiver and requires the latest settings from frontend.
+    // load registers the receiver and loads the specific shared preferences.
     fun load(context: Context?, preferencesName: String) {
-        context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
-        context?.sendBroadcast(Intent(ACTION_DESIRE_PREF).apply {
-            putExtra(INTENT_PREF_KEYS, arrayOf("*"))
-            putExtra(INTENT_PREF_NAME, preferencesName)
-        })
-    }
-
-    fun getBoolean(key: String, defValue: Boolean): Boolean {
-        contentLock.read {
-            return content[key] as Boolean? ?: defValue
+        try {
+            var dataDir = getApplicationDataDir(context)
+            dataDir = dataDir?.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
+            content = XSharedPreferences(File("$dataDir/shared_prefs/$preferencesName.xml"))
+            context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+        } catch (_: FileNotFoundException) {
+            // Ignore this one
+        } catch (e: Throwable) {
+            log("PREF => $e")
         }
     }
 
-    fun getString(key: String, defValue: String = ""): String {
-        contentLock.read {
-            return content[key] as String? ?: defValue
+    fun cacheStringList() {
+        PREFERENCE_STRING_LIST_KEYS.forEach { key ->
+            val list = content?.getString(key, "")?.split(" ")
+            listCacheLock.write {
+                listCache[key] = list ?: return
+            }
         }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    fun getStringList(key: String, defValue: Array<String> = arrayOf()): Array<String> {
-        contentLock.read {
-            return content[key] as Array<String>? ?: defValue
+    fun getBoolean(key: String, defValue: Boolean): Boolean =
+            content?.getBoolean(key, defValue) ?: defValue
+
+    fun getString(key: String, defValue: String = ""): String =
+            content?.getString(key, defValue) ?: defValue
+
+    fun getStringList(key: String, defValue: List<String> = listOf()): List<String> {
+        listCacheLock.read {
+            return listCache[key] ?: defValue
         }
     }
 }

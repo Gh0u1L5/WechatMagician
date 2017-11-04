@@ -1,10 +1,11 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
+import android.annotation.SuppressLint
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager.*
+import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceFragment
 import android.util.Log
@@ -13,12 +14,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
-import com.gh0u1l5.wechatmagician.Global.INTENT_PREF_KEYS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
-import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
+import java.io.File
 
 class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -29,6 +30,9 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
             val preferencesResId = arguments.getInt(ARG_PREF_RES)
             manager.sharedPreferencesName = arguments.getString(ARG_PREF_NAME)
             addPreferencesFromResource(preferencesResId)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            manager.setStorageDeviceProtected()
         }
         manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
@@ -52,11 +56,25 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                 Log.e(LOG_TAG, "Cannot hide icon: $e")
                 Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
-            return // this setting is useless for backend part.
         }
+    }
 
-        val value = preferences.all[key]
-        notifyPreferenceChange(activity, mapOf(key to value))
+    // Reference: https://github.com/rovo89/XposedBridge/issues/206
+    @SuppressLint("SetWorldReadable")
+    override fun onPause() {
+        // Set data directory as world executable.
+        val dataDir = getApplicationDataDir(activity)
+        File(dataDir).setExecutable(true, false)
+
+        // Set shared preferences as world readable.
+        val folder = File("$dataDir/shared_prefs")
+        val filename = preferenceManager.sharedPreferencesName + ".xml"
+        File(folder, filename).setReadable(true, false)
+
+        // Notify the backend to reload the preferences
+        activity?.sendBroadcast(Intent(ACTION_UPDATE_PREF))
+
+        super.onPause()
     }
 
     override fun onDestroy() {
@@ -75,28 +93,6 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                 putString(ARG_PREF_NAME, preferencesName)
             }
             return fragment
-        }
-
-        // notifyPreferenceChange notifies the backend that the shared preference has been changed.
-        fun notifyPreferenceChange(context: Context?, data: Map<String, Any?>) {
-            context?.sendBroadcast(Intent(ACTION_UPDATE_PREF).apply {
-                putExtra(INTENT_PREF_KEYS, data.keys.toTypedArray())
-                for (entry in data) {
-                    val key = entry.key; var value = entry.value
-                    if (key in PREFERENCE_STRING_LIST_KEYS && value is String) {
-                        // Split value into an Array<String> if it's a list.
-                        value = value.split(' ').toTypedArray()
-                    }
-                    // Note: Here's a trick called "smart cast"
-                    when(value) {
-                        is String ->   putExtra(key, value)
-                        is Boolean ->  putExtra(key, value)
-                        is Array<*> -> putExtra(key, value)
-                        else ->
-                            Log.e(LOG_TAG, "Unknown Preference Type: ${value?.javaClass}")
-                    }
-                }
-            })
         }
     }
 }
