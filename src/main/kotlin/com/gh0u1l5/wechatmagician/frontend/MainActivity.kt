@@ -2,8 +2,6 @@ package com.gh0u1l5.wechatmagician.frontend
 
 import android.app.Activity
 import android.app.Fragment
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.support.constraint.ConstraintLayout
 import android.support.design.widget.NavigationView
@@ -16,6 +14,7 @@ import com.gh0u1l5.wechatmagician.frontend.fragments.DonateFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment
+import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 
@@ -48,8 +47,7 @@ class MainActivity : Activity(),
     }
 
     fun onGithubLinkClick(view: View?) {
-        val url = Uri.parse(view?.context?.getString(R.string.view_about_project_github_url))
-        view?.context?.startActivity(Intent(Intent.ACTION_VIEW).setData(url))
+        openURL(view?.context, view?.context?.getString(R.string.view_about_project_github_url))
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

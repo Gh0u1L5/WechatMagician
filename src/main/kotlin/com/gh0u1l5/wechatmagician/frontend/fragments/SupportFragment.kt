@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
 import kotlinx.android.synthetic.main.fragment_support.*
 import java.io.File
 
@@ -30,8 +31,7 @@ class SupportFragment : Fragment() {
     override fun onStart() {
         super.onStart()
         support_github_card.setOnClickListener { view ->
-            val url = Uri.parse("${view?.context?.getString(R.string.view_about_project_github_url)}/issues")
-            view?.context?.startActivity(Intent(Intent.ACTION_VIEW).setData(url))
+            openURL(activity, "${view?.context?.getString(R.string.view_about_project_github_url)}/issues")
         }
         support_email_card.setOnClickListener { view ->
             val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"

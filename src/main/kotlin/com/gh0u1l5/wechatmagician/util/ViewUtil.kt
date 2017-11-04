@@ -1,13 +1,18 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 
@@ -68,6 +73,16 @@ object ViewUtil {
             resources.getColor(resId, context.theme)
         } else {
             resources.getColor(resId)
+        }
+    }
+
+    // openURL opens an URL using an external explorer.
+    fun openURL(context: Context?, url: String?) {
+        try {
+            context?.startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)))
+        } catch (e: Throwable) {
+            Log.e(Global.LOG_TAG, "Cannot open URL $url: $e")
+            Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 }
