@@ -3,7 +3,8 @@ package com.gh0u1l5.wechatmagician
 object Global {
     val LOG_TAG = "WechatMagician"
 
-    val WECHAT_PACKAGE_NAME = "com.tencent.mm"
+    val XPOSED_PACKAGE_NAME   = "de.robv.android.xposed.installer"
+    val WECHAT_PACKAGE_NAME   = "com.tencent.mm"
     val MAGICIAN_PACKAGE_NAME = "com.gh0u1l5.wechatmagician"
 
     val STATUS_FLAG_HOOKING       = "Hooking"
