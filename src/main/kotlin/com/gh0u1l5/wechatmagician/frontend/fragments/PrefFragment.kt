@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
-import android.annotation.SuppressLint
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
@@ -17,6 +16,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 import java.io.File
@@ -68,16 +68,12 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     }
 
     // Reference: https://github.com/rovo89/XposedBridge/issues/206
-    @SuppressLint("SetWorldReadable")
     override fun onPause() {
-        // Set data directory as world executable.
-        val dataDir = getApplicationDataDir(activity)
-        File(dataDir).setExecutable(true, false)
-
         // Set shared preferences as world readable.
+        val dataDir = getApplicationDataDir(activity)
         val folder = File("$dataDir/shared_prefs")
         val filename = preferenceManager.sharedPreferencesName + ".xml"
-        File(folder, filename).setReadable(true, false)
+        FileUtil.setWorldReadable(File(folder, filename))
 
         // Notify the backend to reload the preferences
         activity?.sendBroadcast(Intent(ACTION_UPDATE_PREF))

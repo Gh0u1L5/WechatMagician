@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
-import android.annotation.SuppressLint
 import android.app.Fragment
 import android.content.Intent
 import android.net.Uri
@@ -25,7 +24,6 @@ class SupportFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             inflater!!.inflate(R.layout.fragment_support, container, false)
 
-    @SuppressLint("SdCardPath")
     override fun onStart() {
         super.onStart()
         support_github_card.setOnClickListener { view ->
