@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.os.Bundle
+import java.math.BigInteger
 
 // MessageUtil is a helper object for processing Wechat internal strings / byte arrays.
 object MessageUtil {
@@ -56,6 +57,15 @@ object MessageUtil {
             "$it = ${bundle[it]}"
         }
         return "{$str}"
+    }
+
+    private val TWO_64 = BigInteger.ONE.shiftLeft(64)
+    fun longToDecimalString(l: Long): String {
+        var b = BigInteger.valueOf(l)
+        if (b.signum() < 0) {
+            b = b.add(TWO_64)
+        }
+        return b.toString()
     }
 
     fun bytesToHexString(arg: ByteArray?): String {

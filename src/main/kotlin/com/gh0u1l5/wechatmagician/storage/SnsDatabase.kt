@@ -1,24 +1,12 @@
 package com.gh0u1l5.wechatmagician.storage
 
+import com.gh0u1l5.wechatmagician.util.MessageUtil.longToDecimalString
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
-import java.math.BigInteger
 
 object SnsDatabase {
     // snsDB is the database that stores SNS information.
     @Volatile var snsDB: Any? = null
-
-    // TWO_64 is a constant used by toDecimalString()
-    private val TWO_64 = BigInteger.ONE.shiftLeft(64)
-
-    // toDecimalString convert a signed Long to unsigned decimal String
-    private fun toDecimalString(l: Long): String {
-        var b = BigInteger.valueOf(l)
-        if (b.signum() < 0) {
-            b = b.add(TWO_64)
-        }
-        return b.toString()
-    }
 
     // getSnsId searches the database to find the snsId in a specific row
     fun getSnsId(rowId: String?): String? {
@@ -36,6 +24,6 @@ object SnsDatabase {
         XposedHelpers.callMethod(cursor, "moveToFirst")
         val snsId = XposedHelpers.callMethod(cursor, "getLong", 0)
         XposedHelpers.callMethod(cursor, "close")
-        return toDecimalString(snsId as Long)
+        return longToDecimalString(snsId as Long)
     }
 }

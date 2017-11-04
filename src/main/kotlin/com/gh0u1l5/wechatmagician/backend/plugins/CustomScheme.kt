@@ -20,6 +20,7 @@ object CustomScheme {
         findAndHookMethod(
                 pkg.WXCustomSchemeEntry, pkg.WXCustomSchemeEntryStart,
                 C.Intent, object : XC_MethodHook() {
+            @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val intent = param.args[0] as Intent?
                 val uri = intent?.data ?: return
