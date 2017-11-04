@@ -7,10 +7,13 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment.Companion.readHookStatus
 import com.gh0u1l5.wechatmagician.util.AlipayUtil
 import kotlinx.android.synthetic.main.fragment_donate.*
 
@@ -25,6 +28,14 @@ class DonateFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+
+        // Hide Tenpay if the URI router is not hijacked.
+        val status = readHookStatus(activity)
+        if (status == null || status[STATUS_FLAG_CUSTOM_SCHEME] != true) {
+            donate_tenpay.visibility = GONE
+        }
+
+        // Set onClick listeners for donation buttons.
         donate_alipay.setOnClickListener { view ->
             if (!AlipayUtil.hasInstalledAlipayClient(view.context)) {
                 Toast.makeText(view.context, R.string.prompt_alipay_not_found, Toast.LENGTH_SHORT).show()
