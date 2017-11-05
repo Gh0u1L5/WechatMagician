@@ -29,9 +29,12 @@ object ViewUtil {
                     attrs += getter to XposedHelpers.callMethod(child, getter)
                 }
             }
+            getAttr("getWidth")
+            getAttr("getHeight")
             getAttr("getTag")
             getAttr("getText")
             getAttr("isClickable")
+            getAttr("isLongClickable")
 
             XposedBridge.log("$prefix[$it] => ${child.javaClass}, $attrs")
             if (child is ViewGroup) {
