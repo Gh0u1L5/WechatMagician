@@ -64,7 +64,7 @@ object WechatEvents {
     fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long): Boolean {
         val operations = listOf(str["menu_sns_forward"], str["menu_sns_screenshot"])
         ListPopupWindow(parent.context).apply {
-            width = 320
+            width = 390
             anchorView = view
             setDropDownGravity(Gravity.CENTER)
             setAdapter(WechatListPopupAdapter(view.context, operations))
@@ -90,7 +90,6 @@ object WechatEvents {
                 val path = ImageUtil.createScreenshotPath()
                 val bitmap = ViewUtil.drawView(itemView)
                 FileUtil.writeBitmapToDisk(path, bitmap)
-                // TODO: check notifyNewMediaFile on Android 7
                 FileUtil.notifyNewMediaFile(path, itemView.context)
                 Toast.makeText(
                         itemView.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
