@@ -40,14 +40,14 @@ class WechatHook : IXposedHookLoadPackage {
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         try {
             when (lpparam.packageName) {
-                "com.gh0u1l5.wechatmagician" ->
+                MAGICIAN_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         val pluginFrontend = Frontend
                         pluginFrontend.init(lpparam.classLoader)
                         tryHook(pluginFrontend::notifyStatus)
                         pluginFrontend.setDirectoryPermissions(context)
                     })
-                "com.tencent.mm" ->
+                WECHAT_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         handleLoadWechat(lpparam, context)
                     })
