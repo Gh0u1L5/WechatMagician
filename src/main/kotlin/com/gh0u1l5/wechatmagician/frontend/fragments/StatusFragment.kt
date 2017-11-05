@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.frontend.fragments
 import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -81,6 +82,16 @@ class StatusFragment : Fragment() {
             val sharedDir = File(dataDir, FOLDER_SHARED)
             if (sharedDir.exists()) {
                 val path = sharedDir.absolutePath + "/status"
+
+                // Check the modified time of the status object
+                val bootAt = System.currentTimeMillis() - SystemClock.elapsedRealtime()
+                val modifiedAt = File(path).lastModified()
+                if (modifiedAt < bootAt) {
+                    // status is not modified after this boot, invalid.
+                    return null
+                }
+
+                // Read status object from disk
                 try {
                     return readObjectFromDisk(path) as HashMap<String, Boolean>
                 } catch (e: Throwable) {
