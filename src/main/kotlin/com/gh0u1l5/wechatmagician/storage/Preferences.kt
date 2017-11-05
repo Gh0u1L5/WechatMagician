@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
+import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
@@ -63,7 +64,8 @@ class Preferences {
             // Also load the preferences in the data directories.
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-            content = XSharedPreferences(File("$magicianDataDir/shared_prefs/$preferencesName.xml"))
+            val preferencePath = "$magicianDataDir/$FOLDER_SHARED_PREFS/$preferencesName.xml"
+            content = XSharedPreferences(File(preferencePath))
             context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
         } catch (_: FileNotFoundException) {
             // Ignore this one

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
@@ -77,9 +78,9 @@ class StatusFragment : Fragment() {
         @Suppress("UNCHECKED_CAST")
         fun readHookStatus(context: Context?): HashMap<String, Boolean>? {
             val dataDir = getApplicationDataDir(context)
-            val cacheDir = File(dataDir, "cache")
-            if (cacheDir.exists()) {
-                val path = cacheDir.absolutePath + "/status"
+            val sharedDir = File(dataDir, FOLDER_SHARED)
+            if (sharedDir.exists()) {
+                val path = sharedDir.absolutePath + "/status"
                 try {
                     return readObjectFromDisk(path) as HashMap<String, Boolean>
                 } catch (e: Throwable) {

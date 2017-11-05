@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
+import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
@@ -28,8 +29,8 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
         val manager = preferenceManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Move old shared preferences to device protected storage if it exists
-            val oldPrefDir = activity?.applicationInfo?.dataDir + "/shared_prefs"
-            val newPrefDir = activity?.applicationInfo?.deviceProtectedDataDir + "/shared_prefs"
+            val oldPrefDir = "${activity?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
+            val newPrefDir = "${activity?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
             try {
                 File(oldPrefDir).renameTo(File(newPrefDir))
             } catch (e: Throwable) {
@@ -71,7 +72,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     override fun onPause() {
         // Set shared preferences as world readable.
         val dataDir = getApplicationDataDir(activity)
-        val folder = File("$dataDir/shared_prefs")
+        val folder = File("$dataDir/$FOLDER_SHARED_PREFS")
         val filename = preferenceManager.sharedPreferencesName + ".xml"
         FileUtil.setWorldReadable(File(folder, filename))
 

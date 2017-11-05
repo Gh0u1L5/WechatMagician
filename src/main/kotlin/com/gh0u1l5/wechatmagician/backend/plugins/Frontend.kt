@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.content.Context
+import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.XC_MethodReplacement
@@ -22,10 +23,10 @@ class Frontend(private val loader: ClassLoader) {
             val dataDir = File(getApplicationDataDir(context))
             FileUtil.setWorldExecutable(dataDir)
 
-            val cacheDir = File(dataDir, "cache")
-            cacheDir.mkdir()
-            FileUtil.setWorldWritable(cacheDir)
-            FileUtil.setWorldExecutable(cacheDir)
+            val sharedDir = File(dataDir, FOLDER_SHARED)
+            sharedDir.mkdir()
+            FileUtil.setWorldWritable(sharedDir)
+            FileUtil.setWorldExecutable(sharedDir)
         } catch (e: Throwable) {
             log("FRONT => $e")
         }

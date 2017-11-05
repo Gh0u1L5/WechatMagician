@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
@@ -96,7 +97,7 @@ class WechatHook : IXposedHookLoadPackage {
         thread(start = true) {
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-            WechatPackage.writeStatus("$magicianDataDir/cache/status")
+            WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
         }
     }
 }
