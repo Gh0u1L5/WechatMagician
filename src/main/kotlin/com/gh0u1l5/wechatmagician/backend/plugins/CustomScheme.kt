@@ -12,7 +12,7 @@ object CustomScheme {
 
     val pkg = WechatPackage
 
-    fun registerCustomSchemes() {
+    @JvmStatic fun registerCustomSchemes() {
         if (pkg.WXCustomSchemeEntry == null || pkg.WXCustomSchemeEntryStart == "") {
             return
         }

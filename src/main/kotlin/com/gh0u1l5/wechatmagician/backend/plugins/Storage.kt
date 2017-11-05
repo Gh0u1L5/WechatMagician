@@ -14,7 +14,7 @@ object Storage {
 
     private val pkg = WechatPackage
 
-    fun hookMsgStorage() {
+    @JvmStatic fun hookMsgStorage() {
         if (pkg.MsgStorageClass == null || pkg.MsgStorageInsertMethod == "") {
             return
         }
@@ -46,7 +46,7 @@ object Storage {
         pkg.setStatus(STATUS_FLAG_MSG_STORAGE, true)
     }
 
-    fun hookImgStorage() {
+    @JvmStatic fun hookImgStorage() {
         if (pkg.ImgStorageClass == null) {
             return
         }

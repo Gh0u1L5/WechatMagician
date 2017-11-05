@@ -21,14 +21,14 @@ object Database {
 
     private var preferences: Preferences? = null
 
-    fun init(_preferences: Preferences) {
+    @JvmStatic fun init(_preferences: Preferences) {
         preferences = _preferences
     }
 
     private val str = Strings
     private val pkg = WechatPackage
 
-    fun hookDatabase() {
+    @JvmStatic fun hookDatabase() {
         when (null) {
             pkg.SQLiteDatabaseClass,
             pkg.SQLiteCursorFactory,

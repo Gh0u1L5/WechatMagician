@@ -18,7 +18,7 @@ object SnsUI {
     private val events = WechatEvents
 
     // Hook SnsUserUI.onCreate to popup a menu during long click.
-    fun setLongClickListenerForSnsUserUI() {
+    @JvmStatic fun setLongClickListenerForSnsUserUI() {
         if (pkg.SnsUserUI == null) {
             return
         }
@@ -32,7 +32,7 @@ object SnsUI {
     }
 
     // Hook SnsTimeLineUI.onCreate to popup a menu during long click.
-    fun setLongClickListenerForSnsTimeLineUI() {
+    @JvmStatic fun setLongClickListenerForSnsTimeLineUI() {
         if (pkg.SnsTimeLineUI == null) {
             return
         }
@@ -45,7 +45,7 @@ object SnsUI {
         })
     }
 
-    private fun registerSnsPopupWindow(wrapper: Any?) {
+    @JvmStatic fun registerSnsPopupWindow(wrapper: Any?) {
         if (pkg.SnsActivity == null || wrapper == null) {
             return
         }
@@ -85,7 +85,7 @@ object SnsUI {
     }
 
     // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
-    fun cleanTextViewBeforeForwarding() {
+    @JvmStatic fun cleanTextViewBeforeForwarding() {
         if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
             return
         }

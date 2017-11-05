@@ -12,13 +12,13 @@ object AutoLogin {
 
     private var preferences: Preferences? = null
 
-    fun init(_preferences: Preferences) {
+    @JvmStatic fun init(_preferences: Preferences) {
         preferences = _preferences
     }
 
     private val pkg = WechatPackage
 
-    fun enableAutoLogin() {
+    @JvmStatic fun enableAutoLogin() {
         if (pkg.WebWXLoginUI == null) {
             return
         }

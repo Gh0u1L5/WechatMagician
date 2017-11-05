@@ -16,14 +16,14 @@ object XML {
 
     private var preferences: Preferences? = null
 
-    fun init(_preferences: Preferences) {
+    @JvmStatic fun init(_preferences: Preferences) {
         preferences = _preferences
     }
 
     private val str = Strings
     private val pkg = WechatPackage
 
-    fun hookXMLParse() {
+    @JvmStatic fun hookXMLParse() {
         if (pkg.XMLParserClass == null || pkg.XMLParseMethod == "") {
             return
         }

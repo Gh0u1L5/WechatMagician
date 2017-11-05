@@ -42,7 +42,8 @@ class WechatHook : IXposedHookLoadPackage {
             when (lpparam.packageName) {
                 "com.gh0u1l5.wechatmagician" ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
-                        val pluginFrontend = Frontend(lpparam.classLoader)
+                        val pluginFrontend = Frontend
+                        pluginFrontend.init(lpparam.classLoader)
                         tryHook(pluginFrontend::notifyStatus)
                         pluginFrontend.setDirectoryPermissions(context)
                     })

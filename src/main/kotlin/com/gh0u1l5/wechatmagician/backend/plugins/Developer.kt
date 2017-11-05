@@ -18,7 +18,7 @@ object Developer {
     private var loader: ClassLoader? = null
     private var preferences: Preferences? = null
 
-    fun init(_loader: ClassLoader, _preferences: Preferences) {
+    @JvmStatic fun init(_loader: ClassLoader, _preferences: Preferences) {
         loader = _loader
         preferences = _preferences
     }
@@ -26,7 +26,7 @@ object Developer {
     private val pkg = WechatPackage
 
     // Hook View.onTouchEvent to trace touch events.
-    fun traceTouchEvents() {
+    @JvmStatic fun traceTouchEvents() {
         if (preferences!!.getBoolean("developer_ui_touch_event", false)) {
             XposedHelpers.findAndHookMethod(
                     "android.view.View", loader,
@@ -40,7 +40,7 @@ object Developer {
     }
 
     // Hook Activity.startActivity and Activity.onCreate to trace activities.
-    fun traceActivities() {
+    @JvmStatic fun traceActivities() {
         if (preferences!!.getBoolean("developer_ui_trace_activities", false)) {
             XposedHelpers.findAndHookMethod(
                     "android.app.Activity", loader,
@@ -71,7 +71,7 @@ object Developer {
     }
 
     // Hook XLog to print internal errors into logcat.
-    fun enableXLog() {
+    @JvmStatic fun enableXLog() {
         if (pkg.XLogSetup == null) {
             return
         }
@@ -88,7 +88,7 @@ object Developer {
     }
 
     // Hook XML Parser to trace the XML files used in Wechat.
-    fun traceXMLParse() {
+    @JvmStatic fun traceXMLParse() {
         if (pkg.XMLParserClass == null || pkg.XMLParseMethod == "") {
             return
         }
@@ -108,7 +108,7 @@ object Developer {
     }
 
     // Hook SQLiteDatabase to trace all the database operations.
-    fun traceDatabase() {
+    @JvmStatic fun traceDatabase() {
         when (null) {
             pkg.SQLiteDatabaseClass,
             pkg.SQLiteCursorFactory,

@@ -9,8 +9,15 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.io.File
 
-class Frontend(private val loader: ClassLoader) {
-    fun notifyStatus() {
+object Frontend {
+
+    private var loader: ClassLoader? = null
+
+    @JvmStatic fun init(_loader: ClassLoader) {
+        loader = _loader
+    }
+
+    @JvmStatic fun notifyStatus() {
         findAndHookMethod(
                 "com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment", loader,
                 "isModuleLoaded", object : XC_MethodReplacement() {
@@ -18,7 +25,7 @@ class Frontend(private val loader: ClassLoader) {
         })
     }
 
-    fun setDirectoryPermissions(context: Context?) {
+    @JvmStatic fun setDirectoryPermissions(context: Context?) {
         try {
             val dataDir = File(getApplicationDataDir(context))
             FileUtil.setWorldExecutable(dataDir)

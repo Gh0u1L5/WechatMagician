@@ -21,7 +21,7 @@ object Limits {
 
     private var preferences: Preferences? = null
 
-    fun init(_preferences: Preferences) {
+    @JvmStatic fun init(_preferences: Preferences) {
         preferences = _preferences
     }
 
@@ -30,7 +30,7 @@ object Limits {
     private val events = WechatEvents
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
-    fun breakSelectPhotosLimit() {
+    @JvmStatic fun breakSelectPhotosLimit() {
         if (pkg.AlbumPreviewUI == null) {
             return
         }
@@ -54,7 +54,7 @@ object Limits {
         })
     }
 
-    fun breakSelectContactLimit() {
+    @JvmStatic fun breakSelectContactLimit() {
         if (pkg.MMActivity == null || pkg.SelectContactUI == null) {
             return
         }
@@ -136,7 +136,7 @@ object Limits {
     }
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
-    fun breakSelectConversationLimit() {
+    @JvmStatic fun breakSelectConversationLimit() {
         if (pkg.SelectConversationUI == null || pkg.SelectConversationUIMaxLimitMethod == "") {
             return
         }
