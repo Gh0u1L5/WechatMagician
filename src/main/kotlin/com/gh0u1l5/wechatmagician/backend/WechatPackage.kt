@@ -28,6 +28,9 @@ object WechatPackage {
     private val statusLock = ReentrantReadWriteLock()
     private val status: HashMap<String, Boolean> = hashMapOf()
 
+    // version stores the current version of Wechat
+    var version: Version? = null
+
     var XLogSetup: Class<*>? = null
     var WebWXLoginUI: Class<*>? = null
     var RemittanceAdapter: Class<*>? = null
@@ -79,7 +82,9 @@ object WechatPackage {
     // WechatHook will do the runtime analysis and set the objects.
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
+
         val version = getVersion(lpparam)
+        this.version = version
 
         var apkFile: ApkFile? = null
         val classes: Array<DexClass>
@@ -113,8 +118,8 @@ object WechatPackage {
 
 
         SQLiteDatabasePkg = when {
-            version >= Version("6.5.8") ->"com.tencent.wcdb"
-            else ->"com.tencent.mmdb"
+            version >= Version("6.5.8") -> "com.tencent.wcdb"
+            else -> "com.tencent.mmdb"
         }
         SQLiteDatabaseClass = findClassIfExists(
                 "$SQLiteDatabasePkg.database.SQLiteDatabase", loader)
@@ -169,12 +174,26 @@ object WechatPackage {
                 .firstOrNull("ContactInfoClass")
 
         if (MsgInfoClass != null) {
-            MsgStorageClass = storageClasses
-                    .filterByMethod(C.Long, MsgInfoClass!!, C.Boolean)
-                    .firstOrNull("MsgStorageClass")
-            MsgStorageInsertMethod = findMethodsByExactParameters(
-                    MsgStorageClass, C.Long, MsgInfoClass!!, C.Boolean
-            ).firstOrNull()?.name ?: ""
+            MsgStorageClass = when {
+                version >= Version("6.5.8") ->
+                    storageClasses
+                            .filterByMethod(C.Long, MsgInfoClass!!, C.Boolean)
+                            .firstOrNull("MsgStorageClass")
+                else ->
+                    storageClasses
+                            .filterByMethod(C.Long, MsgInfoClass!!)
+                            .firstOrNull("MsgStorageClass")
+            }
+            MsgStorageInsertMethod = when {
+                version >= Version("6.5.8") ->
+                    findMethodsByExactParameters(
+                            MsgStorageClass, C.Long, MsgInfoClass!!, C.Boolean
+                    ).firstOrNull()?.name ?: ""
+                else ->
+                    findMethodsByExactParameters(
+                        MsgStorageClass, C.Long, MsgInfoClass!!
+                    ).firstOrNull()?.name ?: ""
+            }
         }
 
 //        ImgStorageClass = findClassesFromPackage(loader, classes, WECHAT_PACKAGE_NAME, 1)

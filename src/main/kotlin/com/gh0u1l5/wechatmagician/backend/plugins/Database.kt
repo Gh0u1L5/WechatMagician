@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
+import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -131,7 +132,13 @@ object Database {
             XposedHelpers.setObjectField(copy, "field_content", values["content"])
             XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
 
-            XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+            val version = pkg.version ?: return
+            when {
+                version >= Version("6.5.8") ->
+                    XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+                else ->
+                    XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy)
+            }
         } catch (e: Throwable) {
             XposedBridge.log("DB => Handle message recall failed: $e")
         }
