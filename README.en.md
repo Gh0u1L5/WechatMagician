@@ -9,12 +9,13 @@ WechatMagician is a fancy Xposed module designed for Chinese social media applic
 6. Retweet other's moments (which can be text, image, video or links).
 7. Take screenshot of a single moment.
 8. Set blacklist for moments, and say goodbye to ads and PDA couples.
+9. Automatically confirm the login requests from Wechat PC client (take your own risk if you turn on this function).
 
 __P.S. If you want to retweet or take screenshots, please long press the blank area under others' avatar.__
 
-## QQ Group / Wechat Group
+## QQ Group
 
-<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.jpg" width="40%" />
+Official QQ Group: 135955386, 157550472
 
 ## Design
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:

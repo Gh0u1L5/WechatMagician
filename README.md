@@ -11,12 +11,15 @@ WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控
 6. 一键转发他人朋友圈（支持纯文字、图文、视频、链接等）。
 7. 单条朋友圈一键截图。
 8. 设定朋友圈关键字黑名单，免除广告与被秀恩爱的烦恼。
+9. 自动确认电脑端登录请求（开启该功能即视为用户同意独自承担可能的安全风险）。
 
 __注：使用朋友圈转发/截图功能时，请长按好友头像下方的空白处。__
 
 ## QQ群 / 微信群
 
-<img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_qq_group.jpg" width="40%" /> <img src="https://github.com/Gh0u1L5/WechatMagician/raw/master/image/qrcode_wechat_group.jpg" width="40%" />
+官方QQ群：135955386, 157550472
+
+官方微信群：添加微信账号 "XposedHelper" 发送关键词 “微信巫师”
 
 ## 设计理念
 
