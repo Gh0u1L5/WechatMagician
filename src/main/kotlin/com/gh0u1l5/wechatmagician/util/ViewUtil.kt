@@ -75,6 +75,7 @@ object ViewUtil {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             resources.getColor(resId, context.theme)
         } else {
+            @Suppress("DEPRECATION")
             resources.getColor(resId)
         }
     }

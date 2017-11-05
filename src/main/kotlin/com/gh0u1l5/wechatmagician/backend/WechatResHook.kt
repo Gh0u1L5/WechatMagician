@@ -31,6 +31,7 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
             Strings.language = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 resparam.res.configuration.locales[0]
             } else {
+                @Suppress("DEPRECATION")
                 resparam.res.configuration.locale
             }.language
 
