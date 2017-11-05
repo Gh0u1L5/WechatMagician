@@ -1,9 +1,12 @@
 package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
+import android.os.Environment
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.getObjectField
+import java.text.SimpleDateFormat
+import java.util.*
 
 // ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
@@ -55,5 +58,13 @@ object ImageUtil {
         val path = getPathFromImgId(imgId) ?: return
         replaceThumbDiskCache("${path}hd", bitmap)
         replaceThumbMemoryCache(path, bitmap)
+    }
+
+    // createScreenshotPath generates a path for saving the new screenshot
+    fun createScreenshotPath(): String {
+        val time = Calendar.getInstance().time
+        val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
+        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
+        return "$storage/screenshot/SNS-${formatter.format(time)}.jpg"
     }
 }
