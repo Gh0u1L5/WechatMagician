@@ -12,6 +12,7 @@ import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -118,18 +119,22 @@ object Database {
             return
         }
 
-        val msgId = values["msgId"] as Long
-        val msg = MessageCache[msgId] ?: return
+        try {
+            val msgId = values["msgId"] as Long
+            val msg = MessageCache[msgId] ?: return
 
-        val copy = msg.javaClass.newInstance()
-        PackageUtil.shadowCopy(msg, copy)
+            val copy = msg.javaClass.newInstance()
+            PackageUtil.shadowCopy(msg, copy)
 
-        val createTime = XposedHelpers.getLongField(msg, "field_createTime")
-        XposedHelpers.setIntField(copy, "field_type", values["type"] as Int)
-        XposedHelpers.setObjectField(copy, "field_content", values["content"])
-        XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
+            val createTime = XposedHelpers.getLongField(msg, "field_createTime")
+            XposedHelpers.setIntField(copy, "field_type", values["type"] as Int)
+            XposedHelpers.setObjectField(copy, "field_content", values["content"])
+            XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
 
-        XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+            XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
+        } catch (e: Throwable) {
+            XposedBridge.log("DB => Handle message recall failed: $e")
+        }
     }
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
