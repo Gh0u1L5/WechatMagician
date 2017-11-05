@@ -1,19 +1,17 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.app.Activity
-import android.os.Environment
 import android.view.Gravity
+import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.frontend.WechatListPopupAdapter
-import com.gh0u1l5.wechatmagician.storage.SnsDatabase
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.FileUtil
+import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
 import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 import java.lang.reflect.Field
-import java.text.SimpleDateFormat
-import java.util.*
 
 object WechatEvents {
 
@@ -63,60 +61,39 @@ object WechatEvents {
     }
 
     // Show a popup menu in SnsTimelineUI
-    fun onAdFrameLongClick(layout: FrameLayout, x: Float?, y: Float?): Boolean {
-        if (x == null || y == null) {
-            return false
-        }
-
-        val popup = ListPopupWindow(layout.context)
-        popup.width = 320
-        popup.anchorView = layout
-
-        val location = IntArray(2)
-        layout.getLocationOnScreen(location)
-        popup.horizontalOffset = (x - location[0] - layout.width).toInt()
-        popup.verticalOffset = (y - location[1] - layout.height).toInt()
-
-        popup.setDropDownGravity(Gravity.BOTTOM or Gravity.END)
-        popup.setAdapter(WechatListPopupAdapter(
-                layout.context, listOf(str["menu_sns_forward"], str["menu_sns_screenshot"])
-        ))
-        popup.setOnItemClickListener { _, _, itemId, _ ->
-            onAdFramePopupMenuSelected(layout, itemId)
-            popup.dismiss()
-        }
-
-        popup.show()
+    fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long): Boolean {
+        val operations = listOf(str["menu_sns_forward"], str["menu_sns_screenshot"])
+        ListPopupWindow(parent.context).apply {
+            width = 320
+            anchorView = view
+            setDropDownGravity(Gravity.CENTER)
+            setAdapter(WechatListPopupAdapter(view.context, operations))
+            setOnItemClickListener { _, _, operation, _ ->
+                onTimelineItemPopupMenuSelected(view, snsId, operation)
+                dismiss()
+            }
+        }.show()
         return true
     }
 
     // Handle the logic about the popup menu in SnsTimelineUI
-    private fun onAdFramePopupMenuSelected(layout: FrameLayout, itemId: Int): Boolean {
-        val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
-        val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
-        when (itemId) {
-            0 -> {
-                if (pkg.PLTextView == null) {
-                    return false
-                }
-                val textView = ViewUtil.searchViewGroup(layout, pkg.PLTextView!!.name)
-                val rowId = textView?.tag as String?
-                val snsId = SnsDatabase.getSnsId(rowId?.drop("sns_table_".length))
-                ForwardAsyncTask(snsId, layout.context).execute()
+    private fun onTimelineItemPopupMenuSelected(itemView: View, snsId: Long, operation: Int): Boolean {
+        when (operation) {
+            0 -> { // Forward
+                ForwardAsyncTask(snsId, itemView.context).execute()
                 Toast.makeText(
-                        layout.context, str["prompt_wait"], Toast.LENGTH_SHORT
+                        itemView.context, str["prompt_wait"], Toast.LENGTH_SHORT
                 ).show()
                 return true
             }
-            1 -> {
-                val time = Calendar.getInstance().time
-                val filename = "SNS-${formatter.format(time)}.jpg"
-                val path = "$storage/screenshot/$filename"
-                val bitmap = ViewUtil.drawView(layout)
+            1 -> { // Screenshot
+                val path = ImageUtil.createScreenshotPath()
+                val bitmap = ViewUtil.drawView(itemView)
                 FileUtil.writeBitmapToDisk(path, bitmap)
-                FileUtil.notifyNewMediaFile(path, layout.context)
+                // TODO: check notifyNewMediaFile on Android 7
+                FileUtil.notifyNewMediaFile(path, itemView.context)
                 Toast.makeText(
-                        layout.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
+                        itemView.context, str["prompt_screenshot"] + path, Toast.LENGTH_SHORT
                 ).show()
                 return true
             }

@@ -46,10 +46,9 @@ object Database {
                 }
                 if (snsDB !== param.result) {
                     snsDB = param.result
-                    // Force Wechat to retrieve existing SNS data online.
-                    callMethod(snsDB, "delete",
-                            "snsExtInfo3", "local_flag=0", null
-                    )
+                    // Force Wechat to retrieve existing SNS data from remote server.
+                    val deleted = ContentValues().apply { put("sourceType", 0) }
+                    callMethod(snsDB, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
                 }
             }
         })

@@ -2,36 +2,83 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.Activity
 import android.view.View
-import android.widget.FrameLayout
+import android.view.ViewGroup
+import android.widget.ListView
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
+import de.robv.android.xposed.XposedHelpers.getLongField
 
 object SnsUI {
 
     private val pkg = WechatPackage
     private val events = WechatEvents
 
-    // Hook AdFrameLayout constructors to add popup menu.
-    fun setItemLongPressPopupMenu() {
-        if (pkg.AdFrameLayout == null) {
+    // Hook SnsUserUI.onCreate to popup a menu during long click.
+    fun setLongClickListenerForSnsUserUI() {
+        if (pkg.SnsUserUI == null) {
             return
         }
 
-        XposedHelpers.findAndHookConstructor(pkg.AdFrameLayout, C.Context, C.AttributeSet, object : XC_MethodHook() {
+        XposedHelpers.findAndHookMethod(pkg.SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val layout = param.thisObject as FrameLayout
-                var x: Float? = null
-                var y: Float? = null
-                (layout as View).setOnTouchListener { _, motion ->
-                    x = motion.rawX; y = motion.rawY; false
-                }
-                layout.isLongClickable = true
-                layout.setOnLongClickListener {
-                    events.onAdFrameLongClick(layout, x, y)
+                registerSnsPopupWindow(param.thisObject)
+            }
+        })
+    }
+
+    // Hook SnsTimeLineUI.onCreate to popup a menu during long click.
+    fun setLongClickListenerForSnsTimeLineUI() {
+        if (pkg.SnsTimeLineUI == null) {
+            return
+        }
+
+        XposedHelpers.findAndHookMethod(pkg.SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                registerSnsPopupWindow(param.thisObject)
+            }
+        })
+    }
+
+    private fun registerSnsPopupWindow(wrapper: Any?) {
+        if (pkg.SnsActivity == null || wrapper == null) {
+            return
+        }
+
+        val activityField = findFirstFieldByExactType(wrapper.javaClass, pkg.SnsActivity)
+        val activity = activityField.get(wrapper)
+        val listViewField = findFirstFieldByExactType(activity.javaClass, C.ListView)
+        val listView = listViewField.get(activity) as ListView
+
+        // Set onLongClickListener for items
+        listView.setOnItemLongClickListener { parent, view, position, _ ->
+            val item = parent.getItemAtPosition(position)
+            val snsId = getLongField(item, "field_snsId")
+            events.onTimelineItemLongClick(parent, view, snsId)
+        }
+
+        // Hook adapter to make sure the items are long clickable.
+        val adapter = listView.adapter ?: return
+        XposedHelpers.findAndHookMethod(
+                adapter.javaClass, "getView",
+                C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (param.thisObject === adapter) {
+                    val convertView = param.args[1] as View?
+                    if (convertView == null) { // this is a new view
+                        val view = param.result as View? ?: return
+                        if (view is ViewGroup) {
+                            repeat(view.childCount, {
+                                view.getChildAt(it).isClickable = false
+                            })
+                        }
+                        view.isLongClickable = true
+                    }
                 }
             }
         })

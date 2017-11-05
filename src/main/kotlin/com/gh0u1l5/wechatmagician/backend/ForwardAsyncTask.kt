@@ -11,16 +11,18 @@ import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadImage
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadThumb
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadVideo
 import com.gh0u1l5.wechatmagician.util.FileUtil.readBytesFromDisk
+import com.gh0u1l5.wechatmagician.util.MessageUtil.longToDecimalString
 import de.robv.android.xposed.XposedBridge.log
 import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
 // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
-class ForwardAsyncTask(private val snsId: String?, context: Context) : AsyncTask<Void, Void, Throwable?>() {
+class ForwardAsyncTask(snsId: Long, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
     private val str = Strings
 
-    private val snsInfo = SnsCache[snsId]
+    private val snsId = longToDecimalString(snsId)
+    private val snsInfo = SnsCache[this.snsId]
     private val context = WeakReference(context)
     private val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
 

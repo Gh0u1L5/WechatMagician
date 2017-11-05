@@ -21,6 +21,7 @@ object C {
     val Menu = android.view.Menu::class.java
     val MotionEvent = android.view.MotionEvent::class.java
     val View = android.view.View::class.java
+    val ViewGroup = android.view.ViewGroup::class.java
 
     val ByteArray = ByteArray::class.java
     val ObjectArray = Array<Any>::class.java

@@ -45,13 +45,11 @@ object WechatPackage {
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
 
-    var PLTextView: Class<*>? = null
-
+    var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
     var SnsUploadUIEditTextField = ""
-    var AdFrameLayout: Class<*>? = null
-    var SnsPostTextView: Class<*>? = null
-    var SnsPhotosContent: Class<*>? = null
+    var SnsUserUI: Class<*>? = null
+    var SnsTimeLineUI: Class<*>? = null
 
     var AlbumPreviewUI: Class<*>? = null
     var SelectContactUI: Class<*>? = null
@@ -130,20 +128,24 @@ object WechatPackage {
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
 
-        PLTextView = findClassIfExists(
-                "$WECHAT_PACKAGE_NAME.kiss.widget.textview.PLSysTextView", loader)
 
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
-        SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
-                .filterBySuper(MMActivity)
+        val snsUIClasses = findClassesFromPackage(loader, classes, pkgSnsUI)
+        SnsActivity = snsUIClasses
+                .filterByField("$pkgUI.base.MMPullDownView")
+                .firstOrNull("SnsActivity")
+        SnsUploadUI = snsUIClasses
+                .filterByField("$pkgSnsUI.LocationWidget")
                 .filterByField("$pkgSnsUI.SnsUploadSayFooter")
                 .firstOrNull("SnsUploadUI")
         SnsUploadUIEditTextField = findFieldsWithType(
                 SnsUploadUI, "$pkgSnsUI.SnsEditText"
         ).firstOrNull()?.name ?: ""
-        AdFrameLayout = findClassIfExists("$pkgSnsUI.AdFrameLayout", loader)
-        SnsPostTextView = findClassIfExists("$pkgSnsUI.widget.SnsPostDescPreloadTextView", loader)
-        SnsPhotosContent = findClassIfExists("$pkgSnsUI.PhotosContent", loader)
+        SnsUserUI = findClassIfExists("$pkgSnsUI.SnsUserUI", loader)
+        SnsTimeLineUI = snsUIClasses
+                .filterByField("android.support.v7.app.ActionBar")
+                .firstOrNull("SnsTimeLineUI")
+
 
         val pkgGalleryUI = "$WECHAT_PACKAGE_NAME.plugin.gallery.ui"
         AlbumPreviewUI = findClassIfExists("$pkgGalleryUI.AlbumPreviewUI", loader)

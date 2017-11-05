@@ -70,7 +70,8 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginDeveloper::traceDatabase)
 
         val pluginSnsUI = SnsUI
-        tryHook(pluginSnsUI::setItemLongPressPopupMenu)
+        tryHook(pluginSnsUI::setLongClickListenerForSnsUserUI)
+        tryHook(pluginSnsUI::setLongClickListenerForSnsTimeLineUI)
         tryHook(pluginSnsUI::cleanTextViewBeforeForwarding)
 
         val pluginLimits = Limits
