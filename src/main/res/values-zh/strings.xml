@@ -47,7 +47,7 @@
     <string name="pref_toggle_database_delete">跟踪删除操作</string>
     <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
 
-    <string name="pref_category_miscellaneous">其他逆向工具</string>
+    <string name="pref_category_developer_miscellaneous">其他逆向工具</string>
     <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 
     <string name="pref_category_interface">用户界面</string>
@@ -66,6 +66,10 @@
     <string name="pref_toggle_keyword_blacklist_summary">使你免除七夕不敢开朋友圈的苦恼</string>
     <string name="pref_list_keyword_blacklist">关键字黑名单</string>
     <string name="pref_list_keyword_blacklist_summary">使用空格分隔，性能较差的手机注意不要写太长</string>
+
+    <string name="pref_category_settings_miscellaneous">杂项</string>
+    <string name="pref_toggle_auto_login">启用自动登录</string>
+    <string name="pref_toggle_auto_login_summary">自动同意电脑版微信的登录请求，若开启此选项造成任何经济损失作者概不负责</string>
 
     <string name="support_report_subject">微信巫师用户反馈</string>
     <string name="support_report_text">开发者你好，Xposed日志与WechatPackage记录已添加到附件，我目前遇到的问题是：</string>

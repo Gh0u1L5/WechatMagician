@@ -69,6 +69,10 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginDeveloper::traceXMLParse)
         tryHook(pluginDeveloper::traceDatabase)
 
+        val pluginAutoLogin = AutoLogin
+        pluginAutoLogin.init(settings)
+        tryHook(pluginAutoLogin::enableAutoLogin)
+
         val pluginSnsUI = SnsUI
         tryHook(pluginSnsUI::setLongClickListenerForSnsUserUI)
         tryHook(pluginSnsUI::setLongClickListenerForSnsTimeLineUI)

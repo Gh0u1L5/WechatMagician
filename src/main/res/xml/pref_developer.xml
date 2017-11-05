@@ -41,7 +41,7 @@
             android:key="developer_database_execute"
             android:title="@string/pref_toggle_database_execute" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/pref_category_miscellaneous">
+    <PreferenceCategory android:title="@string/pref_category_developer_miscellaneous">
         <SwitchPreference
             android:defaultValue="false"
             android:key="developer_xml_parser"

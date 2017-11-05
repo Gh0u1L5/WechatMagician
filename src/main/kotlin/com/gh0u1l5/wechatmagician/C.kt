@@ -14,6 +14,7 @@ object C {
 
     val AttributeSet = android.util.AttributeSet::class.java
     val Bundle = android.os.Bundle::class.java
+    val Button = android.widget.Button::class.java
     val ContentValues = android.content.ContentValues::class.java
     val Context = android.content.Context::class.java
     val Intent = android.content.Intent::class.java

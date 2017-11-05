@@ -29,6 +29,7 @@ object WechatPackage {
     private val status: HashMap<String, Boolean> = hashMapOf()
 
     var XLogSetup: Class<*>? = null
+    var WebWXLoginUI: Class<*>? = null
     var RemittanceAdapter: Class<*>? = null
     var WXCustomSchemeEntry: Class<*>? = null
     var WXCustomSchemeEntryStart = ""
@@ -92,6 +93,8 @@ object WechatPackage {
 
         XLogSetup = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.xlog.app.XLogSetup", loader)
+        WebWXLoginUI = findClassIfExists(
+                "$WECHAT_PACKAGE_NAME.plugin.webwx.ui.ExtDeviceWXLoginUI", loader)
         RemittanceAdapter = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.plugin.remittance.ui.RemittanceAdapterUI", loader)
         WXCustomSchemeEntry = findClassIfExists(

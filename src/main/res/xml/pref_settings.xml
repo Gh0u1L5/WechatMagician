@@ -49,4 +49,11 @@
             android:summary="@string/pref_list_keyword_blacklist_summary"
             android:title="@string/pref_list_keyword_blacklist" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_category_settings_miscellaneous">
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="settings_auto_login"
+            android:summary="@string/pref_toggle_auto_login_summary"
+            android:title="@string/pref_toggle_auto_login" />
+    </PreferenceCategory>
 </PreferenceScreen>
