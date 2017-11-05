@@ -32,6 +32,13 @@ object PackageUtil {
             })
         }
 
+        fun filterByField(fieldName: String, fieldType: String): Classes {
+            return Classes(classes.filter {
+                val field = it.getField(fieldName)
+                field != null && field.type.name == fieldType
+            })
+        }
+
         fun filterByField(fieldType: String): Classes {
             return Classes(classes.filter {
                 PackageUtil.findFieldsWithType(it, fieldType).isNotEmpty()
