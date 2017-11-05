@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import com.gh0u1l5.wechatmagician.C
@@ -47,7 +48,9 @@ object Developer {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val intent = param.args[0] as Intent?
-                    XposedBridge.log("Activity.startActivity => ${param.thisObject.javaClass}, intent => ${bundleToString(intent?.extras)}")
+                    XposedBridge.log("Activity.startActivity => " +
+                            "${param.thisObject.javaClass}, " +
+                            "intent => ${bundleToString(intent?.extras)}")
                 }
             })
 
@@ -58,7 +61,10 @@ object Developer {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val bundle = param.args[0] as Bundle?
                     val intent = (param.thisObject as Activity).intent
-                    XposedBridge.log("Activity.onCreate => ${param.thisObject.javaClass}, intent => ${bundleToString(intent?.extras)}, bundle => ${bundleToString(bundle)}")
+                    XposedBridge.log("Activity.onCreate => " +
+                            "${param.thisObject.javaClass}, " +
+                            "intent => ${bundleToString(intent?.extras)}, " +
+                            "bundle => ${bundleToString(bundle)}")
                 }
             })
         }
@@ -129,7 +135,7 @@ object Developer {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val table = param.args[0] as String?
-                    val values = param.args[2] as android.content.ContentValues?
+                    val values = param.args[2] as ContentValues?
                     XposedBridge.log("DB => insert table = $table, values = $values")
                 }
             })
@@ -142,10 +148,14 @@ object Developer {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val table = param.args[0] as String?
-                    val values = param.args[1] as android.content.ContentValues?
+                    val values = param.args[1] as ContentValues?
                     val whereClause = param.args[2] as String?
                     val whereArgs = param.args[3] as Array<*>?
-                    XposedBridge.log("DB => update table = $table, values = $values, whereClause = $whereClause, whereArgs = ${argsToString(whereArgs)}")
+                    XposedBridge.log("DB => update " +
+                            "table = $table, " +
+                            "values = $values, " +
+                            "whereClause = $whereClause, " +
+                            "whereArgs = ${argsToString(whereArgs)}")
                 }
             })
         }
@@ -159,7 +169,10 @@ object Developer {
                     val table = param.args[0] as String?
                     val whereClause = param.args[1] as String?
                     val whereArgs = param.args[2] as Array<*>?
-                    XposedBridge.log("DB => delete table = $table, whereClause = $whereClause, whereArgs = ${argsToString(whereArgs)}")
+                    XposedBridge.log("DB => delete " +
+                            "table = $table, " +
+                            "whereClause = $whereClause, " +
+                            "whereArgs = ${argsToString(whereArgs)}")
                 }
             })
         }

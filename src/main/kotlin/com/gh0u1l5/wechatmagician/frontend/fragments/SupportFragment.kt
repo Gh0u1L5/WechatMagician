@@ -4,7 +4,6 @@ import android.app.Fragment
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -30,14 +29,12 @@ class SupportFragment : Fragment() {
             openURL(activity, "${view?.context?.getString(R.string.view_about_project_github_url)}/issues")
         }
         support_email_card.setOnClickListener { view ->
-            val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
-            val pkgLog = Uri.fromFile(File("$storage/.status/pkg"))
-            val dataDir = getApplicationDataDir(activity)?.replace(MAGICIAN_PACKAGE_NAME, XPOSED_PACKAGE_NAME)
+            val dataDir = getApplicationDataDir(activity).replace(MAGICIAN_PACKAGE_NAME, XPOSED_PACKAGE_NAME)
             val xposedLog = Uri.fromFile(File("$dataDir/log/error.log"))
             try {
                 view?.context?.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                     type = "text/plain"
-                    putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(pkgLog, xposedLog))
+                    putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(xposedLog))
                     putExtra(Intent.EXTRA_EMAIL, arrayOf("WechatMagician@yahoo.com"))
                     putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_report_subject))
                     putExtra(Intent.EXTRA_TEXT, getString(R.string.support_report_text))

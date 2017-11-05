@@ -10,7 +10,6 @@ object Global {
     val FOLDER_SHARED = "shared"
     val FOLDER_SHARED_PREFS = "shared_prefs"
 
-    val STATUS_FLAG_HOOKING       = "Hooking"
     val STATUS_FLAG_MSG_STORAGE   = "MsgStorage"
     val STATUS_FLAG_IMG_STORAGE   = "ImgStorage"
     val STATUS_FLAG_RESOURCES     = "Resources"

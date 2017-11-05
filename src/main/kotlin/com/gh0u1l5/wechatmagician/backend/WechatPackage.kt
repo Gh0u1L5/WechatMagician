@@ -29,6 +29,7 @@ object WechatPackage {
     private val status: HashMap<String, Boolean> = hashMapOf()
 
     var XLogSetup: Class<*>? = null
+    var RemittanceAdapter: Class<*>? = null
     var WXCustomSchemeEntry: Class<*>? = null
     var WXCustomSchemeEntryStart = ""
     var EncEngine: Class<*>? = null
@@ -45,7 +46,6 @@ object WechatPackage {
     var MMListPopupWindow: Class<*>? = null
 
     var PLTextView: Class<*>? = null
-    var RemittanceAdapter: Class<*>? = null
 
     var SnsUploadUI: Class<*>? = null
     var SnsUploadUIEditTextField = ""
@@ -60,12 +60,10 @@ object WechatPackage {
 
     var MsgInfoClass: Class<*>? = null
     var ContactInfoClass: Class<*>? = null
+
     var MsgStorageClass: Class<*>? = null
     var MsgStorageInsertMethod = ""
     @Volatile var MsgStorageObject: Any? = null
-
-    var XMLParserClass: Class<*>? = null
-    var XMLParseMethod = ""
 
     val CacheMapClass = "$WECHAT_PACKAGE_NAME.a.f"
     val CacheMapPutMethod = "k"
@@ -74,6 +72,9 @@ object WechatPackage {
     var ImgStorageCacheField = ""
     val ImgStorageLoadMethod = "a"
     @Volatile var ImgStorageObject: Any? = null
+
+    var XMLParserClass: Class<*>? = null
+    var XMLParseMethod = ""
 
     // Analyzes Wechat package statically for the name of classes.
     // WechatHook will do the runtime analysis and set the objects.
@@ -90,8 +91,11 @@ object WechatPackage {
             apkFile?.close()
         }
 
+
         XLogSetup = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.xlog.app.XLogSetup", loader)
+        RemittanceAdapter = findClassIfExists(
+                "$WECHAT_PACKAGE_NAME.plugin.remittance.ui.RemittanceAdapterUI", loader)
         WXCustomSchemeEntry = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
         WXCustomSchemeEntryStart = findMethodsByExactParameters(
@@ -106,6 +110,7 @@ object WechatPackage {
                 EncEngine, C.Int, C.ByteArray, C.Int
         ).firstOrNull()?.name ?: ""
 
+
         SQLiteDatabasePkg = when {
             version >= Version("6.5.8") ->"com.tencent.wcdb"
             else ->"com.tencent.mmdb"
@@ -119,6 +124,7 @@ object WechatPackage {
         SQLiteCancellationSignal = findClassIfExists(
                 "$SQLiteDatabasePkg.support.CancellationSignal", loader)
 
+
         val pkgUI = "$WECHAT_PACKAGE_NAME.ui"
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
@@ -126,8 +132,6 @@ object WechatPackage {
 
         PLTextView = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.kiss.widget.textview.PLSysTextView", loader)
-        RemittanceAdapter = findClassIfExists(
-                "$WECHAT_PACKAGE_NAME.plugin.remittance.ui.RemittanceAdapterUI", loader)
 
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
         SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
@@ -149,6 +153,7 @@ object WechatPackage {
                 SelectConversationUI, C.Boolean, C.Boolean
         ).firstOrNull()?.name ?: ""
 
+
         val storageClasses = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
         MsgInfoClass = storageClasses
                 .filterByMethod(C.Boolean, "isSystem")
@@ -157,6 +162,7 @@ object WechatPackage {
                 .filterByMethod(C.String, "getCityCode")
                 .filterByMethod(C.String, "getCountryCode")
                 .firstOrNull("ContactInfoClass")
+
         if (MsgInfoClass != null) {
             MsgStorageClass = storageClasses
                     .filterByMethod(C.Long, MsgInfoClass!!, C.Boolean)
@@ -166,6 +172,14 @@ object WechatPackage {
             ).firstOrNull()?.name ?: ""
         }
 
+//        ImgStorageClass = findClassesFromPackage(loader, classes, WECHAT_PACKAGE_NAME, 1)
+//                .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
+//                .firstOrNull("ImgStorageClass")
+//        ImgStorageCacheField = findFieldsWithGenericType(
+//                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
+//        ).firstOrNull()?.name ?: ""
+
+
         val platformClasses = findClassesFromPackage(loader, classes,"$WECHAT_PACKAGE_NAME.sdk.platformtools")
         XMLParserClass = platformClasses
                 .filterByMethod(C.Map, C.String, C.String)
@@ -173,13 +187,6 @@ object WechatPackage {
         XMLParseMethod = findMethodsByExactParameters(
                 XMLParserClass, C.Map, C.String, C.String
         ).firstOrNull()?.name ?: ""
-
-//        ImgStorageClass = findClassesFromPackage(loader, classes, WECHAT_PACKAGE_NAME, 1)
-//                .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
-//                .firstOrNull("ImgStorageClass")
-//        ImgStorageCacheField = findFieldsWithGenericType(
-//                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
-//        ).firstOrNull()?.name ?: ""
     }
 
     // getVersion returns the version of current package / application
