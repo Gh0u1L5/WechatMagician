@@ -4,6 +4,7 @@ import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import com.gh0u1l5.wechatmagician.util.FileUtil.readObjectFromDisk
-import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 import kotlinx.android.synthetic.main.fragment_status.*
 import java.io.File
 
@@ -44,7 +44,7 @@ class StatusFragment : Fragment() {
         }
 
         // Set the main banner of status fragment.
-        val colorOk = getColor(activity, resources, R.color.ok)
+        val colorOk = ContextCompat.getColor(activity, R.color.ok)
         status_text.setTextColor(colorOk)
         status_text.text = getString(R.string.status_ok)
         status_image.setBackgroundColor(colorOk)

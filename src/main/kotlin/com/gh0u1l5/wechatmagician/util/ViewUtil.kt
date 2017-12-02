@@ -70,16 +70,6 @@ object ViewUtil {
         return b
     }
 
-    // getColor finds the color according to the given resId.
-    fun getColor(context: Context, resources: Resources, resId: Int): Int {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            resources.getColor(resId, context.theme)
-        } else {
-            @Suppress("DEPRECATION")
-            resources.getColor(resId)
-        }
-    }
-
     // openURL opens an URL using an external explorer.
     fun openURL(context: Context?, url: String?) {
         try {

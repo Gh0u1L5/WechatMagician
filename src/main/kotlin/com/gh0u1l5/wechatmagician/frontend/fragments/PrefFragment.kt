@@ -7,6 +7,7 @@ import android.content.pm.PackageManager.*
 import android.os.Build
 import android.os.Bundle
 import android.preference.PreferenceFragment
+import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +20,6 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
-import com.gh0u1l5.wechatmagician.util.ViewUtil.getColor
 import java.io.File
 
 class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
@@ -48,7 +48,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return super.onCreateView(inflater, container, savedInstanceState).apply {
-            setBackgroundColor(getColor(activity, resources, R.color.card_background))
+            setBackgroundColor(ContextCompat.getColor(activity, R.color.card_background))
         }
     }
 
