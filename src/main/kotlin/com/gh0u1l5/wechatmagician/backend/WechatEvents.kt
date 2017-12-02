@@ -10,6 +10,7 @@ import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
+import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 import java.lang.reflect.Field
 
@@ -64,7 +65,7 @@ object WechatEvents {
     fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long): Boolean {
         val operations = listOf(str["menu_sns_forward"], str["menu_sns_screenshot"])
         ListPopupWindow(parent.context).apply {
-            width = 390
+            width = parent.context.dp2px(100)
             anchorView = view
             setDropDownGravity(Gravity.CENTER)
             setAdapter(WechatListPopupAdapter(view.context, operations))

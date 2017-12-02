@@ -79,4 +79,10 @@ object ViewUtil {
             Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
+
+    // dp2px convert size in dp to size in px.
+    fun Context.dp2px(dip: Int): Int {
+        val scale = resources.displayMetrics.density
+        return (dip * scale + 0.5f).toInt()
+    }
 }
