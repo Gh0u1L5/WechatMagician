@@ -12,10 +12,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
@@ -30,7 +30,7 @@ class StatusFragment : Fragment() {
             STATUS_FLAG_RESOURCES to R.id.component_resources_status,
             STATUS_FLAG_DATABASE to R.id.component_database_status,
             STATUS_FLAG_XML_PARSER to R.id.component_xml_parser_status,
-            STATUS_FLAG_CUSTOM_SCHEME to R.id.component_custom_scheme_status
+            STATUS_FLAG_URI_ROUTER to R.id.component_uri_router_status
     )
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =

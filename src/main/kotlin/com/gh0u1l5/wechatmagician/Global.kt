@@ -10,12 +10,12 @@ object Global {
     val FOLDER_SHARED = "shared"
     val FOLDER_SHARED_PREFS = "shared_prefs"
 
-    val STATUS_FLAG_MSG_STORAGE   = "MsgStorage"
-    val STATUS_FLAG_IMG_STORAGE   = "ImgStorage"
-    val STATUS_FLAG_RESOURCES     = "Resources"
-    val STATUS_FLAG_DATABASE      = "Database"
-    val STATUS_FLAG_XML_PARSER    = "XMLParser"
-    val STATUS_FLAG_CUSTOM_SCHEME = "CustomScheme"
+    val STATUS_FLAG_MSG_STORAGE = "MsgStorage"
+    val STATUS_FLAG_IMG_STORAGE = "ImgStorage"
+    val STATUS_FLAG_RESOURCES   = "Resources"
+    val STATUS_FLAG_DATABASE    = "Database"
+    val STATUS_FLAG_XML_PARSER  = "XMLParser"
+    val STATUS_FLAG_URI_ROUTER  = "UriRouter"
 
     val ACTION_UPDATE_PREF = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
     val PREFERENCE_STRING_LIST_KEYS = listOf("settings_sns_keyword_blacklist_content")

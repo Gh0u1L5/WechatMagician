@@ -2,16 +2,16 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.Activity
 import android.content.Intent
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
-object CustomScheme {
+object UriRouter {
 
     val pkg = WechatPackage
 
-    @JvmStatic fun registerCustomSchemes() {
+    @JvmStatic fun hijackUriRouter() {
         if (pkg.WXCustomScheme == null || pkg.WXCustomSchemeEntryMethod == null) {
             return
         }
@@ -44,6 +44,6 @@ object CustomScheme {
             }
         })
 
-        pkg.setStatus(STATUS_FLAG_CUSTOM_SCHEME, true)
+        pkg.setStatus(STATUS_FLAG_URI_ROUTER, true)
     }
 }

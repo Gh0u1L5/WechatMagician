@@ -104,8 +104,8 @@ class WechatHook : IXposedHookLoadPackage {
         pluginDatabase.init(settings)
         tryHook(pluginDatabase::hookDatabase)
 
-        val pluginCustomScheme = CustomScheme
-        tryHook(pluginCustomScheme::registerCustomSchemes)
+        val pluginUriRouter = UriRouter
+        tryHook(pluginUriRouter::hijackUriRouter)
 
         thread(start = true) {
             val wechatDataDir = getApplicationDataDir(context)

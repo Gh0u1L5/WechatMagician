@@ -173,7 +173,7 @@
                     android:textColor="@color/text_color" />
 
                 <ImageView
-                    android:id="@+id/component_custom_scheme_status"
+                    android:id="@+id/component_uri_router_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="10dp"

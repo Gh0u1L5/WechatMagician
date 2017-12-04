@@ -10,7 +10,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_CUSTOM_SCHEME
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment.Companion.readHookStatus
@@ -31,7 +31,7 @@ class DonateFragment : Fragment() {
 
         // Hide Tenpay if the URI router is not hijacked.
         val status = readHookStatus(activity)
-        if (status == null || status[STATUS_FLAG_CUSTOM_SCHEME] != true) {
+        if (status == null || status[STATUS_FLAG_URI_ROUTER] != true) {
             donate_tenpay.visibility = GONE
         }
 
