@@ -2,12 +2,10 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
-import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup

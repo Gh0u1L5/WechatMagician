@@ -1,12 +1,12 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
-import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_IMG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.MessageCache
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge
+import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedHelpers
 import kotlin.concurrent.thread
 
@@ -15,12 +15,12 @@ object Storage {
     private val pkg = WechatPackage
 
     @JvmStatic fun hookMsgStorage() {
-        if (pkg.MsgStorageClass == null || pkg.MsgStorageInsertMethod == "") {
+        if (pkg.MsgStorageClass == null || pkg.MsgStorageInsertMethod == null) {
             return
         }
 
         // Analyze dynamically to find the global message storage instance.
-        XposedBridge.hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
+        hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.MsgStorageObject !== param.thisObject) {
@@ -30,9 +30,7 @@ object Storage {
         })
 
         // Hook MsgStorage to record the received messages.
-        XposedHelpers.findAndHookMethod(
-                pkg.MsgStorageClass, pkg.MsgStorageInsertMethod,
-                pkg.MsgInfoClass, C.Boolean, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 thread(start = true) {
@@ -52,7 +50,7 @@ object Storage {
         }
 
         // Analyze dynamically to find the global image storage instance.
-        XposedBridge.hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
+        hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (pkg.ImgStorageObject !== param.thisObject) {
@@ -72,7 +70,7 @@ object Storage {
 //        })
 
 //        // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
-//        XposedHelpers.findAndHookConstructor(
+//        findAndHookConstructor(
 //                "java.io.FileOutputStream", loader,
 //                C.File, C.Boolean, object : XC_MethodHook() {
 //            @Throws(Throwable::class)

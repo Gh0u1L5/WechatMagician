@@ -9,8 +9,7 @@ import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
-import de.robv.android.xposed.XposedHelpers.getLongField
+import de.robv.android.xposed.XposedHelpers.*
 
 object SnsUI {
 
@@ -23,7 +22,7 @@ object SnsUI {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 registerSnsPopupWindow(param.thisObject)
@@ -37,7 +36,7 @@ object SnsUI {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 registerSnsPopupWindow(param.thisObject)
@@ -64,7 +63,7 @@ object SnsUI {
 
         // Hook adapter to make sure the items are long clickable.
         val adapter = listView.adapter ?: return
-        XposedHelpers.findAndHookMethod(
+        findAndHookMethod(
                 adapter.javaClass, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -90,7 +89,7 @@ object SnsUI {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val intent = (param.thisObject as Activity).intent ?: return

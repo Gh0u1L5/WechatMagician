@@ -1,9 +1,9 @@
 package com.gh0u1l5.wechatmagician.util
 
+import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers
-import de.robv.android.xposed.XposedHelpers.findClass
-import de.robv.android.xposed.XposedHelpers.findMethodExact
+import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -90,7 +90,7 @@ object PackageUtil {
             val satisfyDepth =
                     it.packageName.drop(packageName.length).count{it == '.'} == depth
             return@predicate satisfyPrefix && satisfyDepth
-        }.map { findClass(getClassName(it), loader)!! })
+        }.mapNotNull { findClassIfExists(getClassName(it), loader) })
     }
 
     // findMethodExactIfExists looks up and returns a method if it exists, otherwise it returns null.
@@ -123,5 +123,17 @@ object PackageUtil {
         return clazz?.declaredFields?.filter {
             it.genericType.toString() == genericTypeName
         } ?: listOf()
+    }
+
+    fun findAndHookMethod(clazz: Class<*>?, method: Method?, callback: XC_MethodHook) {
+        if (clazz == null) {
+            log("findAndHookMethod: clazz should not be null")
+            return
+        }
+        if (method == null) {
+            log("findAndHookMethod: method should not be null")
+            return
+        }
+        findAndHookMethod(clazz, method.name, *method.parameterTypes, callback)
     }
 }

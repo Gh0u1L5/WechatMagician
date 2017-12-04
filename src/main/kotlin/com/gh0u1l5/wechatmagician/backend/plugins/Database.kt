@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
-import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.MessageCache
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -31,14 +30,14 @@ object Database {
 
     @JvmStatic fun hookDatabase() {
         when (null) {
-            pkg.SQLiteDatabaseClass,
+            pkg.SQLiteDatabase,
             pkg.SQLiteCursorFactory,
             pkg.SQLiteErrorHandler -> return
         }
 
         // Hook SQLiteDatabase.openDatabase to capture the database instance for SNS.
         findAndHookMethod(
-                pkg.SQLiteDatabaseClass, "openDatabase",
+                pkg.SQLiteDatabase, "openDatabase",
                 C.String, pkg.SQLiteCursorFactory, C.Int, pkg.SQLiteErrorHandler, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -58,7 +57,7 @@ object Database {
 
         // Hook SQLiteDatabase.update to prevent Wechat from recalling messages or deleting moments.
         findAndHookMethod(
-                pkg.SQLiteDatabaseClass, "updateWithOnConflict",
+                pkg.SQLiteDatabase, "updateWithOnConflict",
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -117,7 +116,7 @@ object Database {
 
     // handleMessageRecall notifies user that someone has recalled the given message.
     private fun handleMessageRecall(values: ContentValues) {
-        if (pkg.MsgStorageObject == null || pkg.MsgStorageInsertMethod == "") {
+        if (pkg.MsgStorageObject == null || pkg.MsgStorageInsertMethod == null) {
             return
         }
 
@@ -133,12 +132,9 @@ object Database {
             XposedHelpers.setObjectField(copy, "field_content", values["content"])
             XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
 
-            val version = pkg.version ?: return
-            when {
-                version >= Version("6.5.8") ->
-                    XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy, false)
-                else ->
-                    XposedHelpers.callMethod(pkg.MsgStorageObject, pkg.MsgStorageInsertMethod, copy)
+            when (pkg.MsgStorageInsertMethod?.parameterTypes?.size) {
+                1 -> pkg.MsgStorageInsertMethod?.invoke(pkg.MsgStorageObject, copy)
+                2 -> pkg.MsgStorageInsertMethod?.invoke(pkg.MsgStorageObject, copy, false)
             }
         } catch (e: Throwable) {
             XposedBridge.log("DB => Handle message recall failed: $e")

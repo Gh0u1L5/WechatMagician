@@ -5,7 +5,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 
 object AutoLogin {
@@ -23,7 +23,7 @@ object AutoLogin {
             return
         }
 
-        XposedHelpers.findAndHookMethod(pkg.WebWXLoginUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(pkg.WebWXLoginUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (preferences?.getBoolean("settings_auto_login", false) == true) {

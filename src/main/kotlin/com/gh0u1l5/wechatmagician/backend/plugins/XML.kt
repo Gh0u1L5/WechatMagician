@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
-import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -8,8 +7,8 @@ import com.gh0u1l5.wechatmagician.storage.SnsBlacklist
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedHelpers
 import kotlin.concurrent.thread
 
 object XML {
@@ -24,12 +23,12 @@ object XML {
     private val pkg = WechatPackage
 
     @JvmStatic fun hookXMLParse() {
-        if (pkg.XMLParserClass == null || pkg.XMLParseMethod == "") {
+        if (pkg.XMLParserClass == null || pkg.XMLParseMethod == null) {
             return
         }
 
         // Hook XML Parser for the status bar easter egg.
-        XposedHelpers.findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, C.String, C.String, object : XC_MethodHook() {
+        findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 @Suppress("UNCHECKED_CAST")

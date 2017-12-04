@@ -14,8 +14,9 @@ import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatResHook
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.Strings
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Limits {
 
@@ -35,7 +36,7 @@ object Limits {
             return
         }
 
-        XposedHelpers.findAndHookMethod(
+        findAndHookMethod(
                 pkg.AlbumPreviewUI, "onCreate",
                 C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -60,7 +61,7 @@ object Limits {
         }
 
         // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
-        XposedHelpers.findAndHookMethod(
+        findAndHookMethod(
                 pkg.MMActivity, "onCreateOptionsMenu",
                 C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -103,7 +104,7 @@ object Limits {
         })
 
         // Hook SelectContactUI to help the "Select All" button.
-        XposedHelpers.findAndHookMethod(
+        findAndHookMethod(
                 pkg.SelectContactUI, "onActivityResult",
                 C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -122,7 +123,7 @@ object Limits {
         })
 
         // Hook SelectContactUI to bypass the limit on number of recipients.
-        XposedHelpers.findAndHookMethod(
+        findAndHookMethod(
                 pkg.SelectContactUI, "onCreate",
                 C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -137,13 +138,11 @@ object Limits {
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
     @JvmStatic fun breakSelectConversationLimit() {
-        if (pkg.SelectConversationUI == null || pkg.SelectConversationUIMaxLimitMethod == "") {
+        if (pkg.SelectConversationUI == null || pkg.SelectConversationUIMaxLimitMethod == null) {
             return
         }
 
-        XposedHelpers.findAndHookMethod(
-                pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod,
-                C.Boolean, object : XC_MethodHook() {
+        findAndHookMethod(pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false

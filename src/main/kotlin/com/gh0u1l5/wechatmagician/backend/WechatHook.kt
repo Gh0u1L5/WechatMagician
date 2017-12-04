@@ -33,7 +33,7 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     inline private fun tryHook(hook: () -> Unit) {
-        try { hook() } catch (e: Throwable) { log("HOOK => $e") }
+        try { hook() } catch (e: Throwable) { log(e) }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -55,8 +55,8 @@ class WechatHook : IXposedHookLoadPackage {
         } catch (e: Throwable) { log(e) }
     }
 
-        val loader = lpparam.classLoader
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
+        val loader = lpparam.classLoader
 
         WechatPackage.init(lpparam)
         settings.load(context, "settings")
