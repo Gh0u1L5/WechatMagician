@@ -13,6 +13,7 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
@@ -49,7 +50,13 @@ class WechatHook : IXposedHookLoadPackage {
                     })
                 WECHAT_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
-                        handleLoadWechat(lpparam, context)
+                        thread(start = true) {
+                            // NOTE: Since 6.5.16, Wechat loads multiple DEX asynchronously using
+                            // a service called DexOptService. So we need to sleep a while, wait
+                            // for MultiDex installation.
+                            sleep(500)
+                            handleLoadWechat(lpparam, context)
+                        }
                     })
             }
         } catch (e: Throwable) { log(e) }
