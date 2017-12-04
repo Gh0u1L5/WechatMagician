@@ -9,6 +9,7 @@ import android.net.Uri
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ListView
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global
 import de.robv.android.xposed.XposedBridge
@@ -82,5 +83,16 @@ object ViewUtil {
     fun Context.dp2px(dip: Int): Int {
         val scale = resources.displayMetrics.density
         return (dip * scale + 0.5f).toInt()
+    }
+
+    fun ListView.getViewAtPosition(position: Int): View {
+        val firstItemPosition = firstVisiblePosition
+        val lastItemPosition = firstItemPosition + childCount - 1
+
+        return if (position < firstItemPosition || position > lastItemPosition) {
+            adapter.getView(position, null, this)
+        } else {
+            getChildAt(position - firstItemPosition)
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.frontend
+package com.gh0u1l5.wechatmagician.frontend.wechat
 
 import android.content.Context
 import android.graphics.Color
@@ -13,7 +13,7 @@ import android.widget.TextView
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers
 
-class WechatListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<String>(context, 0, strings) {
+class ListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<String>(context, 0, strings) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView as LinearLayout?
         if (view == null) {
