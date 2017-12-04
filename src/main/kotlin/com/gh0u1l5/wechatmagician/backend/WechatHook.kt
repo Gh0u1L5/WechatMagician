@@ -81,10 +81,10 @@ class WechatHook : IXposedHookLoadPackage {
         pluginAutoLogin.init(settings)
         tryHook(pluginAutoLogin::enableAutoLogin)
 
-        val pluginSnsUI = SnsUI
-        tryHook(pluginSnsUI::setLongClickListenerForSnsUserUI)
-        tryHook(pluginSnsUI::setLongClickListenerForSnsTimeLineUI)
-        tryHook(pluginSnsUI::cleanTextViewBeforeForwarding)
+        val pluginSnsForward = SnsForward
+        tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
+        tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
+        tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
 
         val pluginLimits = Limits
         pluginLimits.init(settings)
