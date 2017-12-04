@@ -24,10 +24,10 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
-    inline private fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context?) -> Unit) {
+    inline private fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context) -> Unit) {
         findAndHookMethod("android.app.Application",loader, "attach", C.Context, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                callback(param.thisObject as Context?)
+                callback(param.thisObject as Context)
             }
         })
     }
@@ -55,8 +55,8 @@ class WechatHook : IXposedHookLoadPackage {
         } catch (e: Throwable) { log(e) }
     }
 
-    private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context?) {
         val loader = lpparam.classLoader
+    private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
 
         WechatPackage.init(lpparam)
         settings.load(context, "settings")
