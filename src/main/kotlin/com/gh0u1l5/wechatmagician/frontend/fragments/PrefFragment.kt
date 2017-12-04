@@ -24,8 +24,7 @@ import java.io.File
 
 class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         val manager = preferenceManager
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -41,16 +40,11 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
         }
 
         if (arguments != null) {
-            manager.sharedPreferencesName = arguments!!.getString(ARG_PREF_NAME)
-        }
-        manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        if (arguments != null) {
             val preferencesResId = arguments!!.getInt(ARG_PREF_RES)
+            manager.sharedPreferencesName = arguments!!.getString(ARG_PREF_NAME)
             setPreferencesFromResource(preferencesResId, rootKey)
         }
+        manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
