@@ -1,9 +1,9 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
-import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
 import android.os.SystemClock
+import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
@@ -33,8 +33,8 @@ class StatusFragment : Fragment() {
             STATUS_FLAG_CUSTOM_SCHEME to R.id.component_custom_scheme_status
     )
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater!!.inflate(R.layout.fragment_status, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            inflater.inflate(R.layout.fragment_status, container, false)
 
     override fun onStart() {
         super.onStart()
@@ -43,8 +43,10 @@ class StatusFragment : Fragment() {
             return
         }
 
+        val context = context ?: return
+
         // Set the main banner of status fragment.
-        val colorOk = ContextCompat.getColor(activity, R.color.ok)
+        val colorOk = ContextCompat.getColor(context, R.color.ok)
         status_text.setTextColor(colorOk)
         status_text.text = getString(R.string.status_ok)
         status_image.setBackgroundColor(colorOk)
@@ -52,7 +54,7 @@ class StatusFragment : Fragment() {
         status_image.contentDescription = getString(R.string.status_ok)
 
         // Set the status for each component.
-        val status = readHookStatus(activity)
+        val status = readHookStatus(context)
         if (status != null) {
             for (entry in componentMap) {
                 if (status[entry.key] == true) {
@@ -66,7 +68,7 @@ class StatusFragment : Fragment() {
     private fun isModuleLoaded(): Boolean = false
 
     private fun setComponentIconValid(iconId: Int) {
-        val icon = activity.findViewById<ImageView>(iconId)
+        val icon = activity?.findViewById<ImageView>(iconId)
         if (icon != null) {
             icon.setImageResource(R.drawable.ic_component_valid)
             icon.contentDescription = getString(R.string.status_component_valid)

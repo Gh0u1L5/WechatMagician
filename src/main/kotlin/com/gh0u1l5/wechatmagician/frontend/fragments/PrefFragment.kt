@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager.*
 import android.os.Build
 import android.os.Bundle
-import android.preference.PreferenceFragment
 import android.support.v4.content.ContextCompat
+import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,15 +22,16 @@ import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import java.io.File
 
-class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
+class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val manager = preferenceManager
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Move old shared preferences to device protected storage if it exists
-            val oldPrefDir = "${activity?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
-            val newPrefDir = "${activity?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
+            val oldPrefDir = "${context?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
+            val newPrefDir = "${context?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
             try {
                 File(oldPrefDir).renameTo(File(newPrefDir))
             } catch (e: Throwable) {
@@ -38,17 +39,24 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
             }
             manager.setStorageDeviceProtected()
         }
+
         if (arguments != null) {
-            val preferencesResId = arguments.getInt(ARG_PREF_RES)
-            manager.sharedPreferencesName = arguments.getString(ARG_PREF_NAME)
-            addPreferencesFromResource(preferencesResId)
+            manager.sharedPreferencesName = arguments!!.getString(ARG_PREF_NAME)
         }
         manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        return super.onCreateView(inflater, container, savedInstanceState).apply {
-            setBackgroundColor(ContextCompat.getColor(activity, R.color.card_background))
+    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+        if (arguments != null) {
+            val preferencesResId = arguments!!.getInt(ARG_PREF_RES)
+            setPreferencesFromResource(preferencesResId, rootKey)
+        }
+    }
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val context = context ?: return null
+        return super.onCreateView(inflater, container, savedInstanceState)?.apply {
+            setBackgroundColor(ContextCompat.getColor(context, R.color.card_background))
         }
     }
 
@@ -60,10 +68,10 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                 val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
                 val className = "$MAGICIAN_PACKAGE_NAME.frontend.MainActivityAlias"
                 val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
-                activity.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
+                context?.packageManager?.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
             } catch (e: Throwable) {
                 Log.e(LOG_TAG, "Cannot hide icon: $e")
-                Toast.makeText(activity, e.localizedMessage, Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -71,13 +79,13 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     // Reference: https://github.com/rovo89/XposedBridge/issues/206
     override fun onPause() {
         // Set shared preferences as world readable.
-        val dataDir = getApplicationDataDir(activity)
+        val dataDir = getApplicationDataDir(context)
         val folder = File("$dataDir/$FOLDER_SHARED_PREFS")
         val filename = preferenceManager.sharedPreferencesName + ".xml"
         FileUtil.setWorldReadable(File(folder, filename))
 
         // Notify the backend to reload the preferences
-        activity?.sendBroadcast(Intent(ACTION_UPDATE_PREF))
+        context?.sendBroadcast(Intent(ACTION_UPDATE_PREF))
 
         super.onPause()
     }
