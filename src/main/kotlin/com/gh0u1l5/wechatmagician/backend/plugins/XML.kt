@@ -6,6 +6,7 @@ import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.SnsBlacklist
 import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
+import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
@@ -56,7 +57,7 @@ object XML {
             return
         }
         val prompt = preferences!!.getString(
-                "settings_chatting_recall_prompt", str["prompt_recall"])
+                "settings_chatting_recall_prompt", str[PROMPT_RECALL])
         result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
     }
 

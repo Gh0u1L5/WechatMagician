@@ -9,6 +9,7 @@ import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.SnsBlacklist
 import com.gh0u1l5.wechatmagician.storage.SnsDatabase.snsDB
 import com.gh0u1l5.wechatmagician.storage.Strings
+import com.gh0u1l5.wechatmagician.storage.Strings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -143,7 +144,7 @@ object Database {
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(str["label_deleted"], content)?.let { msg ->
+        MessageUtil.notifyInfoDelete(str[LABEL_DELETED], content)?.let { msg ->
             values.remove("sourceType")
             values.put("content", msg)
         }
@@ -151,7 +152,7 @@ object Database {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(str["label_deleted"], curActionBuf)?.let { msg ->
+        MessageUtil.notifyCommentDelete(str[LABEL_DELETED], curActionBuf)?.let { msg ->
             values.remove("commentflag")
             values.put("curActionBuf", msg)
         }
