@@ -108,7 +108,7 @@ object SnsForward {
 
     // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
     @JvmStatic fun cleanTextViewBeforeForwarding() {
-        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == null) {
+        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
             return
         }
 
@@ -118,7 +118,8 @@ object SnsForward {
                 val intent = (param.thisObject as Activity).intent ?: return
                 if (intent.getBooleanExtra("Ksnsforward", false)) {
                     val content = intent.getStringExtra("Kdescription")
-                    val editText = pkg.SnsUploadUIEditTextField!!.get(param.thisObject)
+                    val editTextField = pkg.SnsUploadUIEditTextField
+                    val editText = getObjectField(param.thisObject, editTextField)
                     XposedHelpers.callMethod(editText, "setText", content)
                 }
             }

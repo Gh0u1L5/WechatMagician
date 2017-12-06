@@ -17,7 +17,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.io.File
-import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -59,7 +58,7 @@ object WechatPackage {
 
     var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
-    var SnsUploadUIEditTextField: Field? = null
+    var SnsUploadUIEditTextField = ""
     var SnsUserUI: Class<*>? = null
     var SnsTimeLineUI: Class<*>? = null
 
@@ -174,7 +173,7 @@ object WechatPackage {
                 .firstOrNull("SnsUploadUI")
         SnsUploadUIEditTextField = findFieldsWithType(
                 SnsUploadUI, "$pkgSnsUI.SnsEditText"
-        ).firstOrNull()
+        ).firstOrNull()?.name ?: ""
         SnsUserUI = findClassIfExists("$pkgSnsUI.SnsUserUI", loader)
         SnsTimeLineUI = snsUIClasses
                 .filterByField("android.support.v7.app.ActionBar")
