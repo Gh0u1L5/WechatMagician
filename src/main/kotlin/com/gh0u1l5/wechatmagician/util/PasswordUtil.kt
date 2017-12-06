@@ -8,9 +8,7 @@ import android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.Global.SALT
-import com.gh0u1l5.wechatmagician.Global.SHA_MAGIC_STRING
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.Strings.BUTTON_CANCEL
 import com.gh0u1l5.wechatmagician.storage.Strings.BUTTON_OK
@@ -25,22 +23,12 @@ object PasswordUtil {
 
     private val str = Strings
 
-    fun encryptPassword(preferences: SharedPreferences, key: String) {
-        val password = preferences.getString(key, "")
-        if (password.startsWith(Global.SHA_MAGIC_STRING)) {
-            return // Already encrypted
-        }
-        val sha = MessageDigest
-                .getInstance("SHA-256")
-                .digest((password + SALT).toByteArray())
-                .joinToString(separator = "") { String.format("%02X", it) }
-        preferences.edit()
-                .putString(key, SHA_MAGIC_STRING + sha)
-                .apply()
-    }
+    private fun encryptPassword(password: String): String = MessageDigest
+            .getInstance("SHA-256")
+            .digest((password + SALT).toByteArray())
+            .joinToString(separator = "") { String.format("%02X", it) }
 
-    private fun verifyPassword(encrypted: String, password: String): Boolean {
-        val originSHA = encrypted.drop(SHA_MAGIC_STRING.length)
+    private fun verifyPassword(originSHA: String, password: String): Boolean {
         val inputSHA = MessageDigest
                 .getInstance("SHA-256")
                 .digest((password + SALT).toByteArray())
@@ -100,7 +88,7 @@ object PasswordUtil {
         val message = str[PROMPT_NEW_PASSWORD]
         askPassword(context, title, message) { input ->
             preferences.edit()
-                    .putString(key, input)
+                    .putString(key, encryptPassword(input))
                     .apply()
         }
     }

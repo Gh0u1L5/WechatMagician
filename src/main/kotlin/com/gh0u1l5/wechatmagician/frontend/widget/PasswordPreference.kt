@@ -19,6 +19,11 @@ class PasswordPreference : EditTextPreference {
 
     override fun onClick() {
         val pref = context.getSharedPreferences(PREFERENCE_NAME_SETTINGS, MODE_PRIVATE)
-        PasswordUtil.changePassword(context, "Wechat Magician", pref, key)
+        val encrypted = pref.getString(key, "")
+        if (encrypted == "") {
+            PasswordUtil.createPassword(context, "Wechat Magician", pref, key)
+        } else {
+            PasswordUtil.changePassword(context, "Wechat Magician", pref, key)
+        }
     }
 }
