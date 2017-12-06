@@ -48,11 +48,6 @@ object Database {
                         mainDB = param.thisObject
                     }
                 }
-                if (path.endsWith("SnsMicroMsg.db")) {
-                    if (snsDB !== param.thisObject) {
-                        snsDB = param.thisObject
-                    }
-                }
             }
         })
 

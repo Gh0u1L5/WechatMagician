@@ -67,18 +67,22 @@ object WechatEvents {
     }
 
     // Show a popup menu in SnsTimelineUI
-    fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupPosition): Boolean {
+    fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupPosition?): Boolean {
         val operations = listOf(str[MENU_SNS_FORWARD], str[MENU_SNS_SCREENSHOT])
         ListPopupWindow(parent.context).apply {
-            // Calculate list view size
-            val location = IntArray(2)
-            position.anchor.getLocationOnScreen(location)
-            val bottom = location[1] + position.anchor.height
+            if (position != null) {
+                // Calculate list view size
+                val location = IntArray(2)
+                position.anchor.getLocationOnScreen(location)
+                val bottom = location[1] + position.anchor.height
 
-            // Set position for popup window
-            anchorView = position.anchor
-            horizontalOffset = position.x - position.anchor.left
-            verticalOffset = position.y - bottom
+                // Set position for popup window
+                anchorView = position.anchor
+                horizontalOffset = position.x - position.anchor.left
+                verticalOffset = position.y - bottom
+            } else {
+                anchorView = view
+            }
 
             // Set general properties for popup window
             width = parent.context.dp2px(100)
