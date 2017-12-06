@@ -36,6 +36,17 @@ object Global {
     val SETTINGS_SNS_KEYWORD_BLACKLIST          = "settings_sns_keyword_blacklist"
     val SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT  = "settings_sns_keyword_blacklist_content"
 
+    val DEVELOPER_UI_TOUCH_EVENT      = "developer_ui_touch_event"
+    val DEVELOPER_UI_TRACE_ACTIVITIES = "developer_ui_trace_activities"
+    val DEVELOPER_UI_XLOG             = "developer_ui_xlog"
+    val DEVELOPER_DATABASE_QUERY      = "developer_database_query"
+    val DEVELOPER_DATABASE_INSERT     = "developer_database_insert"
+    val DEVELOPER_DATABASE_UPDATE     = "developer_database_update"
+    val DEVELOPER_DATABASE_DELETE     = "developer_database_delete"
+    val DEVELOPER_DATABASE_EXECUTE    = "developer_database_execute"
+    val DEVELOPER_TRACE_LOGCAT        = "developer_trace_logcat"
+    val DEVELOPER_XML_PARSER          = "developer_xml_parser"
+
     val ACTION_UPDATE_PREF = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
     val PREFERENCE_STRING_LIST_KEYS = listOf(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT)
 }
