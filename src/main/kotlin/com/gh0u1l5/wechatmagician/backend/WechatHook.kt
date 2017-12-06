@@ -91,6 +91,12 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
         tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
 
+        val pluginSecretFriend = SecretFriend
+        pluginSecretFriend.init(settings)
+        tryHook(pluginSecretFriend::tamperAdapterCount)
+        tryHook(pluginSecretFriend::hideSecretFriend)
+        tryHook(pluginSecretFriend::hideSecretFriendConversation)
+
         val pluginLimits = Limits
         pluginLimits.init(settings)
         tryHook(pluginLimits::breakSelectPhotosLimit)
