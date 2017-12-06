@@ -4,6 +4,7 @@ import com.gh0u1l5.wechatmagician.util.MessageUtil.longToDecimalString
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.callMethod
 
 object SnsDatabase {
     // snsDB is the database that stores SNS information.
@@ -14,22 +15,26 @@ object SnsDatabase {
         if (rowId == null || rowId == "") return null
         val db = snsDB ?: return null
 
+        var cursor: Any? = null
         try {
-            val cursor = XposedHelpers.callMethod(db, "query",
+            cursor = callMethod(db, "query",
                     "SnsInfo", arrayOf("snsId"), "rowId=?", arrayOf(rowId),
                     null, null, null, null
             )
-            val count = XposedHelpers.callMethod(cursor, "getCount")
+            val count = callMethod(cursor, "getCount")
             if (count != 1) {
                 XposedBridge.log("DB => Unexpected count $count for rowId $rowId in table SnsInfo")
                 return null
             }
-            XposedHelpers.callMethod(cursor, "moveToFirst")
+            callMethod(cursor, "moveToFirst")
             val snsId = XposedHelpers.callMethod(cursor, "getLong", 0)
-            XposedHelpers.callMethod(cursor, "close")
             return longToDecimalString(snsId as Long)
         } catch (e: Throwable) {
             log(e); return null
+        } finally {
+            if (cursor != null) {
+                callMethod(cursor, "close")
+            }
         }
     }
 }
