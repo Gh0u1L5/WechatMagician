@@ -2,10 +2,10 @@ package com.gh0u1l5.wechatmagician.storage
 
 import de.robv.android.xposed.XposedBridge.log
 
-// Strings describes the localized strings used by the module.
+// LocalizedStrings describes the localized strings used by the module.
 // NOTE: we use this object instead of Android default localized resources
 // to support devices that cannot use resource hooks.
-object Strings {
+object LocalizedStrings {
 
     val TITLE_SECRET_FRIEND           = "title_secret_friend"
     val PROMPT_NEW_PASSWORD           = "prompt_new_password"

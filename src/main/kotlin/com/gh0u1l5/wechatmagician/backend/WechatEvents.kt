@@ -7,11 +7,11 @@ import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupPosition
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.MENU_SNS_FORWARD
-import com.gh0u1l5.wechatmagician.storage.Strings.MENU_SNS_SCREENSHOT
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_SCREENSHOT
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_WAIT
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_FORWARD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SCREENSHOT
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_WAIT
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.ImageUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil
@@ -21,7 +21,7 @@ import java.lang.reflect.Field
 
 object WechatEvents {
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
 
     // Handle the logic about "select all" check box in SelectContactUI

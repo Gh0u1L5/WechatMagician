@@ -12,9 +12,9 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatResHook
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.BUTTON_SELECT_ALL
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -27,7 +27,7 @@ object Limits {
         preferences = _preferences
     }
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
     private val events = WechatEvents
 

@@ -5,8 +5,8 @@ import android.content.Context.MODE_PRIVATE
 import android.support.v7.preference.SwitchPreferenceCompat
 import android.util.AttributeSet
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_VERIFY_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 
 class PasswordSwitchPreference : SwitchPreferenceCompat {
@@ -32,7 +32,7 @@ class PasswordSwitchPreference : SwitchPreferenceCompat {
             return super.onClick()
         }
 
-        val message = Strings[PROMPT_VERIFY_PASSWORD]
+        val message = LocalizedStrings[PROMPT_VERIFY_PASSWORD]
         PasswordUtil.askPasswordWithVerify(context, "Wechat Magician", message, encrypted) {
             super.onClick()
         }

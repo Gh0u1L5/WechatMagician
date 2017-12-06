@@ -2,9 +2,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -20,7 +20,7 @@ object XML {
         preferences = _preferences
     }
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
 
     @JvmStatic fun hookXMLParse() {

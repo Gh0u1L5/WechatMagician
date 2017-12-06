@@ -9,19 +9,19 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.SALT
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.BUTTON_CANCEL
-import com.gh0u1l5.wechatmagician.storage.Strings.BUTTON_OK
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_CORRECT_PASSWORD
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_NEW_PASSWORD
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_VERIFY_PASSWORD
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_WRONG_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_CANCEL
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_OK
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_CORRECT_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_NEW_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_WRONG_PASSWORD
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import java.security.MessageDigest
 
 object PasswordUtil {
 
-    private val str = Strings
+    private val str = LocalizedStrings
 
     private fun encryptPassword(password: String): String = MessageDigest
             .getInstance("SHA-256")

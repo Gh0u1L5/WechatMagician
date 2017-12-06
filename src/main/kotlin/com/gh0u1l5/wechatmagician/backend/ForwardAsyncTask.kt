@@ -5,8 +5,8 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_SNS_INVALID
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SNS_INVALID
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadImage
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadThumb
@@ -20,7 +20,7 @@ import kotlin.concurrent.thread
 // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
 class ForwardAsyncTask(snsId: Long, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
-    private val str = Strings
+    private val str = LocalizedStrings
 
     private val snsId = longToDecimalString(snsId)
     private val snsInfo = SnsCache[this.snsId]

@@ -9,11 +9,11 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatus
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_SET_PASSWORD
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_VERIFY_PASSWORD
-import com.gh0u1l5.wechatmagician.storage.Strings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
@@ -26,7 +26,7 @@ object SearchBar {
         preferences = _preferences
     }
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
 
     private fun handleCommand(context: Context, command: String): Boolean {

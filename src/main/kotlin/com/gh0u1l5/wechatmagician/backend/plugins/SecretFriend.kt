@@ -7,9 +7,9 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_USER_NOT_FOUND
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_USER_NOT_FOUND
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.getUsernameFromNickname
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import de.robv.android.xposed.XC_MethodHook
@@ -25,7 +25,7 @@ object SecretFriend {
         preferences = _preferences
     }
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
 
     // These are the cache of adapter objects

@@ -4,9 +4,9 @@ import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.Strings
-import com.gh0u1l5.wechatmagician.storage.Strings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.mainDB
 import com.gh0u1l5.wechatmagician.storage.database.SnsDatabase.snsDB
@@ -28,7 +28,7 @@ object Database {
         preferences = _preferences
     }
 
-    private val str = Strings
+    private val str = LocalizedStrings
     private val pkg = WechatPackage
 
     @JvmStatic fun hookDatabase() {
