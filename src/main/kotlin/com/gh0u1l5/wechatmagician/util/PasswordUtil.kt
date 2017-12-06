@@ -84,20 +84,21 @@ object PasswordUtil {
         }
     }
 
-    fun createPassword(context: Context, title: String, preferences: SharedPreferences, key: String) {
+    fun createPassword(context: Context, title: String, preferences: SharedPreferences, key: String, onFinish: (String) -> Unit = {}) {
         val message = str[PROMPT_NEW_PASSWORD]
         askPassword(context, title, message) { input ->
             preferences.edit()
                     .putString(key, encryptPassword(input))
                     .apply()
+            onFinish(input)
         }
     }
 
-    fun changePassword(context: Context, title: String, preferences: SharedPreferences, key: String) {
+    fun changePassword(context: Context, title: String, preferences: SharedPreferences, key: String, onFinish: (String) -> Unit = {}) {
         val message = str[PROMPT_VERIFY_PASSWORD]
         val encrypted = preferences.getString(key, "")
         askPasswordWithVerify(context, title, message, encrypted) {
-            createPassword(context, title, preferences, key)
+            createPassword(context, title, preferences, key, onFinish)
         }
     }
 }

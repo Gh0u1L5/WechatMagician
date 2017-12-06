@@ -21,20 +21,24 @@ class PasswordSwitchPreference : SwitchPreferenceCompat {
 
     override fun onClick() {
         val pref = context.getSharedPreferences(PREFERENCE_NAME_SETTINGS, MODE_PRIVATE)
+        val encrypted = pref.getString("${key}_password", "")
 
         val status = pref.getBoolean(key, false)
-        if (!status) {
-            return super.onClick()
-        }
-
-        val encrypted = pref.getString("${key}_password", "")
-        if (encrypted == "") {
-            return super.onClick()
-        }
-
-        val message = LocalizedStrings[PROMPT_VERIFY_PASSWORD]
-        PasswordUtil.askPasswordWithVerify(context, "Wechat Magician", message, encrypted) {
-            super.onClick()
+        if (status) { // close
+            if (encrypted == "") {
+                return super.onClick()
+            }
+            val message = LocalizedStrings[PROMPT_VERIFY_PASSWORD]
+            PasswordUtil.askPasswordWithVerify(context, "Wechat Magician", message, encrypted) {
+                super.onClick()
+            }
+        } else { // open
+            if (encrypted != "") {
+                return super.onClick()
+            }
+            PasswordUtil.createPassword(context, "Wechat Magician", pref, key) {
+                super.onClick()
+            }
         }
     }
 }
