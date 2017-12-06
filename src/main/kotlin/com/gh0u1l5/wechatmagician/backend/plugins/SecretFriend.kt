@@ -8,6 +8,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_USER_NOT_FOUND
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -16,7 +17,6 @@ import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.XposedHelpers.getObjectField
-import java.util.concurrent.ConcurrentHashMap
 
 object SecretFriend {
 
@@ -33,15 +33,6 @@ object SecretFriend {
     @Volatile var addressAdapter: Any? = null
     @Volatile var conversationAdapter: Any? = null
 
-    // hideTable records the index of items we need to hide
-    private val hideTable: MutableMap<BaseAdapter, Set<Int>> = ConcurrentHashMap()
-
-    private fun notifyAdapter(adapter: Any?) {
-        if (adapter is BaseAdapter) {
-            adapter.notifyDataSetChanged()
-        }
-    }
-
     fun changeUserStatus(context: Context, nickname: String, isSecret: Boolean) {
         val pref = context.getSharedPreferences(PREFERENCE_NAME_SECRET_FRIEND, MODE_PRIVATE)
         val username = getUsernameFromNickname(nickname)
@@ -56,8 +47,8 @@ object SecretFriend {
             SecretFriendList -= username
         }
         pref.edit().putBoolean(username, isSecret).apply()
-        notifyAdapter(addressAdapter)
-        notifyAdapter(conversationAdapter)
+        AdapterHider.notifyAdapter(addressAdapter)
+        AdapterHider.notifyAdapter(conversationAdapter)
     }
 
     private fun hideItemView(param: XC_MethodHook.MethodHookParam) {
@@ -67,8 +58,7 @@ object SecretFriend {
 
         val adapter = param.thisObject as BaseAdapter
         val index = param.args[0] as Int
-        val list = hideTable[adapter] ?: return
-        param.args[0] = index + list.filter { it <= index }.size
+        param.args[0] = AdapterHider.onGetView(adapter, index)
     }
 
     private fun updateHideCache(param: XC_MethodHook.MethodHookParam) {
@@ -77,12 +67,10 @@ object SecretFriend {
         }
 
         val adapter = param.thisObject as BaseAdapter
-        hideTable[adapter] = setOf()
-        hideTable[adapter] = (0 until adapter.count).filter { index ->
-            val item = adapter.getItem(index)
+        AdapterHider.onDataSetChanged(adapter) { item ->
             val username = getObjectField(item, "field_username")
             username in SecretFriendList
-        }.toSet()
+        }
     }
 
     @JvmStatic fun tamperAdapterCount() {
@@ -97,8 +85,7 @@ object SecretFriend {
                 }
                 val adapter = param.thisObject as BaseAdapter
                 val count = param.result as Int
-                val hideSize = hideTable[adapter]?.size ?: 0
-                param.result = count - hideSize
+                param.result = AdapterHider.onGetCount(adapter, count)
             }
         })
     }
