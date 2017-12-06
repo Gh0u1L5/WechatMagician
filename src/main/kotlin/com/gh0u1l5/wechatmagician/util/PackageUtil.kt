@@ -19,6 +19,13 @@ object PackageUtil {
             return Classes(classes.filter { it.superclass == superClass })
         }
 
+        fun filterByEnclosingClass(enclosingClass: Class<*>?): Classes {
+            if (enclosingClass == null) {
+                return Classes(listOf())
+            }
+            return Classes(classes.filter { it.enclosingClass == enclosingClass })
+        }
+
         fun filterByMethod(returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>): Classes {
             return Classes(classes.filter {
                 val method = PackageUtil.findMethodExactIfExists(it, methodName, *parameterTypes)

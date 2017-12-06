@@ -60,6 +60,7 @@ object WechatPackage {
 
     var AddressUI: Class<*>? = null
     var ContactLongClickListener: Class<*>? = null
+    var MainUI: Class<*>? = null
     var ConversationLongClickListener: Class<*>? = null
 
     var SnsActivity: Class<*>? = null
@@ -170,9 +171,14 @@ object WechatPackage {
 
 
         AddressUI = findClassIfExists("$pkgUI.contact.AddressUI.a", loader)
-        ContactLongClickListener = PackageUtil.Classes(AddressUI?.declaredClasses?.toList() ?: listOf())
+        ContactLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.contact")
+                .filterByEnclosingClass(AddressUI)
                 .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
                 .firstOrNull("ContactLongClickListener")
+        MainUI = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
+                .filterByMethod(C.Int, "getLayoutId")
+                .filterByMethod(null, "onConfigurationChanged", C.Configuration)
+                .firstOrNull("MainUI")
         ConversationLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
                 .filterByMethod(null, "onCreateContextMenu", C.ContextMenu, C.View, C.ContextMenuInfo)
                 .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
