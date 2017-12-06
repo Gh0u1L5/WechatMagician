@@ -69,9 +69,10 @@ object Strings {
     )
 
     operator fun get(key: String): String {
-        val value = (resources[language] ?: resources["zh"])!![key]
+        val res = resources[language] ?: resources["zh"]
+        val value = res!![key]
         if (value == null) {
-            log("RES => Unknown resource: $key")
+            log("RES => Resource Missing: $key")
             return "???"
         }
         return value
