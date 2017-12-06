@@ -5,6 +5,6 @@ object SnsBlacklist : BaseList<String?>() {
         if (value == null) {
             return
         }
-        super.plusAssign(value.padStart(20, '0'))
+        super.plusAssign(value.padStart(25, '0'))
     }
 }
