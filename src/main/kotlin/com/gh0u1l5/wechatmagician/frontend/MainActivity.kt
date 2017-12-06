@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.frontend.fragments.DonateFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
@@ -64,10 +66,10 @@ class MainActivity : AppCompatActivity(),
                 StatusFragment.newInstance()
             }
             R.id.nav_settings -> {
-                PrefFragment.newInstance(R.xml.pref_settings, "settings")
+                PrefFragment.newInstance(R.xml.pref_settings, PREFERENCE_NAME_SETTINGS)
             }
             R.id.nav_developer -> {
-                PrefFragment.newInstance(R.xml.pref_developer, "developer")
+                PrefFragment.newInstance(R.xml.pref_developer, PREFERENCE_NAME_DEVELOPER)
             }
             R.id.nav_support -> {
                 SupportFragment.newInstance()

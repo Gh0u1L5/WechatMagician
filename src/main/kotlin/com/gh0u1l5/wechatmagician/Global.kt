@@ -23,4 +23,8 @@ object Global {
 
     val ACTION_UPDATE_PREF = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
     val PREFERENCE_STRING_LIST_KEYS = listOf("settings_sns_keyword_blacklist_content")
+
+    val PREFERENCE_NAME_SETTINGS      = "settings"
+    val PREFERENCE_NAME_DEVELOPER     = "developer"
+    val PREFERENCE_NAME_SECRET_FRIEND = "wechat-magician-secret-friend"
 }

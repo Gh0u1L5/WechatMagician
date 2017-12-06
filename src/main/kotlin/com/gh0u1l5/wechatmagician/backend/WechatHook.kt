@@ -4,6 +4,8 @@ import android.content.Context
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -66,8 +68,8 @@ class WechatHook : IXposedHookLoadPackage {
         val loader = lpparam.classLoader
 
         WechatPackage.init(lpparam)
-        settings.load(context, "settings")
-        developer.load(context, "developer")
+        settings.load(context, PREFERENCE_NAME_SETTINGS)
+        developer.load(context, PREFERENCE_NAME_DEVELOPER)
 
         val pluginDeveloper = Developer
         pluginDeveloper.init(loader, developer)
