@@ -55,6 +55,10 @@
             android:key="settings_auto_login"
             android:summary="@string/pref_toggle_auto_login_summary"
             android:title="@string/pref_toggle_auto_login" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="settings_disable_unread_count"
+            android:title="@string/pref_disable_message_unread_count" />
         <com.gh0u1l5.wechatmagician.frontend.widget.PasswordSwitchPreference
             android:defaultValue="false"
             android:key="settings_secret_friend"

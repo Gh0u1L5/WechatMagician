@@ -86,6 +86,10 @@ class WechatHook : IXposedHookLoadPackage {
         pluginAutoLogin.init(settings)
         tryHook(pluginAutoLogin::enableAutoLogin)
 
+        val pluginUnreadCount = UnreadCount
+        pluginUnreadCount.init(settings)
+        tryHook(pluginUnreadCount::disableMessageUnreadCount)
+
         val pluginSnsForward = SnsForward
         tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
         tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)

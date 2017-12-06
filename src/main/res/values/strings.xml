@@ -71,6 +71,7 @@
     <string name="pref_category_settings_miscellaneous">Miscellaneous</string>
     <string name="pref_toggle_auto_login">Toggle Auto Login</string>
     <string name="pref_toggle_auto_login_summary">Automatically agree any login requests from Wechat PC client (take your own risk).</string>
+    <string name="pref_disable_message_unread_count">Disable Message Unread Count</string>
     <string name="pref_toggle_secret_friend">Enable Secret Friends</string>
     <string name="pref_text_secret_friend_password">Configure Password for Secret Friends</string>
 
