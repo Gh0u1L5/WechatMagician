@@ -16,6 +16,10 @@
             android:title="@string/pref_toggle_trace_activities" />
         <SwitchPreference
             android:defaultValue="false"
+            android:key="developer_ui_dump_popup_menu"
+            android:title="@string/pref_toggle_dump_popup_menu" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="developer_ui_xlog"
             android:title="@string/pref_toggle_xlog" />
     </PreferenceCategory>

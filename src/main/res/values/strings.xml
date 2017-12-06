@@ -38,6 +38,7 @@
     <string name="pref_category_ui">UI Debug Options</string>
     <string name="pref_toggle_touch_event">Trace Touch Events</string>
     <string name="pref_toggle_trace_activities">Trace Activities</string>
+    <string name="pref_toggle_dump_popup_menu">Dump Popup Menu</string>
     <string name="pref_toggle_xlog">Toggle Tencent XLog</string>
 
     <string name="pref_category_database">Database Debug Options</string>

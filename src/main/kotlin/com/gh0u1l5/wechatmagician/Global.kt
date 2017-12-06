@@ -38,6 +38,7 @@ object Global {
 
     val DEVELOPER_UI_TOUCH_EVENT      = "developer_ui_touch_event"
     val DEVELOPER_UI_TRACE_ACTIVITIES = "developer_ui_trace_activities"
+    val DEVELOPER_UI_DUMP_POPUP_MENU  = "developer_ui_dump_popup_menu"
     val DEVELOPER_UI_XLOG             = "developer_ui_xlog"
     val DEVELOPER_DATABASE_QUERY      = "developer_database_query"
     val DEVELOPER_DATABASE_INSERT     = "developer_database_insert"

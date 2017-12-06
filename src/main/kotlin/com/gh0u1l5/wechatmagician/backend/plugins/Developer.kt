@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ListAdapter
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_DATABASE_DELETE
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_DATABASE_EXECUTE
@@ -11,6 +12,7 @@ import com.gh0u1l5.wechatmagician.Global.DEVELOPER_DATABASE_INSERT
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_DATABASE_QUERY
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_DATABASE_UPDATE
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_TRACE_LOGCAT
+import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_DUMP_POPUP_MENU
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_TOUCH_EVENT
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_TRACE_ACTIVITIES
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_XLOG
@@ -21,8 +23,7 @@ import com.gh0u1l5.wechatmagician.util.MessageUtil.argsToString
 import com.gh0u1l5.wechatmagician.util.MessageUtil.bundleToString
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge.hookAllMethods
-import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedBridge.*
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Developer {
@@ -77,6 +78,37 @@ object Developer {
                             "${param.thisObject.javaClass}, " +
                             "intent => ${bundleToString(intent?.extras)}, " +
                             "bundle => ${bundleToString(bundle)}")
+                }
+            })
+        }
+    }
+
+    // Hook MMListPopupWindow to trace every popup menu.
+    @JvmStatic fun dumpPopupMenu() {
+        if (pkg.MMListPopupWindow == null) {
+            return
+        }
+
+        if (preferences!!.getBoolean(DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
+            hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    val menu = param.thisObject
+                    val context = param.args[0]
+                    log("POPUP => menu.class = ${menu.javaClass}")
+                    log("POPUP => context.class = ${context.javaClass}")
+                }
+            })
+
+            findAndHookMethod(
+                    pkg.MMListPopupWindow, "setAdapter",
+                    C.ListAdapter, object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    val adapter = param.args[0] as ListAdapter? ?: return
+                    log("POPUP => adapter.count = ${adapter.count}")
+                    (0 until adapter.count).forEach { index ->
+                        log("POPUP => adapter.item[$index] = ${adapter.getItem(index)}")
+                        log("POPUP => adapter.item[$index].class = ${adapter.getItem(index).javaClass}")
+                    }
                 }
             })
         }

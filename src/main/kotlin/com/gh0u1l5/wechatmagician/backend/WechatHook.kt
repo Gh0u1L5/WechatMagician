@@ -77,6 +77,7 @@ class WechatHook : IXposedHookLoadPackage {
         pluginDeveloper.init(loader, developer)
         tryHook(pluginDeveloper::traceTouchEvents)
         tryHook(pluginDeveloper::traceActivities)
+        tryHook(pluginDeveloper::dumpPopupMenu)
         tryHook(pluginDeveloper::enableXLog)
         tryHook(pluginDeveloper::traceDatabase)
         tryHook(pluginDeveloper::traceLogCat)

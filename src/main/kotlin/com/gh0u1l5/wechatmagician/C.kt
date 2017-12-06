@@ -20,6 +20,7 @@ object C {
     val Context = android.content.Context::class.java
     val Intent = android.content.Intent::class.java
     val KeyEvent = android.view.KeyEvent::class.java
+    val ListAdapter = android.widget.ListAdapter::class.java
     val ListView = android.widget.ListView::class.java
     val Menu = android.view.Menu::class.java
     val MotionEvent = android.view.MotionEvent::class.java
