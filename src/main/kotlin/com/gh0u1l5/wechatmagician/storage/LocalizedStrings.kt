@@ -31,8 +31,8 @@ object LocalizedStrings {
     private val resources: Map<String, Map<String, String>> = mapOf(
             "zh" to mapOf(
                     TITLE_SECRET_FRIEND           to "密友",
-                    PROMPT_NEW_PASSWORD           to "请输入新密码",
                     BUTTON_HIDE_FRIEND            to "隐藏好友",
+                    PROMPT_NEW_PASSWORD           to "请设定新密码",
                     PROMPT_VERIFY_PASSWORD        to "请输入解锁密码",
                     PROMPT_USER_NOT_FOUND         to "用户不存在",
                     PROMPT_SET_PASSWORD           to "请先设置密码",
