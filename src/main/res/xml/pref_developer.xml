@@ -44,6 +44,10 @@
     <PreferenceCategory android:title="@string/pref_category_developer_miscellaneous">
         <SwitchPreference
             android:defaultValue="false"
+            android:key="developer_trace_logcat"
+            android:title="@string/pref_toggle_trace_logcat" />
+        <SwitchPreference
+            android:defaultValue="false"
             android:key="developer_xml_parser"
             android:title="@string/pref_toggle_xml_parser" />
     </PreferenceCategory>

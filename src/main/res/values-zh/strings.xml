@@ -48,6 +48,7 @@
     <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
 
     <string name="pref_category_developer_miscellaneous">其他逆向工具</string>
+    <string name="pref_toggle_trace_logcat">跟踪LogCat事件</string>
     <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 
     <string name="pref_category_interface">用户界面</string>

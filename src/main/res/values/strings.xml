@@ -48,6 +48,7 @@
     <string name="pref_toggle_database_execute">Trace Execute</string>
 
     <string name="pref_category_developer_miscellaneous">Miscellaneous</string>
+    <string name="pref_toggle_trace_logcat">Trace LogCat</string>
     <string name="pref_toggle_xml_parser">Trace XML Parser</string>
 
     <string name="pref_category_interface">Interface</string>
