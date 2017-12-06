@@ -65,6 +65,8 @@ class Preferences : SharedPreferences {
             // Ignore this one
         } catch (e: Throwable) {
             log("PREF => $e")
+        } finally {
+            cacheStringList()
         }
     }
 
