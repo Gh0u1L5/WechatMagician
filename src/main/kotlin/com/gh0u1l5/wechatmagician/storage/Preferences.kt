@@ -72,7 +72,7 @@ class Preferences : SharedPreferences {
 
     fun cacheStringList() {
         PREFERENCE_STRING_LIST_KEYS.forEach { key ->
-            listCache[key] = getString(key, "").split(" ")
+            listCache[key] = getString(key, "").split(" ").filter { it.isNotEmpty() }
         }
     }
 

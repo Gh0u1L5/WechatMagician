@@ -69,12 +69,14 @@ object XML {
         if (!preferences!!.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)) {
             return
         }
-        thread(start = true) {
-            val content = result[".TimelineObject.contentDesc"] ?: return@thread
-            val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, listOf())
-            list.filter { content.contains(it) }.forEach {
+
+        val content = result[".TimelineObject.contentDesc"] ?: return
+        val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, listOf())
+        list.forEach {
+            if (content.contains(it)) {
                 SnsBlacklist += result[".TimelineObject.id"]
-                return@thread
+                result[".TimelineObject.private"] = "1"
+                return
             }
         }
     }
