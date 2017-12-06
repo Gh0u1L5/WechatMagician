@@ -11,11 +11,13 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
+import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import net.dongliu.apk.parser.bean.DexClass
 import java.io.File
+import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -29,11 +31,15 @@ object WechatPackage {
     private val statusLock = ReentrantReadWriteLock()
     private val status: HashMap<String, Boolean> = hashMapOf()
 
+    var LogCat: Class<*>? = null
     var XLogSetup: Class<*>? = null
     var WebWXLoginUI: Class<*>? = null
     var RemittanceAdapter: Class<*>? = null
+    var ActionBarEditText: Class<*>? = null
+
     var WXCustomScheme: Class<*>? = null
     var WXCustomSchemeEntryMethod: Method? = null
+
     var EncEngine: Class<*>? = null
     var EncEngineEDMethod: Method? = null
 
@@ -47,9 +53,13 @@ object WechatPackage {
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
 
+    var MMBaseAdapter: Class<*>? = null
+    var AddressAdapter: Class<*>? = null
+    var ConversationWithCacheAdapter: Class<*>? = null
+
     var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
-    var SnsUploadUIEditTextField = ""
+    var SnsUploadUIEditTextField: Field? = null
     var SnsUserUI: Class<*>? = null
     var SnsTimeLineUI: Class<*>? = null
 
@@ -92,12 +102,18 @@ object WechatPackage {
         }
 
 
+        LogCat = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.sdk.platformtools")
+                .filterByMethod(null, "printErrStackTrace", C.String, C.Throwable, C.String, C.ObjectArray)
+                .firstOrNull("LogCat")
         XLogSetup = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.xlog.app.XLogSetup", loader)
         WebWXLoginUI = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.plugin.webwx.ui.ExtDeviceWXLoginUI", loader)
         RemittanceAdapter = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.plugin.remittance.ui.RemittanceAdapterUI", loader)
+        ActionBarEditText = findClassIfExists(
+                "$WECHAT_PACKAGE_NAME.ui.tools.ActionBarSearchView.ActionBarEditText", loader)
+
         WXCustomScheme = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
         WXCustomSchemeEntryMethod = findMethodsByExactParameters(
@@ -133,6 +149,20 @@ object WechatPackage {
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
 
 
+        AddressAdapter = findClassesFromPackage(loader, classes, "$pkgUI.contact")
+                .filterByMethod(null, "pause")
+                .firstOrNull("AddressAdapter")
+        ConversationWithCacheAdapter = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
+                .filterByMethod(null, "clearCache")
+                .firstOrNull("ConversationWithCacheAdapter")
+        if (AddressAdapter != null && ConversationWithCacheAdapter != null) {
+            if (AddressAdapter?.superclass != ConversationWithCacheAdapter?.superclass) {
+                log("Unexpected base adapter: ${AddressAdapter?.superclass} and ${ConversationWithCacheAdapter?.superclass}")
+            }
+            MMBaseAdapter = AddressAdapter?.superclass
+        }
+
+
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
         val snsUIClasses = findClassesFromPackage(loader, classes, pkgSnsUI)
         SnsActivity = snsUIClasses
@@ -144,7 +174,7 @@ object WechatPackage {
                 .firstOrNull("SnsUploadUI")
         SnsUploadUIEditTextField = findFieldsWithType(
                 SnsUploadUI, "$pkgSnsUI.SnsEditText"
-        ).firstOrNull()?.name ?: ""
+        ).firstOrNull()
         SnsUserUI = findClassIfExists("$pkgSnsUI.SnsUserUI", loader)
         SnsTimeLineUI = snsUIClasses
                 .filterByField("android.support.v7.app.ActionBar")

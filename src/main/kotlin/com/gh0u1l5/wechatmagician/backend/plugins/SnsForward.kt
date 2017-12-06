@@ -14,7 +14,7 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.*
 
-object SnsUI {
+object SnsForward {
 
     private val pkg = WechatPackage
     private val events = WechatEvents
@@ -79,7 +79,7 @@ object SnsUI {
 
     // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
     @JvmStatic fun cleanTextViewBeforeForwarding() {
-        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
+        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == null) {
             return
         }
 
@@ -89,9 +89,7 @@ object SnsUI {
                 val intent = (param.thisObject as Activity).intent ?: return
                 if (intent.getBooleanExtra("Ksnsforward", false)) {
                     val content = intent.getStringExtra("Kdescription")
-                    val editText = XposedHelpers.getObjectField(
-                            param.thisObject, pkg.SnsUploadUIEditTextField
-                    )
+                    val editText = pkg.SnsUploadUIEditTextField!!.get(param.thisObject)
                     XposedHelpers.callMethod(editText, "setText", content)
                 }
             }
