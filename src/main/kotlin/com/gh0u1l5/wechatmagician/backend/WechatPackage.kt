@@ -149,6 +149,7 @@ object WechatPackage {
 
 
         val pkgUI = "$WECHAT_PACKAGE_NAME.ui"
+        LauncherUI = findClassIfExists("$pkgUI.LauncherUI", loader)
         MMActivity = findClassIfExists("$pkgUI.MMActivity", loader)
         MMFragmentActivity = findClassIfExists("$pkgUI.MMFragmentActivity", loader)
         MMListPopupWindow = findClassIfExists("$pkgUI.base.MMListPopupWindow", loader)
@@ -179,11 +180,10 @@ object WechatPackage {
 
 
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
-        val snsUIClasses = findClassesFromPackage(loader, classes, pkgSnsUI)
-        SnsActivity = snsUIClasses
+        SnsActivity = findClassesFromPackage(loader, classes, pkgSnsUI)
                 .filterByField("$pkgUI.base.MMPullDownView")
                 .firstOrNull("SnsActivity")
-        SnsUploadUI = snsUIClasses
+        SnsUploadUI = findClassesFromPackage(loader, classes, pkgSnsUI)
                 .filterByField("$pkgSnsUI.LocationWidget")
                 .filterByField("$pkgSnsUI.SnsUploadSayFooter")
                 .firstOrNull("SnsUploadUI")
@@ -191,7 +191,7 @@ object WechatPackage {
                 SnsUploadUI, "$pkgSnsUI.SnsEditText"
         ).firstOrNull()?.name ?: ""
         SnsUserUI = findClassIfExists("$pkgSnsUI.SnsUserUI", loader)
-        SnsTimeLineUI = snsUIClasses
+        SnsTimeLineUI = findClassesFromPackage(loader, classes, pkgSnsUI)
                 .filterByField("android.support.v7.app.ActionBar")
                 .firstOrNull("SnsTimeLineUI")
 
@@ -205,11 +205,10 @@ object WechatPackage {
         ).firstOrNull()
 
 
-        val storageClasses = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
-        MsgInfoClass = storageClasses
+        MsgInfoClass = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
                 .filterByMethod(C.Boolean, "isSystem")
                 .firstOrNull("MsgInfoClass")
-        ContactInfoClass = storageClasses
+        ContactInfoClass = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
                 .filterByMethod(C.String, "getCityCode")
                 .filterByMethod(C.String, "getCountryCode")
                 .firstOrNull("ContactInfoClass")
@@ -217,11 +216,11 @@ object WechatPackage {
         if (MsgInfoClass != null) {
             MsgStorageClass = when {
                 version >= Version("6.5.8") ->
-                    storageClasses
+                    findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
                             .filterByMethod(C.Long, MsgInfoClass!!, C.Boolean)
                             .firstOrNull("MsgStorageClass")
                 else ->
-                    storageClasses
+                    findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.storage")
                             .filterByMethod(C.Long, MsgInfoClass!!)
                             .firstOrNull("MsgStorageClass")
             }
@@ -245,8 +244,7 @@ object WechatPackage {
 //        ).firstOrNull()?.name ?: ""
 
 
-        val platformClasses = findClassesFromPackage(loader, classes,"$WECHAT_PACKAGE_NAME.sdk.platformtools")
-        XMLParserClass = platformClasses
+        XMLParserClass = findClassesFromPackage(loader, classes,"$WECHAT_PACKAGE_NAME.sdk.platformtools")
                 .filterByMethod(C.Map, C.String, C.String)
                 .firstOrNull("XMLParserClass")
         XMLParseMethod = findMethodsByExactParameters(

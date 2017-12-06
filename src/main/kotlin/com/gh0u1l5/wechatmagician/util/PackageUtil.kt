@@ -54,6 +54,9 @@ object PackageUtil {
         }
     }
 
+    // classesCache stores the result of findClassesFromPackage to speed up next search.
+    private val classesCache: MutableMap<Pair<String, Int>, Classes> = HashMap()
+
     // shadowCopy copy all the fields of the object obj into the object copy.
     fun shadowCopy(obj: Any, copy: Any, clazz: Class<*>? = obj.javaClass) {
         if (clazz == null) {
@@ -82,7 +85,11 @@ object PackageUtil {
     fun findClassesFromPackage(
             loader: ClassLoader, classes: Array<DexClass>, packageName: String, depth: Int = 0
     ): Classes {
-        return Classes(classes.filter predicate@ {
+        if ((packageName to depth) in classesCache) {
+            return classesCache[packageName to depth]!!
+        }
+
+        val result = Classes(classes.filter predicate@ {
             if (depth == 0) {
                 return@predicate it.packageName == packageName
             }
@@ -91,6 +98,8 @@ object PackageUtil {
                     it.packageName.drop(packageName.length).count{it == '.'} == depth
             return@predicate satisfyPrefix && satisfyDepth
         }.mapNotNull { findClassIfExists(getClassName(it), loader) })
+        classesCache[packageName to depth] = result
+        return result
     }
 
     // findMethodExactIfExists looks up and returns a method if it exists, otherwise it returns null.
