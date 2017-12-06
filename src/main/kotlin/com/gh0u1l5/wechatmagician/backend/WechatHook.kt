@@ -118,6 +118,10 @@ class WechatHook : IXposedHookLoadPackage {
         val pluginUriRouter = UriRouter
         tryHook(pluginUriRouter::hijackUriRouter)
 
+        val pluginSearchBar = SearchBar
+        pluginSearchBar.init(settings)
+        tryHook(pluginSearchBar::hijackSearchBar)
+
         thread(start = true) {
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
