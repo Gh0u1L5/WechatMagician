@@ -1,0 +1,18 @@
+package com.gh0u1l5.wechatmagician.storage.list
+
+import java.util.*
+import java.util.concurrent.ConcurrentHashMap
+
+open class BaseList<T> {
+    protected val data: MutableSet<T> = Collections.newSetFromMap(ConcurrentHashMap())
+
+    open operator fun contains(value: Any?): Boolean = value in data
+
+    open operator fun plusAssign(value: T) { data += value }
+
+    open operator fun plusAssign(values: Iterable<T>) { data += values }
+
+    open operator fun minusAssign(value: T) { data -= value }
+
+    open operator fun minusAssign(values: Iterable<T>) { data -= values }
+}

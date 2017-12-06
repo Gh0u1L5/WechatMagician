@@ -1,11 +1,7 @@
-package com.gh0u1l5.wechatmagician.storage
-
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
+package com.gh0u1l5.wechatmagician.storage.cache
 
 // SnsCache records the timeline objects browsed by the user.
-object SnsCache {
+object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
 
     data class SnsMediaURL(
             val url: String?,
@@ -44,10 +40,10 @@ object SnsCache {
                 return null
             }
             return SnsMediaURL(
-                    url   = raw["$mediaListKey.$key"],
-                    md5   = raw["$mediaListKey.$key.\$md5"],
-                    idx   = raw["$mediaListKey.$key.\$enc_idx"],
-                    key   = raw["$mediaListKey.$key.\$key"],
+                    url = raw["$mediaListKey.$key"],
+                    md5 = raw["$mediaListKey.$key.\$md5"],
+                    idx = raw["$mediaListKey.$key.\$enc_idx"],
+                    key = raw["$mediaListKey.$key.\$key"],
                     token = raw["$mediaListKey.$key.\$token"]
             )
         }
@@ -60,8 +56,8 @@ object SnsCache {
                 return null
             }
             return SnsMedia(
-                    type  = raw["$mediaListKey.$key.type"],
-                    main  = parseMediaURL("$key.url", raw),
+                    type = raw["$mediaListKey.$key.type"],
+                    main = parseMediaURL("$key.url", raw),
                     thumb = parseMediaURL("$key.thumb", raw)
             )
         }
@@ -75,28 +71,6 @@ object SnsCache {
                 result += parseMedia("media$i", raw) ?: break
             }
             return result.toList()
-        }
-    }
-
-    // snsTable maps snsId to SNS object.
-    private val snsTableLock = ReentrantReadWriteLock()
-    private val snsTable: MutableMap<String, SnsInfo> = mutableMapOf()
-
-    operator fun get(snsId: String?): SnsInfo? {
-        snsTableLock.read {
-            return snsTable[snsId]
-        }
-    }
-
-    operator fun set(snsId: String, record: SnsInfo) {
-        snsTableLock.write {
-            snsTable[snsId] = record
-        }
-    }
-
-    operator fun contains(snsId: String): Boolean {
-        snsTableLock.read {
-            return snsId in snsTable
         }
     }
 }

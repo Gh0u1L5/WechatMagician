@@ -3,7 +3,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_IMG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.storage.MessageCache
+import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors

@@ -5,9 +5,9 @@ import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.storage.SnsCache
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.Strings.PROMPT_SNS_INVALID
+import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadImage
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadThumb
 import com.gh0u1l5.wechatmagician.util.DownloadUtil.downloadVideo
