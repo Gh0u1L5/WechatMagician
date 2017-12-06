@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.view.ContextMenu
-import android.view.View
 import android.widget.AdapterView
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
@@ -23,9 +22,11 @@ import de.robv.android.xposed.XposedHelpers.*
 
 object SecretFriend {
 
+    private var loader: ClassLoader? = null
     private var preferences: Preferences? = null
 
-    @JvmStatic fun init(_preferences: Preferences) {
+    @JvmStatic fun init(_loader: ClassLoader, _preferences: Preferences) {
+        loader = _loader
         preferences = _preferences
     }
 
@@ -119,13 +120,7 @@ object SecretFriend {
                 }
 
                 val menu = param.args[0] as ContextMenu
-                val view = param.args[1] as View? ?: return
-
-                val item = menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
-                item.setOnMenuItemClickListener { // TODO: check if this is needed
-                    changeUserStatusByUsername(view.context, currentUsername, true)
-                    return@setOnMenuItemClickListener true
-                }
+                menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
             }
         })
 
@@ -157,13 +152,7 @@ object SecretFriend {
                 }
 
                 val menu = param.args[0] as ContextMenu
-                val view = param.args[1] as View? ?: return
-
-                val item = menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
-                item.setOnMenuItemClickListener {
-                    changeUserStatusByUsername(view.context, currentUsername, true)
-                    return@setOnMenuItemClickListener true
-                }
+                menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
             }
         })
 
@@ -242,9 +231,13 @@ object SecretFriend {
             }
         })
 
-        findAndHookMethod(pkg.ConversationWithCacheAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
+        findAndHookMethod("android.widget.BaseAdapter", loader, "notifyDataSetChanged", object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) = updateHideCache(param)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                if (param.thisObject.javaClass == pkg.ConversationWithCacheAdapter) {
+                    updateHideCache(param)
+                }
+            }
         })
     }
 }

@@ -97,7 +97,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
 
         val pluginSecretFriend = SecretFriend
-        pluginSecretFriend.init(settings)
+        pluginSecretFriend.init(loader, settings)
         tryHook(pluginSecretFriend::addHideOptionInPopupMenu)
         tryHook(pluginSecretFriend::tamperAdapterCount)
         tryHook(pluginSecretFriend::hideSecretFriend)
