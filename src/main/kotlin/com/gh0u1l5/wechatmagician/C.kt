@@ -11,6 +11,7 @@ object C {
     val Map = Map::class.java
     val Object = Object::class.java
     val String = String::class.java
+    val Throwable = Throwable::class.java
 
     val AttributeSet = android.util.AttributeSet::class.java
     val Bundle = android.os.Bundle::class.java
@@ -18,6 +19,7 @@ object C {
     val ContentValues = android.content.ContentValues::class.java
     val Context = android.content.Context::class.java
     val Intent = android.content.Intent::class.java
+    val KeyEvent = android.view.KeyEvent::class.java
     val ListView = android.widget.ListView::class.java
     val Menu = android.view.Menu::class.java
     val MotionEvent = android.view.MotionEvent::class.java
