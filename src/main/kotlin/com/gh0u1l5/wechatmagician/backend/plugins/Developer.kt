@@ -91,6 +91,7 @@ object Developer {
 
         if (preferences!!.getBoolean(DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
             hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
+                @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val menu = param.thisObject
                     val context = param.args[0]
@@ -102,6 +103,7 @@ object Developer {
             findAndHookMethod(
                     pkg.MMListPopupWindow, "setAdapter",
                     C.ListAdapter, object : XC_MethodHook() {
+                @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val adapter = param.args[0] as ListAdapter? ?: return
                     log("POPUP => adapter.count = ${adapter.count}")
