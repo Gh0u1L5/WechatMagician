@@ -13,6 +13,7 @@ import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.mainDB
 import com.gh0u1l5.wechatmagician.storage.database.SnsDatabase.snsDB
+import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
@@ -101,6 +102,9 @@ object Database {
                             return
                         }
                         if (values["sourceType"] != 0) {
+                            return
+                        }
+                        if (values["userName"] in SecretFriendList) {
                             return
                         }
                         if (values["stringSeq"] in SnsBlacklist) {

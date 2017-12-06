@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
@@ -10,6 +11,7 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
+import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
@@ -42,6 +44,7 @@ object XML {
                     handleRevokeCommand(result)
                 }
                 if (result[".TimelineObject"] != null) {
+                    matchSecretFriendList(result)
                     matchKeywordBlackList(result)
                     recordTimelineObject(result)
                 }
@@ -65,11 +68,26 @@ object XML {
         result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
     }
 
+    private fun matchSecretFriendList(result: MutableMap<String, String?>) {
+        if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
+            return
+        }
+        if (result[".TimelineObject.private"] == "1") {
+            return
+        }
+        val username = result[".TimelineObject.username"] ?: return
+        if (username in SecretFriendList) {
+            result[".TimelineObject.private"] = "1"
+        }
+    }
+
     private fun matchKeywordBlackList(result: MutableMap<String, String?>) {
         if (!preferences!!.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)) {
             return
         }
-
+        if (result[".TimelineObject.private"] == "1") {
+            return
+        }
         val content = result[".TimelineObject.contentDesc"] ?: return
         val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, listOf())
         list.forEach {
