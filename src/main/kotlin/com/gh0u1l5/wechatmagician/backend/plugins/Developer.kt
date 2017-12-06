@@ -149,7 +149,7 @@ object Developer {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[1] as String?
                     val selectionArgs = param.args[2] as Array<*>?
-                    log("DB => query sql = $sql, selectionArgs = ${argsToString(selectionArgs)}")
+                    log("DB => query sql = $sql, selectionArgs = ${argsToString(selectionArgs)}, db = ${param.thisObject}")
                 }
             })
         }
@@ -162,7 +162,7 @@ object Developer {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val table = param.args[0] as String?
                     val values = param.args[2] as ContentValues?
-                    log("DB => insert table = $table, values = $values")
+                    log("DB => insert table = $table, values = $values, db = ${param.thisObject}")
                 }
             })
         }
@@ -181,7 +181,8 @@ object Developer {
                             "table = $table, " +
                             "values = $values, " +
                             "whereClause = $whereClause, " +
-                            "whereArgs = ${argsToString(whereArgs)}")
+                            "whereArgs = ${argsToString(whereArgs)}, " +
+                            "db = ${param.thisObject}")
                 }
             })
         }
@@ -198,7 +199,8 @@ object Developer {
                     log("DB => delete " +
                             "table = $table, " +
                             "whereClause = $whereClause, " +
-                            "whereArgs = ${argsToString(whereArgs)}")
+                            "whereArgs = ${argsToString(whereArgs)}, " +
+                            "db = ${param.thisObject}")
                 }
             })
         }
@@ -211,7 +213,7 @@ object Developer {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[0] as String?
                     val bindArgs = param.args[1] as Array<*>?
-                    log("DB => executeSql sql = $sql, bindArgs = ${argsToString(bindArgs)}")
+                    log("DB => executeSql sql = $sql, bindArgs = ${argsToString(bindArgs)}, db = ${param.thisObject}")
                 }
             })
         }
