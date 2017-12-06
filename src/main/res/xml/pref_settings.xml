@@ -55,5 +55,16 @@
             android:key="settings_auto_login"
             android:summary="@string/pref_toggle_auto_login_summary"
             android:title="@string/pref_toggle_auto_login" />
+        <com.gh0u1l5.wechatmagician.frontend.widget.PasswordSwitchPreference
+            android:defaultValue="false"
+            android:key="settings_secret_friend"
+            android:title="@string/pref_toggle_secret_friend" />
+        <com.gh0u1l5.wechatmagician.frontend.widget.PasswordPreference
+            android:dependency="settings_secret_friend"
+            android:key="settings_secret_friend_password"
+            android:password="false"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_text_secret_friend_password" />
     </PreferenceCategory>
 </PreferenceScreen>
