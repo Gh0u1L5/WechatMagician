@@ -7,7 +7,6 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
@@ -30,6 +29,8 @@ object WechatPackage {
     // status stores the working status of all the hooks.
     private val statusLock = ReentrantReadWriteLock()
     private val status: HashMap<String, Boolean> = hashMapOf()
+
+    var Version: Version? = null
 
     var LogCat: Class<*>? = null
     var XLogSetup: Class<*>? = null
@@ -96,7 +97,9 @@ object WechatPackage {
     // WechatHook will do the runtime analysis and set the objects.
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         val loader = lpparam.classLoader
+
         val version = getVersion(lpparam)
+        Version = version
 
         var apkFile: ApkFile? = null
         val classes: Array<DexClass>
