@@ -1,5 +1,9 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -53,21 +57,21 @@ object XML {
         if (!msg.startsWith("\"")) {
             return
         }
-        if (!preferences!!.getBoolean("settings_chatting_recall", true)) {
+        if (!preferences!!.getBoolean(SETTINGS_CHATTING_RECALL, true)) {
             return
         }
         val prompt = preferences!!.getString(
-                "settings_chatting_recall_prompt", str[PROMPT_RECALL])
+                SETTINGS_CHATTING_RECALL_PROMPT, str[PROMPT_RECALL])
         result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
     }
 
     private fun matchKeywordBlackList(result: MutableMap<String, String?>) {
-        if (!preferences!!.getBoolean("settings_sns_keyword_blacklist", false)) {
+        if (!preferences!!.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)) {
             return
         }
         thread(start = true) {
             val content = result[".TimelineObject.contentDesc"] ?: return@thread
-            val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content", listOf())
+            val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, listOf())
             list.filter { content.contains(it) }.forEach {
                 SnsBlacklist += result[".TimelineObject.id"]
                 return@thread

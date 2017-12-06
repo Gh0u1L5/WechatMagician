@@ -19,10 +19,23 @@ object Global {
     val STATUS_FLAG_URI_ROUTER  = "UriRouter"
     val STATUS_FLAG_COMMAND     = "SearchBarCommand"
 
-    val ACTION_UPDATE_PREF = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
-    val PREFERENCE_STRING_LIST_KEYS = listOf("settings_sns_keyword_blacklist_content")
-
     val PREFERENCE_NAME_SETTINGS      = "settings"
     val PREFERENCE_NAME_DEVELOPER     = "developer"
     val PREFERENCE_NAME_SECRET_FRIEND = "wechat-magician-secret-friend"
+
+    val SETTINGS_AUTO_LOGIN                     = "settings_auto_login"
+    val SETTINGS_CHATTING_RECALL                = "settings_chatting_recall"
+    val SETTINGS_CHATTING_RECALL_PROMPT         = "settings_chatting_recall_prompt"
+    val SETTINGS_DISABLE_UNREAD_COUNT           = "settings_disable_unread_count"
+    val SETTINGS_INTERFACE_HIDE_ICON            = "settings_interface_hide_icon"
+    val SETTINGS_SECRET_FRIEND                  = "settings_secret_friend"
+    val SETTINGS_SECRET_FRIEND_PASSWORD         = "settings_secret_friend_password"
+    val SETTINGS_SELECT_PHOTOS_LIMIT            = "settings_select_photos_limit"
+    val SETTINGS_SNS_DELETE_COMMENT             = "settings_sns_delete_comment"
+    val SETTINGS_SNS_DELETE_MOMENT              = "settings_sns_delete_moment"
+    val SETTINGS_SNS_KEYWORD_BLACKLIST          = "settings_sns_keyword_blacklist"
+    val SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT  = "settings_sns_keyword_blacklist_content"
+
+    val ACTION_UPDATE_PREF = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
+    val PREFERENCE_STRING_LIST_KEYS = listOf(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT)
 }

@@ -17,6 +17,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_INTERFACE_HIDE_ICON
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
@@ -55,7 +56,7 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
     }
 
     override fun onSharedPreferenceChanged(preferences: SharedPreferences, key: String) {
-        if (key == "settings_interface_hide_icon") {
+        if (key == SETTINGS_INTERFACE_HIDE_ICON) {
             // Hide/Show the icon as required.
             try {
                 val hide = preferences.getBoolean(key, false)

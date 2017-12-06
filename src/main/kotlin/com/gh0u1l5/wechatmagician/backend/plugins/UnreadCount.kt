@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_DISABLE_UNREAD_COUNT
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
@@ -28,7 +29,7 @@ object UnreadCount {
                 C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (!preferences!!.getBoolean("settings_disable_unread_count", false)) {
+                if (!preferences!!.getBoolean(SETTINGS_DISABLE_UNREAD_COUNT, false)) {
                     return
                 }
 

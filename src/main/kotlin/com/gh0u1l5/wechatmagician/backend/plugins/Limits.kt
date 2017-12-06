@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
@@ -46,7 +47,7 @@ object Limits {
                 val current = intent.getIntExtra("max_select_count", 9)
                 val limit = try {
                     preferences!!.getString(
-                            "settings_select_photos_limit", "1000"
+                            SETTINGS_SELECT_PHOTOS_LIMIT, "1000"
                     ).toInt()
                 } catch (_: Throwable) { 1000 }
                 if (current <= 9) {

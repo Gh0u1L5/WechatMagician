@@ -6,6 +6,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatus
@@ -40,11 +42,11 @@ object SearchBar {
                 return true
             }
             command.startsWith("#hide ") -> {
-                if (!preferences!!.getBoolean("settings_secret_friend", false)) {
+                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
                     return false
                 }
 
-                val encrypted = preferences!!.getString("settings_secret_friend_password", "")
+                val encrypted = preferences!!.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted == "") {
                     Toast.makeText(
                             context, str[PROMPT_SET_PASSWORD], Toast.LENGTH_SHORT
@@ -56,11 +58,11 @@ object SearchBar {
                 return true
             }
             command.startsWith("#unhide ") -> {
-                if (!preferences!!.getBoolean("settings_secret_friend", false)) {
+                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
                     return false
                 }
 
-                val encrypted = preferences!!.getString("settings_secret_friend_password", "")
+                val encrypted = preferences!!.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted == "") {
                     Toast.makeText(
                             context, str[PROMPT_SET_PASSWORD], Toast.LENGTH_SHORT

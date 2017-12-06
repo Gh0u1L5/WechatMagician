@@ -2,6 +2,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_DELETE_COMMENT
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_DELETE_MOMENT
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -87,7 +90,7 @@ object Database {
                         if (!values.getAsString("content").startsWith("\"")) {
                             return
                         }
-                        if (!preferences!!.getBoolean("settings_chatting_recall", true)) {
+                        if (!preferences!!.getBoolean(SETTINGS_CHATTING_RECALL, true)) {
                             return
                         }
                         handleMessageRecall(values)
@@ -103,7 +106,7 @@ object Database {
                         if (values["stringSeq"] in SnsBlacklist) {
                             return
                         }
-                        if (!preferences!!.getBoolean("settings_sns_delete_moment", true)) {
+                        if (!preferences!!.getBoolean(SETTINGS_SNS_DELETE_MOMENT, true)) {
                             return
                         }
                         val content = values["content"] as ByteArray?
@@ -116,7 +119,7 @@ object Database {
                         if (values["commentflag"] != 1) {
                             return
                         }
-                        if (!preferences!!.getBoolean("settings_sns_delete_comment", true)) {
+                        if (!preferences!!.getBoolean(SETTINGS_SNS_DELETE_COMMENT, true)) {
                             return
                         }
                         val curActionBuf = values["curActionBuf"] as ByteArray?
