@@ -65,12 +65,13 @@ object XML {
         if (!preferences!!.getBoolean("settings_sns_keyword_blacklist", false)) {
             return
         }
-        val content = result[".TimelineObject.contentDesc"] ?: return
-        val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content", listOf())
-        list.filter { content.contains(it) }.forEach {
-            result[".TimelineObject.private"] = "1"
-            SnsBlacklist += result[".TimelineObject.id"]
-            return
+        thread(start = true) {
+            val content = result[".TimelineObject.contentDesc"] ?: return@thread
+            val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content", listOf())
+            list.filter { content.contains(it) }.forEach {
+                SnsBlacklist += result[".TimelineObject.id"]
+                return@thread
+            }
         }
     }
 
