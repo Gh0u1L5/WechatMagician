@@ -8,12 +8,14 @@ import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.Strings
 import com.gh0u1l5.wechatmagician.storage.Strings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
+import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.mainDB
 import com.gh0u1l5.wechatmagician.storage.database.SnsDatabase.snsDB
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
+import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -36,22 +38,39 @@ object Database {
             pkg.SQLiteErrorHandler -> return
         }
 
-        // Hook SQLiteDatabase.openDatabase to capture the database instance for SNS.
+        // Hook SQLiteDatabase constructors to catch the database instances.
+        hookAllConstructors(pkg.SQLiteDatabase, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val path = param.thisObject.toString()
+                if (path.endsWith("EnMicroMsg.db")) {
+                    if (mainDB !== param.thisObject) {
+                        mainDB = param.thisObject
+                    }
+                }
+                if (path.endsWith("SnsMicroMsg.db")) {
+                    if (snsDB !== param.thisObject) {
+                        snsDB = param.thisObject
+                    }
+                }
+            }
+        })
+
+        // Hook SQLiteDatabase.openDatabase to initialize the database instance for SNS.
         findAndHookMethod(
                 pkg.SQLiteDatabase, "openDatabase",
                 C.String, pkg.SQLiteCursorFactory, C.Int, pkg.SQLiteErrorHandler, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                val path = param.args[0] as String?
-                if (path?.endsWith("SnsMicroMsg.db") != true) {
-                    return
-                }
-                if (snsDB !== param.result) {
-                    snsDB = param.result
-                    // Force Wechat to retrieve existing SNS data from remote server.
-                    val deleted = ContentValues().apply { put("sourceType", 0) }
-                    callMethod(snsDB, "delete", "snsExtInfo3", "local_flag=0", null)
-                    callMethod(snsDB, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
+                val path = param.args[0] as String? ?: return
+                if (path.endsWith("SnsMicroMsg.db")) {
+                    if (snsDB !== param.result) {
+                        snsDB = param.result
+                        // Force Wechat to retrieve existing SNS data from remote server.
+                        val deleted = ContentValues().apply { put("sourceType", 0) }
+                        callMethod(snsDB, "delete", "snsExtInfo3", "local_flag=0", null)
+                        callMethod(snsDB, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
+                    }
                 }
             }
         })
