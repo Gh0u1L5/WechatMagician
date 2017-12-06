@@ -2,10 +2,12 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
@@ -79,12 +81,22 @@ object ViewUtil {
         }
     }
 
-    // dp2px convert size in dp to size in px.
+    // Context.dp2px convert size in dp to size in px.
     fun Context.dp2px(dip: Int): Int {
         val scale = resources.displayMetrics.density
         return (dip * scale + 0.5f).toInt()
     }
 
+    // Resources.getDefaultLanguage returns current default language for the given resources
+    fun Resources.getDefaultLanguage(): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            configuration.locales[0]
+        } else {
+            configuration.locale
+        }.language
+    }
+
+    // ListView.getViewAtPosition returns the item view at specific position
     fun ListView.getViewAtPosition(position: Int): View {
         val firstItemPosition = firstVisiblePosition
         val lastItemPosition = firstItemPosition + childCount - 1

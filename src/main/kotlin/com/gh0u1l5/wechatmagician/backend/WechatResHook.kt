@@ -1,10 +1,10 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.res.XModuleResources
-import android.os.Build
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.storage.Strings
+import com.gh0u1l5.wechatmagician.util.ViewUtil.getDefaultLanguage
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.XposedBridge.log
@@ -28,15 +28,10 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
         try {
             // Set language for Strings
-            Strings.language = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                resparam.res.configuration.locales[0]
-            } else {
-                @Suppress("DEPRECATION")
-                resparam.res.configuration.locale
-            }.language
-
+            Strings.language = resparam.res.getDefaultLanguage()
             // Load resources
             MODULE_RES = XModuleResources.createInstance(MODULE_PATH, resparam.res)
+
             WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
         } catch (e: Throwable) { log(e) }
     }
