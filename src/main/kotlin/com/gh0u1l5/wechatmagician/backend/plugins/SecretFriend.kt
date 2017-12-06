@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.widget.BaseAdapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SECRET_FRIEND
@@ -55,19 +54,14 @@ object SecretFriend {
         if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
             return
         }
-
-        val adapter = param.thisObject as BaseAdapter
-        val index = param.args[0] as Int
-        param.args[0] = AdapterHider.onGetView(adapter, index)
+        AdapterHider.beforeGetView(param)
     }
 
     private fun updateHideCache(param: XC_MethodHook.MethodHookParam) {
         if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
             return
         }
-
-        val adapter = param.thisObject as BaseAdapter
-        AdapterHider.onDataSetChanged(adapter) { item ->
+        AdapterHider.beforeNotifyDataSetChanged(param) { item ->
             val username = getObjectField(item, "field_username")
             username in SecretFriendList
         }
@@ -79,14 +73,12 @@ object SecretFriend {
         }
 
         findAndHookMethod(pkg.MMBaseAdapter, "getCount", object : XC_MethodHook() {
+            @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
                     return
                 }
-                val adapter = param.thisObject as BaseAdapter
-                val count = param.result as Int
-                param.result = AdapterHider.onGetCount(adapter, count)
-            }
+                AdapterHider.afterGetCount(param) }
         })
     }
 
