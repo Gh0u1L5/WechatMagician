@@ -98,6 +98,7 @@ class WechatHook : IXposedHookLoadPackage {
 
         val pluginSecretFriend = SecretFriend
         pluginSecretFriend.init(settings)
+        tryHook(pluginSecretFriend::addHideOptionInPopupMenu)
         tryHook(pluginSecretFriend::tamperAdapterCount)
         tryHook(pluginSecretFriend::hideSecretFriend)
         tryHook(pluginSecretFriend::hideSecretFriendConversation)

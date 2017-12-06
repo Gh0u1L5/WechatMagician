@@ -10,7 +10,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatus
+import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatusByNickname
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
@@ -53,7 +53,7 @@ object SearchBar {
                     ).show()
                 } else {
                     val nickname = command.drop("#hide ".length)
-                    changeUserStatus(context, nickname, true)
+                    changeUserStatusByNickname(context, nickname, true)
                 }
                 return true
             }
@@ -72,7 +72,7 @@ object SearchBar {
                     val message = str[PROMPT_VERIFY_PASSWORD]
                     PasswordUtil.askPasswordWithVerify(context, title, message, encrypted) {
                         val nickname = command.drop("#unhide ".length)
-                        SecretFriend.changeUserStatus(context, nickname, false)
+                        changeUserStatusByNickname(context, nickname, false)
                     }
                 }
                 return true

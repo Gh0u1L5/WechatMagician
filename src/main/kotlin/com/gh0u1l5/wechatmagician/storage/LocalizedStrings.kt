@@ -8,6 +8,7 @@ import de.robv.android.xposed.XposedBridge.log
 object LocalizedStrings {
 
     val TITLE_SECRET_FRIEND           = "title_secret_friend"
+    val BUTTON_HIDE_FRIEND            = "button_hide_friend"
     val PROMPT_NEW_PASSWORD           = "prompt_new_password"
     val PROMPT_VERIFY_PASSWORD        = "prompt_verify_password"
     val PROMPT_USER_NOT_FOUND         = "prompt_user_not_found"
@@ -31,6 +32,7 @@ object LocalizedStrings {
             "zh" to mapOf(
                     TITLE_SECRET_FRIEND           to "密友",
                     PROMPT_NEW_PASSWORD           to "请输入新密码",
+                    BUTTON_HIDE_FRIEND            to "隐藏好友",
                     PROMPT_VERIFY_PASSWORD        to "请输入解锁密码",
                     PROMPT_USER_NOT_FOUND         to "用户不存在",
                     PROMPT_SET_PASSWORD           to "请先设置密码",
@@ -49,6 +51,7 @@ object LocalizedStrings {
             ),
             "en" to mapOf(
                     TITLE_SECRET_FRIEND           to "Secret Friends",
+                    BUTTON_HIDE_FRIEND            to "Hide This Friend",
                     PROMPT_NEW_PASSWORD           to "Please enter a new password:",
                     PROMPT_VERIFY_PASSWORD        to "Please enter your password:",
                     PROMPT_USER_NOT_FOUND         to "User Not Found!",

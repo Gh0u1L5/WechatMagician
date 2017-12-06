@@ -7,6 +7,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.FileUtil
+import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
@@ -48,6 +49,7 @@ object WechatPackage {
     var SQLiteErrorHandler: Class<*>? = null
     var SQLiteCancellationSignal: Class<*>? = null
 
+    var LauncherUI: Class<*>? = null
     var MMActivity: Class<*>? = null
     var MMFragmentActivity: Class<*>? = null
     var MMListPopupWindow: Class<*>? = null
@@ -55,6 +57,10 @@ object WechatPackage {
     var MMBaseAdapter: Class<*>? = null
     var AddressAdapter: Class<*>? = null
     var ConversationWithCacheAdapter: Class<*>? = null
+
+    var AddressUI: Class<*>? = null
+    var ContactLongClickListener: Class<*>? = null
+    var ConversationLongClickListener: Class<*>? = null
 
     var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
@@ -160,6 +166,16 @@ object WechatPackage {
             }
             MMBaseAdapter = AddressAdapter?.superclass
         }
+
+
+        AddressUI = findClassIfExists("$pkgUI.contact.AddressUI.a", loader)
+        ContactLongClickListener = PackageUtil.Classes(AddressUI?.declaredClasses?.toList() ?: listOf())
+                .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
+                .firstOrNull("ContactLongClickListener")
+        ConversationLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
+                .filterByMethod(null, "onCreateContextMenu", C.ContextMenu, C.View, C.ContextMenuInfo)
+                .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
+                .firstOrNull("ConversationLongClickListener")
 
 
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
