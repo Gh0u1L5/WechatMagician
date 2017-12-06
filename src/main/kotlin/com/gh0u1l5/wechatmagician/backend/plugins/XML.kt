@@ -66,7 +66,7 @@ object XML {
             return
         }
         val content = result[".TimelineObject.contentDesc"] ?: return
-        val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content")
+        val list = preferences!!.getStringList("settings_sns_keyword_blacklist_content", listOf())
         list.filter { content.contains(it) }.forEach {
             result[".TimelineObject.private"] = "1"
             SnsBlacklist += result[".TimelineObject.id"]
