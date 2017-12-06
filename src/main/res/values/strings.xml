@@ -70,6 +70,8 @@
     <string name="pref_category_settings_miscellaneous">Miscellaneous</string>
     <string name="pref_toggle_auto_login">Toggle Auto Login</string>
     <string name="pref_toggle_auto_login_summary">Automatically agree any login requests from Wechat PC client (take your own risk).</string>
+    <string name="pref_toggle_secret_friend">Enable Secret Friends</string>
+    <string name="pref_text_secret_friend_password">Configure Password for Secret Friends</string>
 
     <string name="support_report_subject">Wechat Magician Report</string>
     <string name="support_report_text">Dear Developer,\nThe Xposed log and WechatPackage status has been attached. Currently my issue is:</string>
