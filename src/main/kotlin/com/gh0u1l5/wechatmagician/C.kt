@@ -13,11 +13,15 @@ object C {
     val String = String::class.java
     val Throwable = Throwable::class.java
 
+    val AdapterView = android.widget.AdapterView::class.java
+    val AdapterView_OnItemClickListener = android.widget.AdapterView.OnItemClickListener::class.java
     val AttributeSet = android.util.AttributeSet::class.java
     val Bundle = android.os.Bundle::class.java
     val Button = android.widget.Button::class.java
     val ContentValues = android.content.ContentValues::class.java
     val Context = android.content.Context::class.java
+    val ContextMenu = android.view.ContextMenu::class.java
+    val ContextMenuInfo = android.view.ContextMenu.ContextMenuInfo::class.java
     val Intent = android.content.Intent::class.java
     val KeyEvent = android.view.KeyEvent::class.java
     val ListAdapter = android.widget.ListAdapter::class.java
