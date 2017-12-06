@@ -234,9 +234,9 @@ object Developer {
                         val msg = param.args[1] as String
                         val args = param.args[2] as Array<*>?
                         if (args == null) {
-                            log("${func.toUpperCase()} $tag $msg")
+                            log("LOG.${func.toUpperCase()} => [$tag] $msg")
                         } else {
-                            log("${func.toUpperCase()} $tag ${msg.format(*args)}")
+                            log("LOG.${func.toUpperCase()} => [$tag] ${msg.format(*args)}")
                         }
                     }
                 })
