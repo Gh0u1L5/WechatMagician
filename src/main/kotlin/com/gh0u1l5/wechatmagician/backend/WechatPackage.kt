@@ -115,7 +115,8 @@ object WechatPackage {
 
 
         LogCat = findClassesFromPackage(loader, classes, "$WECHAT_PACKAGE_NAME.sdk.platformtools")
-                .filterByMethod(null, "printErrStackTrace", C.String, C.Throwable, C.String, C.ObjectArray)
+                .filterByEnclosingClass(null)
+                .filterByMethod(C.Int, "getLogLevel")
                 .firstOrNull("LogCat")
         XLogSetup = findClassIfExists(
                 "$WECHAT_PACKAGE_NAME.xlog.app.XLogSetup", loader)
