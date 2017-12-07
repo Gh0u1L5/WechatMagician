@@ -44,7 +44,7 @@ object SecretFriend {
 
     @Volatile var currentUsername: String? = null
 
-    private fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
+    fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
             return
         }

@@ -11,11 +11,13 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatusByNickname
+import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatusByUsername
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
@@ -72,7 +74,13 @@ object SearchBar {
                     val message = str[PROMPT_VERIFY_PASSWORD]
                     PasswordUtil.askPasswordWithVerify(context, title, message, encrypted) {
                         val nickname = command.drop("#unhide ".length)
-                        changeUserStatusByNickname(context, nickname, false)
+                        if (nickname == "all") {
+                            SecretFriendList.forEach { username ->
+                                changeUserStatusByUsername(context, username, false)
+                            }
+                        } else {
+                            changeUserStatusByNickname(context, nickname, false)
+                        }
                     }
                 }
                 return true
