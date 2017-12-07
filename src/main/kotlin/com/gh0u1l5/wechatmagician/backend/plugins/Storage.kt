@@ -15,10 +15,6 @@ object Storage {
     private val pkg = WechatPackage
 
     @JvmStatic fun hookMsgStorage() {
-        if (pkg.MsgStorageClass == null || pkg.MsgStorageInsertMethod == null) {
-            return
-        }
-
         // Analyze dynamically to find the global message storage instance.
         hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -45,10 +41,6 @@ object Storage {
     }
 
     @JvmStatic fun hookImgStorage() {
-        if (pkg.ImgStorageClass == null) {
-            return
-        }
-
         // Analyze dynamically to find the global image storage instance.
         hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
             @Throws(Throwable::class)

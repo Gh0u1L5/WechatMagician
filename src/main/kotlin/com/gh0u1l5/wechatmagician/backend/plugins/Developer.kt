@@ -85,10 +85,6 @@ object Developer {
 
     // Hook MMListPopupWindow to trace every popup menu.
     @JvmStatic fun dumpPopupMenu() {
-        if (pkg.MMListPopupWindow == null) {
-            return
-        }
-
         if (preferences!!.getBoolean(DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
             hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -118,10 +114,6 @@ object Developer {
 
     // Hook XLog to print internal errors into logcat.
     @JvmStatic fun enableXLog() {
-        if (pkg.XLogSetup == null) {
-            return
-        }
-
         if (preferences!!.getBoolean(DEVELOPER_UI_XLOG, false)) {
             hookAllMethods(
                     pkg.XLogSetup, "keep_setupXLog", object : XC_MethodHook() {
@@ -135,12 +127,6 @@ object Developer {
 
     // Hook SQLiteDatabase to trace all the database operations.
     @JvmStatic fun traceDatabase() {
-        when (null) {
-            pkg.SQLiteDatabase,
-            pkg.SQLiteCursorFactory,
-            pkg.SQLiteCancellationSignal -> return
-        }
-
         if (preferences!!.getBoolean(DEVELOPER_DATABASE_QUERY, false)) {
             findAndHookMethod(
                     pkg.SQLiteDatabase, "rawQueryWithFactory",
@@ -221,10 +207,6 @@ object Developer {
 
     // Hook Log to trace hidden logcat output.
     @JvmStatic fun traceLogCat() {
-        if (pkg.LogCat == null) {
-            return
-        }
-
         if (preferences!!.getBoolean(DEVELOPER_TRACE_LOGCAT, false)) {
             val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
@@ -248,10 +230,6 @@ object Developer {
 
     // Hook XML Parser to trace the XML files used in Wechat.
     @JvmStatic fun traceXMLParse() {
-        if (pkg.XMLParserClass == null || pkg.XMLParseMethod == null) {
-            return
-        }
-
         if (preferences!!.getBoolean(DEVELOPER_XML_PARSER, false)) {
             findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
                 @Throws(Throwable::class)

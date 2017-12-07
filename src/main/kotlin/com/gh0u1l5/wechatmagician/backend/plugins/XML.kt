@@ -28,10 +28,6 @@ object XML {
     private val pkg = WechatPackage
 
     @JvmStatic fun hookXMLParse() {
-        if (pkg.XMLParserClass == null || pkg.XMLParseMethod == null) {
-            return
-        }
-
         // Hook XML Parser for the status bar easter egg.
         findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)

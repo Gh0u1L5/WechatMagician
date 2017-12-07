@@ -101,13 +101,6 @@ object SecretFriend {
     }
 
     @JvmStatic fun addHideOptionInPopupMenu() {
-        when (null) {
-            pkg.AddressUI,
-            pkg.ContactLongClickListener,
-            pkg.ConversationLongClickListener,
-            pkg.ConversationCreateContextMenuListener -> return
-        }
-
         findAndHookMethod(
                 pkg.ContactLongClickListener, "onItemLongClick",
                 C.AdapterView, C.View, C.Int, C.Long, object : XC_MethodHook() {
@@ -178,10 +171,6 @@ object SecretFriend {
     }
 
     @JvmStatic fun tamperAdapterCount() {
-        if (pkg.MMBaseAdapter == null) {
-            return
-        }
-
         findAndHookMethod(pkg.MMBaseAdapter, "getCount", object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -193,12 +182,6 @@ object SecretFriend {
     }
 
     @JvmStatic fun hideSecretFriend() {
-        when (null) {
-            pkg.MMBaseAdapter,
-            pkg.AddressAdapter,
-            pkg.MMBaseAdapterGetMethod -> return
-        }
-
         findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -231,12 +214,6 @@ object SecretFriend {
     }
 
     @JvmStatic fun hideSecretFriendConversation() {
-        when (null) {
-            pkg.MMBaseAdapter,
-            pkg.ConversationWithCacheAdapter,
-            pkg.MMBaseAdapterGetMethod -> return
-        }
-
         findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -258,10 +235,6 @@ object SecretFriend {
     }
 
     @JvmStatic fun hideSecretFriendChattingWindow() {
-        if (pkg.ChattingUI == null) {
-            return
-        }
-
         findAndHookMethod(pkg.ChattingUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {

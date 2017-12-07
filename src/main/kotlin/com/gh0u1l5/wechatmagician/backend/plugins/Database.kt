@@ -35,12 +35,6 @@ object Database {
     private val pkg = WechatPackage
 
     @JvmStatic fun hookDatabase() {
-        when (null) {
-            pkg.SQLiteDatabase,
-            pkg.SQLiteCursorFactory,
-            pkg.SQLiteErrorHandler -> return
-        }
-
         // Hook SQLiteDatabase constructors to catch the database instances.
         hookAllConstructors(pkg.SQLiteDatabase, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -134,7 +128,7 @@ object Database {
 
     // handleMessageRecall notifies user that someone has recalled the given message.
     private fun handleMessageRecall(values: ContentValues) {
-        if (pkg.MsgStorageObject == null || pkg.MsgStorageInsertMethod == null) {
+        if (pkg.MsgStorageObject == null) {
             return
         }
 
@@ -150,9 +144,9 @@ object Database {
             XposedHelpers.setObjectField(copy, "field_content", values["content"])
             XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
 
-            when (pkg.MsgStorageInsertMethod?.parameterTypes?.size) {
-                1 -> pkg.MsgStorageInsertMethod?.invoke(pkg.MsgStorageObject, copy)
-                2 -> pkg.MsgStorageInsertMethod?.invoke(pkg.MsgStorageObject, copy, false)
+            when (pkg.MsgStorageInsertMethod.parameterTypes.size) {
+                1 -> pkg.MsgStorageInsertMethod.invoke(pkg.MsgStorageObject, copy)
+                2 -> pkg.MsgStorageInsertMethod.invoke(pkg.MsgStorageObject, copy, false)
             }
         } catch (e: Throwable) {
             XposedBridge.log("DB => Handle message recall failed: $e")

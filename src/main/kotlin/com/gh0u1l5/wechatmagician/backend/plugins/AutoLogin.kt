@@ -20,10 +20,6 @@ object AutoLogin {
     private val pkg = WechatPackage
 
     @JvmStatic fun enableAutoLogin() {
-        if (pkg.WebWXLoginUI == null) {
-            return
-        }
-
         findAndHookMethod(pkg.WebWXLoginUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {

@@ -91,6 +91,7 @@ object ViewUtil {
     }
 
     // Resources.getDefaultLanguage returns current default language for the given resources
+    @Suppress("DEPRECATION")
     fun Resources.getDefaultLanguage(): String {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.locales[0]
@@ -117,12 +118,7 @@ object ViewUtil {
             return null
         }
 
-        val pkg = WechatPackage
-        if (pkg.SnsActivity == null) {
-            return null
-        }
-
-        val activityField = findFirstFieldByExactType(container.javaClass, pkg.SnsActivity)
+        val activityField = findFirstFieldByExactType(container.javaClass, WechatPackage.SnsActivity)
         val activity = activityField.get(container)
         val listViewField = findFirstFieldByExactType(activity.javaClass, C.ListView)
         return listViewField.get(activity) as ListView

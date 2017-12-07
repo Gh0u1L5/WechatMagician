@@ -27,10 +27,6 @@ object WechatEvents {
 
     // Handle the logic about "select all" check box in SelectContactUI
     fun onSelectContactUISelectAll(activity: Activity, isChecked: Boolean) {
-        if (pkg.ContactInfoClass == null) {
-            return
-        }
-
         val intent = activity.intent ?: return
         intent.putExtra("select_all_checked", isChecked)
         intent.putExtra("already_select_contact", "")
@@ -49,7 +45,7 @@ object WechatEvents {
 
                 if (contactField == null) {
                     contactField = item.javaClass.fields.firstOrNull {
-                        it.type.name == pkg.ContactInfoClass?.name
+                        it.type.name == pkg.ContactInfoClass.name
                     } ?: return@next
                 }
                 val contact = contactField?.get(item) ?: return@next

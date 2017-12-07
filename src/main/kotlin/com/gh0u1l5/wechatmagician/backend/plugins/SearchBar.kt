@@ -82,10 +82,6 @@ object SearchBar {
     }
 
     @JvmStatic fun hijackSearchBar() {
-        if (pkg.ActionBarEditText == null) {
-            return
-        }
-
         hookAllConstructors(pkg.ActionBarEditText, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {

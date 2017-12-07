@@ -34,10 +34,6 @@ object Limits {
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
     @JvmStatic fun breakSelectPhotosLimit() {
-        if (pkg.AlbumPreviewUI == null) {
-            return
-        }
-
         findAndHookMethod(
                 pkg.AlbumPreviewUI, "onCreate",
                 C.Bundle, object : XC_MethodHook() {
@@ -58,10 +54,6 @@ object Limits {
     }
 
     @JvmStatic fun breakSelectContactLimit() {
-        if (pkg.MMActivity == null || pkg.SelectContactUI == null) {
-            return
-        }
-
         // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
         findAndHookMethod(
                 pkg.MMActivity, "onCreateOptionsMenu",
@@ -140,10 +132,6 @@ object Limits {
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
     @JvmStatic fun breakSelectConversationLimit() {
-        if (pkg.SelectConversationUI == null || pkg.SelectConversationUIMaxLimitMethod == null) {
-            return
-        }
-
         findAndHookMethod(pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {

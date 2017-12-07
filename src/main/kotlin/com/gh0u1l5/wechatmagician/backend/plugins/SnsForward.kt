@@ -74,9 +74,6 @@ object SnsForward {
                 ).show()
                 return
             }
-            if (pkg.SnsUploadUI == null) {
-                return
-            }
 
             val intent = Intent(context.get(), pkg.SnsUploadUI)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -117,10 +114,6 @@ object SnsForward {
 
     // Hook SnsUserUI.onCreate to popup a menu during long click.
     @JvmStatic fun setLongClickListenerForSnsUserUI() {
-        if (pkg.SnsUserUI == null) {
-            return
-        }
-
         findAndHookMethod(pkg.SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -159,10 +152,6 @@ object SnsForward {
 
     // Hook SnsTimeLineUI.onCreate to popup a menu during long click.
     @JvmStatic fun setLongClickListenerForSnsTimeLineUI() {
-        if (pkg.SnsTimeLineUI == null) {
-            return
-        }
-
         findAndHookMethod(pkg.SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -192,11 +181,6 @@ object SnsForward {
 
     // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
     @JvmStatic fun cleanTextViewBeforeForwarding() {
-        when (null) {
-            pkg.SnsUploadUI,
-            pkg.SnsUploadUIEditTextField -> return
-        }
-
         findAndHookMethod(pkg.SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {

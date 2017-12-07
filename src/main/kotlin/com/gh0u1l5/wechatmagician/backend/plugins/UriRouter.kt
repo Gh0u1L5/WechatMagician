@@ -12,10 +12,6 @@ object UriRouter {
     val pkg = WechatPackage
 
     @JvmStatic fun hijackUriRouter() {
-        if (pkg.WXCustomScheme == null || pkg.WXCustomSchemeEntryMethod == null) {
-            return
-        }
-
         findAndHookMethod(pkg.WXCustomScheme, pkg.WXCustomSchemeEntryMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -29,9 +25,6 @@ object UriRouter {
                     val activity = param.thisObject as Activity
                     when (segments[0]) {
                         "donate" -> {
-                            if (pkg.RemittanceAdapter == null) {
-                                return
-                            }
                             activity.startActivity(Intent(activity, pkg.RemittanceAdapter).apply {
                                 putExtra("scene", 1)
                                 putExtra("pay_channel", 12)

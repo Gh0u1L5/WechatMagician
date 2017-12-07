@@ -35,8 +35,12 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    inline private fun tryHook(hook: () -> Unit) {
-        try { hook() } catch (e: Throwable) { log(e) }
+    inline private fun tryHook(crossinline hook: () -> Unit) {
+        thread(start = true) {
+            hook()
+        }.setUncaughtExceptionHandler { _, throwable ->
+            log(throwable)
+        }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -52,9 +56,7 @@ class WechatHook : IXposedHookLoadPackage {
                     })
                 WECHAT_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
-                        thread(start = true) {
-                            handleLoadWechat(lpparam, context)
-                        }
+                        handleLoadWechat(lpparam, context)
                     })
             }
         } catch (e: Throwable) { log(e) }
@@ -63,10 +65,14 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
         val loader = lpparam.classLoader
 
-        WechatPackage.init(lpparam)
-        SecretFriendList.init(context)
-        settings.load(context, PREFERENCE_NAME_SETTINGS)
-        developer.load(context, PREFERENCE_NAME_DEVELOPER)
+        thread(start = true) {
+            WechatPackage.init(lpparam)
+            SecretFriendList.init(context)
+            settings.load(context, PREFERENCE_NAME_SETTINGS)
+            developer.load(context, PREFERENCE_NAME_DEVELOPER)
+        }.setUncaughtExceptionHandler { _, throwable ->
+            log(throwable)
+        }
 
         val pluginDeveloper = Developer
         pluginDeveloper.init(loader, developer)
@@ -107,7 +113,7 @@ class WechatHook : IXposedHookLoadPackage {
 
         val pluginStorage = Storage
         tryHook(pluginStorage::hookMsgStorage)
-        tryHook(pluginStorage::hookImgStorage)
+//        tryHook(pluginStorage::hookImgStorage)
 
         val pluginXML = XML
         pluginXML.init(settings)
@@ -128,6 +134,8 @@ class WechatHook : IXposedHookLoadPackage {
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
             WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
+        }.setUncaughtExceptionHandler { _, throwable ->
+            log(throwable)
         }
     }
 }

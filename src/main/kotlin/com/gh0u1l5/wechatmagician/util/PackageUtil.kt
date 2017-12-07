@@ -49,13 +49,7 @@ object PackageUtil {
             })
         }
 
-        fun firstOrNull(role: String, expectedSize: Int = 1): Class<*>? {
-            if (classes.size != expectedSize) {
-                log("APK PARSE => Expected to find $expectedSize class(es) for $role, found ${classes.size}")
-                return null
-            }
-            return classes.firstOrNull()
-        }
+        fun firstOrNull(): Class<*>? = classes.firstOrNull()
     }
 
     // classesCache stores the result of findClassesFromPackage to speed up next search.
@@ -74,7 +68,7 @@ object PackageUtil {
     }
 
     // findClassIfExists looks up and returns a class if it exists, otherwise it returns null.
-    fun findClassIfExists(className:String, classLoader: ClassLoader): Class<*>? =
+    fun findClassIfExists(className:String, classLoader: ClassLoader?): Class<*>? =
             try { findClass(className, classLoader) } catch (_: Throwable) { null }
 
     // getClassName parses the standard class name of the given DexClass.

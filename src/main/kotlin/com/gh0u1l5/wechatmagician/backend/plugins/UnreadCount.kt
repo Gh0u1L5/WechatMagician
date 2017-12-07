@@ -20,10 +20,6 @@ object UnreadCount {
     private val pkg = WechatPackage
 
     @JvmStatic fun disableMessageUnreadCount() {
-        if (pkg.MMBaseAdapter == null || pkg.ConversationWithCacheAdapter == null) {
-            return
-        }
-
         findAndHookMethod(
                 pkg.MMBaseAdapter, "getItem",
                 C.Int, object : XC_MethodHook() {
