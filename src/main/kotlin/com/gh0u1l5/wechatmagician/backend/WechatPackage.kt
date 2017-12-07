@@ -64,6 +64,7 @@ object WechatPackage {
     var ContactLongClickListener: Class<*>? = null
     var MainUI: Class<*>? = null
     var ConversationLongClickListener: Class<*>? = null
+    var ChattingUI: Class<*>? = null
 
     var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
@@ -192,6 +193,10 @@ object WechatPackage {
                 .filterByMethod(null, "onCreateContextMenu", C.ContextMenu, C.View, C.ContextMenuInfo)
                 .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
                 .firstOrNull("ConversationLongClickListener")
+        ChattingUI = findClassesFromPackage(loader, classes, "$pkgUI.chatting")
+                .filterBySuper(MMFragmentActivity)
+                .filterByMethod(null, "onRequestPermissionsResult", C.Int, C.StringArray, C.IntArray)
+                .firstOrNull("ChattingUI")
 
 
         val pkgSnsUI = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"

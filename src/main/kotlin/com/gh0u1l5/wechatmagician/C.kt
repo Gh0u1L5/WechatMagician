@@ -33,6 +33,7 @@ object C {
     val ViewGroup = android.view.ViewGroup::class.java
 
     val ByteArray = ByteArray::class.java
+    val IntArray = IntArray::class.java
     val ObjectArray = Array<Any>::class.java
     val StringArray = Array<String>::class.java
 }

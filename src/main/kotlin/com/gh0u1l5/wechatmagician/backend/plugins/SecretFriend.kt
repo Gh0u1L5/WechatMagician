@@ -244,4 +244,28 @@ object SecretFriend {
             }
         })
     }
+
+    @JvmStatic fun hideSecretFriendChattingWindow() {
+        if (pkg.ChattingUI == null) {
+            return
+        }
+
+        findAndHookMethod(pkg.ChattingUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
+                    return
+                }
+
+                val activity = param.thisObject as Activity
+                val username = activity.intent.getStringExtra("Chat_User")
+                if (username in SecretFriendList) {
+                    Toast.makeText(
+                            activity, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
+                    ).show()
+                    activity.finish()
+                }
+            }
+        })
+    }
 }

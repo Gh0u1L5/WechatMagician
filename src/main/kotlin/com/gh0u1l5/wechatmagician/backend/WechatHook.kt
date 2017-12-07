@@ -102,6 +102,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginSecretFriend::tamperAdapterCount)
         tryHook(pluginSecretFriend::hideSecretFriend)
         tryHook(pluginSecretFriend::hideSecretFriendConversation)
+        tryHook(pluginSecretFriend::hideSecretFriendChattingWindow)
 
         val pluginLimits = Limits
         pluginLimits.init(settings)
