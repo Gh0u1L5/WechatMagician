@@ -99,14 +99,14 @@ object PackageUtil {
             return classesCache[packageName to depth]!!
         }
 
-        classesCache[packageName to depth] = Classes(classes.filter predicate@ { clazz ->
+        classesCache[packageName to depth] = Classes(classes.filter { clazz ->
             val currentPackage = getPackageName(clazz)
             if (depth == 0) {
-                return@predicate currentPackage == packageName
+                return@filter currentPackage == packageName
             }
             val satisfyPrefix = currentPackage.startsWith(packageName)
             val satisfyDepth = currentPackage.drop(packageName.length).count{it == '.'} == depth
-            return@predicate satisfyPrefix && satisfyDepth
+            return@filter satisfyPrefix && satisfyDepth
         }.mapNotNull { findClassIfExists(getClassName(it), loader) })
         return classesCache[packageName to depth]!!
     }
