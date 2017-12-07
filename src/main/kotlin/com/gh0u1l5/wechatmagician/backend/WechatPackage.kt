@@ -104,6 +104,13 @@ object WechatPackage {
         val version = getVersion(lpparam)
         Version = version
 
+        // NOTE: Since 6.5.16, Wechat loads multiple DEX asynchronously using
+        // a service called DexOptService. So we need to wait for MultiDex
+        // installation to continue.
+        if (version >= Version("6.5.16")) {
+            waitDexOpt(loader)
+        }
+
         var apkFile: ApkFile? = null
         val classes: Array<DexClass>
         try {
@@ -284,6 +291,12 @@ object WechatPackage {
         XMLParseMethod = findMethodsByExactParameters(
                 XMLParserClass, C.Map, C.String, C.String
         ).firstOrNull()
+    }
+
+    // waitDexOpt will keep waiting until the oracle is loaded into the given class loader.
+    private fun waitDexOpt(loader: ClassLoader) {
+        val oracle = "android.support.v4.os.ResultReceiver"
+        while (findClassIfExists(oracle, loader) == null);
     }
 
     // getVersion returns the version of current package / application
