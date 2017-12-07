@@ -17,6 +17,9 @@ import java.util.concurrent.ConcurrentHashMap
 
 class Preferences : SharedPreferences {
 
+    // isLoaded indicates whether this preference has been loaded.
+    @Volatile private var isLoaded = false
+
     // listCache caches the string lists in memory to speed up getStringList()
     private val listCache: MutableMap<String, List<String>> = ConcurrentHashMap()
 
@@ -67,6 +70,7 @@ class Preferences : SharedPreferences {
             log("PREF => $e")
         } finally {
             cacheStringList()
+            isLoaded = true
         }
     }
 
@@ -90,50 +94,29 @@ class Preferences : SharedPreferences {
         return content?.all
     }
 
-    override fun getInt(key: String, defValue: Int): Int {
-        if (legacy != null) {
-            return legacy?.get(key) as? Int ?: defValue
-        }
-        return content?.getInt(key, defValue) ?: defValue
+    private fun getValue(key: String): Any? {
+        while(!isLoaded);
+        return all?.get(key)
     }
 
-    override fun getLong(key: String, defValue: Long): Long {
-        if (legacy != null) {
-            return legacy?.get(key) as? Long ?: defValue
-        }
-        return content?.getLong(key, defValue) ?: defValue
+    private inline fun <reified T>getValue(key: String, defValue: T): T {
+        return getValue(key) as? T ?: defValue
     }
 
-    override fun getFloat(key: String, defValue: Float): Float {
-        if (legacy != null) {
-            return legacy?.get(key) as? Float ?: defValue
-        }
-        return content?.getFloat(key, defValue) ?: defValue
-    }
+    override fun getInt(key: String, defValue: Int): Int = getValue(key, defValue)
 
-    override fun getBoolean(key: String, defValue: Boolean): Boolean {
-        if (legacy != null) {
-            return legacy?.get(key) as? Boolean ?: defValue
-        }
-        return content?.getBoolean(key, defValue) ?: defValue
-    }
+    override fun getLong(key: String, defValue: Long): Long = getValue(key, defValue)
 
-    override fun getString(key: String, defValue: String): String {
-        if (legacy != null) {
-            return legacy?.get(key) as? String ?: defValue
-        }
-        return content?.getString(key, defValue) ?: defValue
-    }
+    override fun getFloat(key: String, defValue: Float): Float = getValue(key, defValue)
 
-    @Suppress("UNCHECKED_CAST")
-    override fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> {
-        if (legacy != null) {
-            return legacy?.get(key) as? MutableSet<String> ?: defValue
-        }
-        return content?.getStringSet(key, defValue) ?: defValue
-    }
+    override fun getBoolean(key: String, defValue: Boolean): Boolean = getValue(key, defValue)
+
+    override fun getString(key: String, defValue: String): String = getValue(key, defValue)
+
+    override fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> = getValue(key, defValue)
 
     fun getStringList(key: String, defValue: List<String>): List<String> {
+        while(!isLoaded);
         return listCache[key] ?: defValue
     }
 
