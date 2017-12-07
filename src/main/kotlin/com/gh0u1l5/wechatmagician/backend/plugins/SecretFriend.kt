@@ -198,15 +198,15 @@ object SecretFriend {
                 val adapter = param.thisObject as BaseAdapter
                 thread(start = true) {
                     (0 until adapter.count).forEach { index ->
-                        try {
-                            val item = adapter.getItem(index)
+                        val item = adapter.getItem(index)
+                        if (item != null) {
                             val nickname = getObjectField(item, "field_nickname")
                             val username = getObjectField(item, "field_username")
                             cacheNicknameUsernamePair(nickname as? String, username as? String)
-                        } catch (_: IndexOutOfBoundsException) {
-                            // Ignore this one
                         }
                     }
+                }.setUncaughtExceptionHandler { _, _ ->
+                    // Ignore this one
                 }
                 updateHideCache(param)
             }
