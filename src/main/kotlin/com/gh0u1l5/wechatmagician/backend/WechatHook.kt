@@ -65,14 +65,10 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
         val loader = lpparam.classLoader
 
-        thread(start = true) {
-            WechatPackage.init(lpparam)
-            SecretFriendList.init(context)
-            settings.load(context, PREFERENCE_NAME_SETTINGS)
-            developer.load(context, PREFERENCE_NAME_DEVELOPER)
-        }.setUncaughtExceptionHandler { _, throwable ->
-            log(throwable)
-        }
+        WechatPackage.init(lpparam)
+        SecretFriendList.init(context)
+        settings.load(context, PREFERENCE_NAME_SETTINGS)
+        developer.load(context, PREFERENCE_NAME_DEVELOPER)
 
         val pluginDeveloper = Developer
         pluginDeveloper.init(loader, developer)

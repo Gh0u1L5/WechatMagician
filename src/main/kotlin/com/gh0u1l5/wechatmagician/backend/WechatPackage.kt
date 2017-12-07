@@ -4,7 +4,7 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.Global.SPIN_INTERVAL
+import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.FileUtil
@@ -23,6 +23,7 @@ import java.lang.Thread.sleep
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
+import kotlin.concurrent.thread
 import kotlin.concurrent.write
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
@@ -45,8 +46,11 @@ object WechatPackage {
     fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         synchronized(initializeChannel) {
             if (!isInitialized) {
-                initializeChannel.wait()
+                initializeChannel.wait(WAIT_TIMEOUT)
             }
+        }
+        if (loader == null || version == null || classes == null) {
+            throw Error("Failed to evaluate $name: initialization failed.")
         }
         initializer() ?: throw Error("Failed to evaluate $name")
     }
@@ -294,37 +298,37 @@ object WechatPackage {
         ).firstOrNull()
     }
 
-    // Analyzes Wechat package statically for the name of classes.
-    // WechatHook will do the runtime analysis and set the objects.
+    // init initializes necessary information for static analysis.
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
-        loader = lpparam.classLoader
-        version = getVersion(lpparam)
+        thread(start = true) {
+            try {
+                loader = lpparam.classLoader
+                version = getVersion(lpparam)
 
-        var apkFile: ApkFile? = null
-        try {
-            apkFile = ApkFile(lpparam.appInfo.sourceDir)
-            classes = apkFile.dexClasses
-        } finally {
-            apkFile?.close()
-        }
+                var apkFile: ApkFile? = null
+                try {
+                    apkFile = ApkFile(lpparam.appInfo.sourceDir)
+                    classes = apkFile.dexClasses
+                } finally {
+                    apkFile?.close()
+                }
 
-        // NOTE: Since 6.5.16, Wechat loads multiple DEX asynchronously using
-        // a service called DexOptService. So we need to wait for MultiDex
-        // installation to continue.
-        if (version!! >= Version("6.5.16")) {
-            while (true) {
-                val pathList = getObjectField(loader, "pathList")
-                val elements = getObjectField(pathList, "dexElements") as Array<*>?
-                val dexCount = elements?.filter {
-                    getObjectField(it, "dexFile") != null
-                }?.size ?: 0
-                if (dexCount > 1) break else sleep(SPIN_INTERVAL)
+                // NOTE: Since 6.5.16, Wechat loads multiple DEX asynchronously using
+                // a service called DexOptService. So we need to wait for MultiDex
+                // installation to continue.
+                if (version!! >= Version("6.5.16")) {
+                    // Keep waiting until the oracle is loaded into the given class loader.
+                    val oracle = "android.support.v4.os.ResultReceiver"
+                    while (findClassIfExists(oracle, loader) == null);
+                }
+            } finally {
+                synchronized(initializeChannel) {
+                    isInitialized = true
+                    initializeChannel.notifyAll()
+                }
             }
-        }
-
-        synchronized(initializeChannel) {
-            isInitialized = true
-            initializeChannel.notifyAll()
+        }.setUncaughtExceptionHandler { _, throwable ->
+            log(throwable)
         }
     }
 

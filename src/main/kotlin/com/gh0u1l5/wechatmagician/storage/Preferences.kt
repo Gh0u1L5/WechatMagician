@@ -6,6 +6,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
+import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
@@ -14,6 +15,7 @@ import de.robv.android.xposed.XposedBridge.log
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.concurrent.thread
 
 class Preferences : SharedPreferences {
 
@@ -48,33 +50,35 @@ class Preferences : SharedPreferences {
     // load registers the receiver and loads the specific shared preferences.
     @Suppress("UNCHECKED_CAST")
     fun load(context: Context?, preferencesName: String) {
-        try {
-            // First, check the legacy preferences on external storage
-            // If legacy preferences exists, load the legacy content.
-            val storage = Environment.getExternalStorageDirectory()
-            val legacyPrefDir = File(storage, "WechatMagician/.prefs")
-            val legacyPrefFile = File(legacyPrefDir, preferencesName)
-            if (legacyPrefFile.exists()) {
-                val path = legacyPrefFile.absolutePath
-                legacy = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
-            }
+        thread(start = true) {
+            try {
+                // First, check the legacy preferences on external storage
+                // If legacy preferences exists, load the legacy content.
+                val storage = Environment.getExternalStorageDirectory()
+                val legacyPrefDir = File(storage, "WechatMagician/.prefs")
+                val legacyPrefFile = File(legacyPrefDir, preferencesName)
+                if (legacyPrefFile.exists()) {
+                    val path = legacyPrefFile.absolutePath
+                    legacy = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
+                }
 
-            // Also load the preferences in the data directories.
-            val wechatDataDir = getApplicationDataDir(context)
-            val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-            val preferencePath = "$magicianDataDir/$FOLDER_SHARED_PREFS/$preferencesName.xml"
-            content = XSharedPreferences(File(preferencePath))
-            context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
-        } catch (_: FileNotFoundException) {
-            // Ignore this one
-        } catch (e: Throwable) {
-            log("PREF => $e")
-        } finally {
-            synchronized(loadChannel) {
-                isLoaded = true
-                loadChannel.notifyAll()
+                // Also load the preferences in the data directories.
+                val wechatDataDir = getApplicationDataDir(context)
+                val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
+                val preferencePath = "$magicianDataDir/$FOLDER_SHARED_PREFS/$preferencesName.xml"
+                content = XSharedPreferences(File(preferencePath))
+                context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+            } catch (_: FileNotFoundException) {
+                // Ignore this one
+            } catch (e: Throwable) {
+                log(e)
+            } finally {
+                synchronized(loadChannel) {
+                    isLoaded = true
+                    loadChannel.notifyAll()
+                }
+                cacheStringList()
             }
-            cacheStringList()
         }
     }
 
@@ -101,7 +105,7 @@ class Preferences : SharedPreferences {
     private fun getValue(key: String): Any? {
         synchronized(loadChannel) {
             if (!isLoaded) {
-                loadChannel.wait()
+                loadChannel.wait(WAIT_TIMEOUT)
             }
         }
         return all?.get(key)
@@ -126,7 +130,7 @@ class Preferences : SharedPreferences {
     fun getStringList(key: String, defValue: List<String>): List<String> {
         synchronized(loadChannel) {
             if (!isLoaded) {
-                loadChannel.wait()
+                loadChannel.wait(WAIT_TIMEOUT)
             }
         }
         return listCache[key] ?: defValue
