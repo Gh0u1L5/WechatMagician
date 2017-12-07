@@ -27,6 +27,7 @@ class ListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<S
 
                 val textLayout = LinearLayout.LayoutParams(WRAP_CONTENT, MATCH_PARENT)
                 textLayout.marginStart = context.dp2px(15)
+                textLayout.marginEnd = context.dp2px(15)
                 addView(TextView(context).apply {
                     textSize = 16F
                     gravity = Gravity.CENTER_VERTICAL

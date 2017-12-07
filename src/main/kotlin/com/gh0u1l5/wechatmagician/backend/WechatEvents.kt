@@ -82,7 +82,7 @@ object WechatEvents {
             }
 
             // Set general properties for popup window
-            width = parent.context.dp2px(100)
+            width = parent.context.dp2px(120)
             setDropDownGravity(Gravity.CENTER)
             setAdapter(ListPopupAdapter(view.context, operations))
             setOnItemClickListener { _, _, operation, _ ->
