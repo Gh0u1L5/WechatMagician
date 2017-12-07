@@ -1,9 +1,12 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
+import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.view.ContextMenu
+import android.view.View
 import android.widget.AdapterView
+import android.widget.BaseAdapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
@@ -15,10 +18,12 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_HIDE_FRIEND
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_USER_NOT_FOUND
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.cacheNicknameUsernamePair
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.getUsernameFromNickname
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.*
+import kotlin.concurrent.thread
 
 object SecretFriend {
 
@@ -36,6 +41,8 @@ object SecretFriend {
     // These are the cache of adapter objects
     @Volatile var addressAdapter: Any? = null
     @Volatile var conversationAdapter: Any? = null
+
+    @Volatile var currentUsername: String? = null
 
     private fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
@@ -66,20 +73,30 @@ object SecretFriend {
         changeUserStatusByUsername(context, username, isSecret)
     }
 
-    private fun hideItemView(param: XC_MethodHook.MethodHookParam) {
+    private fun recordCurrentUsername(param: XC_MethodHook.MethodHookParam) {
         if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
             return
         }
-        AdapterHider.beforeGetView(param)
+
+        val parent = param.args[0] as AdapterView<*>
+        val position = param.args[2] as Int
+
+        val adapter = parent.adapter
+        val item = adapter.getItem(position)
+        currentUsername = getObjectField(item, "field_username") as String?
     }
 
-    private fun updateHideCache(param: XC_MethodHook.MethodHookParam) {
+    private fun addHideOption(param: XC_MethodHook.MethodHookParam) {
         if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
             return
         }
-        AdapterHider.beforeNotifyDataSetChanged(param) { item ->
-            val username = getObjectField(item, "field_username")
-            username in SecretFriendList
+
+        val menu = param.args[0] as ContextMenu
+        val view = param.args[1] as View
+        val item = menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
+        item.setOnMenuItemClickListener {
+            changeUserStatusByUsername(view.context, currentUsername, true)
+            return@setOnMenuItemClickListener true
         }
     }
 
@@ -87,73 +104,36 @@ object SecretFriend {
         when (null) {
             pkg.AddressUI,
             pkg.ContactLongClickListener,
-            pkg.ConversationLongClickListener -> return
+            pkg.ConversationLongClickListener,
+            pkg.ConversationCreateContextMenuListener -> return
         }
-
-        var currentUsername: String? = ""
 
         findAndHookMethod(
                 pkg.ContactLongClickListener, "onItemLongClick",
                 C.AdapterView, C.View, C.Int, C.Long, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
-                    return
-                }
-
-                val parent = param.args[0] as AdapterView<*>
-                val position = param.args[2] as Int
-
-                val adapter = parent.adapter
-                val item = adapter.getItem(position)
-                currentUsername = getObjectField(item, "field_username") as String?
-            }
+            override fun beforeHookedMethod(param: MethodHookParam) = recordCurrentUsername(param)
         })
 
         findAndHookMethod(
                 pkg.AddressUI, "onCreateContextMenu",
                 C.ContextMenu, C.View, C.ContextMenuInfo, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
-                    return
-                }
-
-                val menu = param.args[0] as ContextMenu
-                menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
-            }
+            override fun afterHookedMethod(param: MethodHookParam) = addHideOption(param)
         })
 
         findAndHookMethod(
                 pkg.ConversationLongClickListener, "onItemLongClick",
                 C.AdapterView, C.View, C.Int, C.Long, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
-                    return
-                }
-
-                val parent = param.args[0] as AdapterView<*>
-                val position = param.args[2] as Int
-
-                val adapter = parent.adapter
-                val item = adapter.getItem(position)
-                currentUsername = getObjectField(item, "field_username") as String?
-            }
+            override fun beforeHookedMethod(param: MethodHookParam) = recordCurrentUsername(param)
         })
 
         findAndHookMethod(
-                pkg.ConversationLongClickListener, "onCreateContextMenu",
+                pkg.ConversationCreateContextMenuListener, "onCreateContextMenu",
                 C.ContextMenu, C.View, C.ContextMenuInfo, object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
-                    return
-                }
-
-                val menu = param.args[0] as ContextMenu
-                menu.add(0, ITEM_ID_BUTTON_HIDE_FRIEND, 0, str[BUTTON_HIDE_FRIEND])
-            }
+            override fun afterHookedMethod(param: MethodHookParam) = addHideOption(param)
         })
 
         findAndHookMethod(pkg.MMListPopupWindow, "show", object : XC_MethodHook() {
@@ -178,6 +158,23 @@ object SecretFriend {
                 })
             }
         })
+    }
+
+    private fun hideItem(param: XC_MethodHook.MethodHookParam) {
+        if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
+            return
+        }
+        AdapterHider.beforeGetItem(param)
+    }
+
+    private fun updateHideCache(param: XC_MethodHook.MethodHookParam) {
+        if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
+            return
+        }
+        AdapterHider.beforeNotifyDataSetChanged(param) { item ->
+            val username = getObjectField(item, "field_username")
+            username in SecretFriendList
+        }
     }
 
     @JvmStatic fun tamperAdapterCount() {

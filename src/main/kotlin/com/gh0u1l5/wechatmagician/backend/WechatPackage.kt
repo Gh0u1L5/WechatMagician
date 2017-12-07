@@ -64,6 +64,7 @@ object WechatPackage {
     var ContactLongClickListener: Class<*>? = null
     var MainUI: Class<*>? = null
     var ConversationLongClickListener: Class<*>? = null
+    var ConversationCreateContextMenuListener: Class<*>? = null
     var ChattingUI: Class<*>? = null
 
     var SnsActivity: Class<*>? = null
@@ -189,10 +190,22 @@ object WechatPackage {
                 .filterByMethod(C.Int, "getLayoutId")
                 .filterByMethod(null, "onConfigurationChanged", C.Configuration)
                 .firstOrNull("MainUI")
-        ConversationLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
-                .filterByMethod(null, "onCreateContextMenu", C.ContextMenu, C.View, C.ContextMenuInfo)
-                .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
-                .firstOrNull("ConversationLongClickListener")
+        when {
+            version >= Version("6.5.8") -> {
+                ConversationLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
+                        .filterByMethod(null, "onCreateContextMenu", C.ContextMenu, C.View, C.ContextMenuInfo)
+                        .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
+                        .firstOrNull("ConversationLongClickListener")
+                ConversationCreateContextMenuListener = ConversationLongClickListener
+            }
+            else -> {
+                ConversationLongClickListener = findClassesFromPackage(loader, classes, "$pkgUI.conversation")
+                        .filterByEnclosingClass(MainUI)
+                        .filterByMethod(C.Boolean, "onItemLongClick", C.AdapterView, C.View, C.Int, C.Long)
+                        .firstOrNull("ConversationLongClickListener")
+                ConversationCreateContextMenuListener = MainUI
+            }
+        }
         ChattingUI = findClassesFromPackage(loader, classes, "$pkgUI.chatting")
                 .filterBySuper(MMFragmentActivity)
                 .filterByMethod(null, "onRequestPermissionsResult", C.Int, C.StringArray, C.IntArray)

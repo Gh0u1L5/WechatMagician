@@ -16,7 +16,7 @@ object AdapterHider {
         param.result = count - hideSize
     }
 
-    fun beforeGetView(param: XC_MethodHook.MethodHookParam) {
+    fun beforeGetItem(param: XC_MethodHook.MethodHookParam) {
         val adapter = param.thisObject as BaseAdapter
         val index = param.args[0] as Int
         val list = hideTable[adapter] ?: return

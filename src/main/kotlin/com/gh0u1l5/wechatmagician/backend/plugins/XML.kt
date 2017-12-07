@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
-import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
@@ -11,7 +10,6 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
-import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
