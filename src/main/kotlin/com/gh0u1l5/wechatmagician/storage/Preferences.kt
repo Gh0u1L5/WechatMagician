@@ -18,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap
 class Preferences : SharedPreferences {
 
     // isLoaded indicates whether this preference has been loaded.
+    private val loadChannel = java.lang.Object()
     @Volatile private var isLoaded = false
 
     // listCache caches the string lists in memory to speed up getStringList()
@@ -69,8 +70,11 @@ class Preferences : SharedPreferences {
         } catch (e: Throwable) {
             log("PREF => $e")
         } finally {
+            synchronized(loadChannel) {
+                isLoaded = true
+                loadChannel.notifyAll()
+            }
             cacheStringList()
-            isLoaded = true
         }
     }
 
@@ -95,7 +99,11 @@ class Preferences : SharedPreferences {
     }
 
     private fun getValue(key: String): Any? {
-        while(!isLoaded);
+        synchronized(loadChannel) {
+            if (!isLoaded) {
+                loadChannel.wait()
+            }
+        }
         return all?.get(key)
     }
 
@@ -116,7 +124,11 @@ class Preferences : SharedPreferences {
     override fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> = getValue(key, defValue)
 
     fun getStringList(key: String, defValue: List<String>): List<String> {
-        while(!isLoaded);
+        synchronized(loadChannel) {
+            if (!isLoaded) {
+                loadChannel.wait()
+            }
+        }
         return listCache[key] ?: defValue
     }
 
