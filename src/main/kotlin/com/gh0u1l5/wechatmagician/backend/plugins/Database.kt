@@ -104,9 +104,6 @@ object Database {
                         if (values["sourceType"] != 0) {
                             return
                         }
-                        if (values["userName"] in SecretFriendList) {
-                            return
-                        }
                         if (values["stringSeq"] in SnsBlacklist) {
                             return
                         }

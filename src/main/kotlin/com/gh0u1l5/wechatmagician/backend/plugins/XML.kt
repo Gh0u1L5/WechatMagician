@@ -44,7 +44,6 @@ object XML {
                     handleRevokeCommand(result)
                 }
                 if (result[".TimelineObject"] != null) {
-                    matchSecretFriendList(result)
                     matchKeywordBlackList(result)
                     recordTimelineObject(result)
                 }
@@ -66,19 +65,6 @@ object XML {
         val prompt = preferences!!.getString(
                 SETTINGS_CHATTING_RECALL_PROMPT, str[PROMPT_RECALL])
         result[msgTag] = MessageUtil.applyEasterEgg(msg, prompt)
-    }
-
-    private fun matchSecretFriendList(result: MutableMap<String, String?>) {
-        if (!preferences!!.getBoolean(SETTINGS_SECRET_FRIEND, false)) {
-            return
-        }
-        if (result[".TimelineObject.private"] == "1") {
-            return
-        }
-        val username = result[".TimelineObject.username"] ?: return
-        if (username in SecretFriendList) {
-            result[".TimelineObject.private"] = "1"
-        }
     }
 
     private fun matchKeywordBlackList(result: MutableMap<String, String?>) {
