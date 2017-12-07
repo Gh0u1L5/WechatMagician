@@ -56,6 +56,7 @@ object WechatPackage {
     var MMListPopupWindow: Class<*>? = null
 
     var MMBaseAdapter: Class<*>? = null
+    var MMBaseAdapterGetMethod: String? = null
     var AddressAdapter: Class<*>? = null
     var ConversationWithCacheAdapter: Class<*>? = null
 
@@ -170,6 +171,11 @@ object WechatPackage {
                 log("Unexpected base adapter: ${AddressAdapter?.superclass} and ${ConversationWithCacheAdapter?.superclass}")
             }
             MMBaseAdapter = AddressAdapter?.superclass
+            MMBaseAdapterGetMethod = MMBaseAdapter?.declaredMethods?.filter {
+                it.parameterTypes.size == 1 && it.parameterTypes[0] == C.Int
+            }?.firstOrNull {
+                it.name != "getItem" && it.name != "getItemId"
+            }?.name
         }
 
 

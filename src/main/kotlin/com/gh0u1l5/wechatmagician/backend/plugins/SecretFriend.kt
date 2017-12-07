@@ -196,17 +196,19 @@ object SecretFriend {
     }
 
     @JvmStatic fun hideSecretFriend() {
-        if (pkg.AddressAdapter == null) {
-            return
+        when (null) {
+            pkg.MMBaseAdapter,
+            pkg.AddressAdapter,
+            pkg.MMBaseAdapterGetMethod -> return
         }
 
-        findAndHookMethod(
-                pkg.AddressAdapter, "getView",
-                C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                addressAdapter = param.thisObject
-                hideItemView(param)
+                if (param.thisObject.javaClass == pkg.AddressAdapter) {
+                    addressAdapter = param.thisObject
+                    hideItem(param)
+                }
             }
         })
 
@@ -217,17 +219,19 @@ object SecretFriend {
     }
 
     @JvmStatic fun hideSecretFriendConversation() {
-        if (pkg.ConversationWithCacheAdapter == null) {
-            return
+        when (null) {
+            pkg.MMBaseAdapter,
+            pkg.ConversationWithCacheAdapter,
+            pkg.MMBaseAdapterGetMethod -> return
         }
 
-        findAndHookMethod(
-                pkg.ConversationWithCacheAdapter, "getView",
-                C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
+        findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                conversationAdapter = param.thisObject
-                hideItemView(param)
+                if (param.thisObject.javaClass == pkg.ConversationWithCacheAdapter) {
+                    conversationAdapter = param.thisObject
+                    hideItem(param)
+                }
             }
         })
 
