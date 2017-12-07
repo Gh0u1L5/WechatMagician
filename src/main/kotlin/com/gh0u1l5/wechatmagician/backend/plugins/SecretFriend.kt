@@ -214,7 +214,22 @@ object SecretFriend {
 
         findAndHookMethod(pkg.AddressAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
             @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) = updateHideCache(param)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject as BaseAdapter
+                thread(start = true) {
+                    (0 until adapter.count).forEach { index ->
+                        try {
+                            val item = adapter.getItem(index)
+                            val nickname = getObjectField(item, "field_nickname")
+                            val username = getObjectField(item, "field_username")
+                            cacheNicknameUsernamePair(nickname as? String, username as? String)
+                        } catch (_: IndexOutOfBoundsException) {
+                            // Ignore this one
+                        }
+                    }
+                }
+                updateHideCache(param)
+            }
         })
     }
 

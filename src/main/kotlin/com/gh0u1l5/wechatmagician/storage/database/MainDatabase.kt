@@ -11,6 +11,13 @@ object MainDatabase {
     // nameCache maps nicknames to corresponding usernames
     private val nameCache: MutableMap<String, String> = ConcurrentHashMap()
 
+    fun cacheNicknameUsernamePair(nickname: String?, username: String?) {
+        if (nickname == null || username == null) {
+            return
+        }
+        nameCache[nickname] = username
+    }
+
     fun getUsernameFromNickname(nickname: String): String? {
         if (nickname in nameCache) {
             return nameCache[nickname]
