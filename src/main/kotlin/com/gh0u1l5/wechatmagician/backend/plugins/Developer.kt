@@ -226,7 +226,7 @@ object Developer {
         }
 
         if (preferences!!.getBoolean(DEVELOPER_TRACE_LOGCAT, false)) {
-            val functions = listOf("d", "e", "i", "v", "w")
+            val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
                 findAndHookMethod(
                         pkg.LogCat, func,
