@@ -16,6 +16,7 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
+import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
@@ -127,6 +128,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginSearchBar::hijackSearchBar)
 
         thread(start = true) {
+            sleep(10000) // Wait 10 seconds for hooking
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
             WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
