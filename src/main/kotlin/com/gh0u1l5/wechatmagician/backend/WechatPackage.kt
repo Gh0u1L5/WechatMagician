@@ -44,7 +44,7 @@ object WechatPackage {
     var EncEngine: Class<*>? = null
     var EncEngineEDMethod: Method? = null
 
-    var SQLiteDatabasePkg = ""
+    var SQLiteDatabasePkg: String? = null
     var SQLiteDatabase: Class<*>? = null
     var SQLiteCursorFactory: Class<*>? = null
     var SQLiteErrorHandler: Class<*>? = null
@@ -69,7 +69,7 @@ object WechatPackage {
 
     var SnsActivity: Class<*>? = null
     var SnsUploadUI: Class<*>? = null
-    var SnsUploadUIEditTextField = ""
+    var SnsUploadUIEditTextField: String? = null
     var SnsUserUI: Class<*>? = null
     var SnsTimeLineUI: Class<*>? = null
 

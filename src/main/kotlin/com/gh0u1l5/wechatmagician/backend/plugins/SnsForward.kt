@@ -97,8 +97,9 @@ object SnsForward {
 
     // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
     @JvmStatic fun cleanTextViewBeforeForwarding() {
-        if (pkg.SnsUploadUI == null || pkg.SnsUploadUIEditTextField == "") {
-            return
+        when (null) {
+            pkg.SnsUploadUI,
+            pkg.SnsUploadUIEditTextField -> return
         }
 
         findAndHookMethod(pkg.SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
