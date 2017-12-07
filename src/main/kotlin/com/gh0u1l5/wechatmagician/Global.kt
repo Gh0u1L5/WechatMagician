@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician
 object Global {
     val SALT = "W3ch4tM4g1c14n"
     val LOG_TAG = "WechatMagician"
+    val SPIN_INTERVAL = 100L
 
     val XPOSED_PACKAGE_NAME   = "de.robv.android.xposed.installer"
     val WECHAT_PACKAGE_NAME   = "com.tencent.mm"
