@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.backend.plugins.SnsForward.ForwardAsyncTask
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupPosition
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
