@@ -20,9 +20,6 @@ object PackageUtil {
         }
 
         fun filterByEnclosingClass(enclosingClass: Class<*>?): Classes {
-            if (enclosingClass == null) {
-                return Classes(listOf())
-            }
             return Classes(classes.filter { it.enclosingClass == enclosingClass })
         }
 
