@@ -1,10 +1,8 @@
 package com.gh0u1l5.wechatmagician.frontend.widget
 
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.support.v7.preference.SwitchPreferenceCompat
 import android.util.AttributeSet
-import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
@@ -20,7 +18,7 @@ class PasswordSwitchPreference : SwitchPreferenceCompat {
     constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes)
 
     override fun onClick() {
-        val pref = context.getSharedPreferences(PREFERENCE_NAME_SETTINGS, MODE_PRIVATE)
+        val pref = preferenceManager.sharedPreferences
         val encrypted = pref.getString("${key}_password", "")
 
         val status = pref.getBoolean(key, false)
@@ -36,7 +34,7 @@ class PasswordSwitchPreference : SwitchPreferenceCompat {
             if (encrypted != "") {
                 return super.onClick()
             }
-            PasswordUtil.createPassword(context, "Wechat Magician", pref, key) {
+            PasswordUtil.createPassword(context, "Wechat Magician", pref, "${key}_password") {
                 super.onClick()
             }
         }
