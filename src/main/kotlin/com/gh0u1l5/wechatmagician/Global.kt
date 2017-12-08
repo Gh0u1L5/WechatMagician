@@ -3,7 +3,7 @@ package com.gh0u1l5.wechatmagician
 object Global {
     val SALT = "W3ch4tM4g1c14n"
     val LOG_TAG = "WechatMagician"
-    val WAIT_TIMEOUT = 20000L // 20 seconds
+    val WAIT_TIMEOUT = 10000L // 10 seconds
 
     val XPOSED_PACKAGE_NAME   = "de.robv.android.xposed.installer"
     val WECHAT_PACKAGE_NAME   = "com.tencent.mm"

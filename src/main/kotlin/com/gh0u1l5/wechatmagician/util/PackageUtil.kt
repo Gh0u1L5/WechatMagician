@@ -7,6 +7,7 @@ import de.robv.android.xposed.XposedHelpers.*
 import net.dongliu.apk.parser.bean.DexClass
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import java.util.concurrent.ConcurrentHashMap
 
 // PackageUtil is a helper object for static analysis
 object PackageUtil {
@@ -53,7 +54,7 @@ object PackageUtil {
     }
 
     // classesCache stores the result of findClassesFromPackage to speed up next search.
-    private val classesCache: MutableMap<Pair<String, Int>, Classes> = HashMap()
+    private val classesCache: MutableMap<Pair<String, Int>, Classes> = ConcurrentHashMap()
 
     // shadowCopy copy all the fields of the object obj into the object copy.
     @JvmStatic fun shadowCopy(obj: Any, copy: Any, clazz: Class<*>? = obj.javaClass) {
@@ -80,10 +81,9 @@ object PackageUtil {
     }
 
     // getPackageName parses the package name of the given DexClass.
-    // NOTE: Here we do not use DexClass.getPackageName because of Issue #22
+    // NOTE: Here we do not use DexClass.getPackageName() because of Issue #22
     // Reference: https://github.com/Gh0u1L5/WechatMagician/issues/22
-    @JvmStatic fun getPackageName(clazz: DexClass): String {
-        val className = getClassName(clazz)
+    @JvmStatic fun getPackageName(className: String): String {
         val delimiter = className.lastIndexOf('.')
         if (delimiter == -1) {
             return ""
@@ -93,12 +93,11 @@ object PackageUtil {
 
     // findClassesFromPackage returns a list of all the classes contained in the given package.
     @JvmStatic fun findClassesFromPackage(
-            loader: ClassLoader, classes: Array<DexClass>, packageName: String, depth: Int = 0
+            loader: ClassLoader, classes: List<String>, packageName: String, depth: Int = 0
     ): Classes {
         if ((packageName to depth) in classesCache) {
             return classesCache[packageName to depth]!!
         }
-
         classesCache[packageName to depth] = Classes(classes.filter { clazz ->
             val currentPackage = getPackageName(clazz)
             if (depth == 0) {
@@ -107,7 +106,7 @@ object PackageUtil {
             val satisfyPrefix = currentPackage.startsWith(packageName)
             val satisfyDepth = currentPackage.drop(packageName.length).count{it == '.'} == depth
             return@filter satisfyPrefix && satisfyDepth
-        }.mapNotNull { findClassIfExists(getClassName(it), loader) })
+        }.mapNotNull { findClassIfExists(it, loader) })
         return classesCache[packageName to depth]!!
     }
 

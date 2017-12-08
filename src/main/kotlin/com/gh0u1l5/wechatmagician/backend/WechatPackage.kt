@@ -8,6 +8,7 @@ import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.FileUtil
+import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
@@ -17,7 +18,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
-import net.dongliu.apk.parser.bean.DexClass
 import java.io.File
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -40,7 +40,7 @@ object WechatPackage {
     // These stores necessary information to match signatures.
     @Volatile var loader: ClassLoader? = null
     @Volatile var version: Version? = null
-    @Volatile var classes: Array<DexClass>? = null
+    @Volatile var classes: List<String>? = null
 
     fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         synchronized(initializeChannel) {
@@ -307,18 +307,11 @@ object WechatPackage {
                 var apkFile: ApkFile? = null
                 try {
                     apkFile = ApkFile(lpparam.appInfo.sourceDir)
-                    classes = apkFile.dexClasses
+                    classes = apkFile.dexClasses.map { clazz ->
+                        PackageUtil.getClassName(clazz)
+                    }
                 } finally {
                     apkFile?.close()
-                }
-
-                // NOTE: Since 6.5.16, Wechat loads multiple DEX asynchronously using
-                // a service called DexOptService. So we need to wait for MultiDex
-                // installation to continue.
-                if (version!! >= Version("6.5.16")) {
-                    // Keep waiting until the oracle is loaded into the given class loader.
-                    val oracle = "android.support.v4.os.ResultReceiver"
-                    while (findClassIfExists(oracle, loader) == null);
                 }
             } finally {
                 synchronized(initializeChannel) {

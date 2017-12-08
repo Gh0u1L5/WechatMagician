@@ -6,6 +6,7 @@ import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
+import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -128,7 +129,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginSearchBar::hijackSearchBar)
 
         thread(start = true) {
-            sleep(10000) // Wait 10 seconds for hooking
+            sleep(WAIT_TIMEOUT) // Wait a while for hooking
             val wechatDataDir = getApplicationDataDir(context)
             val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
             WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
