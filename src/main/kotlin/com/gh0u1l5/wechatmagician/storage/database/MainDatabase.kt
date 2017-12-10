@@ -20,21 +20,23 @@ object MainDatabase {
     }
 
     fun cleanUnreadCount() {
+        val database = mainDB ?: return
         val clean = ContentValues().apply { put("unReadCount", 0) }
-        callMethod(mainDB, "update", "rconversation", clean, null, null)
+        callMethod(database, "update", "rconversation", clean, null, null)
     }
 
     fun getUsernameFromNickname(nickname: String): String? {
         if (nickname in nameCache) {
             return nameCache[nickname]
         }
+        if (nickname == "") {
+            return null
+        }
 
-        if (nickname == "") return null
-        val db = mainDB ?: return null
-
+        val database = mainDB ?: return null
         var cursor: Any? = null
         try {
-            cursor = callMethod(db, "query",
+            cursor = callMethod(database, "query",
                     "rcontact", arrayOf("username"), "nickname=?", arrayOf(nickname),
                     null, null, null, null
             )
@@ -43,9 +45,8 @@ object MainDatabase {
                 return null
             }
             callMethod(cursor, "moveToFirst")
-            val username = callMethod(cursor, "getString", 0) as String
-            nameCache[nickname] = username
-            return username
+            nameCache[nickname] = callMethod(cursor, "getString", 0) as String
+            return nameCache[nickname]
         } catch (e: Throwable) {
             log(e); return null
         } finally {

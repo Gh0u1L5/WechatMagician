@@ -12,12 +12,14 @@ object SnsDatabase {
 
     // getSnsIdFromRowId searches the database to find the snsId in a specific row
     fun getSnsIdFromRowId(rowId: String?): String? {
-        if (rowId == null || rowId == "") return null
-        val db = snsDB ?: return null
+        if (rowId == null || rowId == "") {
+            return null
+        }
 
+        val database = snsDB ?: return null
         var cursor: Any? = null
         try {
-            cursor = callMethod(db, "query",
+            cursor = callMethod(database, "query",
                     "SnsInfo", arrayOf("snsId"), "rowId=?", arrayOf(rowId),
                     null, null, null, null
             )
