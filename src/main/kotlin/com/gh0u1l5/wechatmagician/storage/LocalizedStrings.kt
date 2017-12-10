@@ -23,6 +23,7 @@ object LocalizedStrings {
     val PROMPT_RECALL                 = "prompt_recall"
     val LABEL_DELETED                 = "label_deleted"
     val BUTTON_SELECT_ALL             = "button_select_all"
+    val BUTTON_CLEAN_UNREAD           = "button_clean_unread"
     val BUTTON_OK                     = "button_ok"
     val BUTTON_CANCEL                 = "button_cancel"
 
@@ -46,6 +47,7 @@ object LocalizedStrings {
                     PROMPT_RECALL                 to "妄图撤回一条消息，啧啧",
                     LABEL_DELETED                 to "[已删除]",
                     BUTTON_SELECT_ALL             to "全选",
+                    BUTTON_CLEAN_UNREAD           to "清空全部未读提醒",
                     BUTTON_OK                     to "确定",
                     BUTTON_CANCEL                 to "取消"
             ),
@@ -66,6 +68,7 @@ object LocalizedStrings {
                     PROMPT_RECALL                 to "want to recall the message, idiot.",
                     LABEL_DELETED                 to "[Deleted]",
                     BUTTON_SELECT_ALL             to "All",
+                    BUTTON_CLEAN_UNREAD           to "Mark All as Read",
                     BUTTON_OK                     to "Okay",
                     BUTTON_CANCEL                 to "Cancel"
             )

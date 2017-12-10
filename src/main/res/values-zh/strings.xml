@@ -72,7 +72,6 @@
     <string name="pref_category_settings_miscellaneous">杂项</string>
     <string name="pref_toggle_auto_login">启用自动登录</string>
     <string name="pref_toggle_auto_login_summary">自动同意电脑版微信的登录请求，若开启此选项造成任何经济损失作者概不负责</string>
-    <string name="pref_disable_message_unread_count">禁用未读消息计数</string>
     <string name="pref_toggle_secret_friend">启用微信密友</string>
     <string name="pref_text_secret_friend_password">设置微信密友密码</string>
 

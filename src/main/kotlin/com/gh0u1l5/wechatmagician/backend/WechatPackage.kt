@@ -126,6 +126,9 @@ object WechatPackage {
         findClassIfExists("$WECHAT_PACKAGE_UI.base.MMListPopupWindow", loader)
     }
 
+    val BaseAdapter: Class<*> by innerLazy("BaseAdapter") {
+        findClassIfExists("android.widget.BaseAdapter", loader)
+    }
     val MMBaseAdapter: Class<*> by innerLazy("MMBaseAdapter") {
         val addressBase = AddressAdapter.superclass
         val conversationBase = ConversationWithCacheAdapter.superclass

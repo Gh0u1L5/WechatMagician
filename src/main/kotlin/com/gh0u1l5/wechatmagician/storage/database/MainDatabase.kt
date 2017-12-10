@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.storage.database
 
+import android.content.ContentValues
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.util.concurrent.ConcurrentHashMap
@@ -16,6 +17,11 @@ object MainDatabase {
             return
         }
         nameCache[nickname] = username
+    }
+
+    fun cleanUnreadCount() {
+        val clean = ContentValues().apply { put("unReadCount", 0) }
+        callMethod(mainDB, "update", "rconversation", clean, null, null)
     }
 
     fun getUsernameFromNickname(nickname: String): String? {

@@ -82,33 +82,6 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginDeveloper::traceLogCat)
         tryHook(pluginDeveloper::traceXMLParse)
 
-        val pluginAutoLogin = AutoLogin
-        pluginAutoLogin.init(settings)
-        tryHook(pluginAutoLogin::enableAutoLogin)
-
-        val pluginUnreadCount = UnreadCount
-        pluginUnreadCount.init(settings)
-        tryHook(pluginUnreadCount::disableMessageUnreadCount)
-
-        val pluginSnsForward = SnsForward
-        tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
-        tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
-        tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
-
-        val pluginSecretFriend = SecretFriend
-        pluginSecretFriend.init(loader, settings)
-        tryHook(pluginSecretFriend::addHideOptionInPopupMenu)
-        tryHook(pluginSecretFriend::tamperAdapterCount)
-        tryHook(pluginSecretFriend::hideSecretFriend)
-        tryHook(pluginSecretFriend::hideSecretFriendConversation)
-        tryHook(pluginSecretFriend::hideSecretFriendChattingWindow)
-
-        val pluginLimits = Limits
-        pluginLimits.init(settings)
-        tryHook(pluginLimits::breakSelectPhotosLimit)
-        tryHook(pluginLimits::breakSelectContactLimit)
-        tryHook(pluginLimits::breakSelectConversationLimit)
-
         val pluginStorage = Storage
         tryHook(pluginStorage::hookMsgStorage)
 //        tryHook(pluginStorage::hookImgStorage)
@@ -127,6 +100,33 @@ class WechatHook : IXposedHookLoadPackage {
         val pluginSearchBar = SearchBar
         pluginSearchBar.init(settings)
         tryHook(pluginSearchBar::hijackSearchBar)
+
+        val pluginPopupMenu = PopupMenu
+        pluginPopupMenu.init(settings)
+        tryHook(pluginPopupMenu::addMenuItemsForContacts)
+        tryHook(pluginPopupMenu::addMenuItemsForConversations)
+
+        val pluginAutoLogin = AutoLogin
+        pluginAutoLogin.init(settings)
+        tryHook(pluginAutoLogin::enableAutoLogin)
+
+        val pluginSnsForward = SnsForward
+        tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
+        tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
+        tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
+
+        val pluginSecretFriend = SecretFriend
+        pluginSecretFriend.init(settings)
+        tryHook(pluginSecretFriend::tamperAdapterCount)
+        tryHook(pluginSecretFriend::hideSecretFriend)
+        tryHook(pluginSecretFriend::hideSecretFriendConversation)
+        tryHook(pluginSecretFriend::hideSecretFriendChattingWindow)
+
+        val pluginLimits = Limits
+        pluginLimits.init(settings)
+        tryHook(pluginLimits::breakSelectPhotosLimit)
+        tryHook(pluginLimits::breakSelectContactLimit)
+        tryHook(pluginLimits::breakSelectConversationLimit)
 
         thread(start = true) {
             sleep(WAIT_TIMEOUT) // Wait a while for hooking
