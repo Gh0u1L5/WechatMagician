@@ -111,6 +111,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginAutoLogin::enableAutoLogin)
 
         val pluginSnsForward = SnsForward
+        tryHook(pluginSnsForward::setLongClickableForSnsUserUI)
         tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
         tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
         tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)

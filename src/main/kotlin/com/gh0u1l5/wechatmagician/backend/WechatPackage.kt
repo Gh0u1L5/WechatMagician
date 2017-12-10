@@ -129,6 +129,9 @@ object WechatPackage {
     val BaseAdapter: Class<*> by innerLazy("BaseAdapter") {
         findClassIfExists("android.widget.BaseAdapter", loader)
     }
+    val HeaderViewListAdapter: Class<*> by innerLazy("HeaderViewListAdapter") {
+        findClassIfExists("android.widget.HeaderViewListAdapter", loader)
+    }
     val MMBaseAdapter: Class<*> by innerLazy("MMBaseAdapter") {
         val addressBase = AddressAdapter.superclass
         val conversationBase = ConversationWithCacheAdapter.superclass

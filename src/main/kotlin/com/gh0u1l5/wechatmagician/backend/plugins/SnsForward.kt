@@ -9,6 +9,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
@@ -29,9 +30,6 @@ import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
 object SnsForward {
-
-    private val pkg = WechatPackage
-    private val events = WechatEvents
 
     // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
     class ForwardAsyncTask(snsId: Long, context: Context) : AsyncTask<Void, Void, Throwable?>() {
@@ -112,40 +110,46 @@ object SnsForward {
         }
     }
 
+    private val pkg = WechatPackage
+    private val events = WechatEvents
+
+    @Volatile private var snsUserUIAdapter: Adapter? = null
+
+    // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
+    @JvmStatic fun setLongClickableForSnsUserUI() {
+        findAndHookMethod(
+                pkg.HeaderViewListAdapter, "getView",
+                C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                if (param.thisObject === snsUserUIAdapter) {
+                    val convertView = param.args[1] as View?
+                    if (convertView == null) { // this is a new view
+                        val view = param.result as View? ?: return
+                        if (view is ViewGroup) {
+                            repeat(view.childCount, {
+                                view.getChildAt(it).isClickable = false
+                            })
+                        }
+                        view.isLongClickable = true
+                    }
+                }
+            }
+        })
+    }
+
     // Hook SnsUserUI.onCreate to popup a menu during long click.
     @JvmStatic fun setLongClickListenerForSnsUserUI() {
         findAndHookMethod(pkg.SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val listView = getListViewFromSnsActivity(param.thisObject) ?: return
-
-                // Set onLongClickListener for items
+                snsUserUIAdapter = listView.adapter ?: return
                 listView.setOnItemLongClickListener { parent, view, position, _ ->
                     val item = parent.getItemAtPosition(position)
                     val snsId = getLongField(item, "field_snsId")
                     events.onTimelineItemLongClick(parent, view, snsId, null)
                 }
-
-                // Hook adapter to make sure the items are long clickable.
-                val adapter = listView.adapter ?: return
-                XposedHelpers.findAndHookMethod(
-                        adapter.javaClass, "getView",
-                        C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        if (param.thisObject === adapter) {
-                            val convertView = param.args[1] as View?
-                            if (convertView == null) { // this is a new view
-                                val view = param.result as View? ?: return
-                                if (view is ViewGroup) {
-                                    repeat(view.childCount, {
-                                        view.getChildAt(it).isClickable = false
-                                    })
-                                }
-                                view.isLongClickable = true
-                            }
-                        }
-                    }
-                })
             }
         })
     }
