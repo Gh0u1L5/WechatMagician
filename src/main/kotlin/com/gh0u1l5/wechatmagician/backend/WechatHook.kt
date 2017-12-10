@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
+import android.os.Build
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
@@ -71,6 +72,17 @@ class WechatHook : IXposedHookLoadPackage {
         SecretFriendList.init(context)
         settings.load(context, PREFERENCE_NAME_SETTINGS)
         developer.load(context, PREFERENCE_NAME_DEVELOPER)
+
+        // Cannot use lazy evaluation on Android 7.0 for now.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            WechatPackage.javaClass.declaredFields.forEach {
+                try {
+                    (it.get(WechatPackage) as? Lazy<*>)?.value
+                } catch (_: Throwable) {
+                    // Ignore this one
+                }
+            }
+        }
 
         val pluginDeveloper = Developer
         pluginDeveloper.init(loader, developer)

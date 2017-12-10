@@ -80,17 +80,6 @@ object PackageUtil {
                 .dropLast(1) //drop trailing ';'
     }
 
-    // getPackageName parses the package name of the given DexClass.
-    // NOTE: Here we do not use DexClass.getPackageName() because of Issue #22
-    // Reference: https://github.com/Gh0u1L5/WechatMagician/issues/22
-    @JvmStatic fun getPackageName(className: String): String {
-        val delimiter = className.lastIndexOf('.')
-        if (delimiter == -1) {
-            return ""
-        }
-        return className.substring(0, delimiter)
-    }
-
     // findClassesFromPackage returns a list of all the classes contained in the given package.
     @JvmStatic fun findClassesFromPackage(
             loader: ClassLoader, classes: List<String>, packageName: String, depth: Int = 0
@@ -99,7 +88,7 @@ object PackageUtil {
             return classesCache[packageName to depth]!!
         }
         classesCache[packageName to depth] = Classes(classes.filter { clazz ->
-            val currentPackage = getPackageName(clazz)
+            val currentPackage = clazz.substringBeforeLast(".")
             if (depth == 0) {
                 return@filter currentPackage == packageName
             }
