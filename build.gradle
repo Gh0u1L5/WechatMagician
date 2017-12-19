@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlin_version = '1.2.0'
+    ext.kotlin_version = '1.2.10'
     repositories {
         jcenter()
         google()
@@ -8,7 +8,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.0-alpha04'
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha05'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
@@ -23,7 +23,7 @@ android {
     defaultConfig {
         applicationId "com.gh0u1l5.wechatmagician"
         minSdkVersion 19
-        maxSdkVersion 26
+        maxSdkVersion 27
         targetSdkVersion 27
     }
     compileOptions {
