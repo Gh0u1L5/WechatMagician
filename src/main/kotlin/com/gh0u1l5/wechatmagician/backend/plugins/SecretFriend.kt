@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.app.Activity
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
-import android.widget.BaseAdapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SECRET_FRIEND
@@ -13,13 +12,11 @@ import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_USER_NOT_FOUND
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.cacheNicknameUsernamePair
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.getUsernameFromNickname
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.XposedHelpers.getObjectField
-import kotlin.concurrent.thread
 
 object SecretFriend {
 
@@ -107,19 +104,6 @@ object SecretFriend {
         findAndHookMethod(pkg.AddressAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val adapter = param.thisObject as BaseAdapter
-                thread(start = true) {
-                    (0 until adapter.count).forEach { index ->
-                        val item = adapter.getItem(index)
-                        if (item != null) {
-                            val nickname = getObjectField(item, "field_nickname")
-                            val username = getObjectField(item, "field_username")
-                            cacheNicknameUsernamePair(nickname as? String, username as? String)
-                        }
-                    }
-                }.setUncaughtExceptionHandler { _, _ ->
-                    // Ignore this one
-                }
                 updateHideCache(param)
             }
         })

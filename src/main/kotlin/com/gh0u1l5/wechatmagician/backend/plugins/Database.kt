@@ -18,7 +18,6 @@ import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
