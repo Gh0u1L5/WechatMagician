@@ -33,20 +33,6 @@ object Database {
     private val str = LocalizedStrings
     private val pkg = WechatPackage
 
-    private fun catchDatabase(thisObject: Any?) {
-        val path = thisObject?.toString() ?: ""
-        if (path.endsWith("EnMicroMsg.db")) {
-            if (mainDB !== thisObject) {
-                mainDB = thisObject
-            }
-        }
-        if (path.endsWith("SnsMicroMsg.db")) {
-            if (snsDB !== thisObject) {
-                snsDB = thisObject
-            }
-        }
-    }
-
     @JvmStatic fun hookDatabase() {
         // Hook SQLiteDatabase.openDatabase to initialize the database instance for SNS.
         findAndHookMethod(
@@ -73,7 +59,12 @@ object Database {
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
-                catchDatabase(param.thisObject)
+                val path = param.thisObject?.toString() ?: ""
+                if (path.endsWith("EnMicroMsg.db")) {
+                    if (mainDB !== param.thisObject) {
+                        mainDB = param.thisObject
+                    }
+                }
 
                 val table = param.args[0] as String? ?: return
                 val values = param.args[1] as ContentValues? ?: return
