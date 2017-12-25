@@ -17,6 +17,7 @@ import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.XposedHelpers.getObjectField
+import java.lang.ref.WeakReference
 
 object SecretFriend {
 
@@ -30,8 +31,8 @@ object SecretFriend {
     private val pkg = WechatPackage
 
     // These are the cache of adapter objects
-    @Volatile var addressAdapter: Any? = null
-    @Volatile var conversationAdapter: Any? = null
+    @Volatile var addressAdapter: WeakReference<Any?> = WeakReference(null)
+    @Volatile var conversationAdapter: WeakReference<Any?> = WeakReference(null)
 
     fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
@@ -44,8 +45,8 @@ object SecretFriend {
         }
         val pref = context.getSharedPreferences(PREFERENCE_NAME_SECRET_FRIEND, MODE_PRIVATE)
         pref.edit().putBoolean(username, isSecret).apply()
-        AdapterHider.notifyAdapter(addressAdapter)
-        AdapterHider.notifyAdapter(conversationAdapter)
+        AdapterHider.notifyAdapter(addressAdapter.get())
+        AdapterHider.notifyAdapter(conversationAdapter.get())
     }
 
     fun changeUserStatusByNickname(context: Context, nickname: String?, isSecret: Boolean) {
@@ -95,7 +96,7 @@ object SecretFriend {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 if (param.thisObject.javaClass == pkg.AddressAdapter) {
-                    addressAdapter = param.thisObject
+                    addressAdapter = WeakReference(param.thisObject)
                     hideItem(param)
                 }
             }
@@ -114,7 +115,7 @@ object SecretFriend {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 if (param.thisObject.javaClass == pkg.ConversationWithCacheAdapter) {
-                    conversationAdapter = param.thisObject
+                    conversationAdapter = WeakReference(param.thisObject)
                     hideItem(param)
                 }
             }

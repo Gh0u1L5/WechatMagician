@@ -113,7 +113,7 @@ object SnsForward {
     private val pkg = WechatPackage
     private val events = WechatEvents
 
-    @Volatile private var snsUserUIAdapter: Adapter? = null
+    @Volatile private var snsUserUIAdapter: WeakReference<Adapter?> = WeakReference(null)
 
     // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
     @JvmStatic fun setLongClickableForSnsUserUI() {
@@ -122,7 +122,7 @@ object SnsForward {
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.thisObject === snsUserUIAdapter) {
+                if (param.thisObject === snsUserUIAdapter.get()) {
                     val convertView = param.args[1] as View?
                     if (convertView == null) { // this is a new view
                         val view = param.result as View? ?: return
@@ -144,7 +144,7 @@ object SnsForward {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val listView = getListViewFromSnsActivity(param.thisObject) ?: return
-                snsUserUIAdapter = listView.adapter ?: return
+                snsUserUIAdapter = WeakReference(listView.adapter)
                 listView.setOnItemLongClickListener { parent, view, position, _ ->
                     val item = parent.getItemAtPosition(position)
                     val snsId = getLongField(item, "field_snsId")
