@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
 import android.support.v4.app.Fragment
@@ -39,26 +40,32 @@ class StatusFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        if (!isModuleLoaded()) {
-            return
-        }
+        if (isModuleLoaded()) {
+            val context = context ?: return
 
-        val context = context ?: return
+            // Set the main banner of status fragment.
+            val color: Int
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || getXposedVersion() >= 89) {
+                color = ContextCompat.getColor(context, R.color.ok)
+                status_text.text = getString(R.string.status_ok)
+                status_image.setImageResource(R.drawable.ic_status_ok)
+                status_image.contentDescription = getString(R.string.status_ok)
+            } else {
+                color = ContextCompat.getColor(context, R.color.warn)
+                status_text.text = getString(R.string.status_outdated_xposed)
+                status_image.setImageResource(R.drawable.ic_status_error)
+                status_image.contentDescription = getString(R.string.status_outdated_xposed)
+            }
+            status_text.setTextColor(color)
+            status_image.setBackgroundColor(color)
 
-        // Set the main banner of status fragment.
-        val colorOk = ContextCompat.getColor(context, R.color.ok)
-        status_text.setTextColor(colorOk)
-        status_text.text = getString(R.string.status_ok)
-        status_image.setBackgroundColor(colorOk)
-        status_image.setImageResource(R.drawable.ic_status_ok)
-        status_image.contentDescription = getString(R.string.status_ok)
-
-        // Set the status for each component.
-        val status = readHookStatus(context)
-        if (status != null) {
-            for (entry in componentMap) {
-                if (status[entry.key] == true) {
-                    setComponentIconValid(entry.value)
+            // Set the status for each component.
+            val status = readHookStatus(context)
+            if (status != null) {
+                for (entry in componentMap) {
+                    if (status[entry.key] == true) {
+                        setComponentIconValid(entry.value)
+                    }
                 }
             }
         }
@@ -66,6 +73,9 @@ class StatusFragment : Fragment() {
 
     // Check backend.plugins.Frontend for actual implementation
     private fun isModuleLoaded(): Boolean = false
+
+    // Check backend.plugins.Frontend for actual implementation
+    private fun getXposedVersion(): Int = 0
 
     private fun setComponentIconValid(iconId: Int) {
         val icon = activity?.findViewById<ImageView>(iconId)

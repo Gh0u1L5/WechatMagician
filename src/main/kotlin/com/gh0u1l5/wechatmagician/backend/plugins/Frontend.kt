@@ -5,6 +5,7 @@ import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.XC_MethodReplacement
+import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.io.File
@@ -23,6 +24,11 @@ object Frontend {
                 "isModuleLoaded", object : XC_MethodReplacement() {
             override fun replaceHookedMethod(param: MethodHookParam): Any = true
         })
+        findAndHookMethod(
+                "com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment", loader,
+                "getXposedVersion", object : XC_MethodReplacement() {
+            override fun replaceHookedMethod(param: MethodHookParam): Any = XposedBridge.XPOSED_BRIDGE_VERSION
+        })
     }
 
     @JvmStatic fun setDirectoryPermissions(context: Context?) {
@@ -35,7 +41,7 @@ object Frontend {
             FileUtil.setWorldWritable(sharedDir)
             FileUtil.setWorldExecutable(sharedDir)
         } catch (e: Throwable) {
-            log("FRONT => $e")
+            log("FRONTEND => $e")
         }
     }
 }

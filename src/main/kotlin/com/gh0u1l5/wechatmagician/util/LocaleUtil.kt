@@ -7,8 +7,7 @@ import android.os.Build
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-
-import java.util.Locale
+import java.util.*
 
 /**
  * Created by devdeeds.com on 18/4/17.

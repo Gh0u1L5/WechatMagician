@@ -19,7 +19,7 @@
             android:id="@+id/status_image"
             android:layout_width="match_parent"
             android:layout_height="110dp"
-            android:background="?attr/colorError"
+            android:background="@color/error"
             android:contentDescription="@string/status_error"
             android:src="@drawable/ic_status_error" />
 
@@ -29,8 +29,10 @@
             android:layout_height="50dp"
             android:layout_marginTop="110dp"
             android:gravity="center"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
             android:text="@string/status_error"
-            android:textColor="?attr/colorError"
+            android:textColor="@color/error"
             android:textStyle="bold" />
     </android.support.v7.widget.CardView>
 

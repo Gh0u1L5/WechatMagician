@@ -20,6 +20,7 @@
     <string name="donate_wepay">Wechat Pay</string>
     <string name="status_ok">The module is loaded properly.</string>
     <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
+    <string name="status_outdated_xposed">Current Xposed Framework is lower than 89.0; this may cause some unexpected crashes.</string>
     <string name="prompt_alipay_not_found">Alipay Not Found</string>
     <string name="prompt_need_reboot">Take effect after reboot.</string>
     <string name="prompt_wait">Please wait for a while.....</string>
