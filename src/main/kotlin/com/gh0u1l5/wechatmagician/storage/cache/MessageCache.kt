@@ -5,11 +5,9 @@ import kotlin.concurrent.timer
 
 // MessageCache records the recent messages received from friends.
 object MessageCache : BaseCache<Long, Any>() {
-    // Clean cache for every 60 minutes
     init {
-        timer(period = 60 * 60 * 1000, action = {
-            clear()
-        })
+        // Clean cache for every 60 minutes
+        timer(period = 60 * 60 * 1000) { clear() }
     }
 
     // clear removes all the messages received more than 2 minutes ago.
