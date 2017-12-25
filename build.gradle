@@ -59,5 +59,6 @@ dependencies {
     compileOnly 'de.robv.android.xposed:api:53:sources'
 
     implementation files('apk-parser.jar')
+    implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

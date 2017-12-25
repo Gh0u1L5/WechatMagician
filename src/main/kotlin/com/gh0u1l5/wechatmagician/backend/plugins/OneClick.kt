@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
+import me.leolin.shortcutbadger.ShortcutBadger
 
 object OneClick {
 
@@ -15,6 +16,7 @@ object OneClick {
         }
 
         MainDatabase.cleanUnreadCount()
+        ShortcutBadger.removeCount(activity)
         activity.finish()
         activity.startActivity(Intent(activity, pkg.LauncherUI).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
