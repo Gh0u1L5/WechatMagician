@@ -33,8 +33,8 @@ object Database {
     private val str = LocalizedStrings
     private val pkg = WechatPackage
 
-    private fun catchDatabase(thisObject: Any) {
-        val path = thisObject.toString()
+    private fun catchDatabase(thisObject: Any?) {
+        val path = thisObject?.toString() ?: ""
         if (path.endsWith("EnMicroMsg.db")) {
             if (mainDB !== thisObject) {
                 mainDB = thisObject
