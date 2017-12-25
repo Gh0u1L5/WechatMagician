@@ -3,9 +3,6 @@ buildscript {
     repositories {
         jcenter()
         google()
-        maven {
-            url "http://dl.bintray.com/kotlin/kotlin-eap-1.2"
-        }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:3.1.0-alpha05'
@@ -38,9 +35,6 @@ android {
 repositories {
     jcenter()
     google()
-    maven {
-        url 'http://dl.bintray.com/kotlin/kotlin-eap-1.2'
-    }
 }
 
 dependencies {
