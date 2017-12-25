@@ -4,7 +4,6 @@ package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.util.FileUtil

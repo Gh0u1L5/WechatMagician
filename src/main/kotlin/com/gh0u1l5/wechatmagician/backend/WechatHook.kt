@@ -6,7 +6,6 @@ import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
-import com.gh0u1l5.wechatmagician.Global.WAIT_TIMEOUT
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -18,7 +17,6 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
-import java.lang.Thread.sleep
 import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
@@ -26,6 +24,8 @@ class WechatHook : IXposedHookLoadPackage {
 
     private val settings = Preferences()
     private val developer = Preferences()
+
+    private val hookThreadQueue: MutableList<Thread> = arrayListOf()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
@@ -39,11 +39,13 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private inline fun tryHook(crossinline hook: () -> Unit) {
-        thread(start = true) {
+        hookThreadQueue.add(thread(start = true) {
             hook()
-        }.setUncaughtExceptionHandler { _, throwable ->
-            log(throwable)
-        }
+        }.apply {
+            setUncaughtExceptionHandler { _, throwable ->
+                log(throwable)
+            }
+        })
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -131,13 +133,11 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginLimits::breakSelectContactLimit)
         tryHook(pluginLimits::breakSelectConversationLimit)
 
-        thread(start = true) {
-            sleep(WAIT_TIMEOUT) // Wait a while for hooking
-            val wechatDataDir = getApplicationDataDir(context)
-            val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-            WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
-        }.setUncaughtExceptionHandler { _, throwable ->
-            log(throwable)
-        }
+        // Wait until all the hook threads finished
+        hookThreadQueue.forEach { it.join() }
+        // Write the status of all the hooks
+        val wechatDataDir = getApplicationDataDir(context)
+        val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
+        WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
     }
 }
