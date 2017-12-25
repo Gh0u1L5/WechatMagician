@@ -7,6 +7,7 @@ import android.widget.AdapterView
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_CLEAN_UNREAD
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_MARK_ALL_AS_READ
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -101,10 +102,12 @@ object PopupMenu {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as ContextMenu
-                val item = menu.add(0, ITEM_ID_BUTTON_CLEAN_UNREAD, 0, str[BUTTON_CLEAN_UNREAD])
-                item.setOnMenuItemClickListener {
-                    OneClick.cleanUnreadCount(param.thisObject as? Activity)
-                    return@setOnMenuItemClickListener true
+                if (preferences!!.getBoolean(SETTINGS_MARK_ALL_AS_READ, true)) {
+                    val item = menu.add(0, ITEM_ID_BUTTON_CLEAN_UNREAD, 0, str[BUTTON_CLEAN_UNREAD])
+                    item.setOnMenuItemClickListener {
+                        OneClick.cleanUnreadCount(param.thisObject as? Activity)
+                        return@setOnMenuItemClickListener true
+                    }
                 }
             }
         })

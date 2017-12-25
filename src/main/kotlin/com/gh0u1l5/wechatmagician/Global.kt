@@ -27,6 +27,7 @@ object Global {
     val SETTINGS_CHATTING_RECALL                = "settings_chatting_recall"
     val SETTINGS_CHATTING_RECALL_PROMPT         = "settings_chatting_recall_prompt"
     val SETTINGS_INTERFACE_HIDE_ICON            = "settings_interface_hide_icon"
+    val SETTINGS_MARK_ALL_AS_READ               = "settings_mark_all_as_read"
     val SETTINGS_MODULE_LANGUAGE                = "settings_module_language"
     val SETTINGS_SECRET_FRIEND                  = "settings_secret_friend"
     val SETTINGS_SECRET_FRIEND_PASSWORD         = "settings_secret_friend_password"
