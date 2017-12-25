@@ -54,6 +54,15 @@
 
     <string name="pref_category_interface">用户界面</string>
     <string name="pref_toggle_hide_icon">隐藏启动图标</string>
+    <string name="pref_option_module_language">显示语言</string>
+    <string-array name="pref_option_module_language_entries">
+        <item>中文</item>
+        <item>英文</item>
+    </string-array>
+    <string-array name="pref_option_module_language_entry_values">
+        <item>zh</item>
+        <item>en</item>
+    </string-array>
 
     <string name="pref_category_chatting">聊天消息</string>
     <string name="pref_toggle_prevent_recall">启用防撤回</string>

@@ -7,6 +7,12 @@
             android:key="settings_interface_hide_icon"
             android:summary="@string/prompt_need_reboot"
             android:title="@string/pref_toggle_hide_icon" />
+        <ListPreference
+            android:defaultValue="1"
+            android:entries="@array/pref_option_module_language_entries"
+            android:entryValues="@array/pref_option_module_language_entry_values"
+            android:key="settings_module_language"
+            android:title="@string/pref_option_module_language" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_chatting">
         <SwitchPreference

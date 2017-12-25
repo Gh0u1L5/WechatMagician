@@ -54,6 +54,15 @@
 
     <string name="pref_category_interface">Interface</string>
     <string name="pref_toggle_hide_icon">Hide Launcher Icon</string>
+    <string name="pref_option_module_language">Language</string>
+    <string-array name="pref_option_module_language_entries">
+        <item>Chinese</item>
+        <item>English</item>
+    </string-array>
+    <string-array name="pref_option_module_language_entry_values">
+        <item>zh</item>
+        <item>en</item>
+    </string-array>
 
     <string name="pref_category_chatting">Chatting</string>
     <string name="pref_toggle_prevent_recall">Prevent Recalling</string>

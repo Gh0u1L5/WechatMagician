@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.frontend
 
+import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
@@ -15,6 +16,7 @@ import com.gh0u1l5.wechatmagician.frontend.fragments.DonateFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment
+import com.gh0u1l5.wechatmagician.util.LocaleUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -22,6 +24,10 @@ import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(LocaleUtil.onAttach(base))
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,7 +47,7 @@ class MainActivity : AppCompatActivity(),
             openURL(this, getString(R.string.view_about_project_github_url))
         }
 
-        if (main_container != null) {
+        if (main_container != null && savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                     .replace(R.id.main_container, StatusFragment.newInstance())
                     .commit()

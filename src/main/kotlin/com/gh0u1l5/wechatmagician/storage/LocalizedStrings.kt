@@ -1,6 +1,8 @@
 package com.gh0u1l5.wechatmagician.storage
 
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
 import de.robv.android.xposed.XposedBridge.log
+import java.util.*
 
 // LocalizedStrings describes the localized strings used by the module.
 // NOTE: we use this object instead of Android default localized resources
@@ -27,7 +29,8 @@ object LocalizedStrings {
     val BUTTON_OK                     = "button_ok"
     val BUTTON_CANCEL                 = "button_cancel"
 
-    @Volatile var language: String = "zh"
+    @Volatile var preferences: Preferences? = null
+    @Volatile var language: String = Locale.getDefault().language
 
     private val resources: Map<String, Map<String, String>> = mapOf(
             "zh" to mapOf(
@@ -74,9 +77,15 @@ object LocalizedStrings {
             )
     )
 
+    fun init(_preferences: Preferences) {
+        preferences = _preferences
+    }
+
     operator fun get(key: String): String {
-        val res = resources[language] ?: resources["zh"]
-        val value = res!![key]
+        val language = preferences?.getString(SETTINGS_MODULE_LANGUAGE, language)
+        val resource = resources[language] ?: resources["en"]
+
+        val value = resource!![key]
         if (value == null) {
             log("RES => Resource Missing: $key")
             return "???"
