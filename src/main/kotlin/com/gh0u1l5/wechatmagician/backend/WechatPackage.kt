@@ -45,7 +45,7 @@ object WechatPackage {
     fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         synchronized(initializeChannel) {
             if (!isInitialized) {
-                initializeChannel.wait(WAIT_TIMEOUT)
+                initializeChannel.wait()
             }
         }
         if (loader == null || version == null || classes == null) {

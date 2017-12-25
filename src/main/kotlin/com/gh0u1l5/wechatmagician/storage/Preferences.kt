@@ -105,7 +105,7 @@ class Preferences : SharedPreferences {
     private fun getValue(key: String): Any? {
         synchronized(loadChannel) {
             if (!isLoaded) {
-                loadChannel.wait(WAIT_TIMEOUT)
+                loadChannel.wait()
             }
         }
         return all?.get(key)
@@ -130,7 +130,7 @@ class Preferences : SharedPreferences {
     fun getStringList(key: String, defValue: List<String>): List<String> {
         synchronized(loadChannel) {
             if (!isLoaded) {
-                loadChannel.wait(WAIT_TIMEOUT)
+                loadChannel.wait()
             }
         }
         return listCache[key] ?: defValue
