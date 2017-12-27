@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
+import android.os.Build
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
@@ -39,13 +40,15 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private inline fun tryHook(crossinline hook: () -> Unit) {
-        hookThreadQueue.add(thread(start = true) {
-            hook()
-        }.apply {
-            setUncaughtExceptionHandler { _, throwable ->
-                log(throwable)
-            }
-        })
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            try { hook() } catch (e: Throwable) { log(e) }
+        } else {
+            hookThreadQueue.add(thread(start = true) {
+                hook()
+            }.apply {
+                setUncaughtExceptionHandler { _, e -> log(e) }
+            })
+        }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
