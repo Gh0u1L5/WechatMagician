@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.storage.database
 
 import android.content.ContentValues
+import android.database.sqlite.SQLiteDatabase
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.util.concurrent.ConcurrentHashMap
@@ -9,8 +10,8 @@ object MainDatabase {
     // snsDB is the database that stores SNS information.
     @Volatile var mainDB: Any? = null
 
-    // nameCache maps nicknames to corresponding usernames
-    private val nameCache: MutableMap<String, String> = ConcurrentHashMap()
+    // nicknameCache maps nicknames to corresponding usernames
+    private val nicknameCache: MutableMap<String, String> = ConcurrentHashMap()
 
     fun cleanUnreadCount() {
         val database = mainDB ?: return
@@ -21,28 +22,19 @@ object MainDatabase {
         callMethod(database, "update", "rconversation", clean, null, null)
     }
 
-    fun getUsernameFromNickname(nickname: String): String? {
-        if (nickname in nameCache) {
-            return nameCache[nickname]
-        }
-        if (nickname == "") {
-            return null
-        }
-
+    private fun queryUsernames(selection: String, selectionArgs: Array<String>): List<String>? {
         val database = mainDB ?: return null
         var cursor: Any? = null
         try {
             cursor = callMethod(database, "query",
-                    "rcontact", arrayOf("username"), "nickname=?", arrayOf(nickname),
+                    "rcontact", arrayOf("username"), selection, selectionArgs,
                     null, null, null, null
             )
-            val count = callMethod(cursor, "getCount")
-            if (count != 1) {
-                return null
+            val count = callMethod(cursor, "getCount") as Int
+            return (0 until count).map {
+                callMethod(cursor, "moveToNext")
+                callMethod(cursor, "getString", 0) as String
             }
-            callMethod(cursor, "moveToFirst")
-            nameCache[nickname] = callMethod(cursor, "getString", 0) as String
-            return nameCache[nickname]
         } catch (e: Throwable) {
             log(e); return null
         } finally {
@@ -50,5 +42,29 @@ object MainDatabase {
                 callMethod(cursor, "close")
             }
         }
+    }
+
+    fun getUsernamesFromAlias(alias: String): List<String>? {
+        if (alias == "") {
+            return null
+        }
+        return queryUsernames("alias=?", arrayOf(alias))
+    }
+
+    fun getUsernameFromNickname(nickname: String): String? {
+        if (nickname in nicknameCache) {
+            return nicknameCache[nickname]
+        }
+        if (nickname == "") {
+            return null
+        }
+        val result = queryUsernames("nickname=?", arrayOf(nickname))
+        if (result != null && result.isNotEmpty()) {
+            if (result.size != 1) {
+                log("Expected unique nickname for each user!")
+            }
+            nicknameCache[nickname] = result.first()
+        }
+        return result?.firstOrNull()
     }
 }
