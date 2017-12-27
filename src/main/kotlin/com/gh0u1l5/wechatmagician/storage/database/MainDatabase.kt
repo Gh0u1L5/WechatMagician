@@ -14,7 +14,10 @@ object MainDatabase {
 
     fun cleanUnreadCount() {
         val database = mainDB ?: return
-        val clean = ContentValues().apply { put("unReadCount", 0) }
+        val clean = ContentValues().apply {
+            put("unReadCount", 0)
+            put("unReadMuteCount", 0)
+        }
         callMethod(database, "update", "rconversation", clean, null, null)
     }
 
