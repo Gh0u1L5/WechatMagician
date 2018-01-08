@@ -7,7 +7,7 @@ import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.SnsForward.ForwardAsyncTask
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupAdapter
-import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupPosition
+import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_FORWARD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
@@ -64,7 +64,7 @@ object WechatEvents {
     }
 
     // Show a popup menu in SnsTimelineUI
-    fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupPosition?): Boolean {
+    fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupWindowPosition?): Boolean {
         val operations = listOf(str[MENU_SNS_FORWARD], str[MENU_SNS_SCREENSHOT])
         ListPopupWindow(parent.context).apply {
             if (position != null) {

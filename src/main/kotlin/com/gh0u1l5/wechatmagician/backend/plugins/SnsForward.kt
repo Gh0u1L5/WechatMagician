@@ -14,7 +14,7 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupPosition
+import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.util.DownloadUtil
@@ -170,7 +170,7 @@ object SnsForward {
                         val view = listView.getViewAtPosition(position)
                         val item = listView.getItemAtPosition(position)
                         val snsId = getLongField(item, "field_snsId")
-                        val popup = ListPopupPosition(listView, lastKnownX, lastKnownY)
+                        val popup = ListPopupWindowPosition(listView, lastKnownX, lastKnownY)
                         events.onTimelineItemLongClick(listView, view, snsId, popup)
                     }
                 })
