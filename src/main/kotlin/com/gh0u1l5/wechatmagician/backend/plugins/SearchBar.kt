@@ -2,21 +2,27 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_CHATROOM_HIDER
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatusByNickname
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend.changeUserStatusByUsername
+import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_CANCEL
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
+import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -40,6 +46,40 @@ object SearchBar {
                 AlertDialog.Builder(context)
                         .setTitle("Wechat Magician")
                         .setMessage(prompt)
+                        .show()
+                return true
+            }
+            command.startsWith("#chatrooms") -> {
+                if (!preferences!!.getBoolean(SETTINGS_CHATTING_CHATROOM_HIDER, false)) {
+                    return false
+                }
+
+                val adapter = ConversationAdapter(context, ChatroomHideList.toList().mapNotNull {
+                    val contact = MainDatabase.getContactByUsername(username = it)
+                    val conversation = MainDatabase.getConversationByUsername(username = it)
+                    if (contact != null && conversation != null) {
+                        ConversationAdapter.Conversation(
+                                username    = contact.username,
+                                nickname    = contact.nickname,
+                                digest      = conversation.digest,
+                                digestUser  = conversation.digestUser,
+                                atCount     = conversation.atCount,
+                                unreadCount = conversation.unreadCount
+                        )
+                    } else null
+                })
+                AlertDialog.Builder(context)
+                        .setTitle("Wechat Magician")
+                        .setAdapter(adapter, { dialog, position ->
+                            val username = adapter.getItem(position).username
+                            context.startActivity(Intent(context, pkg.ChattingUI)
+                                    .putExtra("Chat_Mode", 1)
+                                    .putExtra("Chat_User", username))
+                            dialog.dismiss()
+                        })
+                        .setNegativeButton(str[BUTTON_CANCEL], { dialog, _ ->
+                            dialog.dismiss()
+                        })
                         .show()
                 return true
             }

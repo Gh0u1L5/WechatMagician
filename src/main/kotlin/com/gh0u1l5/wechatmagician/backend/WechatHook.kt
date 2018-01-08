@@ -9,8 +9,10 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
+import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.Preferences
+import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.IXposedHookLoadPackage
@@ -73,11 +75,18 @@ class WechatHook : IXposedHookLoadPackage {
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
         val loader = lpparam.classLoader
 
-        WechatPackage.init(lpparam)
-        SecretFriendList.init(context)
-        LocalizedStrings.init(settings)
         settings.load(context, PREFERENCE_NAME_SETTINGS)
         developer.load(context, PREFERENCE_NAME_DEVELOPER)
+
+        WechatPackage.init(lpparam)
+        LocalizedStrings.init(settings)
+        SecretFriendList.init(context)
+        ChatroomHideList.init(context)
+
+        tryHook(WechatPackage::hookAdapters)
+        tryHook(AdapterHider::hookAdaptersGetItem)
+        tryHook(AdapterHider::hookAdaptersGetCount)
+        tryHook(AdapterHider::hookAdapterNotifyChanged)
 
         val pluginDeveloper = Developer
         pluginDeveloper.init(loader, developer)
@@ -125,10 +134,10 @@ class WechatHook : IXposedHookLoadPackage {
 
         val pluginSecretFriend = SecretFriend
         pluginSecretFriend.init(settings)
-        tryHook(pluginSecretFriend::tamperAdapterCount)
-        tryHook(pluginSecretFriend::hideSecretFriend)
-        tryHook(pluginSecretFriend::hideSecretFriendConversation)
-        tryHook(pluginSecretFriend::hideSecretFriendChattingWindow)
+        tryHook(pluginSecretFriend::hideChattingWindow)
+
+        val pluginChatroomHider = ChatroomHider
+        pluginChatroomHider.init(settings)
 
         val pluginLimits = Limits
         pluginLimits.init(settings)

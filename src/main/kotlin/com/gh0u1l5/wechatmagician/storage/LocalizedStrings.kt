@@ -11,6 +11,7 @@ object LocalizedStrings {
 
     val TITLE_SECRET_FRIEND           = "title_secret_friend"
     val BUTTON_HIDE_FRIEND            = "button_hide_friend"
+    val BUTTON_HIDE_CHATROOM          = "button_hide_chatroom"
     val PROMPT_NEW_PASSWORD           = "prompt_new_password"
     val PROMPT_VERIFY_PASSWORD        = "prompt_verify_password"
     val PROMPT_USER_NOT_FOUND         = "prompt_user_not_found"
@@ -36,6 +37,7 @@ object LocalizedStrings {
             "zh" to mapOf(
                     TITLE_SECRET_FRIEND           to "密友",
                     BUTTON_HIDE_FRIEND            to "隐藏好友",
+                    BUTTON_HIDE_CHATROOM          to "隐藏无用群聊",
                     PROMPT_NEW_PASSWORD           to "请设定新密码",
                     PROMPT_VERIFY_PASSWORD        to "请输入解锁密码",
                     PROMPT_USER_NOT_FOUND         to "用户不存在",
@@ -57,6 +59,7 @@ object LocalizedStrings {
             "en" to mapOf(
                     TITLE_SECRET_FRIEND           to "Secret Friends",
                     BUTTON_HIDE_FRIEND            to "Hide This Friend",
+                    BUTTON_HIDE_CHATROOM          to "Hide Useless Chatroom",
                     PROMPT_NEW_PASSWORD           to "Please enter a new password:",
                     PROMPT_VERIFY_PASSWORD        to "Please enter your password:",
                     PROMPT_USER_NOT_FOUND         to "User Not Found!",

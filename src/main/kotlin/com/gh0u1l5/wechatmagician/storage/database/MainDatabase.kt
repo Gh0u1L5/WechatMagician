@@ -1,17 +1,27 @@
 package com.gh0u1l5.wechatmagician.storage.database
 
 import android.content.ContentValues
-import android.database.sqlite.SQLiteDatabase
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
-import java.util.concurrent.ConcurrentHashMap
 
 object MainDatabase {
+
+    data class Contact(
+            val alias: String,
+            val username: String,
+            val nickname: String
+    )
+
+    data class Conversation(
+            val username: String,
+            val digest: String,
+            val digestUser: String,
+            val atCount: Int,
+            val unreadCount: Int
+    )
+
     // snsDB is the database that stores SNS information.
     @Volatile var mainDB: Any? = null
-
-    // nicknameCache maps nicknames to corresponding usernames
-    private val nicknameCache: MutableMap<String, String> = ConcurrentHashMap()
 
     fun cleanUnreadCount() {
         val database = mainDB ?: return
@@ -22,18 +32,28 @@ object MainDatabase {
         callMethod(database, "update", "rconversation", clean, null, null)
     }
 
-    private fun queryUsernames(selection: String, selectionArgs: Array<String>): List<String>? {
+    private fun getContacts(selection: String, selectionArgs: Array<String>, ignoreDuplicate: Boolean = false): List<Contact>? {
         val database = mainDB ?: return null
         var cursor: Any? = null
         try {
+            val columns = arrayOf("alias", "username", "nickname")
             cursor = callMethod(database, "query",
-                    "rcontact", arrayOf("username"), selection, selectionArgs,
+                    "rcontact", columns, selection, selectionArgs,
                     null, null, null, null
             )
             val count = callMethod(cursor, "getCount") as Int
+            if (count == 0) {
+                log("Contact Not Found: selection={$selection}, selectionArgs={$selectionArgs}")
+            }
+            if (count > 1 && !ignoreDuplicate) {
+                log("Duplicate Contact: selection={$selection}, selectionArgs={$selectionArgs}")
+            }
             return (0 until count).map {
                 callMethod(cursor, "moveToNext")
-                callMethod(cursor, "getString", 0) as String
+                val alias    = callMethod(cursor, "getString", 0) as String
+                val username = callMethod(cursor, "getString", 1) as String
+                val nickname = callMethod(cursor, "getString", 2) as String
+                Contact(alias, username, nickname)
             }
         } catch (e: Throwable) {
             log(e); return null
@@ -44,27 +64,65 @@ object MainDatabase {
         }
     }
 
-    fun getUsernamesFromAlias(alias: String): List<String>? {
+    fun getContactsByAlias(alias: String): List<Contact>? {
         if (alias == "") {
             return null
         }
-        return queryUsernames("alias=?", arrayOf(alias))
+        return getContacts("alias=?", arrayOf(alias), ignoreDuplicate = true)
     }
 
-    fun getUsernameFromNickname(nickname: String): String? {
-        if (nickname in nicknameCache) {
-            return nicknameCache[nickname]
-        }
+    fun getContactByNickname(nickname: String): Contact? {
         if (nickname == "") {
             return null
         }
-        val result = queryUsernames("nickname=?", arrayOf(nickname))
-        if (result != null && result.isNotEmpty()) {
-            if (result.size != 1) {
-                log("Expected unique nickname for each user!")
-            }
-            nicknameCache[nickname] = result.first()
+        return getContacts("nickname=?", arrayOf(nickname))?.firstOrNull()
+    }
+
+    fun getContactByUsername(username: String): Contact? {
+        if (username == "") {
+            return null
         }
-        return result?.firstOrNull()
+        return getContacts("username=?", arrayOf(username))?.firstOrNull()
+    }
+
+    private fun getConversations(selection: String, selectionArgs: Array<String>, ignoreDuplicate: Boolean = false): List<Conversation>? {
+        val database = mainDB ?: return null
+        var cursor: Any? = null
+        try {
+            val columns = arrayOf("username", "digest", "digestUser", "atCount", "unReadCount")
+            cursor = callMethod(database, "query",
+                    "rconversation", columns, selection, selectionArgs,
+                    null, null, null, null
+            )
+            val count = callMethod(cursor, "getCount") as Int
+            if (count == 0) {
+                log("Conversation Not Found: selection={$selection}, selectionArgs={$selectionArgs}")
+            }
+            if (count > 1 && !ignoreDuplicate) {
+                log("Duplicate Conversation: selection={$selection}, selectionArgs={$selectionArgs}")
+            }
+            return (0 until count).map {
+                callMethod(cursor, "moveToNext")
+                val username    = callMethod(cursor, "getString", 0) as String
+                val digest      = callMethod(cursor, "getString", 1) as String
+                val digestUser  = callMethod(cursor, "getString", 2) as String
+                val atCount     = callMethod(cursor, "getInt", 3) as Int
+                val unreadCount = callMethod(cursor, "getInt", 4) as Int
+                Conversation(username, digest, digestUser, atCount, unreadCount)
+            }
+        } catch (e: Throwable) {
+            log(e); return null
+        } finally {
+            if (cursor != null) {
+                callMethod(cursor, "close")
+            }
+        }
+    }
+
+    fun getConversationByUsername(username: String): Conversation? {
+        if (username == "") {
+            return null
+        }
+        return getConversations("username=?", arrayOf(username))?.firstOrNull()
     }
 }

@@ -3,9 +3,12 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
+import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
+import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
+import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
@@ -13,11 +16,14 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
+import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import java.io.File
+import java.lang.ref.WeakReference
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -40,6 +46,12 @@ object WechatPackage {
     @Volatile var loader: ClassLoader? = null
     @Volatile var version: Version? = null
     @Volatile var classes: List<String>? = null
+
+    // These are the cache of important global objects
+    @Volatile var AddressAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
+    @Volatile var ConversationAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
+    @Volatile var MsgStorageObject: Any? = null
+    @Volatile var ImgStorageObject: Any? = null
 
     fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         synchronized(initializeChannel) {
@@ -249,7 +261,6 @@ object WechatPackage {
                 .firstOrNull()
     }
 
-    @Volatile var MsgStorageObject: Any? = null
     val MsgStorageClass: Class<*> by innerLazy("MsgStorageClass") {
         when {
             version!! >= Version("6.5.8") ->
@@ -278,7 +289,6 @@ object WechatPackage {
     val CacheMapClass = "$WECHAT_PACKAGE_NAME.a.f"
     val CacheMapPutMethod = "k"
 
-    @Volatile var ImgStorageObject: Any? = null
     val ImgStorageClass: Class<*> by innerLazy("ImgStorageClass") {
         findClassesFromPackage(loader!!, classes!!, WECHAT_PACKAGE_NAME, 1)
                 .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
@@ -329,6 +339,26 @@ object WechatPackage {
         }
     }
 
+    @JvmStatic fun hookAdapters() {
+        XposedBridge.hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject as? BaseAdapter
+                AddressAdapterObject = WeakReference(adapter)
+                SecretFriend.onAdapterCreated(param)
+            }
+        })
+        XposedBridge.hookAllConstructors(ConversationWithCacheAdapter, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun afterHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject as? BaseAdapter
+                ConversationAdapterObject = WeakReference(adapter)
+                SecretFriend.onAdapterCreated(param)
+                ChatroomHider.onAdapterCreated(param)
+            }
+        })
+    }
+
     // getVersion returns the version of current package / application
     private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
         val activityThreadClass = findClass("android.app.ActivityThread", null)
@@ -363,6 +393,10 @@ object WechatPackage {
         return this.javaClass.declaredFields.filter {
             when(it.name) {
                 "INSTANCE", "status", "statusLock" -> false
+                "AddressAdapterObject" -> false
+                "ConversationAdapterObject" -> false
+                "MsgStorageObject" -> false
+                "ImgStorageObject" -> false
                 else -> true
             }
         }.joinToString("\n") {

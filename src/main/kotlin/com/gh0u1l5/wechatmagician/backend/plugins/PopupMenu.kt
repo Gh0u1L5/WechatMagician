@@ -6,12 +6,15 @@ import android.view.View
 import android.widget.AdapterView
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_CLEAN_UNREAD
+import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_CHATROOM
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_CHATROOM_HIDER
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MARK_ALL_AS_READ
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_CLEAN_UNREAD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_HIDE_CHATROOM
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_HIDE_FRIEND
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import de.robv.android.xposed.XC_MethodHook
@@ -102,6 +105,15 @@ object PopupMenu {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as ContextMenu
+                if (preferences!!.getBoolean(SETTINGS_CHATTING_CHATROOM_HIDER, false)) {
+                    if (current_username?.endsWith("@chatroom") == true) {
+                        val item = menu.add(0, ITEM_ID_BUTTON_HIDE_CHATROOM, 0, str[BUTTON_HIDE_CHATROOM])
+                        item.setOnMenuItemClickListener {
+                            ChatroomHider.changeChatroomStatus(current_username, true)
+                            return@setOnMenuItemClickListener true
+                        }
+                    }
+                }
                 if (preferences!!.getBoolean(SETTINGS_MARK_ALL_AS_READ, true)) {
                     val item = menu.add(0, ITEM_ID_BUTTON_CLEAN_UNREAD, 0, str[BUTTON_CLEAN_UNREAD])
                     item.setOnMenuItemClickListener {
@@ -120,6 +132,10 @@ object PopupMenu {
                 listenerField.set(param.thisObject, AdapterView.OnItemClickListener { parent, view, position, id ->
                     val item = parent.adapter.getItem(position)
                     when (item) {
+                        str[BUTTON_HIDE_CHATROOM] -> {
+                            ChatroomHider.changeChatroomStatus(current_username, true)
+                            XposedHelpers.callMethod(param.thisObject, "dismiss")
+                        }
                         str[BUTTON_CLEAN_UNREAD] -> {
                             val context = getObjectField(param.thisObject, "mContext")
                             OneClick.cleanUnreadCount(context as? Activity)

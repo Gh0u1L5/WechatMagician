@@ -66,6 +66,8 @@
     </string-array>
 
     <string name="pref_category_chatting">Chatting</string>
+    <string name="pref_toggle_chatroom_hider">Enable Chatroom Hider</string>
+    <string name="pref_toggle_chatroom_hider_summary">Hide the useless chatrooms into Chatroom Helper.</string>
     <string name="pref_toggle_prevent_recall">Prevent Recalling</string>
     <string name="pref_text_recall_prompt">Custom Recalling Prompt</string>
     <string name="pref_text_recall_prompt_default">want to recall the message, idiot.</string>

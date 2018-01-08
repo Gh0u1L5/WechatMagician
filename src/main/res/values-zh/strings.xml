@@ -66,6 +66,8 @@
     </string-array>
 
     <string name="pref_category_chatting">聊天消息</string>
+    <string name="pref_toggle_chatroom_hider">启用群聊隐藏</string>
+    <string name="pref_toggle_chatroom_hider_summary">将不常用的群聊隐藏到群聊助手中</string>
     <string name="pref_toggle_prevent_recall">启用防撤回</string>
     <string name="pref_text_recall_prompt">自定义防撤回提示</string>
     <string name="pref_text_recall_prompt_default">妄图撤回一条消息，啧啧</string>
