@@ -41,14 +41,25 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
+    private fun report(t: Throwable) {
+        // Ignore the exceptions caused by DexOptService on Android 4.X
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            if (t is XposedHelpers.ClassNotFoundError) {
+                return
+            }
+        }
+        // Report the rest exceptions
+        log(t)
+    }
+
     private inline fun tryHook(crossinline hook: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            try { hook() } catch (e: Throwable) { log(e) }
+            try { hook() } catch (t: Throwable) { report(t) }
         } else {
             hookThreadQueue.add(thread(start = true) {
                 hook()
             }.apply {
-                setUncaughtExceptionHandler { _, e -> log(e) }
+                setUncaughtExceptionHandler { _, t -> report(t) }
             })
         }
     }
