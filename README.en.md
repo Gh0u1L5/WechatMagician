@@ -13,9 +13,9 @@ WechatMagician is a fancy Xposed module designed for Chinese social media applic
 
 __P.S. If you want to retweet or take screenshots, please long press the blank area under others' avatar.__
 
-## QQ Group
-
-Official QQ Group: 135955386, 157550472
+## Official QQ Group
+* Group One: 135955386 (Full)
+* Group Two: 157550472
 
 ## Design
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:
