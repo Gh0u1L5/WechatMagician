@@ -13,14 +13,15 @@ import android.widget.TextView
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers
 
-class ListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<String>(context, 0, strings) {
+class StringListAdapter(context: Context, strings: List<String>) :
+        ArrayAdapter<String>(context, 0, strings) {
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView as LinearLayout?
         if (view == null) {
             val containerLayout = XposedHelpers.callMethod(parent, "generateDefaultLayoutParams")
             XposedHelpers.setIntField(containerLayout, "height", context.dp2px(50))
             view = LinearLayout(context).apply {
-                orientation = LinearLayout.HORIZONTAL
+                orientation = LinearLayout.VERTICAL
                 if (containerLayout is ViewGroup.LayoutParams) {
                     layoutParams = containerLayout
                 }
@@ -31,6 +32,7 @@ class ListPopupAdapter(context: Context, strings: List<String>) : ArrayAdapter<S
                 addView(TextView(context).apply {
                     textSize = 16F
                     gravity = Gravity.CENTER_VERTICAL
+                    setSingleLine()
                     setTextColor(Color.BLACK)
                 }, textLayout)
                 setBackgroundColor(Color.WHITE)

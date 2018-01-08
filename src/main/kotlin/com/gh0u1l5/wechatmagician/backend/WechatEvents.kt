@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.backend.plugins.SnsForward.ForwardAsyncTask
-import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupAdapter
+import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_FORWARD
@@ -84,7 +84,7 @@ object WechatEvents {
             // Set general properties for popup window
             width = parent.context.dp2px(120)
             setDropDownGravity(Gravity.CENTER)
-            setAdapter(ListPopupAdapter(view.context, operations))
+            setAdapter(StringListAdapter(view.context, operations))
             setOnItemClickListener { _, _, operation, _ ->
                 onTimelineItemPopupMenuSelected(view, snsId, operation)
                 dismiss()
