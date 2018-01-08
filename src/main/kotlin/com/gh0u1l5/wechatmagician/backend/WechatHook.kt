@@ -73,8 +73,6 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        val loader = lpparam.classLoader
-
         settings.load(context, PREFERENCE_NAME_SETTINGS)
         developer.load(context, PREFERENCE_NAME_DEVELOPER)
 
@@ -89,7 +87,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(AdapterHider::hookAdapterNotifyChanged)
 
         val pluginDeveloper = Developer
-        pluginDeveloper.init(loader, developer)
+        pluginDeveloper.init(developer)
         tryHook(pluginDeveloper::traceTouchEvents)
         tryHook(pluginDeveloper::traceActivities)
         tryHook(pluginDeveloper::dumpPopupMenu)

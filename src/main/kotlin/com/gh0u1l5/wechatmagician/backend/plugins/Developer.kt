@@ -28,11 +28,9 @@ import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Developer {
 
-    private var loader: ClassLoader? = null
     private var preferences: Preferences? = null
 
-    @JvmStatic fun init(_loader: ClassLoader, _preferences: Preferences) {
-        loader = _loader
+    @JvmStatic fun init(_preferences: Preferences) {
         preferences = _preferences
     }
 
@@ -42,7 +40,7 @@ object Developer {
     @JvmStatic fun traceTouchEvents() {
         if (preferences!!.getBoolean(DEVELOPER_UI_TOUCH_EVENT, false)) {
             findAndHookMethod(
-                    "android.view.View", loader,
+                    "android.view.View", pkg.loader,
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -56,7 +54,7 @@ object Developer {
     @JvmStatic fun traceActivities() {
         if (preferences!!.getBoolean(DEVELOPER_UI_TRACE_ACTIVITIES, false)) {
             findAndHookMethod(
-                    "android.app.Activity", loader,
+                    "android.app.Activity", pkg.loader,
                     "startActivity", C.Intent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -68,7 +66,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    "android.app.Activity", loader,
+                    "android.app.Activity", pkg.loader,
                     "onCreate", C.Bundle, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
