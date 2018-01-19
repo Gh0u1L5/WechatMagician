@@ -29,16 +29,17 @@ import kotlin.concurrent.thread
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
 
+    private val hookThreadQueue: MutableList<Thread> = mutableListOf()
+
     private val settings = Preferences()
     private val developer = Preferences()
 
-    private val hookThreadQueue: MutableList<Thread> = mutableListOf()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
     private inline fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context) -> Unit) {
-        findAndHookMethod("android.app.Application",loader, "attach", C.Context, object : XC_MethodHook() {
+        findAndHookMethod("android.app.Application", loader, "attach", C.Context, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 callback(param.thisObject as Context)
             }
