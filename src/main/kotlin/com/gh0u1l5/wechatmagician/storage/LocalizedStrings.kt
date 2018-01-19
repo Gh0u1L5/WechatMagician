@@ -20,6 +20,7 @@ object LocalizedStrings {
     val PROMPT_WRONG_PASSWORD         = "prompt_wrong_password"
     val MENU_SNS_FORWARD              = "menu_sns_forward"
     val MENU_SNS_SCREENSHOT           = "menu_sns_screenshot"
+    val MENU_CHATROOM_UNHIDE          = "menu_chatroom_unhide"
     val PROMPT_WAIT                   = "prompt_wait"
     val PROMPT_SCREENSHOT             = "prompt_screenshot"
     val PROMPT_SNS_INVALID            = "prompt_sns_invalid"
@@ -46,6 +47,7 @@ object LocalizedStrings {
                     PROMPT_WRONG_PASSWORD         to "密码错误",
                     MENU_SNS_FORWARD              to "转发",
                     MENU_SNS_SCREENSHOT           to "截图",
+                    MENU_CHATROOM_UNHIDE          to "还原群聊",
                     PROMPT_WAIT                   to "请稍等片刻……",
                     PROMPT_SCREENSHOT             to "截图已保存至 ",
                     PROMPT_SNS_INVALID            to "数据失效或已删除",
@@ -68,6 +70,7 @@ object LocalizedStrings {
                     PROMPT_WRONG_PASSWORD         to "Wrong Password!",
                     MENU_SNS_FORWARD              to "Forward",
                     MENU_SNS_SCREENSHOT           to "Screenshot",
+                    MENU_CHATROOM_UNHIDE          to "Unhide",
                     PROMPT_WAIT                   to "Please wait for a while......",
                     PROMPT_SCREENSHOT             to "The screenshot has been saved to ",
                     PROMPT_SNS_INVALID            to "Record is invalid or deleted.",

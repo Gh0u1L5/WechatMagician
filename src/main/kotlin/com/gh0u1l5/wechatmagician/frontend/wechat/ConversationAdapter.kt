@@ -8,10 +8,13 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.gh0u1l5.wechatmagician.backend.WechatEvents
+import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
+import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers
 
-class ConversationAdapter(context: Context, conversations: List<ConversationAdapter.Conversation>) :
+class ConversationAdapter(context: Context, val conversations: MutableList<ConversationAdapter.Conversation> = getConversationList()) :
         ArrayAdapter<ConversationAdapter.Conversation>(context, 0, conversations) {
 
     data class Conversation(
@@ -22,6 +25,27 @@ class ConversationAdapter(context: Context, conversations: List<ConversationAdap
             val atCount: Int,
             val unreadCount: Int
     )
+
+    private val events = WechatEvents
+
+    companion object {
+        fun getConversationList(): MutableList<Conversation> {
+            return ChatroomHideList.toList().mapNotNull {
+                val contact = MainDatabase.getContactByUsername(username = it)
+                val conversation = MainDatabase.getConversationByUsername(username = it)
+                if (contact != null && conversation != null) {
+                    ConversationAdapter.Conversation(
+                            username    = contact.username,
+                            nickname    = contact.nickname,
+                            digest      = conversation.digest,
+                            digestUser  = conversation.digestUser,
+                            atCount     = conversation.atCount,
+                            unreadCount = conversation.unreadCount
+                    )
+                } else null
+            }.toMutableList()
+        }
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var view = convertView as LinearLayout?
@@ -66,9 +90,8 @@ class ConversationAdapter(context: Context, conversations: List<ConversationAdap
             digest?.text = conversation.digest
                     .format(conversation.digestUser)
                     .replace("\n", "")
-            setOnLongClickListener {
-                // TODO: create context menu
-                true
+            setOnLongClickListener { view ->
+                events.onChatroomHiderConversationLongClick(view, this@ConversationAdapter, conversation.username)
             }
         }
     }

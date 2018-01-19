@@ -21,8 +21,6 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.storage.Preferences
-import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
-import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -54,20 +52,7 @@ object SearchBar {
                     return false
                 }
 
-                val adapter = ConversationAdapter(context, ChatroomHideList.toList().mapNotNull {
-                    val contact = MainDatabase.getContactByUsername(username = it)
-                    val conversation = MainDatabase.getConversationByUsername(username = it)
-                    if (contact != null && conversation != null) {
-                        ConversationAdapter.Conversation(
-                                username    = contact.username,
-                                nickname    = contact.nickname,
-                                digest      = conversation.digest,
-                                digestUser  = conversation.digestUser,
-                                atCount     = conversation.atCount,
-                                unreadCount = conversation.unreadCount
-                        )
-                    } else null
-                })
+                val adapter = ConversationAdapter(context)
                 AlertDialog.Builder(context)
                         .setTitle("Wechat Magician")
                         .setAdapter(adapter, { dialog, position ->
