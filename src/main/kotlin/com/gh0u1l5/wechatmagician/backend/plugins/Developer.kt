@@ -212,13 +212,13 @@ object Developer {
                         pkg.LogCat, func,
                         C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
-                        val tag = param.args[0] as String
-                        val msg = param.args[1] as String
+                        val tag = param.args[0] as String?
+                        val msg = param.args[1] as String?
                         val args = param.args[2] as Array<*>?
                         if (args == null) {
                             log("LOG.${func.toUpperCase()} => [$tag] $msg")
                         } else {
-                            log("LOG.${func.toUpperCase()} => [$tag] ${msg.format(*args)}")
+                            log("LOG.${func.toUpperCase()} => [$tag] ${msg?.format(*args)}")
                         }
                     }
                 })
