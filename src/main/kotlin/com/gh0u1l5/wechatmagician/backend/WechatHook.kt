@@ -28,7 +28,7 @@ class WechatHook : IXposedHookLoadPackage {
     private val settings = Preferences()
     private val developer = Preferences()
 
-    private val hookThreadQueue: MutableList<Thread> = arrayListOf()
+    private val hookThreadQueue: MutableList<Thread> = mutableListOf()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
