@@ -133,13 +133,17 @@ object PopupMenu {
                     val item = parent.adapter.getItem(position)
                     when (item) {
                         str[BUTTON_HIDE_CHATROOM] -> {
-                            ChatroomHider.changeChatroomStatus(current_username, true)
-                            XposedHelpers.callMethod(param.thisObject, "dismiss")
+                            if (preferences!!.getBoolean(SETTINGS_CHATTING_CHATROOM_HIDER, false)) {
+                                ChatroomHider.changeChatroomStatus(current_username, true)
+                                XposedHelpers.callMethod(param.thisObject, "dismiss")
+                            }
                         }
                         str[BUTTON_CLEAN_UNREAD] -> {
-                            val context = getObjectField(param.thisObject, "mContext")
-                            OneClick.cleanUnreadCount(context as? Activity)
-                            XposedHelpers.callMethod(param.thisObject, "dismiss")
+                            if (preferences!!.getBoolean(SETTINGS_MARK_ALL_AS_READ, true)) {
+                                val context = getObjectField(param.thisObject, "mContext")
+                                OneClick.cleanUnreadCount(context as? Activity)
+                                XposedHelpers.callMethod(param.thisObject, "dismiss")
+                            }
                         }
                         else ->
                             listener.onItemClick(parent, view, position, id)
