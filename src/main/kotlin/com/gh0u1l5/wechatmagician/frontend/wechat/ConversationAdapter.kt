@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_UNNAMED
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
@@ -27,6 +29,7 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
     )
 
     private val events = WechatEvents
+    private val str = LocalizedStrings
 
     companion object {
         fun getConversationList(): MutableList<Conversation> {
@@ -86,7 +89,11 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val conversation = getItem(position)
             val nickname = getChildAt(0) as TextView?
             val digest = getChildAt(1) as TextView?
-            nickname?.text = conversation.nickname
+            if (conversation.nickname == "") {
+                nickname?.text = str[LABEL_UNNAMED]
+            } else {
+                nickname?.text = conversation.nickname
+            }
             digest?.text = conversation.digest
                     .format(conversation.digestUser)
                     .replace("\n", "")

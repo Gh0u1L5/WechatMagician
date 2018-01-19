@@ -26,6 +26,7 @@ object LocalizedStrings {
     val PROMPT_SNS_INVALID            = "prompt_sns_invalid"
     val PROMPT_RECALL                 = "prompt_recall"
     val LABEL_DELETED                 = "label_deleted"
+    val LABEL_UNNAMED                 = "label_unnamed"
     val BUTTON_SELECT_ALL             = "button_select_all"
     val BUTTON_CLEAN_UNREAD           = "button_clean_unread"
     val BUTTON_OK                     = "button_ok"
@@ -53,6 +54,7 @@ object LocalizedStrings {
                     PROMPT_SNS_INVALID            to "数据失效或已删除",
                     PROMPT_RECALL                 to "妄图撤回一条消息，啧啧",
                     LABEL_DELETED                 to "[已删除]",
+                    LABEL_UNNAMED                 to "[未命名]",
                     BUTTON_SELECT_ALL             to "全选",
                     BUTTON_CLEAN_UNREAD           to "清空全部未读提醒",
                     BUTTON_OK                     to "确定",
@@ -76,6 +78,7 @@ object LocalizedStrings {
                     PROMPT_SNS_INVALID            to "Record is invalid or deleted.",
                     PROMPT_RECALL                 to "want to recall the message, idiot.",
                     LABEL_DELETED                 to "[Deleted]",
+                    LABEL_UNNAMED                 to "[Unnamed]",
                     BUTTON_SELECT_ALL             to "All",
                     BUTTON_CLEAN_UNREAD           to "Mark All as Read",
                     BUTTON_OK                     to "Okay",
