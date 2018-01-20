@@ -116,8 +116,8 @@ object WechatEvents {
                 ).show()
                 return true
             }
-            else -> return false
         }
+        return false
     }
 
     fun onChatroomHiderConversationLongClick(view: View, adapter: ConversationAdapter, username: String): Boolean {
@@ -144,7 +144,7 @@ object WechatEvents {
                 adapter.notifyDataSetChanged()
                 return true
             }
-            else -> return false
         }
+        return false
     }
 }

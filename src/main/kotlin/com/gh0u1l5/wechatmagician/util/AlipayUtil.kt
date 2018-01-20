@@ -9,8 +9,8 @@ import java.net.URISyntaxException
 // Reference: http://blog.csdn.net/likesyour/article/details/61198577
 object AlipayUtil {
 
-    private val ALIPAY_PACKAGE_NAME = "com.eg.android.AlipayGphone"
-    private val INTENT_URL_FORMAT = "intent://platformapi/startapp?saId=10000007&" +
+    private const val ALIPAY_PACKAGE_NAME = "com.eg.android.AlipayGphone"
+    private const val INTENT_URL_FORMAT = "intent://platformapi/startapp?saId=10000007&" +
             "clientVersion=3.7.0.0718&qrcode=https%3A%2F%2Fqr.alipay.com%2F{urlCode}%3F_s" +
             "%3Dweb-other&_t=1472443966571#Intent;" +
             "scheme=alipayqr;package=com.eg.android.AlipayGphone;end"

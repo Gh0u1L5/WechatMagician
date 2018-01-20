@@ -30,6 +30,9 @@ object SecretFriend {
 
     fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
+            Toast.makeText(
+                    context, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
+            ).show()
             return
         }
         if (isSecret) {
@@ -46,12 +49,6 @@ object SecretFriend {
             return
         }
         val username = getContactByNickname(nickname)?.username
-        if (username == null) {
-            Toast.makeText(
-                    context, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
         changeUserStatusByUsername(context, username, isSecret)
     }
 
