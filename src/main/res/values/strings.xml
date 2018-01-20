@@ -82,6 +82,8 @@
     <string name="pref_list_keyword_blacklist_summary">Separated by spaces. Don\'t make a long list on an old phone</string>
 
     <string name="pref_category_settings_miscellaneous">Miscellaneous</string>
+    <string name="pref_text_custom_package_name">Custom Wechat Package Name</string>
+    <string name="pref_text_custom_package_name_summary">Set the modified Wechat package name here, this will take effect after reboot.</string>
     <string name="pref_toggle_auto_login">Toggle Auto Login</string>
     <string name="pref_toggle_auto_login_summary">Automatically agree any login requests from Wechat PC client (take your own risk).</string>
     <string name="pref_toggle_mark_all_as_read">Toggle Mark All as Read</string>

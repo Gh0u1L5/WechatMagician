@@ -1,11 +1,8 @@
-@file:Suppress("MemberVisibilityCanPrivate")
-
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
@@ -36,13 +33,14 @@ object WechatPackage {
 
     // isInitialized indicates whether the WechatPackage has been initialized.
     private val initializeChannel = java.lang.Object()
-    @Volatile var isInitialized = false
+    @Volatile private var isInitialized = false
 
     // status stores the working status of all the hooks.
     private val statusLock = ReentrantReadWriteLock()
     private val status: HashMap<String, Boolean> = hashMapOf()
 
     // These stores necessary information to match signatures.
+    @Volatile var packageName: String = ""
     @Volatile var loader: ClassLoader? = null
     @Volatile var version: Version? = null
     @Volatile var classes: List<String>? = null
@@ -53,56 +51,56 @@ object WechatPackage {
     @Volatile var MsgStorageObject: Any? = null
     @Volatile var ImgStorageObject: Any? = null
 
-    fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
+    private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         synchronized(initializeChannel) {
             if (!isInitialized) {
                 initializeChannel.wait()
             }
         }
-        if (loader == null || version == null || classes == null) {
+        if (packageName == "" || loader == null || version == null || classes == null) {
             throw Error("Failed to evaluate $name: initialization failed.")
         }
         initializer() ?: throw Error("Failed to evaluate $name")
     }
 
-    val WECHAT_PACKAGE_SQLITE: String by innerLazy("WECHAT_PACKAGE_SQLITE") {
+    private val WECHAT_PACKAGE_SQLITE: String by innerLazy("WECHAT_PACKAGE_SQLITE") {
         when {
             version!! >= Version("6.5.8") -> "com.tencent.wcdb"
             else -> "com.tencent.mmdb"
         }
     }
-    val WECHAT_PACKAGE_UI: String         = "$WECHAT_PACKAGE_NAME.ui"
-    val WECHAT_PACKAGE_SNS_UI: String     = "$WECHAT_PACKAGE_NAME.plugin.sns.ui"
-    val WECHAT_PACKAGE_GALLERY_UI: String = "$WECHAT_PACKAGE_NAME.plugin.gallery.ui"
+    private val WECHAT_PACKAGE_UI: String         by lazy { "$packageName.ui" }
+    private val WECHAT_PACKAGE_SNS_UI: String     by lazy { "$packageName.plugin.sns.ui" }
+    private val WECHAT_PACKAGE_GALLERY_UI: String by lazy { "$packageName.plugin.gallery.ui" }
 
     val LogCat: Class<*> by innerLazy("LogCat") {
-        findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.sdk.platformtools")
+        findClassesFromPackage(loader!!, classes!!, "$packageName.sdk.platformtools")
                 .filterByEnclosingClass(null)
                 .filterByMethod(C.Int, "getLogLevel")
                 .firstOrNull()
     }
     val XLogSetup: Class<*> by innerLazy("XLogSetup") {
-        findClassIfExists("$WECHAT_PACKAGE_NAME.xlog.app.XLogSetup", loader)
+        findClassIfExists("$packageName.xlog.app.XLogSetup", loader)
     }
     val WebWXLoginUI: Class<*> by innerLazy("WebWXLoginUI") {
-        findClassIfExists("$WECHAT_PACKAGE_NAME.plugin.webwx.ui.ExtDeviceWXLoginUI", loader)
+        findClassIfExists("$packageName.plugin.webwx.ui.ExtDeviceWXLoginUI", loader)
     }
     val RemittanceAdapter: Class<*> by innerLazy("RemittanceAdapter") {
-        findClassIfExists("$WECHAT_PACKAGE_NAME.plugin.remittance.ui.RemittanceAdapterUI", loader)
+        findClassIfExists("$packageName.plugin.remittance.ui.RemittanceAdapterUI", loader)
     }
     val ActionBarEditText: Class<*> by innerLazy("ActionBarEditText") {
-        findClassIfExists("$WECHAT_PACKAGE_NAME.ui.tools.ActionBarSearchView.ActionBarEditText", loader)
+        findClassIfExists("$packageName.ui.tools.ActionBarSearchView.ActionBarEditText", loader)
     }
 
     val WXCustomScheme: Class<*> by innerLazy("WXCustomScheme") {
-        findClassIfExists("$WECHAT_PACKAGE_NAME.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
+        findClassIfExists("$packageName.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
     }
     val WXCustomSchemeEntryMethod: Method by innerLazy("WXCustomSchemeEntryMethod") {
         findMethodsByExactParameters(WXCustomScheme, C.Boolean, C.Intent).firstOrNull()
     }
 
     val EncEngine: Class<*> by innerLazy("EncEngine") {
-        findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.modelsfs")
+        findClassesFromPackage(loader!!, classes!!, "$packageName.modelsfs")
                 .filterByMethod(null, "seek", C.Long)
                 .filterByMethod(null, "free")
                 .firstOrNull()
@@ -250,12 +248,12 @@ object WechatPackage {
     }
 
     val MsgInfoClass: Class<*> by innerLazy("MsgInfoClass") {
-        findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.storage")
+        findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                 .filterByMethod(C.Boolean, "isSystem")
                 .firstOrNull()
     }
     val ContactInfoClass: Class<*> by innerLazy("ContactInfoClass") {
-        findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.storage")
+        findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                 .filterByMethod(C.String, "getCityCode")
                 .filterByMethod(C.String, "getCountryCode")
                 .firstOrNull()
@@ -264,11 +262,11 @@ object WechatPackage {
     val MsgStorageClass: Class<*> by innerLazy("MsgStorageClass") {
         when {
             version!! >= Version("6.5.8") ->
-                findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.storage")
+                findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                         .filterByMethod(C.Long, MsgInfoClass, C.Boolean)
                         .firstOrNull()
             else ->
-                findClassesFromPackage(loader!!, classes!!, "$WECHAT_PACKAGE_NAME.storage")
+                findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                         .filterByMethod(C.Long, MsgInfoClass)
                         .firstOrNull()
         }
@@ -286,11 +284,11 @@ object WechatPackage {
         }
     }
 
-    val CacheMapClass = "$WECHAT_PACKAGE_NAME.a.f"
+    val CacheMapClass: String by lazy { "$packageName.a.f" }
     val CacheMapPutMethod = "k"
 
     val ImgStorageClass: Class<*> by innerLazy("ImgStorageClass") {
-        findClassesFromPackage(loader!!, classes!!, WECHAT_PACKAGE_NAME, 1)
+        findClassesFromPackage(loader!!, classes!!, packageName, 1)
                 .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
                 .firstOrNull()
     }
@@ -302,7 +300,7 @@ object WechatPackage {
     val ImgStorageLoadMethod = "a"
 
     val XMLParserClass: Class<*> by innerLazy("XMLParserClass") {
-        findClassesFromPackage(loader!!, classes!!,"$WECHAT_PACKAGE_NAME.sdk.platformtools")
+        findClassesFromPackage(loader!!, classes!!,"$packageName.sdk.platformtools")
                 .filterByMethod(C.Map, C.String, C.String)
                 .firstOrNull()
     }
@@ -316,6 +314,7 @@ object WechatPackage {
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         thread(start = true) {
             try {
+                packageName = lpparam.packageName
                 loader = lpparam.classLoader
                 version = getVersion(lpparam)
 

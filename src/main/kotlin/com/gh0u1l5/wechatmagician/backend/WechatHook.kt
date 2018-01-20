@@ -5,9 +5,11 @@ import android.os.Build
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CUSTOM_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
@@ -15,13 +17,11 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
-import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.callMethod
-import de.robv.android.xposed.XposedHelpers.findAndHookMethod
+import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
 import kotlin.concurrent.thread
@@ -31,8 +31,8 @@ class WechatHook : IXposedHookLoadPackage {
 
     private val hookThreadQueue: MutableList<Thread> = mutableListOf()
 
-    private val settings = Preferences()
-    private val developer = Preferences()
+    private val settings by lazy { Preferences(PREFERENCE_NAME_SETTINGS) }
+    private val developer by lazy { Preferences(PREFERENCE_NAME_DEVELOPER) }
 
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
@@ -69,7 +69,7 @@ class WechatHook : IXposedHookLoadPackage {
                         pluginFrontend.notifyStatus()
                         pluginFrontend.setDirectoryPermissions(context)
                     })
-                WECHAT_PACKAGE_NAME ->
+                else ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         if (!BuildConfig.DEBUG) {
                             handleLoadWechat(lpparam, context)
@@ -82,8 +82,15 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        settings.load(context, PREFERENCE_NAME_SETTINGS)
-        developer.load(context, PREFERENCE_NAME_DEVELOPER)
+        val customPackageName = settings.getString(SETTINGS_CUSTOM_PACKAGE_NAME, WECHAT_PACKAGE_NAME)
+        if (customPackageName != lpparam.packageName) {
+            if (!Regex(customPackageName).matches(lpparam.packageName)) {
+                return
+            }
+        }
+
+        settings.listen(context)
+        developer.listen(context)
 
         WechatPackage.init(lpparam)
         LocalizedStrings.init(settings)
@@ -155,9 +162,7 @@ class WechatHook : IXposedHookLoadPackage {
         // Wait until all the hook threads finished
         hookThreadQueue.forEach { it.join() }
         // Write the status of all the hooks
-        val wechatDataDir = getApplicationDataDir(context)
-        val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-        WechatPackage.writeStatus("$magicianDataDir/$FOLDER_SHARED/status")
+        WechatPackage.writeStatus("$MAGICIAN_BASE_DIR/$FOLDER_SHARED/status")
     }
 
     private fun handleLoadWechatOnFly(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {

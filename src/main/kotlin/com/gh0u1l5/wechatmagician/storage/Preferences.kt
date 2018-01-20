@@ -4,11 +4,9 @@ import android.content.*
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
-import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
-import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
 import java.io.File
@@ -16,7 +14,7 @@ import java.io.FileNotFoundException
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.concurrent.thread
 
-class Preferences : SharedPreferences {
+class Preferences(preferencesName: String) : SharedPreferences {
 
     // isLoaded indicates whether this preference has been loaded.
     private val loadChannel = java.lang.Object()
@@ -47,8 +45,7 @@ class Preferences : SharedPreferences {
     }
 
     // load registers the receiver and loads the specific shared preferences.
-    @Suppress("UNCHECKED_CAST")
-    fun load(context: Context?, preferencesName: String) {
+    init {
         thread(start = true) {
             try {
                 // First, check the legacy preferences on external storage
@@ -62,11 +59,8 @@ class Preferences : SharedPreferences {
                 }
 
                 // Also load the preferences in the data directories.
-                val wechatDataDir = getApplicationDataDir(context)
-                val magicianDataDir = wechatDataDir.replace(WECHAT_PACKAGE_NAME, MAGICIAN_PACKAGE_NAME)
-                val preferencePath = "$magicianDataDir/$FOLDER_SHARED_PREFS/$preferencesName.xml"
+                val preferencePath = "$MAGICIAN_BASE_DIR/$FOLDER_SHARED_PREFS/$preferencesName.xml"
                 content = XSharedPreferences(File(preferencePath))
-                context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
             } catch (_: FileNotFoundException) {
                 // Ignore this one
             } catch (e: Throwable) {
@@ -79,6 +73,10 @@ class Preferences : SharedPreferences {
                 cacheStringList()
             }
         }
+    }
+
+    fun listen(context: Context?) {
+        context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
     }
 
     fun cacheStringList() {

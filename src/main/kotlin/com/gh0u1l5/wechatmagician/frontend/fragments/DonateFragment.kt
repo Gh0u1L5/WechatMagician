@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.content.ComponentName
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,8 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.Toast
+import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_CUSTOM_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.R
@@ -45,8 +48,11 @@ class DonateFragment : Fragment() {
             AlipayUtil.startAlipayClient(view.context, alipayCode)
         }
         donate_tenpay.setOnClickListener { view ->
-            val className = "$WECHAT_PACKAGE_NAME.plugin.base.stub.WXCustomSchemeEntryActivity"
-            val componentName = ComponentName(WECHAT_PACKAGE_NAME, className)
+            // TODO: Add support for regular expressions
+            val settings = view.context.getSharedPreferences(PREFERENCE_NAME_SETTINGS, MODE_PRIVATE)
+            val packageName = settings.getString(SETTINGS_CUSTOM_PACKAGE_NAME, WECHAT_PACKAGE_NAME)
+            val className = "$packageName.plugin.base.stub.WXCustomSchemeEntryActivity"
+            val componentName = ComponentName(packageName, className)
             try {
                 view.context.startActivity(Intent(Intent.ACTION_VIEW).apply {
                     component = componentName
