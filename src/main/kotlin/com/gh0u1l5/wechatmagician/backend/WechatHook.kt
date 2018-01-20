@@ -178,8 +178,9 @@ class WechatHook : IXposedHookLoadPackage {
             if (File(path).exists()) {
                 val pathClassLoader = PathClassLoader(path, ClassLoader.getSystemClassLoader())
                 val clazz = Class.forName("$MAGICIAN_PACKAGE_NAME.backend.WechatHook", true, pathClassLoader)
-                callMethod(clazz.newInstance(), "handleLoadWechat", lpparam, context)
-                return
+                val method = clazz.getDeclaredMethod("handleLoadWechat", lpparam.javaClass, Context::class.java)
+                method.isAccessible = true
+                method.invoke(clazz.newInstance(), lpparam, context); return
             }
         }
         log("Cannot load module on fly: APK not found")
