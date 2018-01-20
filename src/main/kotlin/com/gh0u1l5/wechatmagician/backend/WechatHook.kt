@@ -21,7 +21,7 @@ import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.*
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
 import kotlin.concurrent.thread
@@ -34,7 +34,6 @@ class WechatHook : IXposedHookLoadPackage {
     private val settings by lazy { Preferences(PREFERENCE_NAME_SETTINGS) }
     private val developer by lazy { Preferences(PREFERENCE_NAME_DEVELOPER) }
 
-
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
@@ -46,12 +45,46 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
+    // NOTE: Since Wechat 6.5.16, the MultiDex installation became asynchronous. In the other word,
+    //       the installation is not guaranteed to be finished during Application.attach. To avoid
+    //       unknown exceptions caused by asynchronous installation, we introduced a new mechanism
+    //       called "waitUntilMultiDexLoaded".
+    private val waitMultiDexChannel = java.lang.Object()
+    @Volatile private var isMultiDexLoaded = false
+    @Volatile private var waitMultiDexHook: XC_MethodHook.Unhook? = null
+
+    private fun waitUntilMultiDexLoaded() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            return
+        }
+        synchronized(waitMultiDexChannel) {
+            if (waitMultiDexHook == null) {
+                waitMultiDexHook = findAndHookMethod(WechatPackage.LogCat, "i", C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
+                    override fun afterHookedMethod(param: MethodHookParam) {
+                        val tag = param.args[0] as String?
+                        val msg = param.args[1] as String?
+                        if (tag == "MicroMsg.MultiDex" && msg == "install done") {
+                            synchronized(waitMultiDexChannel) {
+                                isMultiDexLoaded = true
+                                waitMultiDexHook?.unhook()
+                                waitMultiDexChannel.notifyAll()
+                            }
+                        }
+                    }
+                })
+            }
+            if (!isMultiDexLoaded) {
+                waitMultiDexChannel.wait(500)
+            }
+        }
+    }
+
     private inline fun tryHook(crossinline hook: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             try { hook() } catch (t: Throwable) { log(t) }
         } else {
             hookThreadQueue.add(thread(start = true) {
-                hook()
+                waitUntilMultiDexLoaded(); hook()
             }.apply {
                 setUncaughtExceptionHandler { _, t -> log(t) }
             })
