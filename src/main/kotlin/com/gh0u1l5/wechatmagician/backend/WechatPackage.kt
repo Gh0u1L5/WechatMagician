@@ -5,6 +5,7 @@ import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.Version
+import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
 import com.gh0u1l5.wechatmagician.util.FileUtil
@@ -31,9 +32,8 @@ import kotlin.concurrent.write
 // These classes and objects will be used for hooking and tampering with runtime data.
 object WechatPackage {
 
-    // isInitialized indicates whether the WechatPackage has been initialized.
-    private val initializeChannel = java.lang.Object()
-    @Volatile private var isInitialized = false
+    // initializeChannel resumes all the thread waiting for the WechatPackage initialization.
+    private val initializeChannel = WaitChannel()
 
     // status stores the working status of all the hooks.
     private val statusLock = ReentrantReadWriteLock()
@@ -52,14 +52,7 @@ object WechatPackage {
     @Volatile var ImgStorageObject: Any? = null
 
     private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
-        synchronized(initializeChannel) {
-            if (!isInitialized) {
-                initializeChannel.wait()
-            }
-        }
-        if (packageName == "" || loader == null || version == null || classes == null) {
-            throw Error("Failed to evaluate $name: initialization failed.")
-        }
+        initializeChannel.wait()
         initializer() ?: throw Error("Failed to evaluate $name")
     }
 
@@ -328,10 +321,7 @@ object WechatPackage {
                     apkFile?.close()
                 }
             } finally {
-                synchronized(initializeChannel) {
-                    isInitialized = true
-                    initializeChannel.notifyAll()
-                }
+                initializeChannel.done()
             }
         }
     }

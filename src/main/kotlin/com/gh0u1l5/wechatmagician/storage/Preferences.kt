@@ -8,6 +8,7 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.XSharedPreferences
 import java.io.File
@@ -16,9 +17,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 class Preferences(preferencesName: String) : SharedPreferences {
 
-    // isLoaded indicates whether this preference has been loaded.
-    private val loadChannel = java.lang.Object()
-    @Volatile private var isLoaded = false
+    // loadChannel resumes all the threads waiting for the preference loading.
+    private val loadChannel = WaitChannel()
 
     // listCache caches the string lists in memory to speed up getStringList()
     private val listCache: MutableMap<String, List<String>> = ConcurrentHashMap()
@@ -63,10 +63,7 @@ class Preferences(preferencesName: String) : SharedPreferences {
             } catch (_: FileNotFoundException) {
                 // Ignore this one
             } finally {
-                synchronized(loadChannel) {
-                    isLoaded = true
-                    loadChannel.notifyAll()
-                }
+                loadChannel.done()
                 cacheStringList()
             }
         }
@@ -99,11 +96,7 @@ class Preferences(preferencesName: String) : SharedPreferences {
     }
 
     private fun getValue(key: String): Any? {
-        synchronized(loadChannel) {
-            if (!isLoaded) {
-                loadChannel.wait()
-            }
-        }
+        loadChannel.wait()
         return all?.get(key)
     }
 
@@ -124,11 +117,7 @@ class Preferences(preferencesName: String) : SharedPreferences {
     override fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> = getValue(key, defValue)
 
     fun getStringList(key: String, defValue: List<String>): List<String> {
-        synchronized(loadChannel) {
-            if (!isLoaded) {
-                loadChannel.wait()
-            }
-        }
+        loadChannel.wait()
         return listCache[key] ?: defValue
     }
 

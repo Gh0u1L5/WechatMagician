@@ -13,6 +13,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_CUSTOM_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -50,34 +51,26 @@ class WechatHook : IXposedHookLoadPackage {
     //       the installation is not guaranteed to be finished during Application.attach. To avoid
     //       unknown exceptions caused by asynchronous installation, we introduced a new mechanism
     //       called "waitUntilMultiDexLoaded".
-    private val waitMultiDexChannel = java.lang.Object()
-    @Volatile private var isMultiDexLoaded = false
+    private val waitMultiDexChannel = WaitChannel()
     @Volatile private var waitMultiDexHook: XC_MethodHook.Unhook? = null
 
     private fun waitUntilMultiDexLoaded() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             return
         }
-        synchronized(waitMultiDexChannel) {
-            if (waitMultiDexHook == null) {
-                waitMultiDexHook = findAndHookMethod(WechatPackage.LogCat, "i", C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
-                    override fun afterHookedMethod(param: MethodHookParam) {
-                        val tag = param.args[0] as String?
-                        val msg = param.args[1] as String?
-                        if (tag == "MicroMsg.MultiDex" && msg == "install done") {
-                            synchronized(waitMultiDexChannel) {
-                                isMultiDexLoaded = true
-                                waitMultiDexHook?.unhook()
-                                waitMultiDexChannel.notifyAll()
-                            }
-                        }
+        if (waitMultiDexHook == null) {
+            waitMultiDexHook = findAndHookMethod(WechatPackage.LogCat, "i", C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
+                override fun afterHookedMethod(param: MethodHookParam) {
+                    val tag = param.args[0] as String?
+                    val msg = param.args[1] as String?
+                    if (tag == "MicroMsg.MultiDex" && msg == "install done") {
+                        waitMultiDexHook?.unhook()
+                        waitMultiDexChannel.done()
                     }
-                })
-            }
-            if (!isMultiDexLoaded) {
-                waitMultiDexChannel.wait(500)
-            }
+                }
+            })
         }
+        waitMultiDexChannel.wait()
     }
 
     private inline fun tryHook(crossinline hook: () -> Unit) {
