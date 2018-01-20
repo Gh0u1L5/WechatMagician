@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
+import android.os.Bundle
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
@@ -376,19 +377,33 @@ object WechatPackage {
         }
     }
 
-    override fun toString(): String {
-        return this.javaClass.declaredFields.filter {
-            when(it.name) {
-                "INSTANCE",
-                "initializeChannel",
-                "status", "statusLock",
-                "base", "loader", "version", "classes",
-                "WECHAT_PACKAGE_SQLITE",
-                "WECHAT_PACKAGE_UI",
-                "WECHAT_PACKAGE_SNS_UI",
-                "WECHAT_PACKAGE_GALLERY_UI" -> false
-                else -> true
+    private fun isFieldIgnorable(field: String): Boolean {
+        return when (field) {
+            "INSTANCE",
+            "initializeChannel",
+            "status", "statusLock",
+            "base", "loader", "version", "classes",
+            "WECHAT_PACKAGE_SQLITE",
+            "WECHAT_PACKAGE_UI",
+            "WECHAT_PACKAGE_SNS_UI",
+            "WECHAT_PACKAGE_GALLERY_UI" -> true
+            else -> false
+        }
+    }
+
+    fun toBundle(): Bundle {
+        return Bundle().apply {
+            this.javaClass.declaredFields.filter { field ->
+                !isFieldIgnorable(field.name)
+            }.forEach {
+                putString(it.name, it.get(this).toString())
             }
+        }
+    }
+
+    override fun toString(): String {
+        return this.javaClass.declaredFields.filter { field ->
+            !isFieldIgnorable(field.name)
         }.joinToString("\n") {
             it.isAccessible = true; "${it.name} = ${it.get(this)}"
         }
