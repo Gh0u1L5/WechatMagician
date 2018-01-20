@@ -379,11 +379,14 @@ object WechatPackage {
     override fun toString(): String {
         return this.javaClass.declaredFields.filter {
             when(it.name) {
-                "INSTANCE", "status", "statusLock" -> false
-                "AddressAdapterObject" -> false
-                "ConversationAdapterObject" -> false
-                "MsgStorageObject" -> false
-                "ImgStorageObject" -> false
+                "INSTANCE",
+                "initializeChannel",
+                "status", "statusLock",
+                "base", "loader", "version", "classes",
+                "WECHAT_PACKAGE_SQLITE",
+                "WECHAT_PACKAGE_UI",
+                "WECHAT_PACKAGE_SNS_UI",
+                "WECHAT_PACKAGE_GALLERY_UI" -> false
                 else -> true
             }
         }.joinToString("\n") {
