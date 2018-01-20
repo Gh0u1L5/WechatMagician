@@ -5,6 +5,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
+import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_RECALL
@@ -14,7 +15,6 @@ import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import kotlin.concurrent.thread
 
 object XML {
 
@@ -80,7 +80,7 @@ object XML {
     }
 
     private fun recordTimelineObject(result: MutableMap<String, String?>) {
-        thread(start = true) {
+        tryWithThread {
             val id = result[".TimelineObject.id"]
             if (id != null) {
                 SnsCache[id] = SnsCache.SnsInfo(result)

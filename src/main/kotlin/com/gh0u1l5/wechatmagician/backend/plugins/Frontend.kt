@@ -8,7 +8,6 @@ import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.io.File
 

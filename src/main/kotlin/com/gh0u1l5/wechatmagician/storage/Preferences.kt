@@ -7,13 +7,12 @@ import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.XSharedPreferences
-import de.robv.android.xposed.XposedBridge.log
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.ConcurrentHashMap
-import kotlin.concurrent.thread
 
 class Preferences(preferencesName: String) : SharedPreferences {
 
@@ -47,7 +46,7 @@ class Preferences(preferencesName: String) : SharedPreferences {
 
     // load registers the receiver and loads the specific shared preferences.
     init {
-        thread(start = true) {
+        tryWithThread {
             try {
                 // First, check the legacy preferences on external storage
                 // If legacy preferences exists, load the legacy content.
@@ -58,14 +57,11 @@ class Preferences(preferencesName: String) : SharedPreferences {
                     val path = legacyPrefFile.absolutePath
                     legacy = FileUtil.readObjectFromDisk(path) as HashMap<String, Any?>
                 }
-
                 // Also load the preferences in the data directories.
                 val preferencePath = "$MAGICIAN_BASE_DIR/$FOLDER_SHARED_PREFS/$preferencesName.xml"
                 content = XSharedPreferences(File(preferencePath))
             } catch (_: FileNotFoundException) {
                 // Ignore this one
-            } catch (t: Throwable) {
-                log(t)
             } finally {
                 synchronized(loadChannel) {
                     isLoaded = true

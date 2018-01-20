@@ -26,7 +26,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
-import kotlin.concurrent.thread
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {

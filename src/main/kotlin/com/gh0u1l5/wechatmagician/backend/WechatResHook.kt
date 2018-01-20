@@ -7,7 +7,6 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.tryOrNull
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookZygoteInit
-import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_InitPackageResources
 
 class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {

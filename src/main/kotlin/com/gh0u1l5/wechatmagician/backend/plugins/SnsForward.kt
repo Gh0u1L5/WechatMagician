@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.Adapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
@@ -28,7 +29,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.*
 import java.lang.ref.WeakReference
-import kotlin.concurrent.thread
 
 object SnsForward {
 
@@ -55,13 +55,11 @@ object SnsForward {
                     return null
                 }
                 snsInfo.medias.mapIndexed { i, media ->
-                    thread(start = true) {
+                    tryWithThread {
                         when(media.type) {
                             "2" -> DownloadUtil.downloadImage("$storage/.cache/$i", media)
                             "6" -> DownloadUtil.downloadVideo("$storage/.cache/$i", media)
                         }
-                    }.apply {
-                        setUncaughtExceptionHandler { _, t -> log(t) }
                     }
                 }.forEach { it.join() }; null
             } catch (t: Throwable) { t }

@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.backend
 import android.content.Context
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
@@ -24,7 +25,6 @@ import java.lang.ref.WeakReference
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
-import kotlin.concurrent.thread
 import kotlin.concurrent.write
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
@@ -312,7 +312,7 @@ object WechatPackage {
 
     // init initializes necessary information for static analysis.
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
-        thread(start = true) {
+        tryWithThread {
             try {
                 packageName = lpparam.packageName
                 loader = lpparam.classLoader
@@ -333,8 +333,6 @@ object WechatPackage {
                     initializeChannel.notifyAll()
                 }
             }
-        }.setUncaughtExceptionHandler { _, throwable ->
-            log(throwable)
         }
     }
 
