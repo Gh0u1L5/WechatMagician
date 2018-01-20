@@ -89,9 +89,6 @@ class WechatHook : IXposedHookLoadPackage {
             }
         }
 
-        settings.listen(context)
-        developer.listen(context)
-
         WechatPackage.init(lpparam)
         LocalizedStrings.init(settings)
         SecretFriendList.init(context)
@@ -159,8 +156,14 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginLimits::breakSelectContactLimit)
         tryHook(pluginLimits::breakSelectConversationLimit)
 
+        // Finish minor initializations
+        settings.listen(context)
+        developer.listen(context)
+        WechatResHook.MODULE_RES?.hashCode()
+
         // Wait until all the hook threads finished
         hookThreadQueue.forEach { it.join() }
+
         // Write the status of all the hooks
         WechatPackage.writeStatus("$MAGICIAN_BASE_DIR/$FOLDER_SHARED/status")
     }

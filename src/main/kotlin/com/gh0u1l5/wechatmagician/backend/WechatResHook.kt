@@ -1,6 +1,8 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.res.XModuleResources
+import android.content.res.XModuleResources.createInstance
+import android.content.res.XResources
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import de.robv.android.xposed.IXposedHookInitPackageResources
@@ -12,7 +14,14 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
 
     companion object {
         @Volatile private var MODULE_PATH: String? = null
-        @Volatile var MODULE_RES: XModuleResources? = null
+        @Volatile private var ORIGIN_RES: XResources? = null
+        val MODULE_RES: XModuleResources? by lazy {
+            val result = try { createInstance(MODULE_PATH, ORIGIN_RES) } catch (t: Throwable) { null }
+            if (result != null) {
+                WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
+            }
+            return@lazy result
+        }
     }
 
     override fun initZygote(startupParam: IXposedHookZygoteInit.StartupParam) {
@@ -20,16 +29,6 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
     }
 
     override fun handleInitPackageResources(resparam: XC_InitPackageResources.InitPackageResourcesParam) {
-        if (resparam.packageName != WECHAT_PACKAGE_NAME) {
-            return
-        }
-        try {
-            if (MODULE_RES == null) {
-                MODULE_RES = XModuleResources.createInstance(MODULE_PATH, resparam.res)
-                WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
-            }
-        } catch (t: Throwable) {
-            MODULE_RES = null; log(t)
-        }
+        ORIGIN_RES = resparam.res
     }
 }
