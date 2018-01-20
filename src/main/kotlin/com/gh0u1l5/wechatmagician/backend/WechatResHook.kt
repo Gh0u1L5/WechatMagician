@@ -4,6 +4,7 @@ import android.content.res.XModuleResources
 import android.content.res.XModuleResources.createInstance
 import android.content.res.XResources
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
+import com.gh0u1l5.wechatmagician.Global.tryOrNull
 import de.robv.android.xposed.IXposedHookInitPackageResources
 import de.robv.android.xposed.IXposedHookZygoteInit
 import de.robv.android.xposed.XposedBridge.log
@@ -15,7 +16,7 @@ class WechatResHook : IXposedHookZygoteInit, IXposedHookInitPackageResources {
         @Volatile private var MODULE_PATH: String? = null
         @Volatile private var ORIGIN_RES: XResources? = null
         val MODULE_RES: XModuleResources? by lazy {
-            val result = try { createInstance(MODULE_PATH, ORIGIN_RES) } catch (t: Throwable) { log(t); null }
+            val result = tryOrNull { createInstance(MODULE_PATH, ORIGIN_RES) }
             if (result != null) {
                 WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
             }

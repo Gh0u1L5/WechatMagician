@@ -36,7 +36,7 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
             val newPrefDir = "${context?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
             try {
                 File(oldPrefDir).renameTo(File(newPrefDir))
-            } catch (e: Throwable) {
+            } catch (t: Throwable) {
                 // Ignore this one
             }
             manager.setStorageDeviceProtected()
@@ -66,9 +66,9 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
                 val className = "$MAGICIAN_PACKAGE_NAME.frontend.MainActivityAlias"
                 val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
                 context?.packageManager?.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
-            } catch (e: Throwable) {
-                Log.e(LOG_TAG, "Cannot hide icon: $e")
-                Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+            } catch (t: Throwable) {
+                Log.e(LOG_TAG, "Cannot hide icon: $t")
+                Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
         if (key == SETTINGS_MODULE_LANGUAGE) {

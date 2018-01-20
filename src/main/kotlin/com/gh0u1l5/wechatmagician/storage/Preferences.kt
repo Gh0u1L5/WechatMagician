@@ -6,6 +6,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
+import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.util.FileUtil
 import de.robv.android.xposed.XSharedPreferences
 import de.robv.android.xposed.XposedBridge.log
@@ -63,8 +64,8 @@ class Preferences(preferencesName: String) : SharedPreferences {
                 content = XSharedPreferences(File(preferencePath))
             } catch (_: FileNotFoundException) {
                 // Ignore this one
-            } catch (e: Throwable) {
-                log(e)
+            } catch (t: Throwable) {
+                log(t)
             } finally {
                 synchronized(loadChannel) {
                     isLoaded = true
@@ -76,7 +77,9 @@ class Preferences(preferencesName: String) : SharedPreferences {
     }
 
     fun listen(context: Context?) {
-        context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+        tryWithLog {
+            context?.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+        }
     }
 
     fun cacheStringList() {

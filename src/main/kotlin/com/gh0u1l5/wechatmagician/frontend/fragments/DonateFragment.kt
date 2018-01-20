@@ -60,8 +60,8 @@ class DonateFragment : Fragment() {
                     flags = Intent.FLAG_ACTIVITY_PREVIOUS_IS_TOP
                 })
                 Toast.makeText(view.context, R.string.prompt_wait, Toast.LENGTH_SHORT).show()
-            } catch (e: Throwable) {
-                Toast.makeText(view.context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+            } catch (t: Throwable) {
+                Toast.makeText(view.context, t.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
     }

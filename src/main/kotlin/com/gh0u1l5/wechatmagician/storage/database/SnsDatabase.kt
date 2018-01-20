@@ -31,8 +31,8 @@ object SnsDatabase {
             callMethod(cursor, "moveToFirst")
             val snsId = XposedHelpers.callMethod(cursor, "getLong", 0)
             return longToDecimalString(snsId as Long)
-        } catch (e: Throwable) {
-            log(e); return null
+        } catch (t: Throwable) {
+            log(t); return null
         } finally {
             if (cursor != null) {
                 callMethod(cursor, "close")

@@ -11,6 +11,8 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CUSTOM_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
+import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -84,21 +86,19 @@ class WechatHook : IXposedHookLoadPackage {
             // NOTE: For Android 7.X or later, multi-thread and lazy initialization
             //       causes unexpected crashes with WeXposed. So I fall back to the
             //       original logic for now.
-            try { hook() } catch (t: Throwable) { log(t) }
+            tryWithLog { hook() }
         } else {
             // NOTE: In order to print correct status information, the main thread
             //       have to wait all the hooking threads in the queue.
-            hookThreadQueue.add(thread(start = true) {
+            hookThreadQueue.add(tryWithThread {
                 waitUntilMultiDexLoaded(); hook()
-            }.apply {
-                setUncaughtExceptionHandler { _, t -> log(t) }
             })
         }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        try {
+        tryWithLog {
             when (lpparam.packageName) {
                 MAGICIAN_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { context ->
@@ -116,7 +116,7 @@ class WechatHook : IXposedHookLoadPackage {
                         }
                     })
             }
-        } catch (e: Throwable) { log(e) }
+        }
     }
 
     // handleLoadWechat is the entry point for Wechat hooking logic.

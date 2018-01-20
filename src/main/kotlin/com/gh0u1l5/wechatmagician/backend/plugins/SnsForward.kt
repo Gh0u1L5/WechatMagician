@@ -64,7 +64,7 @@ object SnsForward {
                         setUncaughtExceptionHandler { _, t -> log(t) }
                     }
                 }.forEach { it.join() }; null
-            } catch (e: Throwable) { e }
+            } catch (t: Throwable) { t }
         }
 
         override fun onPostExecute(result: Throwable?) {

@@ -2,6 +2,8 @@ package com.gh0u1l5.wechatmagician
 
 import android.annotation.SuppressLint
 import android.os.Build
+import de.robv.android.xposed.XposedBridge.log
+import kotlin.concurrent.thread
 
 object Global {
     const val SALT = "W3ch4tM4g1c14n"
@@ -67,4 +69,17 @@ object Global {
     const val ITEM_ID_BUTTON_HIDE_FRIEND   = 0x510
     const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511
     const val ITEM_ID_BUTTON_CLEAN_UNREAD  = 0x512
+
+    fun tryWithLog(func: () -> Unit) {
+        try { func() } catch (t: Throwable) { log(t) }
+    }
+
+    fun <T>tryOrNull(func: () -> T): T? =
+        try { func() } catch (t: Throwable) { log(t); null }
+
+    fun tryWithThread(func: () -> Unit): Thread {
+        return thread(start = true) { func() }.apply {
+            setUncaughtExceptionHandler { _, t -> log(t) }
+        }
+    }
 }

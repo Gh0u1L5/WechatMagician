@@ -106,8 +106,8 @@ class StatusFragment : Fragment() {
                 // Read status object from disk
                 try {
                     return readObjectFromDisk(path) as HashMap<String, Boolean>
-                } catch (e: Throwable) {
-                    Log.e(LOG_TAG, "Cannot read hooking status: $e")
+                } catch (t: Throwable) {
+                    Log.e(LOG_TAG, "Cannot read hooking status: $t")
                 }
             }
             return null
