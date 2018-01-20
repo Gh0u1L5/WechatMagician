@@ -28,8 +28,6 @@ import java.io.File
 class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        val manager = preferenceManager
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Move old shared preferences to device protected storage if it exists
             val oldPrefDir = "${context?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
@@ -39,15 +37,15 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
             } catch (t: Throwable) {
                 // Ignore this one
             }
-            manager.setStorageDeviceProtected()
+            preferenceManager.setStorageDeviceProtected()
         }
 
         if (arguments != null) {
             val preferencesResId = arguments!!.getInt(ARG_PREF_RES)
-            manager.sharedPreferencesName = arguments!!.getString(ARG_PREF_NAME)
+            val preferencesName = arguments!!.getString(ARG_PREF_NAME)
+            preferenceManager.sharedPreferencesName = preferencesName
             setPreferencesFromResource(preferencesResId, rootKey)
         }
-        manager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -55,6 +53,30 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
             setBackgroundColor(ContextCompat.getColor(context, R.color.card_background))
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        preferenceManager.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+    }
+
+    // Reference: https://github.com/rovo89/XposedBridge/issues/206
+    override fun onPause() {
+        // Set shared preferences as world readable.
+        val dataDir = getApplicationDataDir(context)
+        val folder = File("$dataDir/$FOLDER_SHARED_PREFS")
+        val filename = preferenceManager.sharedPreferencesName + ".xml"
+        FileUtil.setWorldReadable(File(folder, filename))
+
+        // Notify the backend to reload the preferences
+        context?.sendBroadcast(Intent(ACTION_UPDATE_PREF))
+
+        super.onPause()
+    }
+
+    override fun onStop() {
+        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        super.onStop()
     }
 
     override fun onSharedPreferenceChanged(preferences: SharedPreferences, key: String) {
@@ -79,28 +101,9 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
         }
     }
 
-    // Reference: https://github.com/rovo89/XposedBridge/issues/206
-    override fun onPause() {
-        // Set shared preferences as world readable.
-        val dataDir = getApplicationDataDir(context)
-        val folder = File("$dataDir/$FOLDER_SHARED_PREFS")
-        val filename = preferenceManager.sharedPreferencesName + ".xml"
-        FileUtil.setWorldReadable(File(folder, filename))
-
-        // Notify the backend to reload the preferences
-        context?.sendBroadcast(Intent(ACTION_UPDATE_PREF))
-
-        super.onPause()
-    }
-
-    override fun onDestroy() {
-        preferenceManager.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-        super.onDestroy()
-    }
-
     companion object {
-        private val ARG_PREF_RES = "preferencesResId"
-        private val ARG_PREF_NAME = "preferencesFileName"
+        private const val ARG_PREF_RES = "preferencesResId"
+        private const val ARG_PREF_NAME = "preferencesFileName"
 
         fun newInstance(preferencesResId: Int, preferencesName: String): PrefFragment {
             val fragment = PrefFragment()
