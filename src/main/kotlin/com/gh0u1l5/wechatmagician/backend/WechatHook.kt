@@ -81,8 +81,13 @@ class WechatHook : IXposedHookLoadPackage {
 
     private inline fun tryHook(crossinline hook: () -> Unit) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            // NOTE: For Android 7.X or later, multi-thread and lazy initialization
+            //       causes unexpected crashes with WeXposed. So I fall back to the
+            //       original logic for now.
             try { hook() } catch (t: Throwable) { log(t) }
         } else {
+            // NOTE: In order to print correct status information, the main thread
+            //       have to wait all the hooking threads in the queue.
             hookThreadQueue.add(thread(start = true) {
                 waitUntilMultiDexLoaded(); hook()
             }.apply {
@@ -114,6 +119,7 @@ class WechatHook : IXposedHookLoadPackage {
         } catch (e: Throwable) { log(e) }
     }
 
+    // handleLoadWechat is the entry point for Wechat hooking logic.
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
         val customPackageName = settings.getString(SETTINGS_CUSTOM_PACKAGE_NAME, WECHAT_PACKAGE_NAME)
         if (customPackageName != lpparam.packageName) {
@@ -201,6 +207,7 @@ class WechatHook : IXposedHookLoadPackage {
         WechatPackage.writeStatus("$MAGICIAN_BASE_DIR/$FOLDER_SHARED/status")
     }
 
+    // handleLoadWechatOnFly uses reflection to load updated module without reboot.
     private fun handleLoadWechatOnFly(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
         (0 until 10).forEach { index ->
             val path = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
