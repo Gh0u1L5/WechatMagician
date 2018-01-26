@@ -89,6 +89,6 @@
     <string name="pref_text_secret_friend_password">Configure Password for Secret Friends</string>
 
     <string name="support_report_subject">Wechat Magician Report</string>
-    <string name="support_report_text">Dear Developer,\nThe Xposed log and WechatPackage status has been attached. Currently my issue is:</string>
+    <string name="support_report_greetings">Dear Developer,\nThe Xposed log and WechatPackage status has been attached. Currently my issue is:</string>
 
 </resources>

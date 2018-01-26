@@ -89,5 +89,5 @@
     <string name="pref_text_secret_friend_password">设置微信密友密码</string>
 
     <string name="support_report_subject">微信巫师用户反馈</string>
-    <string name="support_report_text">开发者你好，Xposed日志与WechatPackage记录已添加到附件，我目前遇到的问题是：</string>
+    <string name="support_report_greetings">开发者你好，Xposed日志与WechatPackage记录已添加到附件，我目前遇到的问题是：</string>
 </resources>
