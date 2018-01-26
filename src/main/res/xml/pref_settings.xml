@@ -62,13 +62,6 @@
             android:title="@string/pref_list_keyword_blacklist" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_settings_miscellaneous">
-        <EditTextPreference
-            android:defaultValue="com.tencent.mm"
-            android:key="settings_custom_package_name"
-            android:selectAllOnFocus="true"
-            android:singleLine="true"
-            android:summary="@string/pref_text_custom_package_name_summary"
-            android:title="@string/pref_text_custom_package_name" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="settings_auto_login"

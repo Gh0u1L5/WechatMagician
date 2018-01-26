@@ -9,8 +9,6 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
-import com.gh0u1l5.wechatmagician.Global.SETTINGS_CUSTOM_PACKAGE_NAME
-import com.gh0u1l5.wechatmagician.Global.WECHAT_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.WaitChannel
@@ -33,8 +31,8 @@ class WechatHook : IXposedHookLoadPackage {
 
     private val hookThreadQueue: MutableList<Thread> = mutableListOf()
 
-    private val settings by lazy { Preferences(PREFERENCE_NAME_SETTINGS) }
-    private val developer by lazy { Preferences(PREFERENCE_NAME_DEVELOPER) }
+    private val settings = Preferences()
+    private val developer = Preferences()
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
@@ -113,14 +111,14 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        val customPackageName = settings.getString(SETTINGS_CUSTOM_PACKAGE_NAME, WECHAT_PACKAGE_NAME)
-        if (customPackageName != lpparam.packageName) {
-            if (!Regex(customPackageName).matches(lpparam.packageName)) {
-                return
-            }
-        }
+        settings.init(PREFERENCE_NAME_SETTINGS)
+        developer.init(PREFERENCE_NAME_DEVELOPER)
 
         WechatPackage.init(lpparam)
+        if (!WechatPackage.isWechat()) {
+            return
+        }
+
         LocalizedStrings.init(settings)
         SecretFriendList.init(context)
         ChatroomHideList.init(context)
@@ -193,11 +191,12 @@ class WechatHook : IXposedHookLoadPackage {
         WechatPackage.listen(context)
         WechatResHook.MODULE_RES?.hashCode()
 
-        // Wait until all the hook threads finished
-        hookThreadQueue.forEach { it.join() }
-
         // Write the status of all the hooks
-        WechatPackage.writeStatus("$MAGICIAN_BASE_DIR/$FOLDER_SHARED/status")
+        tryWithThread {
+            // Wait until all the hook threads finished.
+            hookThreadQueue.forEach { it.join() }
+            WechatPackage.writeStatus("$MAGICIAN_BASE_DIR/$FOLDER_SHARED/status")
+        }
     }
 
     // handleLoadWechatOnFly uses reflection to load updated module without reboot.

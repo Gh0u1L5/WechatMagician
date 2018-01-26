@@ -82,8 +82,6 @@
     <string name="pref_list_keyword_blacklist_summary">使用空格分隔，性能较差的手机注意不要写太长</string>
 
     <string name="pref_category_settings_miscellaneous">杂项</string>
-    <string name="pref_text_custom_package_name">自定义微信包名</string>
-    <string name="pref_text_custom_package_name_summary">改包名实现微信多开的用户可以在此设定包名，修改后重启生效</string>
     <string name="pref_toggle_auto_login">启用自动登录</string>
     <string name="pref_toggle_auto_login_summary">自动同意电脑版微信的登录请求，若开启此选项造成任何经济损失作者概不负责</string>
     <string name="pref_toggle_mark_all_as_read">启用一键标记已读</string>

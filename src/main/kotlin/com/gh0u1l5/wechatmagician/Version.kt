@@ -3,7 +3,7 @@ package com.gh0u1l5.wechatmagician
 // Version is a helper class for comparing version strings.
 class Version(private val versionName: String) {
 
-    val version: List<Int> = versionName.split('.').map(String::toInt)
+    val version: List<Int> = versionName.split('.').mapNotNull(String::toIntOrNull)
 
     override fun toString() = versionName
 

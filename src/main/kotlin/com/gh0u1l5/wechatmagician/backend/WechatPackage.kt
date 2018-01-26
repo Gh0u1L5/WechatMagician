@@ -310,29 +310,6 @@ object WechatPackage {
         ).firstOrNull()
     }
 
-    // init initializes necessary information for static analysis.
-    fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
-        tryWithThread {
-            try {
-                base = lpparam.packageName
-                loader = lpparam.classLoader
-                version = getVersion(lpparam)
-
-                var apkFile: ApkFile? = null
-                try {
-                    apkFile = ApkFile(lpparam.appInfo.sourceDir)
-                    classes = apkFile.dexClasses.map { clazz ->
-                        PackageUtil.getClassName(clazz)
-                    }
-                } finally {
-                    apkFile?.close()
-                }
-            } finally {
-                initializeChannel.done()
-            }
-        }
-    }
-
     @JvmStatic fun hookAdapters() {
         XposedBridge.hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
             @Throws(Throwable::class)
@@ -353,6 +330,31 @@ object WechatPackage {
         })
     }
 
+    // init initializes necessary information for static analysis.
+    fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
+        tryWithThread {
+            try {
+                base = lpparam.packageName
+                loader = lpparam.classLoader
+                version = getVersion(lpparam)
+
+                var apkFile: ApkFile? = null
+                try {
+                    apkFile = ApkFile(lpparam.appInfo.sourceDir)
+                    classes = apkFile.dexClasses.map { clazz ->
+                        PackageUtil.getClassName(clazz)
+                    }
+                } finally {
+                    apkFile?.close()
+                }
+            } catch (t: Throwable) {
+                // Ignore this one
+            } finally {
+                initializeChannel.done()
+            }
+        }
+    }
+
     // listen returns debug output to the frontend.
     fun listen(context: Context) {
         val receiver = object : BroadcastReceiver() {
@@ -363,6 +365,14 @@ object WechatPackage {
         tryWithLog {
             context.registerReceiver(receiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
         }
+    }
+
+    // isWechat returns true if the current application seems to be Wechat.
+    fun isWechat(): Boolean {
+        return try {
+            val features = listOf(LogCat, SQLiteDatabase, WXCustomScheme)
+            features.mapNotNull(Class<*>::getName).size > 1
+        } catch (t: Throwable) { false }
     }
 
     // getVersion returns the version of current package / application

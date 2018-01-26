@@ -39,7 +39,6 @@ object Global {
     const val SETTINGS_CHATTING_CHATROOM_HIDER        = "settings_chatting_chatroom_hider"
     const val SETTINGS_CHATTING_RECALL                = "settings_chatting_recall"
     const val SETTINGS_CHATTING_RECALL_PROMPT         = "settings_chatting_recall_prompt"
-    const val SETTINGS_CUSTOM_PACKAGE_NAME            = "settings_custom_package_name"
     const val SETTINGS_INTERFACE_HIDE_ICON            = "settings_interface_hide_icon"
     const val SETTINGS_MARK_ALL_AS_READ               = "settings_mark_all_as_read"
     const val SETTINGS_MODULE_LANGUAGE                = "settings_module_language"
