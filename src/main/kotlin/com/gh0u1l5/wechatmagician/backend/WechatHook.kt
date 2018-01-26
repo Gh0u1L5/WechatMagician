@@ -13,7 +13,6 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
-import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -43,6 +42,9 @@ class WechatHook : IXposedHookLoadPackage {
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
     //       https://github.com/rovo89/xposedbridge/issues/30
+    // NOTE: Since Wechat 6.5.16, the MultiDex installation became asynchronous. It is not
+    //       guaranteed to be finished after Application.attach, but the exceptions caused
+    //       by this can be ignored safely (See details in tryHook).
     private inline fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context) -> Unit) {
         findAndHookMethod("android.app.Application", loader, "attach", C.Context, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -51,44 +53,14 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    // NOTE: Since Wechat 6.5.16, the MultiDex installation became asynchronous. In the other word,
-    //       the installation is not guaranteed to be finished during Application.attach. To avoid
-    //       unknown exceptions caused by asynchronous installation, we introduced a new mechanism
-    //       called "waitUntilMultiDexLoaded".
-    private val waitMultiDexChannel = WaitChannel()
-    @Volatile private var waitMultiDexHook: XC_MethodHook.Unhook? = null
-
-    private fun waitUntilMultiDexLoaded() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            return
-        }
-        if (waitMultiDexHook == null) {
-            waitMultiDexHook = findAndHookMethod(WechatPackage.LogCat, "i", C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
-                override fun afterHookedMethod(param: MethodHookParam) {
-                    val tag = param.args[0] as String?
-                    val msg = param.args[1] as String?
-                    if (tag == "MicroMsg.MultiDex" && msg == "install done") {
-                        waitMultiDexHook?.unhook()
-                        waitMultiDexChannel.done()
-                    }
-                }
-            })
-        }
-        waitMultiDexChannel.wait()
-    }
-
+    // NOTE: For Android 7.X or later, multi-thread and lazy initialization
+    //       causes unexpected crashes with WeXposed. So I fall back to the
+    //       original logic for now.
     private inline fun tryHook(crossinline hook: () -> Unit) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            // NOTE: For Android 7.X or later, multi-thread and lazy initialization
-            //       causes unexpected crashes with WeXposed. So I fall back to the
-            //       original logic for now.
-            tryWithLog { hook() }
-        } else {
-            // NOTE: In order to print correct status information, the main thread
-            //       have to wait all the hooking threads in the queue.
-            hookThreadQueue.add(tryWithThread {
-                waitUntilMultiDexLoaded(); hook()
-            })
+        when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryWithLog { hook() }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> hookThreadQueue.add(tryWithThread { hook() })
+            else -> hookThreadQueue.add(tryWithThread { try { hook() } catch (t: Throwable) { /* Ignore */ } })
         }
     }
 
