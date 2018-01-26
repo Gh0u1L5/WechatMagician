@@ -64,15 +64,6 @@ class WechatHook : IXposedHookLoadPackage {
         }
     }
 
-    private fun loadModuleResource(context: Context) {
-        hookThreadQueue.add(tryWithThread {
-            val pm = context.packageManager
-            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
-            MODULE_RES = XModuleResources.createInstance(path, null)
-            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
-        })
-    }
-
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryWithLog {
@@ -94,6 +85,15 @@ class WechatHook : IXposedHookLoadPackage {
                     })
             }
         }
+    }
+
+    private fun loadModuleResource(context: Context) {
+        hookThreadQueue.add(tryWithThread {
+            val pm = context.packageManager
+            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
+            MODULE_RES = XModuleResources.createInstance(path, null)
+            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
+        })
     }
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
