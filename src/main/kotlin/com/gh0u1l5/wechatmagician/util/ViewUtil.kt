@@ -78,9 +78,9 @@ object ViewUtil {
     fun openURL(context: Context?, url: String?) {
         try {
             context?.startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)))
-        } catch (e: Throwable) {
-            Log.e(Global.LOG_TAG, "Cannot open URL $url: $e")
-            Toast.makeText(context, e.localizedMessage, Toast.LENGTH_SHORT).show()
+        } catch (t: Throwable) {
+            Log.e(Global.LOG_TAG, "Cannot open URL $url: $t")
+            Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 

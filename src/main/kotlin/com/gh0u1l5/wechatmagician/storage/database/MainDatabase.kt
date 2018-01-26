@@ -55,8 +55,8 @@ object MainDatabase {
                 val nickname = callMethod(cursor, "getString", 2) as String
                 Contact(alias, username, nickname)
             }
-        } catch (e: Throwable) {
-            log(e); return null
+        } catch (t: Throwable) {
+            log(t); return null
         } finally {
             if (cursor != null) {
                 callMethod(cursor, "close")
@@ -110,8 +110,8 @@ object MainDatabase {
                 val unreadCount = callMethod(cursor, "getInt", 4) as Int
                 Conversation(username, digest, digestUser, atCount, unreadCount)
             }
-        } catch (e: Throwable) {
-            log(e); return null
+        } catch (t: Throwable) {
+            log(t); return null
         } finally {
             if (cursor != null) {
                 callMethod(cursor, "close")
