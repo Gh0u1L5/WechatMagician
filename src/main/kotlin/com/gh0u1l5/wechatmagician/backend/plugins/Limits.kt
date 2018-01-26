@@ -11,8 +11,8 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
+import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.backend.WechatResHook
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
 import com.gh0u1l5.wechatmagician.storage.Preferences
@@ -72,7 +72,7 @@ object Limits {
 
                 val selectAll = menu.add(0, 2, 0, "")
                 selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                if (WechatResHook.MODULE_RES == null) {
+                if (WechatHook.MODULE_RES == null) {
                     selectAll.isChecked = checked
                     selectAll.title = str[BUTTON_SELECT_ALL] + "  " +
                             if (checked) "\u2611" else "\u2610"
@@ -80,7 +80,7 @@ object Limits {
                         events.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
                     }
                 } else {
-                    val layout = WechatResHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview)
+                    val layout = WechatHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview)
                     val checkedTextView = activity.layoutInflater.inflate(layout, null)
                     checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)

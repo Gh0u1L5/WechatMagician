@@ -31,7 +31,7 @@
     <string name="status_component_valid">运行中</string>
     <string name="status_component_invalid">已失效</string>
     <string name="status_component_msg_storage">消息存储器缓存</string>
-    <string name="status_component_resources">UI资源钩子</string>
+    <string name="status_component_resources">UI资源重定向</string>
     <string name="status_component_database">SQLite数据库劫持</string>
     <string name="status_component_xml_parser">XML解析器劫持</string>
     <string name="status_component_custom_scheme">URI路由劫持</string>

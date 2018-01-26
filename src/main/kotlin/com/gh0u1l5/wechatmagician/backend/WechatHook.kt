@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
+import android.content.res.XModuleResources
 import android.os.Build
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
@@ -9,6 +10,7 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
+import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.WaitChannel
@@ -28,6 +30,10 @@ import java.io.File
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
+
+    companion object {
+        @Volatile var MODULE_RES: XModuleResources? = null
+    }
 
     private val hookThreadQueue: MutableList<Thread> = mutableListOf()
 
@@ -84,6 +90,15 @@ class WechatHook : IXposedHookLoadPackage {
                 waitUntilMultiDexLoaded(); hook()
             })
         }
+    }
+
+    private fun loadModuleResource(context: Context) {
+        hookThreadQueue.add(tryWithThread {
+            val pm = context.packageManager
+            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
+            MODULE_RES = XModuleResources.createInstance(path, null)
+            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
+        })
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -188,8 +203,8 @@ class WechatHook : IXposedHookLoadPackage {
         // Finish minor initializations
         settings.listen(context)
         developer.listen(context)
+        loadModuleResource(context)
         WechatPackage.listen(context)
-        WechatResHook.MODULE_RES?.hashCode()
 
         // Write the status of all the hooks
         tryWithThread {
