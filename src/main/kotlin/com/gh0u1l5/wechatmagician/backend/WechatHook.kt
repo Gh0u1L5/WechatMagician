@@ -190,6 +190,7 @@ class WechatHook : IXposedHookLoadPackage {
         // Finish minor initializations
         settings.listen(context)
         developer.listen(context)
+        WechatPackage.listen(context)
         WechatResHook.MODULE_RES?.hashCode()
 
         // Wait until all the hook threads finished

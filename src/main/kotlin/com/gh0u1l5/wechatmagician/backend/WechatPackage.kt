@@ -1,9 +1,15 @@
 package com.gh0u1l5.wechatmagician.backend
 
+import android.content.BroadcastReceiver
 import android.content.Context
-import android.os.Bundle
+import android.content.Intent
+import android.content.IntentFilter
 import android.widget.BaseAdapter
+import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
+import com.gh0u1l5.wechatmagician.Global.tryOrNull
+import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.WaitChannel
@@ -347,6 +353,18 @@ object WechatPackage {
         })
     }
 
+    // listen returns debug output to the frontend.
+    fun listen(context: Context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                resultData = this@WechatPackage.toString()
+            }
+        }
+        tryWithLog {
+            context.registerReceiver(receiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
+        }
+    }
+
     // getVersion returns the version of current package / application
     private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
         val activityThreadClass = findClass("android.app.ActivityThread", null)
@@ -377,35 +395,36 @@ object WechatPackage {
         }
     }
 
-    private fun isFieldIgnorable(field: String): Boolean {
-        return when (field) {
-            "INSTANCE",
-            "initializeChannel",
-            "status", "statusLock",
-            "base", "loader", "version", "classes",
-            "WECHAT_PACKAGE_SQLITE",
-            "WECHAT_PACKAGE_UI",
-            "WECHAT_PACKAGE_SNS_UI",
-            "WECHAT_PACKAGE_GALLERY_UI" -> true
-            else -> false
-        }
-    }
-
-    fun toBundle(): Bundle {
-        return Bundle().apply {
+    override fun toString(): String {
+        val body = tryOrNull {
             this.javaClass.declaredFields.filter { field ->
-                !isFieldIgnorable(field.name)
-            }.forEach {
-                putString(it.name, it.get(this).toString())
+                when (field.name) {
+                    "INSTANCE", "\$\$delegatedProperties",
+                    "initializeChannel",
+                    "status", "statusLock",
+                    "base", "loader", "version", "classes",
+                    "WECHAT_PACKAGE_SQLITE",
+                    "WECHAT_PACKAGE_UI",
+                    "WECHAT_PACKAGE_SNS_UI",
+                    "WECHAT_PACKAGE_GALLERY_UI" -> false
+                    else -> true
+                }
+            }.joinToString("\n") {
+                it.isAccessible = true
+                val key = it.name.removeSuffix("\$delegate")
+                var value = it.get(this)
+                if (value is WeakReference<*>) {
+                    value = value.get()
+                }
+                "$key = $value"
             }
         }
-    }
 
-    override fun toString(): String {
-        return this.javaClass.declaredFields.filter { field ->
-            !isFieldIgnorable(field.name)
-        }.joinToString("\n") {
-            it.isAccessible = true; "${it.name} = ${it.get(this)}"
-        }
+        return """====================================================
+Wechat Package: $base
+Wechat Version: $version
+Module Version: ${BuildConfig.VERSION_NAME}
+${body?.removeSuffix("\n") ?: "Failed to generate report."}
+===================================================="""
     }
 }
