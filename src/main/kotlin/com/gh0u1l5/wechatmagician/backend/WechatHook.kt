@@ -19,7 +19,6 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
-import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -56,18 +55,20 @@ class WechatHook : IXposedHookLoadPackage {
 
     // isWechat returns true if the current application seems to be Wechat.
     private fun isWechat(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
-        val features = listOf(
-                "com.tencent.mmdb.database.SQLiteDatabase",
-                "com.tencent.wcdb.database.SQLiteDatabase",
-                "${lpparam.packageName}.ui.MMActivity",
-                "${lpparam.packageName}.ui.base.MMListPopupWindow",
-                "${lpparam.packageName}.plugin.webwx.ui.ExtDeviceWXLoginUI",
-                "${lpparam.packageName}.plugin.base.stub.WXCustomSchemeEntryActivity"
+        val features = listOf (
+                "libwechatcommon.so",
+                "libwechatmm.so",
+                "libwechatnetwork.so",
+                "libwechatsight.so",
+                "libwechatxlog.so"
         )
-        val hits = features.mapNotNull {name ->
-            findClassIfExists(name, lpparam.classLoader)
-        }.size
-        return (hits.toDouble() / features.size) > 0.5F
+        return try {
+            val libraryDir = File(lpparam.appInfo.nativeLibraryDir)
+            val hits = features.filter { filename ->
+                File(libraryDir, filename).exists()
+            }.size
+            (hits.toDouble() / features.size) > 0.5F
+        } catch (t: Throwable) { false }
     }
 
     // NOTE: For Android 7.X or later, multi-thread and lazy initialization
