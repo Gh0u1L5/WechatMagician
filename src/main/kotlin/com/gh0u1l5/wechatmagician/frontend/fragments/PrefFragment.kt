@@ -87,17 +87,21 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
                 val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
                 val className = "$MAGICIAN_PACKAGE_NAME.frontend.MainActivityAlias"
                 val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
-                context?.packageManager?.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
+                context!!.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
             } catch (t: Throwable) {
                 Log.e(LOG_TAG, "Cannot hide icon: $t")
                 Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
             }
         }
         if (key == SETTINGS_MODULE_LANGUAGE) {
-            val activity = activity ?: return
-            val language = LocaleUtil.getLanguage(activity)
-            LocaleUtil.setLocale(activity, language)
-            activity.recreate()
+            try {
+                val language = LocaleUtil.getLanguage(activity!!)
+                LocaleUtil.setLocale(activity!!, language)
+                activity!!.recreate()
+            } catch (t: Throwable) {
+                Log.e(LOG_TAG, "Cannot change language: $t")
+                Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
