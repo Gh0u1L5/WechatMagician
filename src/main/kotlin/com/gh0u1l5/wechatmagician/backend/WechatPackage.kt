@@ -367,14 +367,6 @@ object WechatPackage {
         }
     }
 
-    // isWechat returns true if the current application seems to be Wechat.
-    fun isWechat(): Boolean {
-        return try {
-            val features = listOf(LogCat, SQLiteDatabase, WXCustomScheme)
-            features.mapNotNull(Class<*>::getName).size > 1
-        } catch (t: Throwable) { false }
-    }
-
     // getVersion returns the version of current package / application
     private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
         val activityThreadClass = findClass("android.app.ActivityThread", null)

@@ -19,6 +19,7 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -53,6 +54,22 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
+    // isWechat returns true if the current application seems to be Wechat.
+    private fun isWechat(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
+        val features = listOf(
+                "com.tencent.mmdb.database.SQLiteDatabase",
+                "com.tencent.wcdb.database.SQLiteDatabase",
+                "${lpparam.packageName}.ui.MMActivity",
+                "${lpparam.packageName}.ui.base.MMListPopupWindow",
+                "${lpparam.packageName}.plugin.webwx.ui.ExtDeviceWXLoginUI",
+                "${lpparam.packageName}.plugin.base.stub.WXCustomSchemeEntryActivity"
+        )
+        val hits = features.mapNotNull {name ->
+            findClassIfExists(name, lpparam.classLoader)
+        }.size
+        return (hits.toDouble() / features.size) > 0.5F
+    }
+
     // NOTE: For Android 7.X or later, multi-thread and lazy initialization
     //       causes unexpected crashes with WeXposed. So I fall back to the
     //       original logic for now.
@@ -62,6 +79,15 @@ class WechatHook : IXposedHookLoadPackage {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> hookThreadQueue.add(tryWithThread { hook() })
             else -> hookThreadQueue.add(tryWithThread { try { hook() } catch (t: Throwable) { /* Ignore */ } })
         }
+    }
+
+    private fun loadModuleResource(context: Context) {
+        hookThreadQueue.add(tryWithThread {
+            val pm = context.packageManager
+            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
+            MODULE_RES = XModuleResources.createInstance(path, null)
+            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
+        })
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
@@ -75,7 +101,7 @@ class WechatHook : IXposedHookLoadPackage {
                         pluginFrontend.notifyStatus()
                         pluginFrontend.setDirectoryPermissions(context)
                     })
-                else ->
+                else -> if (isWechat(lpparam)) {
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         if (!BuildConfig.DEBUG) {
                             handleLoadWechat(lpparam, context)
@@ -83,17 +109,9 @@ class WechatHook : IXposedHookLoadPackage {
                             handleLoadWechatOnFly(lpparam, context)
                         }
                     })
+                }
             }
         }
-    }
-
-    private fun loadModuleResource(context: Context) {
-        hookThreadQueue.add(tryWithThread {
-            val pm = context.packageManager
-            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
-            MODULE_RES = XModuleResources.createInstance(path, null)
-            WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
-        })
     }
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
@@ -102,10 +120,6 @@ class WechatHook : IXposedHookLoadPackage {
         developer.init(PREFERENCE_NAME_DEVELOPER)
 
         WechatPackage.init(lpparam)
-        if (!WechatPackage.isWechat()) {
-            return
-        }
-
         LocalizedStrings.init(settings)
         SecretFriendList.init(context)
         ChatroomHideList.init(context)
