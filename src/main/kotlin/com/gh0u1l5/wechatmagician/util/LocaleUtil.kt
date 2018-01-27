@@ -41,7 +41,9 @@ object LocaleUtil {
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             updateResources(context, language)
-        } else updateResourcesLegacy(context, language)
+        } else {
+            updateResourcesLegacy(context, language)
+        }
 
     }
 
@@ -68,8 +70,11 @@ object LocaleUtil {
         Locale.setDefault(locale)
 
         val resources = context.resources
+        val configuration = resources.configuration
+        val displayMetrics = resources.displayMetrics
         resources.configuration.locale = locale
-        resources.updateConfiguration(resources.configuration, resources.displayMetrics)
+        resources.updateConfiguration(configuration, displayMetrics)
+
         return context
     }
 }
