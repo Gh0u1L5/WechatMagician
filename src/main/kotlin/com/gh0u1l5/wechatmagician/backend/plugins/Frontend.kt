@@ -1,11 +1,9 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
-import android.content.Context
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import de.robv.android.xposed.XC_MethodReplacement
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -19,6 +17,7 @@ object Frontend {
         loader = _loader
     }
 
+    @Suppress("DEPRECATION")
     @JvmStatic fun notifyStatus() {
         tryWithLog {
             findAndHookMethod(
@@ -34,13 +33,14 @@ object Frontend {
         }
     }
 
-    @JvmStatic fun setDirectoryPermissions(context: Context?) {
+    @JvmStatic fun setDirectoryPermissions() {
         tryWithLog {
-            val dataDir = File(getApplicationDataDir(context))
+            val dataDir = File(MAGICIAN_PACKAGE_NAME)
             FileUtil.setWorldExecutable(dataDir)
 
             val sharedDir = File(dataDir, FOLDER_SHARED)
             sharedDir.mkdir()
+            FileUtil.setWorldReadable(sharedDir)
             FileUtil.setWorldWritable(sharedDir)
             FileUtil.setWorldExecutable(sharedDir)
         }

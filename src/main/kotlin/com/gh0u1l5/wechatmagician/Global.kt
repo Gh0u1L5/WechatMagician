@@ -15,7 +15,7 @@ object Global {
     const val MAGICIAN_PACKAGE_NAME = "com.gh0u1l5.wechatmagician"
 
     @SuppressLint("SdCardPath")
-    val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
+    private val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
     val XPOSED_BASE_DIR = "$DATA_DIR/$XPOSED_PACKAGE_NAME"
     val MAGICIAN_BASE_DIR = "$DATA_DIR/$MAGICIAN_PACKAGE_NAME"
 

@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
-import android.content.Context
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
@@ -13,13 +12,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import com.gh0u1l5.wechatmagician.util.FileUtil.readObjectFromDisk
 import kotlinx.android.synthetic.main.fragment_status.*
 import java.io.File
@@ -60,7 +59,7 @@ class StatusFragment : Fragment() {
             status_image.setBackgroundColor(color)
 
             // Set the status for each component.
-            val status = readHookStatus(context)
+            val status = readHookStatus()
             if (status != null) {
                 for (entry in componentMap) {
                     if (status[entry.key] == true) {
@@ -89,9 +88,8 @@ class StatusFragment : Fragment() {
         fun newInstance(): StatusFragment = StatusFragment()
 
         @Suppress("UNCHECKED_CAST")
-        fun readHookStatus(context: Context?): HashMap<String, Boolean>? {
-            val dataDir = getApplicationDataDir(context)
-            val sharedDir = File(dataDir, FOLDER_SHARED)
+        fun readHookStatus(): HashMap<String, Boolean>? {
+            val sharedDir = File(MAGICIAN_BASE_DIR, FOLDER_SHARED)
             if (sharedDir.exists()) {
                 val path = sharedDir.absolutePath + "/status"
 

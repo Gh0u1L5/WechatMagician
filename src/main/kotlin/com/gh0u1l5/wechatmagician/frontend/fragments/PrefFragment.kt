@@ -16,12 +16,12 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_INTERFACE_HIDE_ICON
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.FileUtil.getApplicationDataDir
 import com.gh0u1l5.wechatmagician.util.LocaleUtil
 import java.io.File
 
@@ -63,10 +63,9 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
     // Reference: https://github.com/rovo89/XposedBridge/issues/206
     override fun onPause() {
         // Set shared preferences as world readable.
-        val dataDir = getApplicationDataDir(context)
-        val folder = File("$dataDir/$FOLDER_SHARED_PREFS")
-        val filename = preferenceManager.sharedPreferencesName + ".xml"
-        FileUtil.setWorldReadable(File(folder, filename))
+        val folder = File("$MAGICIAN_BASE_DIR/$FOLDER_SHARED_PREFS")
+        val file = File(folder, preferenceManager.sharedPreferencesName + ".xml")
+        FileUtil.setWorldReadable(file)
 
         // Notify the backend to reload the preferences
         context?.sendBroadcast(Intent(ACTION_UPDATE_PREF))

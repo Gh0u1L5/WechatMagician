@@ -84,15 +84,6 @@ object FileUtil {
         })
     }
 
-    // getApplicationDataDir returns the data directory of the given context for file operations.
-    fun getApplicationDataDir(context: Context?): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            context?.applicationInfo?.deviceProtectedDataDir
-        } else {
-            context?.applicationInfo?.dataDir
-        } ?: ""
-    }
-
     @SuppressLint("SetWorldReadable")
     fun setWorldReadable(file: File) = file.setReadable(true, false)
 

@@ -96,11 +96,11 @@ class WechatHook : IXposedHookLoadPackage {
         tryWithLog {
             when (lpparam.packageName) {
                 MAGICIAN_PACKAGE_NAME ->
-                    hookApplicationAttach(lpparam.classLoader, { context ->
+                    hookApplicationAttach(lpparam.classLoader, { _ ->
                         val pluginFrontend = Frontend
                         pluginFrontend.init(lpparam.classLoader)
                         pluginFrontend.notifyStatus()
-                        pluginFrontend.setDirectoryPermissions(context)
+                        pluginFrontend.setDirectoryPermissions()
                     })
                 else -> if (isWechat(lpparam)) {
                     hookApplicationAttach(lpparam.classLoader, { context ->

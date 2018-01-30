@@ -30,7 +30,7 @@ class DonateFragment : Fragment() {
         super.onStart()
 
         // Hide Tenpay if the URI router is not hijacked.
-        val status = readHookStatus(activity)
+        val status = readHookStatus()
         if (status == null || status[STATUS_FLAG_URI_ROUTER] != true) {
             donate_tenpay.visibility = GONE
         }
