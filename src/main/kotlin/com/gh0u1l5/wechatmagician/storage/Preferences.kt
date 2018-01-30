@@ -56,6 +56,8 @@ class Preferences : SharedPreferences {
     fun listen(context: Context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                loadChannel.wait()
+
                 // Reload and cache the shared preferences
                 content?.reload()
                 cacheStringList()
