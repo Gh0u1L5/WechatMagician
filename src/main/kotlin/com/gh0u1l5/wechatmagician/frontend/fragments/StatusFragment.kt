@@ -1,27 +1,25 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
+import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.os.SystemClock
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED
-import com.gh0u1l5.wechatmagician.Global.LOG_TAG
-import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
+import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.util.FileUtil.readObjectFromDisk
 import kotlinx.android.synthetic.main.fragment_status.*
-import java.io.File
 
 class StatusFragment : Fragment() {
 
@@ -59,21 +57,20 @@ class StatusFragment : Fragment() {
             status_image.setBackgroundColor(color)
 
             // Set the status for each component.
-            val status = readHookStatus()
-            if (status != null) {
+            requireHookStatus(context, { status ->
                 for (entry in componentMap) {
                     if (status[entry.key] == true) {
                         setComponentIconValid(entry.value)
                     }
                 }
-            }
+            })
         }
     }
 
-    // Check backend.plugins.Frontend for actual implementation
+    // Check backend.WechatHook for actual implementation
     private fun isModuleLoaded(): Boolean = false
 
-    // Check backend.plugins.Frontend for actual implementation
+    // Check backend.WechatHook for actual implementation
     private fun getXposedVersion(): Int = 0
 
     private fun setComponentIconValid(iconId: Int) {
@@ -87,28 +84,15 @@ class StatusFragment : Fragment() {
     companion object {
         fun newInstance(): StatusFragment = StatusFragment()
 
-        @Suppress("UNCHECKED_CAST")
-        fun readHookStatus(): HashMap<String, Boolean>? {
-            val sharedDir = File(MAGICIAN_BASE_DIR, FOLDER_SHARED)
-            if (sharedDir.exists()) {
-                val path = sharedDir.absolutePath + "/status"
-
-                // Check the modified time of the status object
-                val bootAt = System.currentTimeMillis() - SystemClock.elapsedRealtime()
-                val modifiedAt = File(path).lastModified()
-                if (modifiedAt < bootAt) {
-                    // status is not modified after this boot, invalid.
-                    return null
+        fun requireHookStatus(context: Context, callback: (HashMap<String, Boolean>) -> Unit) {
+            context.sendOrderedBroadcast(Intent(ACTION_REQUIRE_HOOK_STATUS), null, object : BroadcastReceiver() {
+                @Suppress("UNCHECKED_CAST")
+                override fun onReceive(context: Context?, intent: Intent?) {
+                    val result = getResultExtras(true)
+                    val status = result.getSerializable("status")
+                    callback(status as HashMap<String, Boolean>? ?: return)
                 }
-
-                // Read status object from disk
-                try {
-                    return readObjectFromDisk(path) as HashMap<String, Boolean>
-                } catch (t: Throwable) {
-                    Log.e(LOG_TAG, "Cannot read hooking status: $t")
-                }
-            }
-            return null
+            }, null, Activity.RESULT_OK, null, null)
         }
     }
 }

@@ -4,9 +4,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Bundle
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
 import com.gh0u1l5.wechatmagician.Global.tryOrNull
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
@@ -15,7 +17,6 @@ import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
 import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
-import com.gh0u1l5.wechatmagician.util.FileUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
@@ -28,7 +29,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
-import java.io.File
 import java.lang.ref.WeakReference
 import java.lang.reflect.Method
 import java.util.concurrent.locks.ReentrantReadWriteLock
@@ -357,13 +357,23 @@ object WechatPackage {
 
     // listen returns debug output to the frontend.
     fun listen(context: Context) {
-        val receiver = object : BroadcastReceiver() {
+        val requireHookStatusReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                statusLock.read {
+                    setResultExtras(Bundle().apply {
+                        putSerializable("status", status)
+                    })
+                }
+            }
+        }
+        val requireWechatPackageReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 resultData = this@WechatPackage.toString()
             }
         }
         tryWithLog {
-            context.registerReceiver(receiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
+            context.registerReceiver(requireHookStatusReceiver, IntentFilter(ACTION_REQUIRE_HOOK_STATUS))
+            context.registerReceiver(requireWechatPackageReceiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
         }
     }
 
@@ -380,20 +390,6 @@ object WechatPackage {
     fun setStatus(key: String, value: Boolean) {
         statusLock.write {
             status[key] = value
-        }
-    }
-
-    // writeStatus writes current status to the given path.
-    fun writeStatus(path: String) {
-        statusLock.read {
-            try {
-                FileUtil.writeOnce(path, {
-                    FileUtil.writeObjectToDisk(it, status)
-                })
-                FileUtil.setWorldReadable(File(path))
-            } catch (_: Throwable) {
-                // Ignore this one
-            }
         }
     }
 

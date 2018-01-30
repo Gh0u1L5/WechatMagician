@@ -34,6 +34,14 @@
             </intent-filter>
         </activity-alias>
 
+        <receiver
+            android:name=".frontend.WechatStartupReceiver"
+            android:label="StartupReceiver">
+            <intent-filter>
+                <action android:name="com.gh0u1l5.wechatmagician.ACTION_WECHAT_STARTUP" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="xposedmodule"
             android:value="true" />
