@@ -97,6 +97,9 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             digest?.text = conversation.digest
                     .format(conversation.digestUser)
                     .replace("\n", "")
+            setOnClickListener { view ->
+                events.onChatroomHiderConversationClick(view, conversation.username)
+            }
             setOnLongClickListener { view ->
                 events.onChatroomHiderConversationLongClick(view, this@ConversationAdapter, conversation.username)
             }

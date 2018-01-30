@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
@@ -55,13 +54,7 @@ object SearchBar {
                 val adapter = ConversationAdapter(context)
                 AlertDialog.Builder(context)
                         .setTitle("Wechat Magician")
-                        .setAdapter(adapter, { dialog, position ->
-                            val username = adapter.getItem(position).username
-                            context.startActivity(Intent(context, pkg.ChattingUI)
-                                    .putExtra("Chat_Mode", 1)
-                                    .putExtra("Chat_User", username))
-                            dialog.dismiss()
-                        })
+                        .setAdapter(adapter, { _, _ -> })
                         .setNegativeButton(str[BUTTON_CANCEL], { dialog, _ ->
                             dialog.dismiss()
                         })

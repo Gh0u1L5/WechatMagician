@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.app.Activity
+import android.content.Intent
 import android.view.Gravity
 import android.view.View
 import android.widget.*
@@ -118,6 +119,13 @@ object WechatEvents {
             }
         }
         return false
+    }
+
+    fun onChatroomHiderConversationClick(view: View, username: String): Boolean {
+        view.context.startActivity(Intent(view.context, pkg.ChattingUI)
+                .putExtra("Chat_Mode", 1)
+                .putExtra("Chat_User", username))
+        return true
     }
 
     fun onChatroomHiderConversationLongClick(view: View, adapter: ConversationAdapter, username: String): Boolean {
