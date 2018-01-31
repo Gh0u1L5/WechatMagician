@@ -52,26 +52,27 @@ class Preferences : SharedPreferences {
         }
     }
 
+    private val updateReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            loadChannel.wait()
+
+            // Reload and cache the shared preferences
+            content?.reload()
+            cacheStringList()
+
+            // The latest preferences has been moved to the data directory.
+            // It is safe to remove the legacy preferences on the external storage.
+            legacy = null
+            val storage = Environment.getExternalStorageDirectory()
+            val legacyPrefDir = File(storage, "WechatMagician/.prefs")
+            legacyPrefDir.deleteRecursively()
+        }
+    }
+
     // listen registers a receiver to listen the update events from the frontend.
     fun listen(context: Context) {
-        val receiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                loadChannel.wait()
-
-                // Reload and cache the shared preferences
-                content?.reload()
-                cacheStringList()
-
-                // The latest preferences has been moved to the data directory.
-                // It is safe to remove the legacy preferences on the external storage.
-                legacy = null
-                val storage = Environment.getExternalStorageDirectory()
-                val legacyPrefDir = File(storage, "WechatMagician/.prefs")
-                legacyPrefDir.deleteRecursively()
-            }
-        }
         tryWithLog {
-            context.registerReceiver(receiver, IntentFilter(ACTION_UPDATE_PREF))
+            context.registerReceiver(updateReceiver, IntentFilter(ACTION_UPDATE_PREF))
         }
     }
 

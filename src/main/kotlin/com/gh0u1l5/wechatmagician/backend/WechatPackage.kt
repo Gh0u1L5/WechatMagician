@@ -355,22 +355,24 @@ object WechatPackage {
         }
     }
 
+    private val requireHookStatusReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            statusLock.read {
+                setResultExtras(Bundle().apply {
+                    putSerializable("status", status)
+                })
+            }
+        }
+    }
+
+    private val requireWechatPackageReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            resultData = this@WechatPackage.toString()
+        }
+    }
+
     // listen returns debug output to the frontend.
     fun listen(context: Context) {
-        val requireHookStatusReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                statusLock.read {
-                    setResultExtras(Bundle().apply {
-                        putSerializable("status", status)
-                    })
-                }
-            }
-        }
-        val requireWechatPackageReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                resultData = this@WechatPackage.toString()
-            }
-        }
         tryWithLog {
             context.registerReceiver(requireHookStatusReceiver, IntentFilter(ACTION_REQUIRE_HOOK_STATUS))
             context.registerReceiver(requireWechatPackageReceiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
