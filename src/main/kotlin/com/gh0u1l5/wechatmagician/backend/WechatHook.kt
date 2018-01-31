@@ -36,8 +36,6 @@ class WechatHook : IXposedHookLoadPackage {
         @Volatile var MODULE_RES: XModuleResources? = null
     }
 
-    private val hookThreadQueue: MutableList<Thread> = mutableListOf()
-
     private val settings = Preferences()
     private val developer = Preferences()
 
@@ -79,18 +77,18 @@ class WechatHook : IXposedHookLoadPackage {
     private inline fun tryHook(crossinline hook: () -> Unit) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryWithLog { hook() }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> hookThreadQueue.add(tryWithThread { hook() })
-            else -> hookThreadQueue.add(tryWithThread { try { hook() } catch (t: Throwable) { /* Ignore */ } })
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> tryWithThread { hook() }
+            else -> tryWithThread { try { hook() } catch (t: Throwable) { /* Ignore */ } }
         }
     }
 
     private fun loadModuleResource(context: Context) {
-        hookThreadQueue.add(tryWithThread {
+        tryWithThread {
             val pm = context.packageManager
             val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
             MODULE_RES = XModuleResources.createInstance(path, null)
             WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
-        })
+        }
     }
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
