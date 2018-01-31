@@ -152,9 +152,9 @@ class WechatHook : IXposedHookLoadPackage {
         tryHook(pluginDeveloper::traceTouchEvents)
         tryHook(pluginDeveloper::traceActivities)
         tryHook(pluginDeveloper::dumpPopupMenu)
-        tryHook(pluginDeveloper::enableXLog)
         tryHook(pluginDeveloper::traceDatabase)
         tryHook(pluginDeveloper::traceLogCat)
+        tryHook(pluginDeveloper::traceFiles)
         tryHook(pluginDeveloper::traceXMLParse)
 
         val pluginStorage = Storage

@@ -40,7 +40,6 @@
     <string name="pref_category_ui">UI逆向工具</string>
     <string name="pref_toggle_touch_event">跟踪触摸事件</string>
     <string name="pref_toggle_trace_activities">跟踪Activity调用</string>
-    <string name="pref_toggle_xlog">启用腾讯XLog模块</string>
 
     <string name="pref_category_database">数据库逆向工具</string>
     <string name="pref_toggle_database_query">跟踪查询操作</string>
@@ -51,6 +50,7 @@
 
     <string name="pref_category_developer_miscellaneous">其他逆向工具</string>
     <string name="pref_toggle_trace_logcat">跟踪LogCat事件</string>
+    <string name="pref_toggle_trace_files">跟踪文件读写</string>
     <string name="pref_toggle_dump_popup_menu">记录弹出菜单信息</string>
     <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 

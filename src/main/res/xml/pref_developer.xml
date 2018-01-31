@@ -18,10 +18,6 @@
             android:defaultValue="false"
             android:key="developer_ui_dump_popup_menu"
             android:title="@string/pref_toggle_dump_popup_menu" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="developer_ui_xlog"
-            android:title="@string/pref_toggle_xlog" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_category_database">
         <SwitchPreference
@@ -50,6 +46,10 @@
             android:defaultValue="false"
             android:key="developer_trace_logcat"
             android:title="@string/pref_toggle_trace_logcat" />
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="developer_trace_files"
+            android:title="@string/pref_toggle_trace_files" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="developer_xml_parser"
