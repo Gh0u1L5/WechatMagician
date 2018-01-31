@@ -82,10 +82,12 @@ class WechatHook : IXposedHookLoadPackage {
         }
     }
 
+    private fun findAPKPath(context: Context, packageName: String) =
+            context.packageManager.getApplicationInfo(packageName, 0).publicSourceDir
+
     private fun loadModuleResource(context: Context) {
         tryWithThread {
-            val pm = context.packageManager
-            val path = pm.getApplicationInfo(MAGICIAN_PACKAGE_NAME, 0).publicSourceDir
+            val path = findAPKPath(context, MAGICIAN_PACKAGE_NAME)
             MODULE_RES = XModuleResources.createInstance(path, null)
             WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
         }
@@ -209,20 +211,15 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechatOnFly uses reflection to load updated module without reboot.
     private fun handleLoadWechatOnFly(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        (0 until 10).forEach { index ->
-            val path = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                "/data/app/$MAGICIAN_PACKAGE_NAME-$index.apk"
-            } else {
-                "/data/app/$MAGICIAN_PACKAGE_NAME-$index/base.apk"
-            }
-            if (File(path).exists()) {
-                val pathClassLoader = PathClassLoader(path, ClassLoader.getSystemClassLoader())
-                val clazz = Class.forName("$MAGICIAN_PACKAGE_NAME.backend.WechatHook", true, pathClassLoader)
-                val method = clazz.getDeclaredMethod("handleLoadWechat", lpparam.javaClass, Context::class.java)
-                method.isAccessible = true
-                method.invoke(clazz.newInstance(), lpparam, context); return
-            }
+        val path = findAPKPath(context, MAGICIAN_PACKAGE_NAME)
+        if (!File(path).exists()) {
+            log("Cannot load module on fly: APK not found")
+            return
         }
-        log("Cannot load module on fly: APK not found")
+        val pathClassLoader = PathClassLoader(path, ClassLoader.getSystemClassLoader())
+        val clazz = Class.forName("$MAGICIAN_PACKAGE_NAME.backend.WechatHook", true, pathClassLoader)
+        val method = clazz.getDeclaredMethod("handleLoadWechat", lpparam.javaClass, Context::class.java)
+        method.isAccessible = true
+        method.invoke(clazz.newInstance(), lpparam, context)
     }
 }
