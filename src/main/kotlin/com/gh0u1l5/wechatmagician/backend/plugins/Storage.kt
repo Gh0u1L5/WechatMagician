@@ -84,8 +84,8 @@ object Storage {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.thisObject as File).absolutePath
                 when {
-                    path.contains("/image2/") -> param.result = null
-                    path.contains("/video/")  -> param.result = null
+                    path.contains("/image2/") -> param.result = true
+                    path.contains("/video/")  -> param.result = true
                 }
             }
         })
