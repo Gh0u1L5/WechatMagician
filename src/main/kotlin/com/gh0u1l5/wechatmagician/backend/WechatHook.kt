@@ -160,6 +160,7 @@ class WechatHook : IXposedHookLoadPackage {
         val pluginStorage = Storage
         tryHook(pluginStorage::hookMsgStorage)
 //        tryHook(pluginStorage::hookImgStorage)
+        tryHook(pluginStorage::hookFileStorage)
 
         val pluginXML = XML
         pluginXML.init(settings)

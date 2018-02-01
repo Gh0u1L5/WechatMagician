@@ -79,9 +79,6 @@ object WechatPackage {
                 .filterByMethod(C.Int, "getLogLevel")
                 .firstOrNull()
     }
-    val XLogSetup: Class<*> by innerLazy("XLogSetup") {
-        findClassIfExists("$packageName.xlog.app.XLogSetup", loader)
-    }
     val WebWXLoginUI: Class<*> by innerLazy("WebWXLoginUI") {
         findClassIfExists("$packageName.plugin.webwx.ui.ExtDeviceWXLoginUI", loader)
     }

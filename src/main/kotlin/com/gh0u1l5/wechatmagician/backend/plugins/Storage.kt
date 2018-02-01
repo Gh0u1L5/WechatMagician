@@ -8,7 +8,9 @@ import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
+import de.robv.android.xposed.XposedHelpers.getLongField
+import java.io.File
 
 object Storage {
 
@@ -31,7 +33,7 @@ object Storage {
             override fun afterHookedMethod(param: MethodHookParam) {
                 tryWithThread {
                     val msg = param.args[0]
-                    val msgId = XposedHelpers.getLongField(msg, "field_msgId")
+                    val msgId = getLongField(msg, "field_msgId")
                     MessageCache[msgId] = msg
                 }
             }
@@ -75,5 +77,17 @@ object Storage {
 //        })
 
         pkg.setStatus(STATUS_FLAG_IMG_STORAGE, true)
+    }
+
+    @JvmStatic fun hookFileStorage() {
+        findAndHookMethod("java.io.File", pkg.loader, "delete", object : XC_MethodHook() {
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                val path = (param.thisObject as File).absolutePath
+                when {
+                    path.contains("/image2/") -> param.result = null
+                    path.contains("/video/")  -> param.result = null
+                }
+            }
+        })
     }
 }

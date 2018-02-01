@@ -116,6 +116,22 @@ object Database {
             }
         })
 
+        findAndHookMethod(
+                pkg.SQLiteDatabase, "delete",
+                C.String, C.String, C.StringArray, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                if (!preferences!!.getBoolean(SETTINGS_CHATTING_RECALL, true)) {
+                    return
+                }
+
+                val table = param.args[0] as String?
+                when (table) {
+                    "ImgInfo2", "videoinfo2", "WxFileIndex2" -> param.result = 1
+                }
+            }
+        })
+
         pkg.setStatus(STATUS_FLAG_DATABASE, true)
     }
 
