@@ -238,6 +238,14 @@ object Developer {
                     log("FILE => Write $path")
                 }
             })
+
+            findAndHookMethod(
+                    "java.io.File", pkg.loader, "delete", object : XC_MethodHook() {
+                override fun beforeHookedMethod(param: MethodHookParam) {
+                    val file = param.thisObject as File
+                    log("FILE => Delete ${file.absolutePath}")
+                }
+            })
         }
     }
 
