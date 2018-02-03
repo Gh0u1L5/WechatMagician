@@ -256,8 +256,8 @@ object Developer {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val xml = param.args[0] as String?
-                    val tag = param.args[1] as String?
-                    log("XML => xml = $xml, tag = $tag")
+                    val root = param.args[1] as String?
+                    log("XML => root = $root, xml = $xml")
                 }
             })
         }
