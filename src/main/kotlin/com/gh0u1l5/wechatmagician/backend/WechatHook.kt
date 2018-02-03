@@ -64,10 +64,9 @@ class WechatHook : IXposedHookLoadPackage {
         )
         return try {
             val libraryDir = File(lpparam.appInfo.nativeLibraryDir)
-            val hits = features.filter { filename ->
+            features.filter { filename ->
                 File(libraryDir, filename).exists()
-            }.size
-            (hits.toDouble() / features.size) > 0.5F
+            }.size >= 3
         } catch (t: Throwable) { false }
     }
 
