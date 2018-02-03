@@ -69,7 +69,7 @@ object XML {
             return
         }
         val content = result[".TimelineObject.contentDesc"] ?: return
-        val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, listOf())
+        val list = preferences!!.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, emptyList())
         list.forEach {
             if (content.contains(it)) {
                 SnsBlacklist += result[".TimelineObject.id"]

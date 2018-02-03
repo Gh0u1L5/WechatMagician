@@ -43,7 +43,7 @@ object AdapterHider {
         if (adapter in records) {
             records[adapter]!!.predicates += (predicateName to predicateBody)
         } else {
-            records[adapter] = Record(listOf(), mapOf(predicateName to predicateBody))
+            records[adapter] = Record(emptyList(), mapOf(predicateName to predicateBody))
         }
     }
 
@@ -51,7 +51,7 @@ object AdapterHider {
         val adapter = param.thisObject as BaseAdapter
         val record = records[adapter] ?: return
 
-        record.sections = listOf()
+        record.sections = emptyList()
         val initial = listOf(Section(0, adapter.count, 0))
         val predicates = record.predicates.values
         record.sections = (0 until adapter.count).filter { index ->

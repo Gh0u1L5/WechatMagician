@@ -15,7 +15,7 @@ object PackageUtil {
     class Classes(private val classes: List<Class<*>>) {
         fun filterBySuper(superClass: Class<*>?): Classes {
             if (superClass == null) {
-                return Classes(listOf())
+                return Classes(emptyList())
             }
             return Classes(classes.filter { it.superclass == superClass })
         }
@@ -110,7 +110,7 @@ object PackageUtil {
             clazz: Class<*>?, returnType: Class<*>?, vararg parameterTypes: Class<*>
     ): List<Method> {
         if (clazz == null) {
-            return listOf()
+            return emptyList()
         }
         return XposedHelpers.findMethodsByExactParameters(
                 clazz, returnType, *parameterTypes
@@ -121,14 +121,14 @@ object PackageUtil {
     @JvmStatic fun findFieldsWithType(clazz: Class<*>?, typeName: String): List<Field> {
         return clazz?.declaredFields?.filter {
             it.type.name == typeName
-        } ?: listOf()
+        } ?: emptyList()
     }
 
     // findFieldsWithGenericType finds all the fields of the given generic type.
     @JvmStatic fun findFieldsWithGenericType(clazz: Class<*>?, genericTypeName: String): List<Field> {
         return clazz?.declaredFields?.filter {
             it.genericType.toString() == genericTypeName
-        } ?: listOf()
+        } ?: emptyList()
     }
 
     @JvmStatic fun findAndHookMethod(clazz: Class<*>?, method: Method?, callback: XC_MethodHook) {

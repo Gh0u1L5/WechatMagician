@@ -64,7 +64,7 @@ object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
 
         private fun parseMedias(raw: MutableMap<String, String?>): List<SnsMedia> {
             if (!raw.containsKey(mediaListKey)) {
-                return listOf()
+                return emptyList()
             }
             val result = mutableListOf<SnsMedia>()
             for (i in 0 until 9) {
