@@ -31,9 +31,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import java.lang.ref.WeakReference
 import java.lang.reflect.Method
-import java.util.concurrent.locks.ReentrantReadWriteLock
-import kotlin.concurrent.read
-import kotlin.concurrent.write
+import java.util.concurrent.ConcurrentHashMap
 
 // WechatPackage analyzes and stores critical classes and objects in Wechat application.
 // These classes and objects will be used for hooking and tampering with runtime data.
@@ -43,8 +41,7 @@ object WechatPackage {
     private val initializeChannel = WaitChannel()
 
     // status stores the working status of all the hooks.
-    private val statusLock = ReentrantReadWriteLock()
-    private val status: HashMap<String, Boolean> = hashMapOf()
+    private val status = ConcurrentHashMap<String, Boolean>()
 
     // These stores necessary information to match signatures.
     @Volatile var packageName: String = ""
@@ -354,11 +351,9 @@ object WechatPackage {
 
     private val requireHookStatusReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            statusLock.read {
-                setResultExtras(Bundle().apply {
-                    putSerializable("status", status)
-                })
-            }
+            setResultExtras(Bundle().apply {
+                putSerializable("status", status)
+            })
         }
     }
 
@@ -386,11 +381,7 @@ object WechatPackage {
     }
 
     // setStatus updates current status of the Wechat hooks.
-    fun setStatus(key: String, value: Boolean) {
-        statusLock.write {
-            status[key] = value
-        }
-    }
+    fun setStatus(key: String, value: Boolean) { status[key] = value }
 
     override fun toString(): String {
         val body = tryOrNull {

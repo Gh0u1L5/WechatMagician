@@ -20,6 +20,7 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
 import kotlinx.android.synthetic.main.fragment_status.*
+import java.util.concurrent.ConcurrentHashMap
 
 class StatusFragment : Fragment() {
 
@@ -84,13 +85,13 @@ class StatusFragment : Fragment() {
     companion object {
         fun newInstance(): StatusFragment = StatusFragment()
 
-        fun requireHookStatus(context: Context, callback: (HashMap<String, Boolean>) -> Unit) {
+        fun requireHookStatus(context: Context, callback: (ConcurrentHashMap<String, Boolean>) -> Unit) {
             context.sendOrderedBroadcast(Intent(ACTION_REQUIRE_HOOK_STATUS), null, object : BroadcastReceiver() {
                 @Suppress("UNCHECKED_CAST")
                 override fun onReceive(context: Context?, intent: Intent?) {
                     val result = getResultExtras(true)
                     val status = result.getSerializable("status")
-                    callback(status as HashMap<String, Boolean>? ?: return)
+                    callback(status as ConcurrentHashMap<String, Boolean>? ?: return)
                 }
             }, null, Activity.RESULT_OK, null, null)
         }
