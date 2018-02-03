@@ -34,10 +34,10 @@ class WechatHook : IXposedHookLoadPackage {
 
     companion object {
         @Volatile var MODULE_RES: XModuleResources? = null
-    }
 
-    private val settings = Preferences()
-    private val developer = Preferences()
+        val settings = Preferences(PREFERENCE_NAME_SETTINGS)
+        val developer = Preferences(PREFERENCE_NAME_DEVELOPER)
+    }
 
     // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
     //       multi-dex applications natively. More information are available in this link:
@@ -132,9 +132,9 @@ class WechatHook : IXposedHookLoadPackage {
         context.sendBroadcast(Intent().setAction(ACTION_WECHAT_STARTUP))
 
         settings.listen(context)
-        settings.init(PREFERENCE_NAME_SETTINGS)
+        settings.load()
         developer.listen(context)
-        developer.init(PREFERENCE_NAME_DEVELOPER)
+        developer.load()
 
         WechatPackage.init(lpparam)
         LocalizedStrings.init(settings)
