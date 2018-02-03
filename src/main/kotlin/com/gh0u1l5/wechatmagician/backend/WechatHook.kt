@@ -33,7 +33,7 @@ import java.io.File
 class WechatHook : IXposedHookLoadPackage {
 
     companion object {
-        @Volatile var MODULE_RES: XModuleResources? = null
+        @Volatile var resources: XModuleResources? = null
 
         val settings = Preferences(PREFERENCE_NAME_SETTINGS)
         val developer = Preferences(PREFERENCE_NAME_DEVELOPER)
@@ -87,7 +87,7 @@ class WechatHook : IXposedHookLoadPackage {
     private fun loadModuleResource(context: Context) {
         tryWithThread {
             val path = findAPKPath(context, MAGICIAN_PACKAGE_NAME)
-            MODULE_RES = XModuleResources.createInstance(path, null)
+            resources = XModuleResources.createInstance(path, null)
             WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)
         }
     }

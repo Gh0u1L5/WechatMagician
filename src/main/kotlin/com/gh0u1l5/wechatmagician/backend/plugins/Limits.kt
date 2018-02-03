@@ -72,7 +72,7 @@ object Limits {
 
                 val selectAll = menu.add(0, 2, 0, "")
                 selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                if (WechatHook.MODULE_RES == null) {
+                if (WechatHook.resources == null) {
                     selectAll.isChecked = checked
                     selectAll.title = str[BUTTON_SELECT_ALL] + "  " +
                             if (checked) "\u2611" else "\u2610"
@@ -80,7 +80,7 @@ object Limits {
                         events.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
                     }
                 } else {
-                    val layout = WechatHook.MODULE_RES?.getLayout(R.layout.wechat_checked_textview)
+                    val layout = WechatHook.resources?.getLayout(R.layout.wechat_checked_textview)
                     val checkedTextView = activity.layoutInflater.inflate(layout, null)
                     checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)
