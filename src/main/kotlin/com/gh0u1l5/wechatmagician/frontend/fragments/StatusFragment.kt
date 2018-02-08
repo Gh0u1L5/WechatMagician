@@ -8,10 +8,12 @@ import android.os.Build
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
@@ -68,10 +70,18 @@ class StatusFragment : Fragment() {
     }
 
     // Check backend.WechatHook for actual implementation
-    private fun isModuleLoaded(): Boolean = false
+    private fun isModuleLoaded(): Boolean {
+        // this log is useless, just make this method longer to hook
+        // (in some framework, short method(assembly code less than two instructions) can not be hooked stably)
+        Log.v(Global.LOG_TAG, "isModuleLoaded, " + javaClass)
+        return false
+    }
 
     // Check backend.WechatHook for actual implementation
-    private fun getXposedVersion(): Int = 0
+    private fun getXposedVersion(): Int {
+        Log.v(Global.LOG_TAG, "getXposedVersion: " + javaClass)
+        return 0
+    }
 
     private fun setComponentIconValid(iconId: Int) {
         val icon = activity?.findViewById<ImageView>(iconId)
