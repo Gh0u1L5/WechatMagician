@@ -6,8 +6,8 @@ import java.math.BigInteger
 // MessageUtil is a helper object for processing Wechat internal strings / byte arrays.
 object MessageUtil {
 
-    fun applyEasterEgg(str: String?, easter_egg: String?): String? {
-        return str?.let{
+    fun applyEasterEgg(str: String, easter_egg: String): String {
+        return str.let{
             "${it.take(it.indexOf("\"", 1) + 1)} $easter_egg"
         }
     }
