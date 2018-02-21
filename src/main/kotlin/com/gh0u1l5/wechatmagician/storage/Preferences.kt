@@ -66,7 +66,7 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
         }
     }
 
-    override fun contains(key: String): Boolean = content.contains(key) ?: false
+    override fun contains(key: String): Boolean = content.contains(key)
 
     override fun getAll(): MutableMap<String, *>? = content.all
 
