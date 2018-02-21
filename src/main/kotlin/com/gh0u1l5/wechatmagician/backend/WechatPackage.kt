@@ -54,6 +54,8 @@ object WechatPackage {
     @Volatile var ConversationAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
     @Volatile var MsgStorageObject: Any? = null
     @Volatile var ImgStorageObject: Any? = null
+    @Volatile var MainDatabaseObject: Any? = null
+    @Volatile var SnsDatabaseObject: Any? = null
 
     private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         initializeChannel.wait()

@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.storage.database
 
 import android.content.ContentValues
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MainDatabaseObject
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 
@@ -20,11 +21,8 @@ object MainDatabase {
             val unreadCount: Int
     )
 
-    // snsDB is the database that stores SNS information.
-    @Volatile var mainDB: Any? = null
-
     fun cleanUnreadCount() {
-        val database = mainDB ?: return
+        val database = MainDatabaseObject ?: return
         val clean = ContentValues().apply {
             put("unReadCount", 0)
             put("unReadMuteCount", 0)
@@ -33,7 +31,7 @@ object MainDatabase {
     }
 
     private fun getContacts(selection: String, selectionArgs: Array<String>, ignoreDuplicate: Boolean = false): List<Contact>? {
-        val database = mainDB ?: return null
+        val database = MainDatabaseObject ?: return null
         var cursor: Any? = null
         try {
             val columns = arrayOf("alias", "username", "nickname")
@@ -86,7 +84,7 @@ object MainDatabase {
     }
 
     private fun getConversations(selection: String, selectionArgs: Array<String>, ignoreDuplicate: Boolean = false): List<Conversation>? {
-        val database = mainDB ?: return null
+        val database = MainDatabaseObject ?: return null
         var cursor: Any? = null
         try {
             val columns = arrayOf("username", "digest", "digestUser", "atCount", "unReadCount")

@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.storage.database
 
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsDatabaseObject
 import com.gh0u1l5.wechatmagician.util.MessageUtil.longToDecimalString
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
@@ -7,16 +8,13 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.callMethod
 
 object SnsDatabase {
-    // snsDB is the database that stores SNS information.
-    @Volatile var snsDB: Any? = null
-
     // getSnsIdFromRowId searches the database to find the snsId in a specific row
     fun getSnsIdFromRowId(rowId: String?): String? {
         if (rowId == null || rowId == "") {
             return null
         }
 
-        val database = snsDB ?: return null
+        val database = SnsDatabaseObject ?: return null
         var cursor: Any? = null
         try {
             cursor = callMethod(database, "query",
