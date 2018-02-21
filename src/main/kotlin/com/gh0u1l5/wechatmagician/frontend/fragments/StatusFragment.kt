@@ -72,15 +72,17 @@ class StatusFragment : Fragment() {
 
     // Check backend.WechatHook for actual implementation
     private fun isModuleLoaded(): Boolean {
-        // this log is useless, just make this method longer to hook
-        // (in some framework, short method(assembly code less than two instructions) can not be hooked stably)
-        Log.v(Global.LOG_TAG, "isModuleLoaded, " + javaClass)
+        // In some frameworks, short methods (less than two Dalvik instructions)
+        // can not be hooked stably. This log just makes the method longer to hook.
+        Log.v(LOG_TAG, "$javaClass.isModuleLoaded() invoked.")
         return false
     }
 
     // Check backend.WechatHook for actual implementation
     private fun getXposedVersion(): Int {
-        Log.v(Global.LOG_TAG, "getXposedVersion: " + javaClass)
+        // In some frameworks, short methods (less than two Dalvik instructions)
+        // can not be hooked stably. This log just makes the method longer to hook.
+        Log.v(LOG_TAG, "$javaClass.getXposedVersion() invoked. ")
         return 0
     }
 
