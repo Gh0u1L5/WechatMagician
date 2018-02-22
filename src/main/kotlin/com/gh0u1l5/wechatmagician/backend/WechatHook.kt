@@ -11,7 +11,7 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
-import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.foundation.*
 import com.gh0u1l5.wechatmagician.backend.interfaces.*
@@ -75,7 +75,7 @@ class WechatHook : IXposedHookLoadPackage {
     //       original logic for now.
     private inline fun tryHook(crossinline hook: () -> Unit) {
         when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryWithLog { hook() }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryVerbosely { hook() }
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> tryAsynchronously { hook() }
             else -> tryAsynchronously { try { hook() } catch (t: Throwable) { /* Ignore */ } }
         }
@@ -128,7 +128,7 @@ class WechatHook : IXposedHookLoadPackage {
 
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
-        tryWithLog {
+        tryVerbosely {
             when (lpparam.packageName) {
                 MAGICIAN_PACKAGE_NAME ->
                     hookApplicationAttach(lpparam.classLoader, { _ ->

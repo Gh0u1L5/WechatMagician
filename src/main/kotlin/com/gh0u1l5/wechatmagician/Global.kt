@@ -71,7 +71,7 @@ object Global {
     const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511
     const val ITEM_ID_BUTTON_CLEAN_UNREAD  = 0x512
 
-    fun tryWithLog(func: () -> Unit) {
+    fun tryVerbosely(func: () -> Unit) {
         try { func() } catch (t: Throwable) { log(t) }
     }
 

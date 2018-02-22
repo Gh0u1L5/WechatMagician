@@ -3,7 +3,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
-import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageInsertMethod
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageObject
@@ -71,9 +71,9 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
             return
         }
 
-        tryWithLog {
+        tryVerbosely {
             val msgId = values["msgId"] as Long
-            val msg = MessageCache[msgId] ?: return@tryWithLog
+            val msg = MessageCache[msgId] ?: return@tryVerbosely
 
             val copy = msg.javaClass.newInstance()
             PackageUtil.shadowCopy(msg, copy)

@@ -12,7 +12,7 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
 import com.gh0u1l5.wechatmagician.Global.tryOrNull
-import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.WaitChannel
@@ -345,7 +345,7 @@ object WechatPackage {
 
     // listen returns debug output to the frontend.
     fun listen(context: Context) {
-        tryWithLog {
+        tryVerbosely {
             context.registerReceiver(requireHookStatusReceiver, IntentFilter(ACTION_REQUIRE_HOOK_STATUS))
             context.registerReceiver(requireWechatPackageReceiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
         }

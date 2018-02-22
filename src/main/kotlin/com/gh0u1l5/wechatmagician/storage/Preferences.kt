@@ -5,7 +5,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
-import com.gh0u1l5.wechatmagician.Global.tryWithLog
+import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.WaitChannel
 import de.robv.android.xposed.XSharedPreferences
@@ -55,7 +55,7 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
 
     // listen registers a receiver to listen the update events from the frontend.
     fun listen(context: Context) {
-        tryWithLog {
+        tryVerbosely {
             context.registerReceiver(updateReceiver, IntentFilter(ACTION_UPDATE_PREF))
         }
     }
