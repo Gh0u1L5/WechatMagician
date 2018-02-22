@@ -368,13 +368,14 @@ object WechatPackage {
             this.javaClass.declaredFields.filter { field ->
                 when (field.name) {
                     "INSTANCE", "\$\$delegatedProperties",
-                    "initializeChannel",
-                    "status", "statusLock",
+                    "initializeChannel", "status",
                     "packageName", "loader", "version", "classes",
                     "WECHAT_PACKAGE_SQLITE",
                     "WECHAT_PACKAGE_UI",
                     "WECHAT_PACKAGE_SNS_UI",
-                    "WECHAT_PACKAGE_GALLERY_UI" -> false
+                    "WECHAT_PACKAGE_GALLERY_UI",
+                    "requireHookStatusReceiver",
+                    "requireWechatPackageReceiver" -> false
                     else -> true
                 }
             }.joinToString("\n") {
