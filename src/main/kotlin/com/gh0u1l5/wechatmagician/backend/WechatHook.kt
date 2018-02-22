@@ -13,8 +13,8 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
-import com.gh0u1l5.wechatmagician.backend.plugins.*
-import com.gh0u1l5.wechatmagician.frontend.wechat.AdapterHider
+import com.gh0u1l5.wechatmagician.backend.foundation.*
+import com.gh0u1l5.wechatmagician.backend.interfaces.*
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
@@ -84,6 +84,34 @@ class WechatHook : IXposedHookLoadPackage {
     private fun findAPKPath(context: Context, packageName: String) =
             context.packageManager.getApplicationInfo(packageName, 0).publicSourceDir
 
+    private fun loadPlugins() {
+        // TODO: rename to tryAsynchronously
+        tryWithThread {
+            PluginList.forEach { plugin ->
+                when (plugin) {
+                    is IActivityHook ->
+                        Activities.register(IActivityHook::class.java, plugin)
+                    is IAdapterHook ->
+                        Adapters.register(IAdapterHook::class.java, plugin)
+                    is IDatabaseHook ->
+                        Database.register(IDatabaseHook::class.java, plugin)
+                    is IDatabaseHookRaw ->
+                        Database.register(IDatabaseHookRaw::class.java, plugin)
+                    is IPopupMenuHook ->
+                        MenuAppender.register(IPopupMenuHook::class.java, plugin)
+                    is ISearchBarConsole ->
+                        SearchBar.register(ISearchBarConsole::class.java, plugin)
+                    is IUriRouterHook ->
+                        UriRouter.register(IUriRouterHook::class.java, plugin)
+                    is IXmlParserHook ->
+                        XmlParser.register(IXmlParserHook::class.java, plugin)
+                    is IXmlParserHookRaw ->
+                        XmlParser.register(IXmlParserHookRaw::class.java, plugin)
+                }
+            }
+        }
+    }
+
     private fun loadModuleResource(context: Context) {
         tryWithThread {
             val path = findAPKPath(context, MAGICIAN_PACKAGE_NAME)
@@ -129,6 +157,8 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
+        // TODO: only continue if the process name matches
+
         context.sendBroadcast(Intent().setAction(ACTION_WECHAT_STARTUP))
 
         settings.listen(context)
@@ -137,76 +167,18 @@ class WechatHook : IXposedHookLoadPackage {
         developer.load()
 
         WechatPackage.init(lpparam)
+        WechatPackage.listen(context)
+
         LocalizedStrings.init(settings)
         SecretFriendList.init(context)
         ChatroomHideList.init(context)
 
-        tryHook(WechatPackage::hookAdapters)
-        tryHook(AdapterHider::hookAdaptersGetItem)
-        tryHook(AdapterHider::hookAdaptersGetCount)
-        tryHook(AdapterHider::hookAdapterNotifyChanged)
+        // Setup foundational hooks
+        HookList.forEach { tryHook(it) }
 
-        val pluginDeveloper = Developer
-        pluginDeveloper.init(developer)
-        tryHook(pluginDeveloper::traceTouchEvents)
-        tryHook(pluginDeveloper::traceActivities)
-        tryHook(pluginDeveloper::dumpPopupMenu)
-        tryHook(pluginDeveloper::traceDatabase)
-        tryHook(pluginDeveloper::traceLogCat)
-        tryHook(pluginDeveloper::traceFiles)
-        tryHook(pluginDeveloper::traceXMLParse)
-
-        val pluginStorage = Storage
-        tryHook(pluginStorage::hookMsgStorage)
-//        tryHook(pluginStorage::hookImgStorage)
-        tryHook(pluginStorage::hookFileStorage)
-
-        val pluginXML = XML
-        pluginXML.init(settings)
-        tryHook(pluginXML::hookXMLParse)
-
-        val pluginDatabase = Database
-        pluginDatabase.init(settings)
-        tryHook(pluginDatabase::hookDatabase)
-
-        val pluginUriRouter = UriRouter
-        tryHook(pluginUriRouter::hijackUriRouter)
-
-        val pluginSearchBar = SearchBar
-        pluginSearchBar.init(settings)
-        tryHook(pluginSearchBar::hijackSearchBar)
-
-        val pluginPopupMenu = PopupMenu
-        pluginPopupMenu.init(settings)
-        tryHook(pluginPopupMenu::addMenuItemsForContacts)
-        tryHook(pluginPopupMenu::addMenuItemsForConversations)
-
-        val pluginAutoLogin = AutoLogin
-        pluginAutoLogin.init(settings)
-        tryHook(pluginAutoLogin::enableAutoLogin)
-
-        val pluginSnsForward = SnsForward
-        tryHook(pluginSnsForward::setLongClickableForSnsUserUI)
-        tryHook(pluginSnsForward::setLongClickListenerForSnsUserUI)
-        tryHook(pluginSnsForward::setLongClickListenerForSnsTimeLineUI)
-        tryHook(pluginSnsForward::cleanTextViewBeforeForwarding)
-
-        val pluginSecretFriend = SecretFriend
-        pluginSecretFriend.init(settings)
-        tryHook(pluginSecretFriend::hideChattingWindow)
-
-        val pluginChatroomHider = ChatroomHider
-        pluginChatroomHider.init(settings)
-
-        val pluginLimits = Limits
-        pluginLimits.init(settings)
-        tryHook(pluginLimits::breakSelectPhotosLimit)
-        tryHook(pluginLimits::breakSelectContactLimit)
-        tryHook(pluginLimits::breakSelectConversationLimit)
-
-        // Finish minor initializations
+        // Load plugins and module resource
+        loadPlugins()
         loadModuleResource(context)
-        WechatPackage.listen(context)
     }
 
     // handleLoadWechatOnFly uses reflection to load updated module without reboot.

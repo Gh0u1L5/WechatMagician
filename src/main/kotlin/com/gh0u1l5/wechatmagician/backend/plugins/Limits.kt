@@ -13,44 +13,30 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
-import com.gh0u1l5.wechatmagician.storage.Preferences
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
-object Limits {
-
-    private var preferences: Preferences? = null
-
-    @JvmStatic fun init(_preferences: Preferences) {
-        preferences = _preferences
-    }
+object Limits : IActivityHook {
 
     private val str = LocalizedStrings
     private val pkg = WechatPackage
+    private val pref = WechatHook.settings
     private val events = WechatEvents
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
-    @JvmStatic fun breakSelectPhotosLimit() {
-        findAndHookMethod(
-                pkg.AlbumPreviewUI, "onCreate",
-                C.Bundle, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val intent = (param.thisObject as Activity).intent ?: return
-                val current = intent.getIntExtra("max_select_count", 9)
-                val limit = try {
-                    preferences!!.getString(
-                            SETTINGS_SELECT_PHOTOS_LIMIT, "1000"
-                    ).toInt()
-                } catch (_: Throwable) { 1000 }
-                if (current <= 9) {
-                    intent.putExtra("max_select_count", current + limit - 9)
-                }
-            }
-        })
+    override fun onAlbumPreviewUICreated(activity: Activity) {
+        val intent = activity.intent ?: return
+        val current = intent.getIntExtra("max_select_count", 9)
+        val limit = try {
+            pref.getString(SETTINGS_SELECT_PHOTOS_LIMIT, "1000").toInt()
+        } catch (_: Throwable) { 1000 }
+        if (current <= 9) {
+            intent.putExtra("max_select_count", current + limit - 9)
+        }
     }
 
     @JvmStatic fun breakSelectContactLimit() {

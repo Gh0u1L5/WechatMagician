@@ -25,7 +25,7 @@ object Global {
     const val STATUS_FLAG_IMG_STORAGE = "ImgStorage"
     const val STATUS_FLAG_RESOURCES   = "Resources"
     const val STATUS_FLAG_DATABASE    = "Database"
-    const val STATUS_FLAG_XML_PARSER  = "XMLParser"
+    const val STATUS_FLAG_XML_PARSER  = "XmlParser"
     const val STATUS_FLAG_URI_ROUTER  = "UriRouter"
     const val STATUS_FLAG_COMMAND     = "SearchBarCommand"
 

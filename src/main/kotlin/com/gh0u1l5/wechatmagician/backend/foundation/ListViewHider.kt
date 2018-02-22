@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.frontend.wechat
+package com.gh0u1l5.wechatmagician.backend.foundation
 
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
@@ -8,7 +8,7 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.util.concurrent.ConcurrentHashMap
 
-object AdapterHider {
+object ListViewHider {
 
     data class Section(
             val start: Int,  // Inclusive
@@ -64,13 +64,13 @@ object AdapterHider {
             }
             return@filter false
         }.fold(initial, { sections, index ->
-            sections.dropLast(1) + sections.last().split(index)
-        })
+                    sections.dropLast(1) + sections.last().split(index)
+                })
     }
 
-    @JvmStatic fun hookAdaptersGetItem() {
+    @JvmStatic fun hijackMMBaseAdapter() {
+        // Hook getItem() of base adapters
         findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
-            @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val adapter = param.thisObject as BaseAdapter
                 val index = param.args[0] as Int
@@ -83,11 +83,9 @@ object AdapterHider {
                 }
             }
         })
-    }
 
-    @JvmStatic fun hookAdaptersGetCount() {
+        // Hook getCount() of base adapters
         findAndHookMethod(pkg.MMBaseAdapter, "getCount", object : XC_MethodHook() {
-            @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 val adapter = param.thisObject as BaseAdapter
                 val sections = records[adapter]?.sections ?: return
@@ -96,11 +94,9 @@ object AdapterHider {
                 }
             }
         })
-    }
 
-    @JvmStatic fun hookAdapterNotifyChanged() {
+        // Hook notifyDataSetChanged() of base adapters
         findAndHookMethod(pkg.BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
-            @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 when (param.thisObject.javaClass) {
                     pkg.AddressAdapter -> {

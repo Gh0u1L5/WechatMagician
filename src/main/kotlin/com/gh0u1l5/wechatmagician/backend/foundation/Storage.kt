@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.backend.plugins
+package com.gh0u1l5.wechatmagician.backend.foundation
 
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_IMG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE

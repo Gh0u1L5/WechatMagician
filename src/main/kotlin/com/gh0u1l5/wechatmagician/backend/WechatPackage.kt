@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
+import android.widget.Adapter
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
@@ -15,16 +16,12 @@ import com.gh0u1l5.wechatmagician.Global.tryWithLog
 import com.gh0u1l5.wechatmagician.Global.tryWithThread
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.WaitChannel
-import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
-import com.gh0u1l5.wechatmagician.backend.plugins.SecretFriend
 import com.gh0u1l5.wechatmagician.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassIfExists
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findClassesFromPackage
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithGenericType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findFieldsWithType
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findMethodsByExactParameters
-import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -52,6 +49,7 @@ object WechatPackage {
     // These are the cache of important global objects
     @Volatile var AddressAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
     @Volatile var ConversationAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
+    @Volatile var SnsUserUIAdapterObject: WeakReference<Adapter?> = WeakReference(null)
     @Volatile var MsgStorageObject: Any? = null
     @Volatile var ImgStorageObject: Any? = null
     @Volatile var MainDatabaseObject: Any? = null
@@ -304,26 +302,6 @@ object WechatPackage {
         findMethodsByExactParameters(
                 XMLParserClass, C.Map, C.String, C.String
         ).firstOrNull()
-    }
-
-    @JvmStatic fun hookAdapters() {
-        XposedBridge.hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                val adapter = param.thisObject as? BaseAdapter
-                AddressAdapterObject = WeakReference(adapter)
-                SecretFriend.onAdapterCreated(param)
-            }
-        })
-        XposedBridge.hookAllConstructors(ConversationWithCacheAdapter, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                val adapter = param.thisObject as? BaseAdapter
-                ConversationAdapterObject = WeakReference(adapter)
-                SecretFriend.onAdapterCreated(param)
-                ChatroomHider.onAdapterCreated(param)
-            }
-        })
     }
 
     // init initializes necessary information for static analysis.

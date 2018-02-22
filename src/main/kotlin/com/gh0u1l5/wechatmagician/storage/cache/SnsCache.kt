@@ -17,7 +17,7 @@ object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
             val thumb: SnsMediaURL?
     )
 
-    class SnsInfo(raw: MutableMap<String, String?>) {
+    class SnsInfo(raw: MutableMap<String, String>) {
         private val mediaListKey = ".TimelineObject.ContentObject.mediaList"
         private val wechatSupportDomain = "https://support.weixin.qq.com"
 
@@ -35,7 +35,7 @@ object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
             }
         }
 
-        private fun parseMediaURL(key: String, raw: MutableMap<String, String?>): SnsMediaURL? {
+        private fun parseMediaURL(key: String, raw: MutableMap<String, String>): SnsMediaURL? {
             if (!raw.containsKey("$mediaListKey.$key")) {
                 return null
             }
@@ -48,7 +48,7 @@ object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
             )
         }
 
-        private fun parseMedia(key: String, raw: MutableMap<String, String?>): SnsMedia? {
+        private fun parseMedia(key: String, raw: MutableMap<String, String>): SnsMedia? {
             if (key == "media0") {
                 return parseMedia("media", raw)
             }
@@ -62,7 +62,7 @@ object SnsCache : BaseCache<String, SnsCache.SnsInfo>() {
             )
         }
 
-        private fun parseMedias(raw: MutableMap<String, String?>): List<SnsMedia> {
+        private fun parseMedias(raw: MutableMap<String, String>): List<SnsMedia> {
             if (!raw.containsKey(mediaListKey)) {
                 return emptyList()
             }
