@@ -10,7 +10,7 @@ import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import com.gh0u1l5.wechatmagician.util.PackageUtil
+import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers
@@ -234,7 +234,7 @@ object Debug {
     // Hook XML Parser to trace the XML files used in Wechat.
     @JvmStatic fun traceXMLParse() {
         if (pref.getBoolean(Global.DEVELOPER_XML_PARSER, false)) {
-            PackageUtil.findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
+            findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val xml = param.args[0] as String?
