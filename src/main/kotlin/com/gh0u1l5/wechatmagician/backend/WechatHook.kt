@@ -87,25 +87,32 @@ class WechatHook : IXposedHookLoadPackage {
     private fun loadPlugins() {
         tryAsynchronously {
             PluginList.forEach { plugin ->
-                when (plugin) {
-                    is IActivityHook ->
-                        Activities.register(IActivityHook::class.java, plugin)
-                    is IAdapterHook ->
-                        Adapters.register(IAdapterHook::class.java, plugin)
-                    is IDatabaseHook ->
-                        Database.register(IDatabaseHook::class.java, plugin)
-                    is IDatabaseHookRaw ->
-                        Database.register(IDatabaseHookRaw::class.java, plugin)
-                    is IPopupMenuHook ->
-                        MenuAppender.register(IPopupMenuHook::class.java, plugin)
-                    is ISearchBarConsole ->
-                        SearchBar.register(ISearchBarConsole::class.java, plugin)
-                    is IUriRouterHook ->
-                        UriRouter.register(IUriRouterHook::class.java, plugin)
-                    is IXmlParserHook ->
-                        XmlParser.register(IXmlParserHook::class.java, plugin)
-                    is IXmlParserHookRaw ->
-                        XmlParser.register(IXmlParserHookRaw::class.java, plugin)
+                if (plugin is IActivityHook) {
+                    Activities.register(IActivityHook::class.java, plugin)
+                }
+                if (plugin is IAdapterHook) {
+                    Adapters.register(IAdapterHook::class.java, plugin)
+                }
+                if (plugin is IDatabaseHook) {
+                    Database.register(IDatabaseHook::class.java, plugin)
+                }
+                if (plugin is IDatabaseHookRaw) {
+                    Database.register(IDatabaseHookRaw::class.java, plugin)
+                }
+                if (plugin is IPopupMenuHook) {
+                    MenuAppender.register(IPopupMenuHook::class.java, plugin)
+                }
+                if (plugin is ISearchBarConsole) {
+                    SearchBar.register(ISearchBarConsole::class.java, plugin)
+                }
+                if (plugin is IUriRouterHook) {
+                    UriRouter.register(IUriRouterHook::class.java, plugin)
+                }
+                if (plugin is IXmlParserHook) {
+                    XmlParser.register(IXmlParserHook::class.java, plugin)
+                }
+                if (plugin is IXmlParserHookRaw) {
+                    XmlParser.register(IXmlParserHookRaw::class.java, plugin)
                 }
             }
         }
