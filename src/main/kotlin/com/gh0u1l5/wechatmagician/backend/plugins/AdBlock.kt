@@ -1,16 +1,15 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_ADBLOCK
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHookRaw
 import de.robv.android.xposed.XC_MethodHook
 
 object AdBlock : IXmlParserHookRaw {
 
-    // TODO: Add configuration in frontend
-
     private val pref = WechatHook.settings
 
-    private fun isPluginEnabled() = true
+    private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SNS_ADBLOCK, true)
 
     override fun beforeXmlParse(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {

@@ -75,6 +75,7 @@
     <string name="pref_text_select_photos_limit">自定义发送图片上限</string>
 
     <string name="pref_category_sns">朋友圈</string>
+    <string name="pref_toggle_sns_adblock">启用朋友圈广告屏蔽</string>
     <string name="pref_toggle_prevent_moment_delete">启用动态防删除</string>
     <string name="pref_toggle_prevent_comment_delete">启用评论防删除</string>
     <string name="pref_toggle_keyword_blacklist">启用关键字黑名单</string>

@@ -47,6 +47,10 @@
     <PreferenceCategory android:title="@string/pref_category_sns">
         <SwitchPreference
             android:defaultValue="true"
+            android:key="settings_sns_adblock"
+            android:title="@string/pref_toggle_sns_adblock" />
+        <SwitchPreference
+            android:defaultValue="true"
             android:key="settings_sns_delete_moment"
             android:title="@string/pref_toggle_prevent_moment_delete" />
         <SwitchPreference

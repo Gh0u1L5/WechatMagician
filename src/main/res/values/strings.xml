@@ -75,6 +75,7 @@
     <string name="pref_text_select_photos_limit">Limit on Sending Photos</string>
 
     <string name="pref_category_sns">Moments</string>
+    <string name="pref_toggle_sns_adblock">Block WeChat Advertisements</string>
     <string name="pref_toggle_prevent_moment_delete">Prevent Deleting Moments</string>
     <string name="pref_toggle_prevent_comment_delete">Prevent Deleting Comments</string>
     <string name="pref_toggle_keyword_blacklist">Toggle Keyword Blacklist</string>
