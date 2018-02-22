@@ -364,7 +364,7 @@ object WechatPackage {
     fun setStatus(key: String, value: Boolean) { status[key] = value }
 
     override fun toString(): String {
-        val body = tryOrNull {
+        val body = try {
             this.javaClass.declaredFields.filter { field ->
                 when (field.name) {
                     "INSTANCE", "\$\$delegatedProperties",
@@ -387,13 +387,13 @@ object WechatPackage {
                 }
                 "$key = $value"
             }
-        }
+        } catch (t: Throwable) { "Error: " + t.localizedMessage }
 
         return """====================================================
 Wechat Package: $packageName
 Wechat Version: $version
 Module Version: ${BuildConfig.VERSION_NAME}
-${body?.removeSuffix("\n") ?: "Failed to generate report."}
+${body.removeSuffix("\n")}
 ===================================================="""
     }
 }
