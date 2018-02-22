@@ -12,7 +12,7 @@ object AdBlock : IXmlParserHookRaw {
 
     private fun isPluginEnabled() = true
 
-    override fun beforeXMLParse(param: XC_MethodHook.MethodHookParam) {
+    override fun beforeXmlParse(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
             return
         }

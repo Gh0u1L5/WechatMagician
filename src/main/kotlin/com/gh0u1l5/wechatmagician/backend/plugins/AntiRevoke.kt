@@ -52,7 +52,7 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
         }
     }
 
-    override fun onXMLParse(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
             return
         }

@@ -129,7 +129,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         }
     }
 
-    override fun onXMLParse(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
         tryAsynchronously {
             if (root == ROOT_TAG) {
                 val id = xml[ID_TAG]
