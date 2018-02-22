@@ -103,7 +103,6 @@ object MenuAppender : EventCenter() {
             }
         })
 
-        // TODO: Fix the segmentation fault on Android 4.X
         findAndHookMethod(
                 pkg.ConversationCreateContextMenuListener, "onCreateContextMenu",
                 C.ContextMenu, C.View, C.ContextMenuInfo, object : XC_MethodHook() {
