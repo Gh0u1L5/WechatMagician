@@ -111,9 +111,9 @@ object MenuAppender : EventCenter() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as ContextMenu
 
-                currentMenuItems = notifyForResult("onCreatePopupMenuForContacts") { plugin ->
+                currentMenuItems = notifyForResult("onCreatePopupMenuForConversations") { plugin ->
                     return@notifyForResult if (plugin is IPopupMenuHook) {
-                        plugin.onCreatePopupMenuForContacts(currentUsername ?: "")
+                        plugin.onCreatePopupMenuForConversations(currentUsername ?: "")
                     } else null
                 }.sortedBy { it.itemId }
 
