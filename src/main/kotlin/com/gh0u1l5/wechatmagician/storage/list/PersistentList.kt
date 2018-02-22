@@ -3,14 +3,14 @@ package com.gh0u1l5.wechatmagician.storage.list
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 
 open class PersistentList(private val preferenceName: String) : BaseList<String>() {
 
     @Volatile var preference: SharedPreferences? = null
 
     fun init(context: Context) {
-        tryWithThread {
+        tryAsynchronously {
             preference = context.getSharedPreferences(preferenceName, MODE_PRIVATE)
             this += preference!!.all.filter { it.value == true }.keys
         }

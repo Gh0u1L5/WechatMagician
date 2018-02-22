@@ -13,7 +13,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
 import com.gh0u1l5.wechatmagician.Global.tryOrNull
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.Version
 import com.gh0u1l5.wechatmagician.WaitChannel
 import com.gh0u1l5.wechatmagician.util.PackageUtil
@@ -306,7 +306,7 @@ object WechatPackage {
 
     // init initializes necessary information for static analysis.
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
-        tryWithThread {
+        tryAsynchronously {
             try {
                 packageName = lpparam.packageName
                 loader = lpparam.classLoader

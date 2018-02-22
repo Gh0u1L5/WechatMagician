@@ -11,7 +11,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUserUIAdapterObject
@@ -58,7 +58,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                     return null
                 }
                 snsInfo.medias.mapIndexed { i, media ->
-                    tryWithThread {
+                    tryAsynchronously {
                         when(media.type) {
                             "2" -> DownloadUtil.downloadImage("$storage/.cache/$i", media)
                             "6" -> DownloadUtil.downloadVideo("$storage/.cache/$i", media)
@@ -130,7 +130,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     }
 
     override fun onXMLParse(root: String, xml: MutableMap<String, String>) {
-        tryWithThread {
+        tryAsynchronously {
             if (root == ROOT_TAG) {
                 val id = xml[ID_TAG]
                 if (id != null) {

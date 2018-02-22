@@ -6,7 +6,7 @@ import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_BASE_DIR
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.WaitChannel
 import de.robv.android.xposed.XSharedPreferences
 import java.io.File
@@ -26,11 +26,11 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
 
     // load reads the shared preferences or reloads the existing preferences
     fun load() {
-        tryWithThread {
+        tryAsynchronously {
             if (loadChannel.done) {
                 content.reload()
                 cacheStringList()
-                return@tryWithThread
+                return@tryAsynchronously
             }
 
             try {

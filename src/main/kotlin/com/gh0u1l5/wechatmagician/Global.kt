@@ -78,7 +78,7 @@ object Global {
     fun <T>tryOrNull(func: () -> T): T? =
         try { func() } catch (t: Throwable) { log(t); null }
 
-    fun tryWithThread(func: () -> Unit): Thread {
+    fun tryAsynchronously(func: () -> Unit): Thread {
         return thread(start = true) { func() }.apply {
             setUncaughtExceptionHandler { _, t -> log(t) }
         }

@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.backend.foundation
 
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_IMG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
@@ -31,7 +31,7 @@ object Storage {
         findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                tryWithThread {
+                tryAsynchronously {
                     val msg = param.args[0]
                     val msgId = getLongField(msg, "field_msgId")
                     MessageCache[msgId] = msg

@@ -12,7 +12,7 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.Global.tryWithLog
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.foundation.*
 import com.gh0u1l5.wechatmagician.backend.interfaces.*
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -76,8 +76,8 @@ class WechatHook : IXposedHookLoadPackage {
     private inline fun tryHook(crossinline hook: () -> Unit) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryWithLog { hook() }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> tryWithThread { hook() }
-            else -> tryWithThread { try { hook() } catch (t: Throwable) { /* Ignore */ } }
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> tryAsynchronously { hook() }
+            else -> tryAsynchronously { try { hook() } catch (t: Throwable) { /* Ignore */ } }
         }
     }
 
@@ -85,8 +85,7 @@ class WechatHook : IXposedHookLoadPackage {
             context.packageManager.getApplicationInfo(packageName, 0).publicSourceDir
 
     private fun loadPlugins() {
-        // TODO: rename to tryAsynchronously
-        tryWithThread {
+        tryAsynchronously {
             PluginList.forEach { plugin ->
                 when (plugin) {
                     is IActivityHook ->
@@ -113,7 +112,7 @@ class WechatHook : IXposedHookLoadPackage {
     }
 
     private fun loadModuleResource(context: Context) {
-        tryWithThread {
+        tryAsynchronously {
             val path = findAPKPath(context, MAGICIAN_PACKAGE_NAME)
             resources = XModuleResources.createInstance(path, null)
             WechatPackage.setStatus(STATUS_FLAG_RESOURCES, true)

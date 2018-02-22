@@ -1,6 +1,6 @@
 package com.gh0u1l5.wechatmagician.backend.foundation.base
 
-import com.gh0u1l5.wechatmagician.Global.tryWithThread
+import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class EventCenter {
@@ -29,7 +29,7 @@ abstract class EventCenter {
 
     fun notifyParallel(event: String, action: (Any) -> Unit) {
         registries[event]?.map { observer ->
-            tryWithThread { action(observer) }
+            tryAsynchronously { action(observer) }
         }?.forEach(Thread::join)
     }
 
