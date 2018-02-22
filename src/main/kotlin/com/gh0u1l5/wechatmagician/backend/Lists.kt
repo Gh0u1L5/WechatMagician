@@ -1,7 +1,6 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import com.gh0u1l5.wechatmagician.backend.foundation.*
-import com.gh0u1l5.wechatmagician.backend.foundation.base.Debug
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 
 val HookList: List<() -> Unit> = listOf(
@@ -26,13 +25,13 @@ val HookList: List<() -> Unit> = listOf(
         UriRouter::hookEvents,
         XmlParser::hookEvents,
 
-        Debug::traceTouchEvents,
-        Debug::traceActivities,
-        Debug::dumpPopupMenu,
-        Debug::traceDatabase,
-        Debug::traceLogCat,
-        Debug::traceFiles,
-        Debug::traceXMLParse
+        Developer::traceTouchEvents,
+        Developer::traceActivities,
+        Developer::dumpPopupMenu,
+        Developer::traceDatabase,
+        Developer::traceLogCat,
+        Developer::traceFiles,
+        Developer::traceXMLParse
 )
 
 val PluginList: List<Any> = listOf(

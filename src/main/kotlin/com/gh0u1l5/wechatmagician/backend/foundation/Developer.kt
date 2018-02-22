@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.backend.foundation.base
+package com.gh0u1l5.wechatmagician.backend.foundation
 
 import android.app.Activity
 import android.content.ContentValues
@@ -9,14 +9,17 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.MessageUtil.argsToString
+import com.gh0u1l5.wechatmagician.util.MessageUtil.bundleToString
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
-import de.robv.android.xposed.XposedBridge
-import de.robv.android.xposed.XposedHelpers
+import de.robv.android.xposed.XposedBridge.hookAllConstructors
+import de.robv.android.xposed.XposedBridge.log
+import de.robv.android.xposed.XposedHelpers.findAndHookConstructor
+import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.io.File
 
-object Debug {
+object Developer {
 
     private val pkg = WechatPackage
     private val pref = WechatHook.developer
@@ -24,12 +27,12 @@ object Debug {
     // Hook View.onTouchEvent to trace touch events.
     @JvmStatic fun traceTouchEvents() {
         if (pref.getBoolean(Global.DEVELOPER_UI_TOUCH_EVENT, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     "android.view.View", pkg.loader,
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
-                    XposedBridge.log("View.onTouchEvent => obj.class = ${param.thisObject.javaClass}")
+                    log("View.onTouchEvent => obj.class = ${param.thisObject.javaClass}")
                 }
             })
         }
@@ -38,29 +41,29 @@ object Debug {
     // Hook Activity.startActivity and Activity.onCreate to trace activities.
     @JvmStatic fun traceActivities() {
         if (pref.getBoolean(Global.DEVELOPER_UI_TRACE_ACTIVITIES, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     "android.app.Activity", pkg.loader,
                     "startActivity", C.Intent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val intent = param.args[0] as Intent?
-                    XposedBridge.log("Activity.startActivity => " +
+                    log("Activity.startActivity => " +
                             "${param.thisObject.javaClass}, " +
-                            "intent => ${MessageUtil.bundleToString(intent?.extras)}")
+                            "intent => ${bundleToString(intent?.extras)}")
                 }
             })
 
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     "android.app.Activity", pkg.loader,
                     "onCreate", C.Bundle, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val bundle = param.args[0] as Bundle?
                     val intent = (param.thisObject as Activity).intent
-                    XposedBridge.log("Activity.onCreate => " +
+                    log("Activity.onCreate => " +
                             "${param.thisObject.javaClass}, " +
-                            "intent => ${MessageUtil.bundleToString(intent?.extras)}, " +
-                            "bundle => ${MessageUtil.bundleToString(bundle)}")
+                            "intent => ${bundleToString(intent?.extras)}, " +
+                            "bundle => ${bundleToString(bundle)}")
                 }
             })
         }
@@ -69,26 +72,26 @@ object Debug {
     // Hook MMListPopupWindow to trace every popup menu.
     @JvmStatic fun dumpPopupMenu() {
         if (pref.getBoolean(Global.DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
-            XposedBridge.hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
+            hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val menu = param.thisObject
                     val context = param.args[0]
-                    XposedBridge.log("POPUP => menu.class = ${menu.javaClass}")
-                    XposedBridge.log("POPUP => context.class = ${context.javaClass}")
+                    log("POPUP => menu.class = ${menu.javaClass}")
+                    log("POPUP => context.class = ${context.javaClass}")
                 }
             })
 
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.MMListPopupWindow, "setAdapter",
                     C.ListAdapter, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val adapter = param.args[0] as ListAdapter? ?: return
-                    XposedBridge.log("POPUP => adapter.count = ${adapter.count}")
+                    log("POPUP => adapter.count = ${adapter.count}")
                     (0 until adapter.count).forEach { index ->
-                        XposedBridge.log("POPUP => adapter.item[$index] = ${adapter.getItem(index)}")
-                        XposedBridge.log("POPUP => adapter.item[$index].class = ${adapter.getItem(index).javaClass}")
+                        log("POPUP => adapter.item[$index] = ${adapter.getItem(index)}")
+                        log("POPUP => adapter.item[$index].class = ${adapter.getItem(index).javaClass}")
                     }
                 }
             })
@@ -98,33 +101,33 @@ object Debug {
     // Hook SQLiteDatabase to trace all the database operations.
     @JvmStatic fun traceDatabase() {
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_QUERY, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.SQLiteDatabase, "rawQueryWithFactory",
                     pkg.SQLiteCursorFactory, C.String, C.StringArray, C.String, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[1] as String?
                     val selectionArgs = param.args[2] as Array<*>?
-                    XposedBridge.log("DB => query sql = $sql, selectionArgs = ${MessageUtil.argsToString(selectionArgs)}, db = ${param.thisObject}")
+                    log("DB => query sql = $sql, selectionArgs = ${argsToString(selectionArgs)}, db = ${param.thisObject}")
                 }
             })
         }
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_INSERT, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.SQLiteDatabase, "insertWithOnConflict",
                     C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val table = param.args[0] as String?
                     val values = param.args[2] as ContentValues?
-                    XposedBridge.log("DB => insert table = $table, values = $values, db = ${param.thisObject}")
+                    log("DB => insert table = $table, values = $values, db = ${param.thisObject}")
                 }
             })
         }
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_UPDATE, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.SQLiteDatabase, "updateWithOnConflict",
                     C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -133,18 +136,18 @@ object Debug {
                     val values = param.args[1] as ContentValues?
                     val whereClause = param.args[2] as String?
                     val whereArgs = param.args[3] as Array<*>?
-                    XposedBridge.log("DB => update " +
+                    log("DB => update " +
                             "table = $table, " +
                             "values = $values, " +
                             "whereClause = $whereClause, " +
-                            "whereArgs = ${MessageUtil.argsToString(whereArgs)}, " +
+                            "whereArgs = ${argsToString(whereArgs)}, " +
                             "db = ${param.thisObject}")
                 }
             })
         }
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_DELETE, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.SQLiteDatabase, "delete",
                     C.String, C.String, C.StringArray, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -152,24 +155,24 @@ object Debug {
                     val table = param.args[0] as String?
                     val whereClause = param.args[1] as String?
                     val whereArgs = param.args[2] as Array<*>?
-                    XposedBridge.log("DB => delete " +
+                    log("DB => delete " +
                             "table = $table, " +
                             "whereClause = $whereClause, " +
-                            "whereArgs = ${MessageUtil.argsToString(whereArgs)}, " +
+                            "whereArgs = ${argsToString(whereArgs)}, " +
                             "db = ${param.thisObject}")
                 }
             })
         }
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_EXECUTE, false)) {
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     pkg.SQLiteDatabase, "executeSql",
                     C.String, C.ObjectArray, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[0] as String?
                     val bindArgs = param.args[1] as Array<*>?
-                    XposedBridge.log("DB => executeSql sql = $sql, bindArgs = ${MessageUtil.argsToString(bindArgs)}, db = ${param.thisObject}")
+                    log("DB => executeSql sql = $sql, bindArgs = ${argsToString(bindArgs)}, db = ${param.thisObject}")
                 }
             })
         }
@@ -180,7 +183,7 @@ object Debug {
         if (pref.getBoolean(Global.DEVELOPER_TRACE_LOGCAT, false)) {
             val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
-                XposedHelpers.findAndHookMethod(
+                findAndHookMethod(
                         pkg.LogCat, func,
                         C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
@@ -188,9 +191,9 @@ object Debug {
                         val msg = param.args[1] as String?
                         val args = param.args[2] as Array<*>?
                         if (args == null) {
-                            XposedBridge.log("LOG.${func.toUpperCase()} => [$tag] $msg")
+                            log("LOG.${func.toUpperCase()} => [$tag] $msg")
                         } else {
-                            XposedBridge.log("LOG.${func.toUpperCase()} => [$tag] ${msg?.format(*args)}")
+                            log("LOG.${func.toUpperCase()} => [$tag] ${msg?.format(*args)}")
                         }
                     }
                 })
@@ -201,31 +204,31 @@ object Debug {
     // Hook FileInputStream / FileOutputStream to trace file operations.
     @JvmStatic fun traceFiles() {
         if (pref.getBoolean(Global.DEVELOPER_TRACE_FILES, false)) {
-            XposedHelpers.findAndHookConstructor(
+            findAndHookConstructor(
                     "java.io.FileInputStream", pkg.loader,
                     C.File, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val path = (param.args[0] as File?)?.absolutePath ?: return
-                    XposedBridge.log("FILE => Read $path")
+                    log("FILE => Read $path")
                 }
             })
 
-            XposedHelpers.findAndHookConstructor(
+            findAndHookConstructor(
                     "java.io.FileOutputStream", pkg.loader,
                     C.File, C.Boolean, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val path = (param.args[0] as File?)?.absolutePath ?: return
-                    XposedBridge.log("FILE => Write $path")
+                    log("FILE => Write $path")
                 }
             })
 
-            XposedHelpers.findAndHookMethod(
+            findAndHookMethod(
                     "java.io.File", pkg.loader, "delete", object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val file = param.thisObject as File
-                    XposedBridge.log("FILE => Delete ${file.absolutePath}")
+                    log("FILE => Delete ${file.absolutePath}")
                 }
             })
         }
@@ -239,7 +242,7 @@ object Debug {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val xml = param.args[0] as String?
                     val root = param.args[1] as String?
-                    XposedBridge.log("XML => root = $root, xml = $xml")
+                    log("XML => root = $root, xml = $xml")
                 }
             })
         }
