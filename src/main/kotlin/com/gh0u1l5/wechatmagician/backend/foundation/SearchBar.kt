@@ -16,6 +16,14 @@ object SearchBar : EventCenter() {
 
     private val pkg = WechatPackage
 
+    private fun cleanup(search: EditText, editable: Editable?) {
+        // Hide Input Method
+        val imm = search.context.getSystemService(INPUT_METHOD_SERVICE)
+        (imm as InputMethodManager).hideSoftInputFromWindow(search.windowToken, 0)
+        // Clean SearchBar content
+        editable?.clear()
+    }
+
     @JvmStatic fun hookEvents() {
         hookAllConstructors(pkg.ActionBarEditText, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
@@ -30,13 +38,11 @@ object SearchBar : EventCenter() {
                         if (!command.endsWith("#")) {
                             return
                         }
-                        notifyParallel("onHandleCommand") { plugin ->
+                        notify("onHandleCommand") { plugin ->
                             if (plugin is ISearchBarConsole) {
                                 val consumed = plugin.onHandleCommand(search.context, command.drop(1).dropLast(1))
                                 if (consumed) {
-                                    val imm = search.context.getSystemService(INPUT_METHOD_SERVICE)
-                                    (imm as InputMethodManager).hideSoftInputFromWindow(search.windowToken, 0)
-                                    editable?.clear()
+                                    cleanup(search, editable)
                                 }
                             }
                         }

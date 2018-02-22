@@ -36,6 +36,7 @@ val HookList: List<() -> Unit> = listOf(
 
 val PluginList: List<Any> = listOf(
         AdBlock,
+        Alert,
         AntiRevoke,
         AntiSnsDelete,
         AutoLogin,
