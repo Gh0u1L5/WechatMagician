@@ -53,8 +53,15 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    // isWechat returns true if the current application seems to be Wechat.
-    private fun isWechat(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
+    // isImportantWechatProcesses returns true if the current process seems to be the main/tools process of Wechat.
+    private fun isImportantWechatProcesses(lpparam: XC_LoadPackage.LoadPackageParam): Boolean {
+        val processName = lpparam.processName
+        if (processName.contains(':')) {
+            if (!processName.endsWith(":tools")) {
+                // Currently we only interested in main process and tools process
+                return false
+            }
+        }
         val features = listOf (
                 "libwechatcommon.so",
                 "libwechatmm.so",
@@ -134,7 +141,7 @@ class WechatHook : IXposedHookLoadPackage {
                     hookApplicationAttach(lpparam.classLoader, { _ ->
                         handleLoadMagician(lpparam.classLoader)
                     })
-                else -> if (isWechat(lpparam)) {
+                else -> if (isImportantWechatProcesses(lpparam)) {
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         if (!BuildConfig.DEBUG) {
                             handleLoadWechat(lpparam, context)
@@ -163,8 +170,6 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        // TODO: only continue if the process name matches
-
         context.sendBroadcast(Intent().setAction(ACTION_WECHAT_STARTUP))
 
         settings.listen(context)
