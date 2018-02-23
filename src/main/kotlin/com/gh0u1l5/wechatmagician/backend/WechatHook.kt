@@ -11,8 +11,8 @@ import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
-import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
+import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.backend.foundation.*
 import com.gh0u1l5.wechatmagician.backend.interfaces.*
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings

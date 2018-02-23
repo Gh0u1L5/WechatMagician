@@ -11,6 +11,7 @@ object AdBlock : IXmlParserHookRaw {
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SNS_ADBLOCK, true)
 
+    // Interrupt the XML parsing for if the root tag is "ADInfo".
     override fun beforeXmlParse(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
             return

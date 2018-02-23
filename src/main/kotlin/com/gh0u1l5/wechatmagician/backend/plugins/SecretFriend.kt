@@ -34,7 +34,7 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SECRET_FRIEND, true)
 
-    fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
+    private fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
             Toast.makeText(
                     context, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
@@ -50,7 +50,7 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
         ConversationAdapterObject.get()?.notifyDataSetChanged()
     }
 
-    fun changeUserStatusByNickname(context: Context, nickname: String?, isSecret: Boolean) {
+    private fun changeUserStatusByNickname(context: Context, nickname: String?, isSecret: Boolean) {
         if (nickname == null) {
             return
         }
@@ -72,7 +72,7 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
 
     override fun onConversationAdapterCreated(adapter: BaseAdapter) = onAdapterCreated(adapter)
 
-    // TODO: add comment
+    // Hide the chatting windows for secret friends.
     override fun onChattingUICreated(activity: Activity) {
         if (!isPluginEnabled()) {
             return
@@ -88,6 +88,8 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
 
     // TODO: add hideNotifications
 
+    // Add menu items in the popup menu for contacts.
+    // TODO: change the title of the button for hiding friends.
     override fun onCreatePopupMenuForContacts(username: String): MenuAppender.PopupMenuItem? {
         if (!isPluginEnabled()) {
             return null
@@ -100,6 +102,7 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
         return MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener)
     }
 
+    // Handle SearchBar commands to operate on secret friends.
     override fun onHandleCommand(context: Context, command: String): Boolean {
         if (!isPluginEnabled()) {
             return false
