@@ -22,7 +22,7 @@ object MarkAllAsRead : IPopupMenuHook {
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_MARK_ALL_AS_READ, true)
 
-    fun cleanUnreadCount(activity: Activity?) {
+    private fun cleanUnreadCount(activity: Activity?) {
         if (activity == null) {
             return
         }

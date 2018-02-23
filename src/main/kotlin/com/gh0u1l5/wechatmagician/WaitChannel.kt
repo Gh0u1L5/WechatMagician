@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician
 
 class WaitChannel {
-    @Volatile var done = false
+    @Volatile private var done = false
     private val channel = java.lang.Object()
 
     fun wait(): Boolean {

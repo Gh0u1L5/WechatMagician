@@ -176,7 +176,6 @@ class WechatHook : IXposedHookLoadPackage {
         WechatPackage.init(lpparam)
         WechatPackage.listen(context)
 
-        LocalizedStrings.init(settings)
         SecretFriendList.init(context)
         ChatroomHideList.init(context)
 
