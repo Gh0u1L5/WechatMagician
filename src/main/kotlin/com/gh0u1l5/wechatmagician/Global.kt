@@ -17,7 +17,6 @@ object Global {
     @SuppressLint("SdCardPath")
     private val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
     val XPOSED_BASE_DIR = "$DATA_DIR/$XPOSED_PACKAGE_NAME/"
-    val MAGICIAN_BASE_DIR = "$DATA_DIR/$MAGICIAN_PACKAGE_NAME/"
 
     const val FOLDER_SHARED_PREFS = "shared_prefs"
 
@@ -29,6 +28,7 @@ object Global {
     const val STATUS_FLAG_URI_ROUTER  = "UriRouter"
     const val STATUS_FLAG_COMMAND     = "SearchBarCommand"
 
+    const val PREFERENCE_PROVIDER_AUTHORITY   = "com.gh0u1l5.wechatmagician.preferences"
     const val PREFERENCE_NAME_SETTINGS        = "settings"
     const val PREFERENCE_NAME_DEVELOPER       = "developer"
     const val PREFERENCE_NAME_SECRET_FRIEND   = "wechat-magician-secret-friend"
@@ -62,7 +62,6 @@ object Global {
     const val DEVELOPER_TRACE_FILES         = "developer_trace_files"
     const val DEVELOPER_XML_PARSER          = "developer_xml_parser"
 
-    const val ACTION_WECHAT_STARTUP         = "$MAGICIAN_PACKAGE_NAME.ACTION_WECHAT_STARTUP"
     const val ACTION_REQUIRE_HOOK_STATUS    = "$MAGICIAN_PACKAGE_NAME.ACTION_REQUIRE_HOOK_STATUS"
     const val ACTION_REQUIRE_WECHAT_PACKAGE = "$MAGICIAN_PACKAGE_NAME.ACTION_REQUIRE_WECHAT_PACKAGE"
     const val ACTION_UPDATE_PREF            = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"

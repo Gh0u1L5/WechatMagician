@@ -1,6 +1,5 @@
 package com.gh0u1l5.wechatmagician.util
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -82,12 +81,4 @@ object FileUtil {
             data = Uri.fromFile(File(path))
         })
     }
-
-    @SuppressLint("SetWorldReadable")
-    fun setWorldReadable(file: File) = file.setReadable(true, false)
-
-    @SuppressLint("SetWorldWritable")
-    fun setWorldWritable(file: File) = file.setWritable(true, false)
-
-    fun setWorldExecutable(file: File) = file.setExecutable(true, false)
 }

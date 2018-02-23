@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.gh0u1l5.wechatmagician"
     android:versionCode="47"
     android:versionName="2.7.2">
@@ -34,13 +35,12 @@
             </intent-filter>
         </activity-alias>
 
-        <receiver
-            android:name=".frontend.WechatStartupReceiver"
-            android:label="StartupReceiver">
-            <intent-filter>
-                <action android:name="com.gh0u1l5.wechatmagician.ACTION_WECHAT_STARTUP" />
-            </intent-filter>
-        </receiver>
+        <provider
+            android:name=".frontend.PrefProvider"
+            android:authorities="com.gh0u1l5.wechatmagician.preferences"
+            android:exported="true"
+            tools:ignore="ExportedContentProvider">
+        </provider>
 
         <meta-data
             android:name="xposedmodule"

@@ -1,12 +1,10 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import android.content.Context
-import android.content.Intent
 import android.content.res.XModuleResources
 import android.os.Build
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.Global.ACTION_WECHAT_STARTUP
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
@@ -170,12 +168,10 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechat is the entry point for Wechat hooking logic.
     private fun handleLoadWechat(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        context.sendBroadcast(Intent().setAction(ACTION_WECHAT_STARTUP))
-
         settings.listen(context)
-        settings.load()
+        settings.load(context)
         developer.listen(context)
-        developer.load()
+        developer.load(context)
 
         WechatPackage.init(lpparam)
         WechatPackage.listen(context)
