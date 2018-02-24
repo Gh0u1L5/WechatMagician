@@ -11,7 +11,6 @@ import android.widget.AdapterView
 import android.widget.ListPopupWindow
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
-import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUI
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUIEditTextField
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUserUIAdapterObject
@@ -122,7 +121,6 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     private const val ID_TAG   = ".TimelineObject.id"
 
     private val str = LocalizedStrings
-    private val events = WechatEvents
 
     override fun onDatabaseOpen(path: String, database: Any) {
         if (path.endsWith("SnsMicroMsg.db")) {
