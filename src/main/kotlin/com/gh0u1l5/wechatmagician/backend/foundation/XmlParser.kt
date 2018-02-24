@@ -11,6 +11,10 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
 object XmlParser : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(IXmlParserHook::class.java, IXmlParserHookRaw::class.java)
+
     @Suppress("UNCHECKED_CAST")
     @JvmStatic fun hookEvents() {
         findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {

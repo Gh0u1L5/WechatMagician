@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap
 
 abstract class EventCenter {
 
+    abstract val interfaces: List<Class<*>>
+
     private val registries: MutableMap<String, List<Any>> = ConcurrentHashMap()
 
     private fun Any.hasEvent(event: String) =

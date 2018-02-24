@@ -14,6 +14,10 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Database : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(IDatabaseHook::class.java, IDatabaseHookRaw::class.java)
+
     @JvmStatic fun hookEvents() {
         findAndHookMethod(
                 SQLiteDatabase, "openDatabase",

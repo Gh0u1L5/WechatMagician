@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend
 
 import com.gh0u1l5.wechatmagician.backend.foundation.*
+import com.gh0u1l5.wechatmagician.backend.foundation.base.EventCenter
 import com.gh0u1l5.wechatmagician.backend.plugins.*
 
 val HookList: List<() -> Unit> = listOf(
@@ -33,6 +34,17 @@ val HookList: List<() -> Unit> = listOf(
         Developer::traceLogCat,
         Developer::traceFiles,
         Developer::traceXMLParse
+)
+
+val EventCenterList: List<EventCenter> = listOf(
+        Activities,
+        Adapters,
+        Database,
+        MenuAppender,
+        Notifications,
+        SearchBar,
+        UriRouter,
+        XmlParser
 )
 
 val PluginList: List<Any> = listOf(

@@ -14,6 +14,10 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Activities : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(IActivityHook::class.java)
+
     @JvmStatic fun hookEvents() {
         findAndHookMethod(AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {

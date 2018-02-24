@@ -8,6 +8,10 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
 object Notifications : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(INotificationHookRaw::class.java)
+
     @JvmStatic fun hookEvents() {
         findAndHookMethod(NotificationAppMsgQueue, NotificationAppMsgQueueAddMethod, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {

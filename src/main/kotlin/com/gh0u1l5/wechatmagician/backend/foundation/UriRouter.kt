@@ -12,6 +12,10 @@ import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
 object UriRouter : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(IUriRouterHook::class.java)
+
     @JvmStatic fun hookEvents() {
         findAndHookMethod(WXCustomScheme, WXCustomSchemeEntryMethod, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {

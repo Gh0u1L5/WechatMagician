@@ -14,6 +14,10 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Adapters : EventCenter() {
+
+    override val interfaces: List<Class<*>>
+        get() = listOf(IAdapterHook::class.java)
+
     @JvmStatic fun hookEvents() {
         hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {

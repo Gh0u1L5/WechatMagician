@@ -15,6 +15,9 @@ import de.robv.android.xposed.XposedBridge.hookAllConstructors
 
 object SearchBar : EventCenter() {
 
+    override val interfaces: List<Class<*>>
+        get() = listOf(ISearchBarConsole::class.java)
+
     private fun cleanup(search: EditText, editable: Editable?) {
         // Hide Input Method
         val imm = search.context.getSystemService(INPUT_METHOD_SERVICE)

@@ -18,6 +18,9 @@ import de.robv.android.xposed.XposedHelpers.*
 
 object MenuAppender : EventCenter() {
 
+    override val interfaces: List<Class<*>>
+        get() = listOf(IPopupMenuHook::class.java)
+
     data class PopupMenuItem (
             val groupId: Int,
             val itemId: Int,
