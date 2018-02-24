@@ -115,6 +115,18 @@ object WechatPackage {
         findClassIfExists("$WECHAT_PACKAGE_SQLITE.support.CancellationSignal", loader)
     }
 
+    val NotificationItem: Class<*> by innerLazy("NotificationItem") {
+        findClassIfExists("$packageName.booter.notification.NotificationItem", loader)
+    }
+    val NotificationAppMsgQueue: Class<*> by innerLazy("NotificationAppMsgQueue") {
+        findClassesFromPackage(loader!!, classes!!, "$packageName.booter.notification.queue")
+                .filterByMethod(null, NotificationItem)
+                .firstOrNull()
+    }
+    val NotificationAppMsgQueueAddMethod: Method by innerLazy("NotificationAppMsgQueueAddMethod") {
+        findMethodsByExactParameters(NotificationAppMsgQueue, NotificationItem).firstOrNull()
+    }
+
     val LauncherUI: Class<*> by innerLazy("LauncherUI") {
         findClassIfExists("$WECHAT_PACKAGE_UI.LauncherUI", loader)
     }

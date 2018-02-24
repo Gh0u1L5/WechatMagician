@@ -21,6 +21,7 @@ val HookList: List<() -> Unit> = listOf(
         Activities::hookEvents,
         Adapters::hookEvents,
         Database::hookEvents,
+        Notifications::hookEvents,
         SearchBar::hookEvents,
         UriRouter::hookEvents,
         XmlParser::hookEvents,

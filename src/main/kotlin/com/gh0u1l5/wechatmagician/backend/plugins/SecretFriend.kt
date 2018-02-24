@@ -12,10 +12,7 @@ import com.gh0u1l5.wechatmagician.backend.WechatPackage.AddressAdapterObject
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationAdapterObject
 import com.gh0u1l5.wechatmagician.backend.foundation.ListViewHider
 import com.gh0u1l5.wechatmagician.backend.foundation.MenuAppender
-import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IPopupMenuHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.ISearchBarConsole
+import com.gh0u1l5.wechatmagician.backend.interfaces.*
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_HIDE_FRIEND
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SET_PASSWORD
@@ -25,9 +22,10 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.TITLE_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase.getContactByNickname
 import com.gh0u1l5.wechatmagician.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
+import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
-object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarConsole {
+object SecretFriend : IActivityHook, IAdapterHook, INotificationHookRaw, IPopupMenuHook, ISearchBarConsole {
 
     private val str = LocalizedStrings
     private val pref = WechatHook.settings
@@ -86,7 +84,17 @@ object SecretFriend : IActivityHook, IAdapterHook, IPopupMenuHook, ISearchBarCon
         }
     }
 
-    // TODO: add hideNotifications
+    // Hide the message notifications from secret friends.
+    override fun beforeAddMessageNotification(param: XC_MethodHook.MethodHookParam) {
+        if (!isPluginEnabled()) {
+            return
+        }
+        val notification = param.args[0].toString()
+        val username = notification.substringAfter("userName: ").substringBefore(",")
+        if (username in SecretFriendList) {
+            param.result = null
+        }
+    }
 
     // Add menu items in the popup menu for contacts.
     // TODO: change the title of the button for hiding friends.
