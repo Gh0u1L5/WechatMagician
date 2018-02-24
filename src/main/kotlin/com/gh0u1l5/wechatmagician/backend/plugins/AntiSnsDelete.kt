@@ -5,6 +5,7 @@ import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHookRaw
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
@@ -53,7 +54,7 @@ object AntiSnsDelete : IDatabaseHookRaw {
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(str[LocalizedStrings.LABEL_DELETED], content)?.let { msg ->
+        MessageUtil.notifyInfoDelete(str[LABEL_DELETED], content)?.let { msg ->
             values.remove("sourceType")
             values.put("content", msg)
         }
@@ -61,7 +62,7 @@ object AntiSnsDelete : IDatabaseHookRaw {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(str[LocalizedStrings.LABEL_DELETED], curActionBuf)?.let { msg ->
+        MessageUtil.notifyCommentDelete(str[LABEL_DELETED], curActionBuf)?.let { msg ->
             values.remove("commentflag")
             values.put("curActionBuf", msg)
         }

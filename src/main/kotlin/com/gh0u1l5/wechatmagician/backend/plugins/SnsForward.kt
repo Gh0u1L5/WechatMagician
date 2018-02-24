@@ -6,10 +6,9 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
+import android.widget.ListPopupWindow
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
@@ -21,12 +20,16 @@ import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHook
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
+import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_FORWARD
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SCREENSHOT
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SNS_INVALID
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_WAIT
 import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
-import com.gh0u1l5.wechatmagician.util.DownloadUtil
-import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.*
+import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getListViewFromSnsActivity
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getViewAtPosition
 import de.robv.android.xposed.XposedBridge.log
@@ -118,6 +121,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     private const val ROOT_TAG = "TimelineObject"
     private const val ID_TAG   = ".TimelineObject.id"
 
+    private val str = LocalizedStrings
     private val events = WechatEvents
 
     override fun onDatabaseOpen(path: String, database: Any) {
@@ -161,7 +165,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         listView.setOnItemLongClickListener { parent, view, position, _ ->
             val item = parent.getItemAtPosition(position)
             val snsId = getLongField(item, "field_snsId")
-            events.onTimelineItemLongClick(parent, view, snsId, null)
+            onTimelineItemLongClick(parent, view, snsId, null)
         }
     }
 
@@ -179,7 +183,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 val item = listView.getItemAtPosition(position)
                 val snsId = getLongField(item, "field_snsId")
                 val popup = ListPopupWindowPosition(listView, lastKnownX, lastKnownY)
-                events.onTimelineItemLongClick(listView, view, snsId, popup)
+                onTimelineItemLongClick(listView, view, snsId, popup)
             }
         })
         (listView as View).setOnTouchListener { _, event ->
@@ -198,5 +202,59 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
             val editText = getObjectField(activity, editTextField)
             XposedHelpers.callMethod(editText, "setText", content)
         }
+    }
+
+    // Show a popup menu in SnsTimelineUI
+    private fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupWindowPosition?): Boolean {
+        val operations = listOf(str[MENU_SNS_FORWARD], str[MENU_SNS_SCREENSHOT])
+        ListPopupWindow(parent.context).apply {
+            if (position != null) {
+                // Calculate list view size
+                val location = IntArray(2)
+                position.anchor.getLocationOnScreen(location)
+                val bottom = location[1] + position.anchor.height
+
+                // Set position for popup window
+                anchorView = position.anchor
+                horizontalOffset = position.x - position.anchor.left
+                verticalOffset = position.y - bottom
+            } else {
+                anchorView = view
+            }
+
+            // Set general properties for popup window
+            width = parent.context.dp2px(120)
+            setDropDownGravity(Gravity.CENTER)
+            setAdapter(StringListAdapter(view.context, operations))
+            setOnItemClickListener { _, _, operation, _ ->
+                onTimelineItemPopupMenuSelected(view, snsId, operation)
+                dismiss()
+            }
+        }.show()
+        return true
+    }
+
+    // Handle the logic about the popup menu in SnsTimelineUI
+    private fun onTimelineItemPopupMenuSelected(itemView: View, snsId: Long, operation: Int): Boolean {
+        when (operation) {
+            0 -> { // Forward
+                ForwardAsyncTask(snsId, itemView.context).execute()
+                Toast.makeText(
+                        itemView.context, str[PROMPT_WAIT], Toast.LENGTH_SHORT
+                ).show()
+                return true
+            }
+            1 -> { // Screenshot
+                val path = ImageUtil.createScreenshotPath()
+                val bitmap = ViewUtil.drawView(itemView)
+                FileUtil.writeBitmapToDisk(path, bitmap)
+                FileUtil.notifyNewMediaFile(path, itemView.context)
+                Toast.makeText(
+                        itemView.context, str[PROMPT_SCREENSHOT] + path, Toast.LENGTH_SHORT
+                ).show()
+                return true
+            }
+        }
+        return false
     }
 }

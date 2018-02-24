@@ -2,10 +2,15 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
+import android.view.Gravity
+import android.view.View
 import android.widget.BaseAdapter
+import android.widget.ListPopupWindow
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_CHATROOM
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_CHATROOM_HIDER
 import com.gh0u1l5.wechatmagician.backend.WechatHook
+import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationAdapterObject
 import com.gh0u1l5.wechatmagician.backend.foundation.ListViewHider
 import com.gh0u1l5.wechatmagician.backend.foundation.MenuAppender
@@ -13,9 +18,13 @@ import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IPopupMenuHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.ISearchBarConsole
 import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
+import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_CANCEL
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_HIDE_CHATROOM
+import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_CHATROOM_UNHIDE
 import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
+import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
@@ -25,7 +34,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_CHATTING_CHATROOM_HIDER, false)
 
-    fun changeChatroomStatus(username: String?, hide: Boolean) {
+    private fun changeChatroomStatus(username: String?, hide: Boolean) {
         if (username == null) {
             return
         }
@@ -71,12 +80,47 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
             AlertDialog.Builder(context)
                     .setTitle("Wechat Magician")
                     .setAdapter(adapter, { _, _ -> })
-                    .setNegativeButton(str[LocalizedStrings.BUTTON_CANCEL], { dialog, _ ->
+                    .setNegativeButton(str[BUTTON_CANCEL], { dialog, _ ->
                         dialog.dismiss()
                     })
                     .show()
             return true
         }
         return super.onHandleCommand(context, command)
+    }
+
+    fun onChatroomHiderConversationClick(view: View, username: String): Boolean {
+        view.context.startActivity(Intent(view.context, WechatPackage.ChattingUI)
+                .putExtra("Chat_Mode", 1)
+                .putExtra("Chat_User", username))
+        return true
+    }
+
+    fun onChatroomHiderConversationLongClick(view: View, adapter: ConversationAdapter, username: String): Boolean {
+        val operations = listOf(str[MENU_CHATROOM_UNHIDE])
+        ListPopupWindow(view.context).apply {
+            anchorView = view
+            width = view.context.dp2px(140)
+            setDropDownGravity(Gravity.CENTER)
+            setAdapter(StringListAdapter(view.context, operations))
+            setOnItemClickListener { _, _, operation, _ ->
+                onChatroomHiderConversationPopupMenuSelected(adapter, username, operation)
+                dismiss()
+            }
+        }.show()
+        return true
+    }
+
+    private fun onChatroomHiderConversationPopupMenuSelected(adapter: ConversationAdapter, username: String, operation: Int): Boolean {
+        when (operation) {
+            0 -> { // Unhide
+                changeChatroomStatus(username, false)
+                adapter.conversations.clear()
+                adapter.conversations.addAll(ConversationAdapter.getConversationList())
+                adapter.notifyDataSetChanged()
+                return true
+            }
+        }
+        return false
     }
 }

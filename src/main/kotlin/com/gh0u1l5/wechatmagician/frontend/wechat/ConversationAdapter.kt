@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
-import com.gh0u1l5.wechatmagician.backend.WechatEvents
+import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_UNNAMED
 import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
@@ -28,7 +28,6 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val unreadCount: Int
     )
 
-    private val events = WechatEvents
     private val str = LocalizedStrings
 
     companion object {
@@ -98,10 +97,10 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
                     .format(conversation.digestUser)
                     .replace("\n", "")
             setOnClickListener { view ->
-                events.onChatroomHiderConversationClick(view, conversation.username)
+                ChatroomHider.onChatroomHiderConversationClick(view, conversation.username)
             }
             setOnLongClickListener { view ->
-                events.onChatroomHiderConversationLongClick(view, this@ConversationAdapter, conversation.username)
+                ChatroomHider.onChatroomHiderConversationLongClick(view, this@ConversationAdapter, conversation.username)
             }
         }
     }

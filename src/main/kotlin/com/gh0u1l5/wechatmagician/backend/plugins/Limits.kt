@@ -6,12 +6,14 @@ import android.graphics.Color
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
+import android.widget.HeaderViewListAdapter
+import android.widget.ListView
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatHook
+import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMActivity
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectContactUI
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectConversationUI
@@ -21,13 +23,14 @@ import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
+import java.lang.reflect.Field
 
 object Limits : IActivityHook {
 
     private val str = LocalizedStrings
     private val pref = WechatHook.settings
-    private val events = WechatEvents
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
     override fun onAlbumPreviewUICreated(activity: Activity) {
@@ -65,7 +68,7 @@ object Limits : IActivityHook {
                     selectAll.title = str[BUTTON_SELECT_ALL] + "  " +
                             if (checked) "\u2611" else "\u2610"
                     selectAll.setOnMenuItemClickListener {
-                        events.onSelectContactUISelectAll(activity, !selectAll.isChecked); true
+                        onSelectContactUISelectAll(activity, !selectAll.isChecked); true
                     }
                 } else {
                     val layout = WechatHook.resources?.getLayout(R.layout.wechat_checked_textview)
@@ -77,7 +80,7 @@ object Limits : IActivityHook {
                     checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
                         isChecked = checked
                         setOnCheckedChangeListener { _, checked ->
-                            events.onSelectContactUISelectAll(activity, checked)
+                            onSelectContactUISelectAll(activity, checked)
                         }
                     }
                     selectAll.actionView = checkedTextView
@@ -126,5 +129,43 @@ object Limits : IActivityHook {
                 param.result = false
             }
         })
+    }
+
+    // Handle the logic about "select all" check box in SelectContactUI
+    private fun onSelectContactUISelectAll(activity: Activity, isChecked: Boolean) {
+        val intent = activity.intent ?: return
+        intent.putExtra("select_all_checked", isChecked)
+        intent.putExtra("already_select_contact", "")
+        if (isChecked) {
+            // Search for the ListView of contacts
+            val listView = XposedHelpers.findFirstFieldByExactType(activity.javaClass, C.ListView)
+                    .get(activity) as ListView? ?: return
+            val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
+
+            // Construct the list of user names
+            var contactField: Field? = null
+            var usernameField: Field? = null
+            val userList = mutableListOf<String>()
+            repeat(adapter.count, next@ { index ->
+                val item = adapter.getItem(index)
+
+                if (contactField == null) {
+                    contactField = item.javaClass.fields.firstOrNull {
+                        it.type.name == WechatPackage.ContactInfoClass.name
+                    } ?: return@next
+                }
+                val contact = contactField?.get(item) ?: return@next
+
+                if (usernameField == null) {
+                    usernameField = contact.javaClass.fields.firstOrNull {
+                        it.name == "field_username"
+                    } ?: return@next
+                }
+                val username = usernameField?.get(contact) ?: return@next
+                userList.add(username as String)
+            })
+            intent.putExtra("already_select_contact", userList.joinToString(","))
+        }
+        activity.startActivityForResult(intent, 5)
     }
 }
