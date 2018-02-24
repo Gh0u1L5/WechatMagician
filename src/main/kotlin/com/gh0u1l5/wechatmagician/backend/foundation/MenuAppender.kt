@@ -80,7 +80,7 @@ object MenuAppender : EventCenter() {
                 currentMenuItems?.forEach {
                     val item = menu.add(it.groupId, it.itemId, it.order, it.title)
                     item.setOnMenuItemClickListener { _ ->
-                        it.onClickListener(view.context) // TODO: can we use param.thisObject here?
+                        it.onClickListener(view.context)
                         return@setOnMenuItemClickListener true
                     }
                 }
