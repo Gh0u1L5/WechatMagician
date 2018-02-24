@@ -85,6 +85,7 @@ object Storage {
                 val path = (param.thisObject as File).absolutePath
                 when {
                     path.contains("/image2/") -> param.result = true
+                    path.contains("/voice2/") -> param.result = true
                     path.contains("/video/")  -> param.result = true
                 }
             }

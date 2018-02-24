@@ -48,7 +48,7 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
         }
         val table = param.args[0] as String?
         when (table) {
-            "ImgInfo2", "videoinfo2", "WxFileIndex2" -> param.result = 1
+            "ImgInfo2", "voiceinfo", "videoinfo2", "WxFileIndex2" -> param.result = 1
         }
     }
 
