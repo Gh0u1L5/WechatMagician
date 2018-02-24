@@ -32,7 +32,7 @@ object IPCUtil {
             is String       -> putExtra(name, value)
             is Parcelable   -> putExtra(name, value)
             is Serializable -> putExtra(name, value)
-            else -> throw Error("Intent.putExtra(): Unknown type: ${value.javaClass}")
+            else -> throw Error("Intent.putExtra(): Unknown type: ${value::class.java}")
         }
     }
 

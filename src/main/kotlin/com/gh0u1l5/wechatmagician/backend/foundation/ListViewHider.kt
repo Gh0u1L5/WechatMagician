@@ -101,7 +101,7 @@ object ListViewHider {
         // Hook notifyDataSetChanged() of base adapters
         findAndHookMethod(BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                when (param.thisObject.javaClass) {
+                when (param.thisObject::class.java) {
                     AddressAdapter -> {
                         updateAdapterSections(param)
                     }

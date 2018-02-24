@@ -38,7 +38,7 @@ object Developer {
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
-                    log("View.onTouchEvent => obj.class = ${param.thisObject.javaClass}")
+                    log("View.onTouchEvent => obj.class = ${param.thisObject::class.java}")
                 }
             })
         }
@@ -54,7 +54,7 @@ object Developer {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val intent = param.args[0] as Intent?
                     log("Activity.startActivity => " +
-                            "${param.thisObject.javaClass}, " +
+                            "${param.thisObject::class.java}, " +
                             "intent => ${bundleToString(intent?.extras)}")
                 }
             })
@@ -67,7 +67,7 @@ object Developer {
                     val bundle = param.args[0] as Bundle?
                     val intent = (param.thisObject as Activity).intent
                     log("Activity.onCreate => " +
-                            "${param.thisObject.javaClass}, " +
+                            "${param.thisObject::class.java}, " +
                             "intent => ${bundleToString(intent?.extras)}, " +
                             "bundle => ${bundleToString(bundle)}")
                 }
@@ -83,8 +83,8 @@ object Developer {
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val menu = param.thisObject
                     val context = param.args[0]
-                    log("POPUP => menu.class = ${menu.javaClass}")
-                    log("POPUP => context.class = ${context.javaClass}")
+                    log("POPUP => menu.class = ${menu::class.java}")
+                    log("POPUP => context.class = ${context::class.java}")
                 }
             })
 
@@ -97,7 +97,7 @@ object Developer {
                     log("POPUP => adapter.count = ${adapter.count}")
                     (0 until adapter.count).forEach { index ->
                         log("POPUP => adapter.item[$index] = ${adapter.getItem(index)}")
-                        log("POPUP => adapter.item[$index].class = ${adapter.getItem(index).javaClass}")
+                        log("POPUP => adapter.item[$index].class = ${adapter.getItem(index)::class.java}")
                     }
                 }
             })

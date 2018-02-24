@@ -51,7 +51,7 @@ object Limits : IActivityHook {
                 C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.thisObject.javaClass != SelectContactUI) {
+                if (param.thisObject::class.java != SelectContactUI) {
                     return
                 }
 
@@ -138,7 +138,7 @@ object Limits : IActivityHook {
         intent.putExtra("already_select_contact", "")
         if (isChecked) {
             // Search for the ListView of contacts
-            val listView = XposedHelpers.findFirstFieldByExactType(activity.javaClass, C.ListView)
+            val listView = XposedHelpers.findFirstFieldByExactType(activity::class.java, C.ListView)
                     .get(activity) as ListView? ?: return
             val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
 
@@ -150,14 +150,14 @@ object Limits : IActivityHook {
                 val item = adapter.getItem(index)
 
                 if (contactField == null) {
-                    contactField = item.javaClass.fields.firstOrNull {
+                    contactField = item::class.java.fields.firstOrNull {
                         it.type.name == WechatPackage.ContactInfoClass.name
                     } ?: return@next
                 }
                 val contact = contactField?.get(item) ?: return@next
 
                 if (usernameField == null) {
-                    usernameField = contact.javaClass.fields.firstOrNull {
+                    usernameField = contact::class.java.fields.firstOrNull {
                         it.name == "field_username"
                     } ?: return@next
                 }

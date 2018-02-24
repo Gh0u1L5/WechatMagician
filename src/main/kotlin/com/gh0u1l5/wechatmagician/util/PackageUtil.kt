@@ -57,7 +57,7 @@ object PackageUtil {
     private val classesCache: MutableMap<Pair<String, Int>, Classes> = ConcurrentHashMap()
 
     // shadowCopy copy all the fields of the object obj into the object copy.
-    @JvmStatic fun shadowCopy(obj: Any, copy: Any, clazz: Class<*>? = obj.javaClass) {
+    @JvmStatic fun shadowCopy(obj: Any, copy: Any, clazz: Class<*>? = obj::class.java) {
         if (clazz == null) {
             return
         }

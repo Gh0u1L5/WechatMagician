@@ -18,13 +18,14 @@ class PrefProvider : ContentProvider() {
 
     private fun getPreferenceType(value: Any?): String {
         return when (value) {
+            null -> "Null"
             is Int -> "Int"
             is Long -> "Long"
             is Float -> "Float"
             is Boolean -> "Boolean"
             is String -> "String"
             is Set<*> -> "StringSet"
-            else -> "${value?.javaClass}"
+            else -> "${value::class.java}"
         }
     }
 

@@ -28,7 +28,7 @@ object Adapters : EventCenter() {
                             plugin.onAddressAdapterCreated(adapter)
                             return@notify
                         }
-                        log("Expect address adapter to be BaseAdapter, get ${param.thisObject.javaClass}")
+                        log("Expect address adapter to be BaseAdapter, get ${param.thisObject::class.java}")
                     }
                 }
             }
@@ -42,7 +42,7 @@ object Adapters : EventCenter() {
                             plugin.onConversationAdapterCreated(adapter)
                             return@notify
                         }
-                        log("Expect conversation adapter to be BaseAdapter, get ${param.thisObject.javaClass}")
+                        log("Expect conversation adapter to be BaseAdapter, get ${param.thisObject::class.java}")
                     }
                 }
             }

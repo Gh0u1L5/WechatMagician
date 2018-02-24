@@ -377,7 +377,7 @@ object WechatPackage {
 
     override fun toString(): String {
         val body = try {
-            this.javaClass.declaredFields.filter { field ->
+            this::class.java.declaredFields.filter { field ->
                 when (field.name) {
                     "INSTANCE", "\$\$delegatedProperties",
                     "initializeChannel", "status",

@@ -29,7 +29,7 @@ object ViewUtil {
             val child = viewGroup.getChildAt(it)
 
             val getAttr = {getter: String ->
-                if (child.javaClass.methods.count{ it.name == getter } != 0) {
+                if (child::class.java.methods.count{ it.name == getter } != 0) {
                     attrs += getter to XposedHelpers.callMethod(child, getter)
                 }
             }
@@ -40,7 +40,7 @@ object ViewUtil {
             getAttr("isClickable")
             getAttr("isLongClickable")
 
-            XposedBridge.log("$prefix[$it] => ${child.javaClass}, $attrs")
+            XposedBridge.log("$prefix[$it] => ${child::class.java}, $attrs")
             if (child is ViewGroup) {
                 dumpViewGroup("$prefix[$it]", child)
             }
@@ -51,7 +51,7 @@ object ViewUtil {
     fun searchViewGroup(viewGroup: ViewGroup, className: String): View? {
         repeat(viewGroup.childCount, {
             val child = viewGroup.getChildAt(it)
-            if (child.javaClass.name == className) {
+            if (child::class.java.name == className) {
                 return child
             }
             if (child is ViewGroup) {
@@ -118,9 +118,9 @@ object ViewUtil {
             return null
         }
 
-        val activityField = findFirstFieldByExactType(container.javaClass, WechatPackage.SnsActivity)
+        val activityField = findFirstFieldByExactType(container::class.java, WechatPackage.SnsActivity)
         val activity = activityField.get(container)
-        val listViewField = findFirstFieldByExactType(activity.javaClass, C.ListView)
+        val listViewField = findFirstFieldByExactType(activity::class.java, C.ListView)
         return listViewField.get(activity) as ListView
     }
 }

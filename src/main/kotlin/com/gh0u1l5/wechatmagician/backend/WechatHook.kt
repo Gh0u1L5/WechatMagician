@@ -176,7 +176,7 @@ class WechatHook : IXposedHookLoadPackage {
         }
         val pathClassLoader = PathClassLoader(path, ClassLoader.getSystemClassLoader())
         val clazz = Class.forName("$MAGICIAN_PACKAGE_NAME.backend.WechatHook", true, pathClassLoader)
-        val method = clazz.getDeclaredMethod("handleLoadWechat", lpparam.javaClass, Context::class.java)
+        val method = clazz.getDeclaredMethod("handleLoadWechat", lpparam::class.java, Context::class.java)
         method.isAccessible = true
         method.invoke(clazz.newInstance(), lpparam, context)
     }

@@ -18,7 +18,7 @@ object AutoLogin : IActivityHook {
         if (!isPluginEnabled()) {
             return
         }
-        val clazz = activity.javaClass
+        val clazz = activity::class.java
         val field = findFirstFieldByExactType(clazz, C.Button)
         val button = field.get(activity) as Button?
         button?.performClick()

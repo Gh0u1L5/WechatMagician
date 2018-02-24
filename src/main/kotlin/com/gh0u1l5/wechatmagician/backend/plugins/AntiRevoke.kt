@@ -75,7 +75,7 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
             val msgId = values["msgId"] as Long
             val msg = MessageCache[msgId] ?: return@tryVerbosely
 
-            val copy = msg.javaClass.newInstance()
+            val copy = msg::class.java.newInstance()
             PackageUtil.shadowCopy(msg, copy)
 
             val createTime = XposedHelpers.getLongField(msg, "field_createTime")
