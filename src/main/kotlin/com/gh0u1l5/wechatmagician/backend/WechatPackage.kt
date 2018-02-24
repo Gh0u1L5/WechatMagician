@@ -26,6 +26,7 @@ import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import java.lang.ref.WeakReference
+import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 
@@ -297,10 +298,10 @@ object WechatPackage {
                 .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
                 .firstOrNull()
     }
-    val ImgStorageCacheField: String by innerLazy("ImgStorageCacheField") {
+    val ImgStorageCacheField: Field by innerLazy("ImgStorageCacheField") {
         findFieldsWithGenericType(
                 ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
-        ).firstOrNull()?.name ?: ""
+        ).firstOrNull()?.apply{ isAccessible = true }
     }
     val ImgStorageLoadMethod = "a"
 

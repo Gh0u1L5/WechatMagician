@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
 import de.robv.android.xposed.XposedHelpers.callMethod
-import de.robv.android.xposed.XposedHelpers.getObjectField
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,7 +41,7 @@ object ImageUtil {
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Check if memory cache and image storage are established
         val storage = WechatPackage.ImgStorageObject ?: return
-        val cache = getObjectField(storage, WechatPackage.ImgStorageCacheField)
+        val cache = WechatPackage.ImgStorageCacheField.get(storage)
 
         // Update memory cache
         callMethod(cache, "remove", path)
