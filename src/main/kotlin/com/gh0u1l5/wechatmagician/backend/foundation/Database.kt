@@ -3,6 +3,10 @@ package com.gh0u1l5.wechatmagician.backend.foundation
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteCancellationSignal
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteCursorFactory
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteDatabase
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteErrorHandler
 import com.gh0u1l5.wechatmagician.backend.foundation.base.EventCenter
 import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHookRaw
@@ -10,13 +14,10 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Database : EventCenter() {
-
-    private val pkg = WechatPackage
-
     @JvmStatic fun hookEvents() {
         findAndHookMethod(
-                pkg.SQLiteDatabase, "openDatabase",
-                C.String, pkg.SQLiteCursorFactory, C.Int, pkg.SQLiteErrorHandler, object : XC_MethodHook() {
+                SQLiteDatabase, "openDatabase",
+                C.String, SQLiteCursorFactory, C.Int, SQLiteErrorHandler, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseOpen") { plugin ->
                     if (plugin is IDatabaseHookRaw) {
@@ -41,8 +42,8 @@ object Database : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.SQLiteDatabase, "rawQueryWithFactory",
-                pkg.SQLiteCursorFactory, C.String, C.StringArray, C.String, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
+                SQLiteDatabase, "rawQueryWithFactory",
+                SQLiteCursorFactory, C.String, C.StringArray, C.String, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseQuery") { plugin ->
                     if (plugin is IDatabaseHookRaw) {
@@ -60,7 +61,7 @@ object Database : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.SQLiteDatabase, "insertWithOnConflict",
+                SQLiteDatabase, "insertWithOnConflict",
                 C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseInsert") { plugin ->
@@ -79,7 +80,7 @@ object Database : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.SQLiteDatabase, "updateWithOnConflict",
+                SQLiteDatabase, "updateWithOnConflict",
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseUpdate") { plugin ->
@@ -98,7 +99,7 @@ object Database : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.SQLiteDatabase, "delete",
+                SQLiteDatabase, "delete",
                 C.String, C.String, C.StringArray, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseDelete") { plugin ->
@@ -117,8 +118,8 @@ object Database : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.SQLiteDatabase, "executeSql",
-                C.String, C.ObjectArray, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
+                SQLiteDatabase, "executeSql",
+                C.String, C.ObjectArray, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseExecute") { plugin ->
                     if (plugin is IDatabaseHookRaw) {
@@ -135,7 +136,6 @@ object Database : EventCenter() {
             }
         })
 
-        pkg.setStatus(STATUS_FLAG_DATABASE, true)
+        WechatPackage.setStatus(STATUS_FLAG_DATABASE, true)
     }
-
 }

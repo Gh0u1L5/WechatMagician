@@ -6,7 +6,11 @@ import android.view.ContextMenu
 import android.view.View
 import android.widget.AdapterView
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.AddressUI
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ContactLongClickListener
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationCreateContextMenuListener
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationLongClickListener
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMListPopupWindow
 import com.gh0u1l5.wechatmagician.backend.foundation.base.EventCenter
 import com.gh0u1l5.wechatmagician.backend.interfaces.IPopupMenuHook
 import de.robv.android.xposed.XC_MethodHook
@@ -22,15 +26,13 @@ object MenuAppender : EventCenter() {
             val onClickListener: (context: Context) -> Unit
     )
 
-    private val pkg = WechatPackage
-
     @Volatile var currentUsername: String? = null
     @Volatile var currentMenuItems: List<PopupMenuItem>? = null
 
     @JvmStatic fun hijackPopupMenuEvents() {
-        findAndHookMethod(pkg.MMListPopupWindow, "show", object : XC_MethodHook() {
+        findAndHookMethod(MMListPopupWindow, "show", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                val listenerField = findFirstFieldByExactType(pkg.MMListPopupWindow, C.AdapterView_OnItemClickListener)
+                val listenerField = findFirstFieldByExactType(MMListPopupWindow, C.AdapterView_OnItemClickListener)
                 val listener = listenerField.get(param.thisObject) as AdapterView.OnItemClickListener
                 listenerField.set(param.thisObject, AdapterView.OnItemClickListener { parent, view, position, id ->
                     val title = parent.adapter.getItem(position)
@@ -44,7 +46,7 @@ object MenuAppender : EventCenter() {
                 })
             }
         })
-        findAndHookMethod(pkg.MMListPopupWindow, "dismiss", object : XC_MethodHook() {
+        findAndHookMethod(MMListPopupWindow, "dismiss", object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam?) {
                 currentUsername = null
                 currentMenuItems = null
@@ -54,7 +56,7 @@ object MenuAppender : EventCenter() {
 
     @JvmStatic fun hijackPopupMenuForContacts() {
         findAndHookMethod(
-                pkg.ContactLongClickListener, "onItemLongClick",
+                ContactLongClickListener, "onItemLongClick",
                 C.AdapterView, C.View, C.Int, C.Long, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val parent = param.args[0] as AdapterView<*>
@@ -65,7 +67,7 @@ object MenuAppender : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.AddressUI, "onCreateContextMenu",
+                AddressUI, "onCreateContextMenu",
                 C.ContextMenu, C.View, C.ContextMenuInfo, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val menu = param.args[0] as ContextMenu
@@ -92,7 +94,7 @@ object MenuAppender : EventCenter() {
 
     @JvmStatic fun hijackPopupMenuForConversations() {
         findAndHookMethod(
-                pkg.ConversationLongClickListener, "onItemLongClick",
+                ConversationLongClickListener, "onItemLongClick",
                 C.AdapterView, C.View, C.Int, C.Long, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -104,7 +106,7 @@ object MenuAppender : EventCenter() {
         })
 
         findAndHookMethod(
-                pkg.ConversationCreateContextMenuListener, "onCreateContextMenu",
+                ConversationCreateContextMenuListener, "onCreateContextMenu",
                 C.ContextMenu, C.View, C.ContextMenuInfo, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {

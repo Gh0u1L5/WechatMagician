@@ -6,6 +6,8 @@ import android.view.Gravity
 import android.view.View
 import android.widget.*
 import com.gh0u1l5.wechatmagician.C
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ChattingUI
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ContactInfoClass
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider.changeChatroomStatus
 import com.gh0u1l5.wechatmagician.backend.plugins.SnsForward.ForwardAsyncTask
 import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
@@ -27,7 +29,6 @@ import java.lang.reflect.Field
 object WechatEvents {
 
     private val str = LocalizedStrings
-    private val pkg = WechatPackage
 
     // Handle the logic about "select all" check box in SelectContactUI
     fun onSelectContactUISelectAll(activity: Activity, isChecked: Boolean) {
@@ -49,7 +50,7 @@ object WechatEvents {
 
                 if (contactField == null) {
                     contactField = item.javaClass.fields.firstOrNull {
-                        it.type.name == pkg.ContactInfoClass.name
+                        it.type.name == ContactInfoClass.name
                     } ?: return@next
                 }
                 val contact = contactField?.get(item) ?: return@next
@@ -122,7 +123,7 @@ object WechatEvents {
     }
 
     fun onChatroomHiderConversationClick(view: View, username: String): Boolean {
-        view.context.startActivity(Intent(view.context, pkg.ChattingUI)
+        view.context.startActivity(Intent(view.context, ChattingUI)
                 .putExtra("Chat_Mode", 1)
                 .putExtra("Chat_User", username))
         return true

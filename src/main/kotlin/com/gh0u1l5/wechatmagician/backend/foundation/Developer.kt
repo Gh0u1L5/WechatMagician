@@ -9,6 +9,13 @@ import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.LogCat
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMListPopupWindow
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteCancellationSignal
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteCursorFactory
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SQLiteDatabase
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.XMLParseMethod
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.XMLParserClass
 import com.gh0u1l5.wechatmagician.util.MessageUtil.argsToString
 import com.gh0u1l5.wechatmagician.util.MessageUtil.bundleToString
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
@@ -21,14 +28,13 @@ import java.io.File
 
 object Developer {
 
-    private val pkg = WechatPackage
     private val pref = WechatHook.developer
 
     // Hook View.onTouchEvent to trace touch events.
     @JvmStatic fun traceTouchEvents() {
         if (pref.getBoolean(Global.DEVELOPER_UI_TOUCH_EVENT, false)) {
             findAndHookMethod(
-                    "android.view.View", pkg.loader,
+                    "android.view.View", WechatPackage.loader,
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -42,7 +48,7 @@ object Developer {
     @JvmStatic fun traceActivities() {
         if (pref.getBoolean(Global.DEVELOPER_UI_TRACE_ACTIVITIES, false)) {
             findAndHookMethod(
-                    "android.app.Activity", pkg.loader,
+                    "android.app.Activity", WechatPackage.loader,
                     "startActivity", C.Intent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -54,7 +60,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    "android.app.Activity", pkg.loader,
+                    "android.app.Activity", WechatPackage.loader,
                     "onCreate", C.Bundle, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
@@ -72,7 +78,7 @@ object Developer {
     // Hook MMListPopupWindow to trace every popup menu.
     @JvmStatic fun dumpPopupMenu() {
         if (pref.getBoolean(Global.DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
-            hookAllConstructors(pkg.MMListPopupWindow, object : XC_MethodHook() {
+            hookAllConstructors(MMListPopupWindow, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val menu = param.thisObject
@@ -83,7 +89,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    pkg.MMListPopupWindow, "setAdapter",
+                    MMListPopupWindow, "setAdapter",
                     C.ListAdapter, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -102,8 +108,8 @@ object Developer {
     @JvmStatic fun traceDatabase() {
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_QUERY, false)) {
             findAndHookMethod(
-                    pkg.SQLiteDatabase, "rawQueryWithFactory",
-                    pkg.SQLiteCursorFactory, C.String, C.StringArray, C.String, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
+                    SQLiteDatabase, "rawQueryWithFactory",
+                    SQLiteCursorFactory, C.String, C.StringArray, C.String, SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[1] as String?
@@ -115,7 +121,7 @@ object Developer {
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_INSERT, false)) {
             findAndHookMethod(
-                    pkg.SQLiteDatabase, "insertWithOnConflict",
+                    SQLiteDatabase, "insertWithOnConflict",
                     C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -128,7 +134,7 @@ object Developer {
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_UPDATE, false)) {
             findAndHookMethod(
-                    pkg.SQLiteDatabase, "updateWithOnConflict",
+                    SQLiteDatabase, "updateWithOnConflict",
                     C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -148,7 +154,7 @@ object Developer {
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_DELETE, false)) {
             findAndHookMethod(
-                    pkg.SQLiteDatabase, "delete",
+                    SQLiteDatabase, "delete",
                     C.String, C.String, C.StringArray, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -166,8 +172,8 @@ object Developer {
 
         if (pref.getBoolean(Global.DEVELOPER_DATABASE_EXECUTE, false)) {
             findAndHookMethod(
-                    pkg.SQLiteDatabase, "executeSql",
-                    C.String, C.ObjectArray, pkg.SQLiteCancellationSignal, object : XC_MethodHook() {
+                    SQLiteDatabase, "executeSql",
+                    C.String, C.ObjectArray, SQLiteCancellationSignal, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val sql = param.args[0] as String?
@@ -183,9 +189,7 @@ object Developer {
         if (pref.getBoolean(Global.DEVELOPER_TRACE_LOGCAT, false)) {
             val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
-                findAndHookMethod(
-                        pkg.LogCat, func,
-                        C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
+                findAndHookMethod(LogCat, func, C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
                         val tag = param.args[0] as String?
                         val msg = param.args[1] as String?
@@ -205,7 +209,7 @@ object Developer {
     @JvmStatic fun traceFiles() {
         if (pref.getBoolean(Global.DEVELOPER_TRACE_FILES, false)) {
             findAndHookConstructor(
-                    "java.io.FileInputStream", pkg.loader,
+                    "java.io.FileInputStream", WechatPackage.loader,
                     C.File, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -215,7 +219,7 @@ object Developer {
             })
 
             findAndHookConstructor(
-                    "java.io.FileOutputStream", pkg.loader,
+                    "java.io.FileOutputStream", WechatPackage.loader,
                     C.File, C.Boolean, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -225,7 +229,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    "java.io.File", pkg.loader, "delete", object : XC_MethodHook() {
+                    "java.io.File", WechatPackage.loader, "delete", object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val file = param.thisObject as File
                     log("FILE => Delete ${file.absolutePath}")
@@ -237,7 +241,7 @@ object Developer {
     // Hook XML Parser to trace the XML files used in Wechat.
     @JvmStatic fun traceXMLParse() {
         if (pref.getBoolean(Global.DEVELOPER_XML_PARSER, false)) {
-            findAndHookMethod(pkg.XMLParserClass, pkg.XMLParseMethod, object : XC_MethodHook() {
+            findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val xml = param.args[0] as String?

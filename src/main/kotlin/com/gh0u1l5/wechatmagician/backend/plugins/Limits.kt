@@ -12,7 +12,10 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMActivity
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectContactUI
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectConversationUI
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectConversationUIMaxLimitMethod
 import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
@@ -23,7 +26,6 @@ import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 object Limits : IActivityHook {
 
     private val str = LocalizedStrings
-    private val pkg = WechatPackage
     private val pref = WechatHook.settings
     private val events = WechatEvents
 
@@ -42,11 +44,11 @@ object Limits : IActivityHook {
     @JvmStatic fun breakSelectContactLimit() {
         // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
         findAndHookMethod(
-                pkg.MMActivity, "onCreateOptionsMenu",
+                MMActivity, "onCreateOptionsMenu",
                 C.Menu, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.thisObject.javaClass != pkg.SelectContactUI) {
+                if (param.thisObject.javaClass != SelectContactUI) {
                     return
                 }
 
@@ -85,7 +87,7 @@ object Limits : IActivityHook {
 
         // Hook SelectContactUI to help the "Select All" button.
         findAndHookMethod(
-                pkg.SelectContactUI, "onActivityResult",
+                SelectContactUI, "onActivityResult",
                 C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -104,7 +106,7 @@ object Limits : IActivityHook {
 
         // Hook SelectContactUI to bypass the limit on number of recipients.
         findAndHookMethod(
-                pkg.SelectContactUI, "onCreate",
+                SelectContactUI, "onCreate",
                 C.Bundle, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -118,7 +120,7 @@ object Limits : IActivityHook {
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
     @JvmStatic fun breakSelectConversationLimit() {
-        findAndHookMethod(pkg.SelectConversationUI, pkg.SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
+        findAndHookMethod(SelectConversationUI, SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false

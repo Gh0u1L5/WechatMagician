@@ -7,14 +7,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_COMMAND
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ActionBarEditText
 import com.gh0u1l5.wechatmagician.backend.foundation.base.EventCenter
 import com.gh0u1l5.wechatmagician.backend.interfaces.ISearchBarConsole
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
 
 object SearchBar : EventCenter() {
-
-    private val pkg = WechatPackage
 
     private fun cleanup(search: EditText, editable: Editable?) {
         // Hide Input Method
@@ -25,7 +24,7 @@ object SearchBar : EventCenter() {
     }
 
     @JvmStatic fun hookEvents() {
-        hookAllConstructors(pkg.ActionBarEditText, object : XC_MethodHook() {
+        hookAllConstructors(ActionBarEditText, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val search = param.thisObject as EditText
                 search.addTextChangedListener(object : TextWatcher {
@@ -51,6 +50,6 @@ object SearchBar : EventCenter() {
             }
         })
 
-        pkg.setStatus(STATUS_FLAG_COMMAND, true)
+        WechatPackage.setStatus(STATUS_FLAG_COMMAND, true)
     }
 }

@@ -3,7 +3,11 @@ package com.gh0u1l5.wechatmagician.backend.foundation
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Predicate
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.AddressAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.BaseAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationWithCacheAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMBaseAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMBaseAdapterGetMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.util.concurrent.ConcurrentHashMap
@@ -36,7 +40,6 @@ object ListViewHider {
             @Volatile var predicates: Map<String, Predicate>
     )
 
-    private val pkg = WechatPackage
     private val records: MutableMap<BaseAdapter, Record> = ConcurrentHashMap()
 
     fun register(adapter: BaseAdapter, predicateName: String, predicateBody: Predicate) {
@@ -70,7 +73,7 @@ object ListViewHider {
 
     @JvmStatic fun hijackMMBaseAdapter() {
         // Hook getItem() of base adapters
-        findAndHookMethod(pkg.MMBaseAdapter, pkg.MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(MMBaseAdapter, MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val adapter = param.thisObject as BaseAdapter
                 val index = param.args[0] as Int
@@ -85,7 +88,7 @@ object ListViewHider {
         })
 
         // Hook getCount() of base adapters
-        findAndHookMethod(pkg.MMBaseAdapter, "getCount", object : XC_MethodHook() {
+        findAndHookMethod(MMBaseAdapter, "getCount", object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val adapter = param.thisObject as BaseAdapter
                 val sections = records[adapter]?.sections ?: return
@@ -96,13 +99,13 @@ object ListViewHider {
         })
 
         // Hook notifyDataSetChanged() of base adapters
-        findAndHookMethod(pkg.BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
+        findAndHookMethod(BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 when (param.thisObject.javaClass) {
-                    pkg.AddressAdapter -> {
+                    AddressAdapter -> {
                         updateAdapterSections(param)
                     }
-                    pkg.ConversationWithCacheAdapter -> {
+                    ConversationWithCacheAdapter -> {
                         updateAdapterSections(param)
                     }
                 }

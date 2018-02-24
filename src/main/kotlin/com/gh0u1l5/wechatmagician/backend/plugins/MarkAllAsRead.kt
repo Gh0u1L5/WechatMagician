@@ -6,7 +6,7 @@ import android.content.Intent
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_CLEAN_UNREAD
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MARK_ALL_AS_READ
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.LauncherUI
 import com.gh0u1l5.wechatmagician.backend.foundation.MenuAppender
 import com.gh0u1l5.wechatmagician.backend.interfaces.IPopupMenuHook
 import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
@@ -17,7 +17,6 @@ import me.leolin.shortcutbadger.ShortcutBadger
 object MarkAllAsRead : IPopupMenuHook {
 
     private val str = LocalizedStrings
-    private val pkg = WechatPackage
     private val pref = WechatHook.settings
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_MARK_ALL_AS_READ, true)
@@ -30,7 +29,7 @@ object MarkAllAsRead : IPopupMenuHook {
         MainDatabase.cleanUnreadCount()
         ShortcutBadger.removeCount(activity)
         activity.finish()
-        activity.startActivity(Intent(activity, pkg.LauncherUI).apply {
+        activity.startActivity(Intent(activity, LauncherUI).apply {
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             addFlags(Intent.FLAG_ACTIVITY_TASK_ON_HOME)
         })

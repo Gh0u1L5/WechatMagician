@@ -13,9 +13,9 @@ object SnsBlock : IXmlParserHook {
     private const val ID_TAG      = ".TimelineObject.id"
     private const val PRIVATE_TAG = ".TimelineObject.private"
 
-    private val settings = WechatHook.settings
+    private val pref = WechatHook.settings
 
-    private fun isPluginEnabled() = settings.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)
+    private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)
 
     override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
@@ -23,7 +23,7 @@ object SnsBlock : IXmlParserHook {
         }
         if (root == ROOT_TAG && xml[PRIVATE_TAG] != "1") {
             val content = xml[CONTENT_TAG] ?: return
-            val keywords = settings.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, emptyList())
+            val keywords = pref.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, emptyList())
             keywords.forEach { keyword ->
                 if (content.contains(keyword)) {
                     SnsBlacklist += xml[ID_TAG]

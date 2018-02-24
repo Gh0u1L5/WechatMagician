@@ -4,6 +4,11 @@ import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_IMG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ImgStorageClass
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ImgStorageObject
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageClass
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageInsertMethod
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageObject
 import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
@@ -13,23 +18,18 @@ import de.robv.android.xposed.XposedHelpers.getLongField
 import java.io.File
 
 object Storage {
-
-    private val pkg = WechatPackage
-
     @JvmStatic fun hookMsgStorage() {
         // Analyze dynamically to find the global message storage instance.
-        hookAllConstructors(pkg.MsgStorageClass, object : XC_MethodHook() {
-            @Throws(Throwable::class)
+        hookAllConstructors(MsgStorageClass, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (pkg.MsgStorageObject !== param.thisObject) {
-                    pkg.MsgStorageObject = param.thisObject
+                if (MsgStorageObject !== param.thisObject) {
+                    MsgStorageObject = param.thisObject
                 }
             }
         })
 
         // Hook MsgStorage to record the received messages.
-        findAndHookMethod(pkg.MsgStorageClass, pkg.MsgStorageInsertMethod, object : XC_MethodHook() {
-            @Throws(Throwable::class)
+        findAndHookMethod(MsgStorageClass, MsgStorageInsertMethod, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 tryAsynchronously {
                     val msg = param.args[0]
@@ -39,22 +39,22 @@ object Storage {
             }
         })
 
-        pkg.setStatus(STATUS_FLAG_MSG_STORAGE, true)
+        WechatPackage.setStatus(STATUS_FLAG_MSG_STORAGE, true)
     }
 
     @JvmStatic fun hookImgStorage() {
         // Analyze dynamically to find the global image storage instance.
-        hookAllConstructors(pkg.ImgStorageClass, object : XC_MethodHook() {
-            @Throws(Throwable::class)
+        hookAllConstructors(ImgStorageClass, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                if (pkg.ImgStorageObject !== param.thisObject) {
-                    pkg.ImgStorageObject = param.thisObject
+                if (ImgStorageObject !== param.thisObject) {
+                    ImgStorageObject = param.thisObject
                 }
             }
         })
 
-//        findAndHookMethod(pkg.ImgStorageClass, pkg.ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
-//            @Throws(Throwable::class)
+//        findAndHookMethod(
+//                ImgStorageClass, ImgStorageLoadMethod,
+//                C.String, C.String, C.String, C.Boolean, object : XC_MethodHook() {
 //            override fun afterHookedMethod(param: MethodHookParam) {
 //                val imgId = param.args[0] as String?
 //                val prefix = param.args[1] as String?
@@ -65,9 +65,8 @@ object Storage {
 
 //        // Hook FileOutputStream to prevent Wechat from overwriting disk cache.
 //        findAndHookConstructor(
-//                "java.io.FileOutputStream", loader,
+//                "java.io.FileOutputStream", WechatPackage.loader,
 //                C.File, C.Boolean, object : XC_MethodHook() {
-//            @Throws(Throwable::class)
 //            override fun beforeHookedMethod(param: MethodHookParam) {
 //                val path = (param.args[0] as File?)?.absolutePath ?: return
 //                if (path in ImageUtil.blockTable) {
@@ -76,11 +75,12 @@ object Storage {
 //            }
 //        })
 
-        pkg.setStatus(STATUS_FLAG_IMG_STORAGE, true)
+        WechatPackage.setStatus(STATUS_FLAG_IMG_STORAGE, true)
     }
 
     @JvmStatic fun hookFileStorage() {
-        findAndHookMethod("java.io.File", pkg.loader, "delete", object : XC_MethodHook() {
+        findAndHookMethod(
+                "java.io.File", WechatPackage.loader, "delete", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path = (param.thisObject as File).absolutePath
                 when {

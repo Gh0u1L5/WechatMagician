@@ -13,7 +13,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
 import com.gh0u1l5.wechatmagician.backend.WechatEvents
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUI
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUIEditTextField
 import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUserUIAdapterObject
 import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
@@ -77,7 +78,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 return
             }
 
-            val intent = Intent(context.get(), pkg.SnsUploadUI)
+            val intent = Intent(context.get(), SnsUploadUI)
                     .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                     .putExtra("Ksnsforward", true)
                     .putExtra("Ksnsupload_type", 9)
@@ -117,7 +118,6 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     private const val ROOT_TAG = "TimelineObject"
     private const val ID_TAG   = ".TimelineObject.id"
 
-    private val pkg = WechatPackage
     private val events = WechatEvents
 
     override fun onDatabaseOpen(path: String, database: Any) {
@@ -194,7 +194,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         val intent = activity.intent ?: return
         if (intent.getBooleanExtra("Ksnsforward", false)) {
             val content = intent.getStringExtra("Kdescription")
-            val editTextField = pkg.SnsUploadUIEditTextField
+            val editTextField = SnsUploadUIEditTextField
             val editText = getObjectField(activity, editTextField)
             XposedHelpers.callMethod(editText, "setText", content)
         }

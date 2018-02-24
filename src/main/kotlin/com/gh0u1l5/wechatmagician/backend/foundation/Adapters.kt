@@ -3,7 +3,9 @@ package com.gh0u1l5.wechatmagician.backend.foundation
 import android.view.View
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.C
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.AddressAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationWithCacheAdapter
+import com.gh0u1l5.wechatmagician.backend.WechatPackage.HeaderViewListAdapter
 import com.gh0u1l5.wechatmagician.backend.foundation.base.EventCenter
 import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
 import de.robv.android.xposed.XC_MethodHook
@@ -12,11 +14,8 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
 object Adapters : EventCenter() {
-
-    private val pkg = WechatPackage
-
     @JvmStatic fun hookEvents() {
-        hookAllConstructors(pkg.AddressAdapter, object : XC_MethodHook() {
+        hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("onAddressAdapterCreated") { plugin ->
                     if (plugin is IAdapterHook) {
@@ -30,7 +29,7 @@ object Adapters : EventCenter() {
                 }
             }
         })
-        hookAllConstructors(pkg.ConversationWithCacheAdapter, object : XC_MethodHook() {
+        hookAllConstructors(ConversationWithCacheAdapter, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("onConversationAdapterCreated") { plugin ->
                     if (plugin is IAdapterHook) {
@@ -45,7 +44,7 @@ object Adapters : EventCenter() {
             }
         })
         findAndHookMethod(
-                pkg.HeaderViewListAdapter, "getView",
+                HeaderViewListAdapter, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("onSnsUserUIAdapterGetView") { plugin ->
