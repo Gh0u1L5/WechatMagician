@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers.base
 
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class EventCenter {
@@ -29,7 +30,9 @@ abstract class EventCenter {
         if (event == "") {
             throw IllegalArgumentException("event cannot be empty!")
         }
-        registries[event]?.forEach(action)
+        registries[event]?.forEach {
+            tryVerbosely { action(it) }
+        }
     }
 
     fun notifyParallel(event: String, action: (Any) -> Unit) {
@@ -45,6 +48,8 @@ abstract class EventCenter {
         if (event == "") {
             throw IllegalArgumentException("event cannot be empty!")
         }
-        return registries[event]?.mapNotNull(action) ?: emptyList()
+        return registries[event]?.mapNotNull {
+            tryVerbosely { action(it) }
+        } ?: emptyList()
     }
 }

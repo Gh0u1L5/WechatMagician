@@ -20,8 +20,6 @@ import de.robv.android.xposed.XposedHelpers.getLongField
 
 object Storage : EventCenter() {
 
-    // TODO: directly cast plugins in notify()
-
     override val interfaces: List<Class<*>>
         get() = listOf(IMessageStorageHook::class.java, IImageStorageHook::class.java)
 
@@ -40,7 +38,6 @@ object Storage : EventCenter() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val msgObject = param.args[0]
                 val msgId = getLongField(msgObject, "field_msgId")
-                // TODO: check if other notify() initialize variables out of its body
                 notify("onMessageStorageInsert") { plugin ->
                     (plugin as IMessageStorageHook).onMessageStorageInsert(msgId, msgObject)
                 }

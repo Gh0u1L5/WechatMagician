@@ -78,10 +78,7 @@ object MenuAppender : EventCenter() {
                 val view = param.args[1] as View
 
                 currentMenuItems = notifyForResult("onCreatePopupMenuForContacts") { plugin ->
-                    return@notifyForResult if (plugin is IPopupMenuHook) {
-                        plugin.onCreatePopupMenuForContacts(currentUsername
-                                ?: "")
-                    } else null
+                    (plugin as IPopupMenuHook).onCreatePopupMenuForContacts(currentUsername ?: "")
                 }.sortedBy { it.itemId }
 
                 currentMenuItems?.forEach {
@@ -118,10 +115,7 @@ object MenuAppender : EventCenter() {
                 val menu = param.args[0] as ContextMenu
 
                 currentMenuItems = notifyForResult("onCreatePopupMenuForConversations") { plugin ->
-                    return@notifyForResult if (plugin is IPopupMenuHook) {
-                        plugin.onCreatePopupMenuForConversations(currentUsername
-                                ?: "")
-                    } else null
+                    (plugin as IPopupMenuHook).onCreatePopupMenuForConversations(currentUsername ?: "")
                 }.sortedBy { it.itemId }
 
                 currentMenuItems?.forEach {

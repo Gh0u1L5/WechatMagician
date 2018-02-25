@@ -22,73 +22,49 @@ object Activities : EventCenter() {
     @WechatHookMethod @JvmStatic fun hookEvents() {
         findAndHookMethod(AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onAlbumPreviewUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onAlbumPreviewUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onAlbumPreviewUICreated(activity)
                 }
             }
         })
         findAndHookMethod(ChattingUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onChattingUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onChattingUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onChattingUICreated(activity)
                 }
             }
         })
         findAndHookMethod(WebWXLoginUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onWebLoginUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onWebLoginUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onWebLoginUICreated(activity)
                 }
             }
         })
         findAndHookMethod(SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onSnsTimelineUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onSnsTimelineUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onSnsTimelineUICreated(activity)
                 }
             }
         })
         findAndHookMethod(SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onSnsUploadUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onSnsUploadUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onSnsUploadUICreated(activity)
                 }
             }
         })
         findAndHookMethod(SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val activity = param.thisObject as? Activity ?: return
                 notify("onSnsUserUICreated") { plugin ->
-                    if (plugin is IActivityHook) {
-                        val activity = param.thisObject
-                        if (activity is Activity) {
-                            plugin.onSnsUserUICreated(activity)
-                        }
-                    }
+                    (plugin as IActivityHook).onSnsUserUICreated(activity)
                 }
             }
         })

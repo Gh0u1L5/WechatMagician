@@ -25,23 +25,18 @@ object Database : EventCenter() {
                 C.String, SQLiteCursorFactory, C.Int, SQLiteErrorHandler, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseOpen") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseOpen(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseOpen(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseOpen") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseOpen(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseOpen(param)
                 }
+
+                val path     = param.args[0] as String
+                val database = param.result
                 notify("onDatabaseOpen") { plugin ->
-                    if (plugin is IDatabaseHook) {
-                        val path     = param.args[0] as String
-                        val database = param.result
-                        plugin.onDatabaseOpen(path, database)
-                    }
+                    (plugin as IDatabaseHook).onDatabaseOpen(path, database)
                 }
             }
         })
@@ -51,16 +46,12 @@ object Database : EventCenter() {
                 SQLiteCursorFactory, C.String, C.StringArray, C.String, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseQuery") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseQuery(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseQuery(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseQuery") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseQuery(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseQuery(param)
                 }
             }
         })
@@ -70,16 +61,12 @@ object Database : EventCenter() {
                 C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseInsert") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseInsert(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseInsert(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseInsert") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseInsert(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseInsert(param)
                 }
             }
         })
@@ -89,16 +76,12 @@ object Database : EventCenter() {
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseUpdate") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseUpdate(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseUpdate(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseUpdate") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseUpdate(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseUpdate(param)
                 }
             }
         })
@@ -108,16 +91,12 @@ object Database : EventCenter() {
                 C.String, C.String, C.StringArray, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseDelete") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseDelete(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseDelete(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseDelete") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseDelete(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseDelete(param)
                 }
             }
         })
@@ -127,16 +106,12 @@ object Database : EventCenter() {
                 C.String, C.ObjectArray, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeDatabaseExecute") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.beforeDatabaseExecute(param)
-                    }
+                    (plugin as IDatabaseHookRaw).beforeDatabaseExecute(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterDatabaseExecute") { plugin ->
-                    if (plugin is IDatabaseHookRaw) {
-                        plugin.afterDatabaseExecute(param)
-                    }
+                    (plugin as IDatabaseHookRaw).afterDatabaseExecute(param)
                 }
             }
         })

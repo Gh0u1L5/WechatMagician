@@ -37,13 +37,12 @@ object SearchBar : EventCenter() {
                     override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
 
                     override fun afterTextChanged(editable: Editable?) {
-                        val command = editable.toString()
-                        if (!command.endsWith("#")) {
-                            return
-                        }
-                        notify("onHandleCommand") { plugin ->
-                            if (plugin is ISearchBarConsole) {
-                                val consumed = plugin.onHandleCommand(search.context, command.drop(1).dropLast(1))
+                        val context = search.context
+                        var command = editable.toString()
+                        if (command.startsWith("#") && command.endsWith("#")) {
+                            command = command.drop(1).dropLast(1)
+                            notify("onHandleCommand") { plugin ->
+                                val consumed = (plugin as ISearchBarConsole).onHandleCommand(context, command)
                                 if (consumed) {
                                     cleanup(search, editable)
                                 }

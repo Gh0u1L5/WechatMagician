@@ -22,29 +22,25 @@ object Adapters : EventCenter() {
     @WechatHookMethod @JvmStatic fun hookEvents() {
         hookAllConstructors(AddressAdapter, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject as? BaseAdapter
+                if (adapter == null) {
+                    log("Expect address adapter to be BaseAdapter, get ${param.thisObject::class.java}")
+                    return
+                }
                 notify("onAddressAdapterCreated") { plugin ->
-                    if (plugin is IAdapterHook) {
-                        val adapter = param.thisObject as? BaseAdapter
-                        if (adapter != null) {
-                            plugin.onAddressAdapterCreated(adapter)
-                            return@notify
-                        }
-                        log("Expect address adapter to be BaseAdapter, get ${param.thisObject::class.java}")
-                    }
+                    (plugin as IAdapterHook).onAddressAdapterCreated(adapter)
                 }
             }
         })
         hookAllConstructors(ConversationWithCacheAdapter, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject as? BaseAdapter
+                if (adapter == null) {
+                    log("Expect conversation adapter to be BaseAdapter, get ${param.thisObject::class.java}")
+                    return
+                }
                 notify("onConversationAdapterCreated") { plugin ->
-                    if (plugin is IAdapterHook) {
-                        val adapter = param.thisObject as? BaseAdapter
-                        if (adapter != null) {
-                            plugin.onConversationAdapterCreated(adapter)
-                            return@notify
-                        }
-                        log("Expect conversation adapter to be BaseAdapter, get ${param.thisObject::class.java}")
-                    }
+                    (plugin as IAdapterHook).onConversationAdapterCreated(adapter)
                 }
             }
         })
@@ -52,15 +48,11 @@ object Adapters : EventCenter() {
                 HeaderViewListAdapter, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
+                val adapter = param.thisObject
+                val convertView = param.args[1] as View?
+                val view = param.result as View? ?: return
                 notify("onSnsUserUIAdapterGetView") { plugin ->
-                    if (plugin is IAdapterHook) {
-                        val adapter = param.thisObject
-                        val convertView = param.args[1] as View?
-                        val view = param.result as View?
-                        if (view != null) {
-                            plugin.onSnsUserUIAdapterGetView(adapter, convertView, view)
-                        }
-                    }
+                    (plugin as IAdapterHook).onSnsUserUIAdapterGetView(adapter, convertView, view)
                 }
             }
         })

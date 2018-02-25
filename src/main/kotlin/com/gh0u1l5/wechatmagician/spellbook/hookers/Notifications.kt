@@ -17,16 +17,12 @@ object Notifications : EventCenter() {
         findAndHookMethod(NotificationAppMsgQueue, NotificationAppMsgQueueAddMethod, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeAddMessageNotification") { plugin ->
-                    if (plugin is INotificationHookRaw) {
-                        plugin.beforeAddMessageNotification(param)
-                    }
+                    (plugin as INotificationHookRaw).beforeAddMessageNotification(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
                 notify("afterAddMessageNotification") { plugin ->
-                    if (plugin is INotificationHookRaw) {
-                        plugin.afterAddMessageNotification(param)
-                    }
+                    (plugin as INotificationHookRaw).afterAddMessageNotification(param)
                 }
             }
         })

@@ -4,9 +4,9 @@ import de.robv.android.xposed.XposedBridge
 import kotlin.concurrent.thread
 
 object BasicUtil {
-    fun tryVerbosely(func: () -> Unit) {
-        try { func() } catch (t: Throwable) {
-            XposedBridge.log(t)
+    fun <T: Any>tryVerbosely(func: () -> T?): T? {
+        return try { func() } catch (t: Throwable) {
+            XposedBridge.log(t); null
         }
     }
 
