@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.os.Environment
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.text.SimpleDateFormat
 import java.util.*
@@ -11,7 +11,7 @@ import java.util.*
 object ImageUtil {
 
     // blockTable records all the thumbnail files changed by ImageUtil
-    // In WechatHook.hookImgStorage, the module hooks FileOutputStream
+    // In WechatHook.hookImageStorage, the module hooks FileOutputStream
     // to prevent anyone from overwriting these files.
     @Volatile var blockTable: Set<String> = setOf()
 

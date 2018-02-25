@@ -9,10 +9,10 @@ import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_UNNAMED
-import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
-import com.gh0u1l5.wechatmagician.storage.list.ChatroomHideList
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.LABEL_UNNAMED
+import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
+import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers
 

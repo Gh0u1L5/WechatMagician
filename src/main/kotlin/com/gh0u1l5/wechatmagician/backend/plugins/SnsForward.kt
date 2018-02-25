@@ -10,29 +10,28 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListPopupWindow
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global.tryAsynchronously
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUI
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUploadUIEditTextField
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsUserUIAdapterObject
-import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_SNS_FORWARD
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_SCREENSHOT
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_SNS_INVALID
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_WAIT
+import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_FORWARD
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SCREENSHOT
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_SNS_INVALID
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_WAIT
-import com.gh0u1l5.wechatmagician.storage.cache.SnsCache
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUploadUI
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUploadUIEditTextField
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUserUIAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.util.*
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getListViewFromSnsActivity
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getViewAtPosition
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.*
 import java.lang.ref.WeakReference
 
@@ -198,7 +197,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
             val content = intent.getStringExtra("Kdescription")
             val editTextField = SnsUploadUIEditTextField
             val editText = getObjectField(activity, editTextField)
-            XposedHelpers.callMethod(editText, "setText", content)
+            callMethod(editText, "setText", content)
         }
     }
 

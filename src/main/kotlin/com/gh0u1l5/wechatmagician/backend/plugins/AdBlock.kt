@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_ADBLOCK
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHookRaw
 import de.robv.android.xposed.XC_MethodHook
 
 object AdBlock : IXmlParserHookRaw {

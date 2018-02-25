@@ -3,10 +3,10 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHookRaw
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.LABEL_DELETED
-import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.LABEL_DELETED
+import com.gh0u1l5.wechatmagician.backend.storage.list.SnsBlacklist
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHookRaw
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 

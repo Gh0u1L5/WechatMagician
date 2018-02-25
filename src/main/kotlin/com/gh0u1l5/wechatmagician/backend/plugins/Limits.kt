@@ -3,25 +3,26 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Color
+import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.HeaderViewListAdapter
 import android.widget.ListView
 import android.widget.TextView
-import com.gh0u1l5.wechatmagician.C
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatPackage
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.MMActivity
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectContactUI
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectConversationUI
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SelectConversationUIMaxLimitMethod
-import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_SELECT_ALL
-import com.gh0u1l5.wechatmagician.util.PackageUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_SELECT_ALL
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMActivity
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectContactUI
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUI
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUIMaxLimitMethod
+import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
+import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -44,11 +45,11 @@ object Limits : IActivityHook {
         }
     }
 
-    @JvmStatic fun breakSelectContactLimit() {
+    @WechatHookMethod @JvmStatic fun breakSelectContactLimit() {
         // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
         findAndHookMethod(
                 MMActivity, "onCreateOptionsMenu",
-                C.Menu, object : XC_MethodHook() {
+                Menu::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun afterHookedMethod(param: MethodHookParam) {
                 if (param.thisObject::class.java != SelectContactUI) {
@@ -91,7 +92,7 @@ object Limits : IActivityHook {
         // Hook SelectContactUI to help the "Select All" button.
         findAndHookMethod(
                 SelectContactUI, "onActivityResult",
-                C.Int, C.Int, C.Intent, object : XC_MethodHook() {
+                Int::class.java, Int::class.java, Intent::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val requestCode = param.args[0] as Int
@@ -110,7 +111,7 @@ object Limits : IActivityHook {
         // Hook SelectContactUI to bypass the limit on number of recipients.
         findAndHookMethod(
                 SelectContactUI, "onCreate",
-                C.Bundle, object : XC_MethodHook() {
+                Bundle::class.java, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val intent = (param.thisObject as Activity).intent ?: return
@@ -122,7 +123,7 @@ object Limits : IActivityHook {
     }
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
-    @JvmStatic fun breakSelectConversationLimit() {
+    @WechatHookMethod @JvmStatic fun breakSelectConversationLimit() {
         findAndHookMethod(SelectConversationUI, SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
@@ -138,7 +139,7 @@ object Limits : IActivityHook {
         intent.putExtra("already_select_contact", "")
         if (isChecked) {
             // Search for the ListView of contacts
-            val listView = XposedHelpers.findFirstFieldByExactType(activity::class.java, C.ListView)
+            val listView = XposedHelpers.findFirstFieldByExactType(activity::class.java, ListView::class.java)
                     .get(activity) as ListView? ?: return
             val adapter = (listView.adapter as HeaderViewListAdapter).wrappedAdapter
 

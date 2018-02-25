@@ -15,12 +15,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_DATABASE
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_MSG_STORAGE
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_RESOURCES
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_URI_ROUTER
-import com.gh0u1l5.wechatmagician.Global.STATUS_FLAG_XML_PARSER
 import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_DATABASE
+import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_MSG_STORAGE
+import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_RESOURCES
+import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_URI_ROUTER
+import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_XML_PARSER
 import kotlinx.android.synthetic.main.fragment_status.*
 
 class StatusFragment : Fragment() {

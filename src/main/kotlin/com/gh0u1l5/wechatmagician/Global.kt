@@ -2,8 +2,6 @@ package com.gh0u1l5.wechatmagician
 
 import android.annotation.SuppressLint
 import android.os.Build
-import de.robv.android.xposed.XposedBridge.log
-import kotlin.concurrent.thread
 
 object Global {
     const val SALT = "W3ch4tM4g1c14n"
@@ -19,14 +17,6 @@ object Global {
     val XPOSED_BASE_DIR = "$DATA_DIR/$XPOSED_PACKAGE_NAME/"
 
     const val FOLDER_SHARED_PREFS = "shared_prefs"
-
-    const val STATUS_FLAG_MSG_STORAGE = "MsgStorage"
-    const val STATUS_FLAG_IMG_STORAGE = "ImgStorage"
-    const val STATUS_FLAG_RESOURCES   = "Resources"
-    const val STATUS_FLAG_DATABASE    = "Database"
-    const val STATUS_FLAG_XML_PARSER  = "XmlParser"
-    const val STATUS_FLAG_URI_ROUTER  = "UriRouter"
-    const val STATUS_FLAG_COMMAND     = "SearchBarCommand"
 
     const val PREFERENCE_PROVIDER_AUTHORITY   = "com.gh0u1l5.wechatmagician.preferences"
     const val PREFERENCE_NAME_SETTINGS        = "settings"
@@ -70,14 +60,4 @@ object Global {
     const val ITEM_ID_BUTTON_HIDE_FRIEND   = 0x510
     const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511
     const val ITEM_ID_BUTTON_CLEAN_UNREAD  = 0x512
-
-    fun tryVerbosely(func: () -> Unit) {
-        try { func() } catch (t: Throwable) { log(t) }
-    }
-
-    fun tryAsynchronously(func: () -> Unit): Thread {
-        return thread(start = true) { func() }.apply {
-            setUncaughtExceptionHandler { _, t -> log(t) }
-        }
-    }
 }

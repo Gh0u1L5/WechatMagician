@@ -3,8 +3,8 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.RemittanceAdapter
-import com.gh0u1l5.wechatmagician.backend.interfaces.IUriRouterHook
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.RemittanceAdapter
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IUriRouterHook
 
 object Donate : IUriRouterHook {
     override fun onUriRouterReceive(activity: Activity, uri: Uri) {

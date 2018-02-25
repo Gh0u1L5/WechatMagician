@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.AlertDialog
 import android.content.Context
-import com.gh0u1l5.wechatmagician.backend.interfaces.ISearchBarConsole
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.ISearchBarConsole
 
 object Alert : ISearchBarConsole {
     // Add "alert" command for SearchBar console.

@@ -6,12 +6,12 @@ import android.content.Intent
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_CLEAN_UNREAD
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MARK_ALL_AS_READ
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.LauncherUI
-import com.gh0u1l5.wechatmagician.backend.foundation.MenuAppender
-import com.gh0u1l5.wechatmagician.backend.interfaces.IPopupMenuHook
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.BUTTON_CLEAN_UNREAD
-import com.gh0u1l5.wechatmagician.storage.database.MainDatabase
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_CLEAN_UNREAD
+import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.LauncherUI
+import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
 import me.leolin.shortcutbadger.ShortcutBadger
 
 object MarkAllAsRead : IPopupMenuHook {

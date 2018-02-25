@@ -1,19 +1,31 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.widget.BaseAdapter
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.AddressAdapterObject
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.ConversationAdapterObject
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.MainDatabaseObject
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.SnsDatabaseObject
-import com.gh0u1l5.wechatmagician.backend.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IAdapterHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MainDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
 import de.robv.android.xposed.XC_MethodHook
 import java.lang.ref.WeakReference
 
-object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHookRaw {
+object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHookRaw, IMessageStorageHook, IImageStorageHook {
 
     // TODO: hook more objects in this plugin
+
+    override fun onMessageStorageCreated(storage: Any) {
+        if (MsgStorageObject !== storage) {
+            MsgStorageObject = storage
+        }
+    }
+
+    override fun onImageStorageCreated(storage: Any) {
+        if (ImgStorageObject !== storage) {
+            ImgStorageObject = storage
+        }
+    }
 
     override fun onAddressAdapterCreated(adapter: BaseAdapter) {
         AddressAdapterObject = WeakReference(adapter)

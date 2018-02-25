@@ -3,8 +3,8 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHook
-import com.gh0u1l5.wechatmagician.storage.list.SnsBlacklist
+import com.gh0u1l5.wechatmagician.backend.storage.list.SnsBlacklist
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
 
 object SnsBlock : IXmlParserHook {
 

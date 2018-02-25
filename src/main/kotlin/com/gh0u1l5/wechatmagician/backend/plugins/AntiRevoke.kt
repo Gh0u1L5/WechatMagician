@@ -3,21 +3,25 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
-import com.gh0u1l5.wechatmagician.Global.tryVerbosely
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageInsertMethod
-import com.gh0u1l5.wechatmagician.backend.WechatPackage.MsgStorageObject
-import com.gh0u1l5.wechatmagician.backend.interfaces.IDatabaseHookRaw
-import com.gh0u1l5.wechatmagician.backend.interfaces.IXmlParserHook
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.storage.LocalizedStrings.PROMPT_RECALL
-import com.gh0u1l5.wechatmagician.storage.cache.MessageCache
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
+import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_RECALL
+import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageInsertMethod
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
+import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import com.gh0u1l5.wechatmagician.util.PackageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
+import java.io.File
 
-object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
+object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, IXmlParserHook {
 
     private const val ROOT_TAG        = "sysmsg"
     private const val TYPE_TAG        = ".sysmsg.\$type"
@@ -27,6 +31,25 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
     private val pref = WechatHook.settings
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_CHATTING_RECALL, true)
+
+    override fun onMessageStorageInsert(msgId: Long, msgObject: Any) {
+        tryAsynchronously {
+            MessageCache[msgId] = msgObject
+        }
+    }
+
+    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
+        if (!isPluginEnabled()) {
+            return
+        }
+        if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
+            val msg = xml[REPLACE_MSG_TAG] ?: return
+            if (msg.startsWith("\"")) {
+                val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, str[PROMPT_RECALL])
+                xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
+            }
+        }
+    }
 
     override fun beforeDatabaseUpdate(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
@@ -52,16 +75,12 @@ object AntiRevoke : IDatabaseHookRaw, IXmlParserHook {
         }
     }
 
-    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
-        if (!isPluginEnabled()) {
-            return
-        }
-        if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
-            val msg = xml[REPLACE_MSG_TAG] ?: return
-            if (msg.startsWith("\"")) {
-                val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, str[PROMPT_RECALL])
-                xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
-            }
+    override fun beforeFileDelete(param: XC_MethodHook.MethodHookParam) {
+        val path = (param.thisObject as File).absolutePath
+        when {
+            path.contains("/image2/") -> param.result = true
+            path.contains("/voice2/") -> param.result = true
+            path.contains("/video/") -> param.result = true
         }
     }
 
