@@ -17,7 +17,7 @@ object SnsBlock : IXmlParserHook {
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)
 
-    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
             return
         }

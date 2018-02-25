@@ -11,7 +11,7 @@ import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
 import de.robv.android.xposed.XC_MethodHook
 import java.lang.ref.WeakReference
 
-object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHookRaw, IMessageStorageHook, IImageStorageHook {
+object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHook, IMessageStorageHook, IImageStorageHook {
 
     // TODO: hook more objects in this plugin
 
@@ -35,16 +35,15 @@ object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHookRaw, IMessageSt
         ConversationAdapterObject = WeakReference(adapter)
     }
 
-    override fun afterDatabaseOpen(param: XC_MethodHook.MethodHookParam) {
-        val path = param.args[0] as String
+    override fun onDatabaseOpened(path: String, database: Any) {
         if (path.endsWith("SnsMicroMsg.db")) {
-            if (SnsDatabaseObject !== param.result) {
-                SnsDatabaseObject = param.result
+            if (SnsDatabaseObject !== database) {
+                SnsDatabaseObject = database
             }
         }
     }
 
-    override fun afterDatabaseUpdate(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseUpdated(param: XC_MethodHook.MethodHookParam) {
         val path = param.thisObject?.toString() ?: ""
         if (path.endsWith("EnMicroMsg.db")) {
             if (MainDatabaseObject !== param.thisObject) {

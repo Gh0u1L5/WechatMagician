@@ -9,8 +9,8 @@ import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageInsertMethod
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
-import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHookRaw
-import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
@@ -21,7 +21,7 @@ import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import java.io.File
 
-object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, IXmlParserHook {
+object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlParserHook {
 
     private const val ROOT_TAG        = "sysmsg"
     private const val TYPE_TAG        = ".sysmsg.\$type"
@@ -32,13 +32,13 @@ object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, I
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_CHATTING_RECALL, true)
 
-    override fun onMessageStorageInsert(msgId: Long, msgObject: Any) {
+    override fun onMessageStorageInserted(msgId: Long, msgObject: Any) {
         tryAsynchronously {
             MessageCache[msgId] = msgObject
         }
     }
 
-    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
             return
         }
@@ -51,7 +51,7 @@ object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, I
         }
     }
 
-    override fun beforeDatabaseUpdate(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseUpdating(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
             return
         }
@@ -65,7 +65,7 @@ object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, I
         }
     }
 
-    override fun beforeDatabaseDelete(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseDeleting(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
             return
         }
@@ -75,7 +75,7 @@ object AntiRevoke : IDatabaseHookRaw, IFileSystemHookRaw, IMessageStorageHook, I
         }
     }
 
-    override fun beforeFileDelete(param: XC_MethodHook.MethodHookParam) {
+    override fun onFileDeleting(param: XC_MethodHook.MethodHookParam) {
         val path = (param.thisObject as File).absolutePath
         when {
             path.contains("/image2/") -> param.result = true

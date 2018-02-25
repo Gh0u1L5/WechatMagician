@@ -38,8 +38,8 @@ object Storage : EventCenter() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val msgObject = param.args[0]
                 val msgId = getLongField(msgObject, "field_msgId")
-                notify("onMessageStorageInsert") { plugin ->
-                    (plugin as IMessageStorageHook).onMessageStorageInsert(msgId, msgObject)
+                notify("onMessageStorageInserted") { plugin ->
+                    (plugin as IMessageStorageHook).onMessageStorageInserted(msgId, msgObject)
                 }
             }
         })

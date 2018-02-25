@@ -7,32 +7,27 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
-import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHookRaw
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
 object XmlParser : EventCenter() {
 
     override val interfaces: List<Class<*>>
-        get() = listOf(IXmlParserHook::class.java, IXmlParserHookRaw::class.java)
+        get() = listOf(IXmlParserHook::class.java)
 
     @Suppress("UNCHECKED_CAST")
     @WechatHookMethod @JvmStatic fun hookEvents() {
         findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("beforeXmlParse") { plugin ->
-                    (plugin as IXmlParserHookRaw).beforeXmlParse(param)
+                    (plugin as IXmlParserHook).onXmlParsing(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterXmlParse") { plugin ->
-                    (plugin as IXmlParserHookRaw).afterXmlParse(param)
-                }
-
                 val root = param.args[1] as String
                 val xml  = param.result as MutableMap<String, String>? ?: return
-                notify("onXmlParse") { plugin ->
-                    (plugin as IXmlParserHook).onXmlParse(root, xml)
+                notify("onXmlParsed") { plugin ->
+                    (plugin as IXmlParserHook).onXmlParsed(root, xml)
                 }
             }
         })

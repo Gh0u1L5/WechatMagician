@@ -36,7 +36,7 @@ object MarkAllAsRead : IPopupMenuHook {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
-    override fun onCreatePopupMenuForConversations(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForConversationsCreating(username: String): MenuAppender.PopupMenuItem? {
         if (!isPluginEnabled()) {
             return null
         }

@@ -25,7 +25,7 @@ import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
-object SecretFriend : IActivityHook, IAdapterHook, INotificationHookRaw, IPopupMenuHook, ISearchBarConsole {
+object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenuHook, ISearchBarConsole {
 
     private val str = LocalizedStrings
     private val pref = WechatHook.settings
@@ -85,7 +85,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHookRaw, IPopupM
     }
 
     // Hide the message notifications from secret friends.
-    override fun beforeAddMessageNotification(param: XC_MethodHook.MethodHookParam) {
+    override fun onMessageNotificationAdding(param: XC_MethodHook.MethodHookParam) {
         if (!isPluginEnabled()) {
             return
         }
@@ -98,7 +98,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHookRaw, IPopupM
 
     // Add menu items in the popup menu for contacts.
     // TODO: change the title of the button for hiding friends.
-    override fun onCreatePopupMenuForContacts(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForContactsCreating(username: String): MenuAppender.PopupMenuItem? {
         if (!isPluginEnabled()) {
             return null
         }

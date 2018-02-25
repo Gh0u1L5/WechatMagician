@@ -7,7 +7,7 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.RemittanceAdapter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IUriRouterHook
 
 object Donate : IUriRouterHook {
-    override fun onUriRouterReceive(activity: Activity, uri: Uri) {
+    override fun onUriRouterReceiving(activity: Activity, uri: Uri) {
         val segments = uri.pathSegments
         if (segments.firstOrNull() == "donate") {
             activity.startActivity(Intent(activity, RemittanceAdapter).apply {

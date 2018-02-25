@@ -56,7 +56,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         }
     }
 
-    override fun onCreatePopupMenuForConversations(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForConversationsCreating(username: String): MenuAppender.PopupMenuItem? {
         if (!isPluginEnabled()) {
             return null
         }

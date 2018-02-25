@@ -6,16 +6,16 @@ import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.LABEL_DELETED
 import com.gh0u1l5.wechatmagician.backend.storage.list.SnsBlacklist
-import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHookRaw
+import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 
-object AntiSnsDelete : IDatabaseHookRaw {
+object AntiSnsDelete : IDatabaseHook {
 
     private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
-    override fun beforeDatabaseUpdate(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseUpdating(param: XC_MethodHook.MethodHookParam) {
         val table = param.args[0] as String? ?: return
         val values = param.args[1] as ContentValues? ?: return
 

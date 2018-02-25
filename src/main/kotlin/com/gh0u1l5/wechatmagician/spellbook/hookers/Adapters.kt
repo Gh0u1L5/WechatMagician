@@ -51,8 +51,8 @@ object Adapters : EventCenter() {
                 val adapter = param.thisObject
                 val convertView = param.args[1] as View?
                 val view = param.result as View? ?: return
-                notify("onSnsUserUIAdapterGetView") { plugin ->
-                    (plugin as IAdapterHook).onSnsUserUIAdapterGetView(adapter, convertView, view)
+                notify("onSnsUserUIAdapterGotView") { plugin ->
+                    (plugin as IAdapterHook).onSnsUserUIAdapterGotView(adapter, convertView, view)
                 }
             }
         })

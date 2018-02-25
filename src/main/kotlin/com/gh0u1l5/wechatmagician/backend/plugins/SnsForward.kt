@@ -121,7 +121,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     private val str = LocalizedStrings
 
-    override fun onDatabaseOpen(path: String, database: Any) {
+    override fun onDatabaseOpened(path: String, database: Any) {
         if (path.endsWith("SnsMicroMsg.db")) {
             // Force Wechat to retrieve existing SNS data from remote server.
             val deleted = ContentValues().apply { put("sourceType", 0) }
@@ -130,7 +130,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         }
     }
 
-    override fun onXmlParse(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
         tryAsynchronously {
             if (root == ROOT_TAG) {
                 val id = xml[ID_TAG]
@@ -142,7 +142,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     }
 
     // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
-    override fun onSnsUserUIAdapterGetView(adapter: Any, convertView: View?, view: View) {
+    override fun onSnsUserUIAdapterGotView(adapter: Any, convertView: View?, view: View) {
         if (adapter === SnsUserUIAdapterObject.get()) {
             if (convertView == null) { // this is a new view
                 if (view is ViewGroup) {

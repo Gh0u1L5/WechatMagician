@@ -9,7 +9,6 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
-import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHookRaw
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -17,26 +16,22 @@ import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 object Database : EventCenter() {
 
     override val interfaces: List<Class<*>>
-        get() = listOf(IDatabaseHook::class.java, IDatabaseHookRaw::class.java)
+        get() = listOf(IDatabaseHook::class.java, IDatabaseHook::class.java)
 
     @WechatHookMethod @JvmStatic fun hookEvents() {
         findAndHookMethod(
                 SQLiteDatabase, "openDatabase",
                 C.String, SQLiteCursorFactory, C.Int, SQLiteErrorHandler, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseOpen") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseOpen(param)
+                notify("onDatabaseOpening") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseOpening(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseOpen") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseOpen(param)
-                }
-
                 val path     = param.args[0] as String
                 val database = param.result
                 notify("onDatabaseOpen") { plugin ->
-                    (plugin as IDatabaseHook).onDatabaseOpen(path, database)
+                    (plugin as IDatabaseHook).onDatabaseOpened(path, database)
                 }
             }
         })
@@ -45,13 +40,13 @@ object Database : EventCenter() {
                 SQLiteDatabase, "rawQueryWithFactory",
                 SQLiteCursorFactory, C.String, C.StringArray, C.String, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseQuery") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseQuery(param)
+                notify("onDatabaseQuerying") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseQuerying(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseQuery") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseQuery(param)
+                notify("onDatabaseQueried") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseQueried(param)
                 }
             }
         })
@@ -60,13 +55,13 @@ object Database : EventCenter() {
                 SQLiteDatabase, "insertWithOnConflict",
                 C.String, C.String, C.ContentValues, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseInsert") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseInsert(param)
+                notify("onDatabaseInserting") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseInserting(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseInsert") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseInsert(param)
+                notify("onDatabaseInserted") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseInserted(param)
                 }
             }
         })
@@ -75,13 +70,13 @@ object Database : EventCenter() {
                 SQLiteDatabase, "updateWithOnConflict",
                 C.String, C.ContentValues, C.String, C.StringArray, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseUpdate") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseUpdate(param)
+                notify("onDatabaseUpdating") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseUpdating(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseUpdate") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseUpdate(param)
+                notify("onDatabaseUpdated") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseUpdated(param)
                 }
             }
         })
@@ -90,13 +85,13 @@ object Database : EventCenter() {
                 SQLiteDatabase, "delete",
                 C.String, C.String, C.StringArray, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseDelete") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseDelete(param)
+                notify("onDatabaseDeleting") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseDeleting(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseDelete") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseDelete(param)
+                notify("onDatabaseDeleted") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseDeleted(param)
                 }
             }
         })
@@ -105,13 +100,13 @@ object Database : EventCenter() {
                 SQLiteDatabase, "executeSql",
                 C.String, C.ObjectArray, SQLiteCancellationSignal, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeDatabaseExecute") { plugin ->
-                    (plugin as IDatabaseHookRaw).beforeDatabaseExecute(param)
+                notify("onDatabaseExecuting") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseExecuting(param)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {
-                notify("afterDatabaseExecute") { plugin ->
-                    (plugin as IDatabaseHookRaw).afterDatabaseExecute(param)
+                notify("onDatabaseExecuted") { plugin ->
+                    (plugin as IDatabaseHook).onDatabaseExecuted(param)
                 }
             }
         })

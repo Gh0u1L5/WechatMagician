@@ -4,5 +4,5 @@ import android.app.Activity
 import android.net.Uri
 
 interface IUriRouterHook {
-    fun onUriRouterReceive(activity: Activity, uri: Uri) { }
+    fun onUriRouterReceiving(activity: Activity, uri: Uri) { }
 }
