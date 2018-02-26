@@ -29,6 +29,9 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
             try {
                 val uri = Uri.parse("content://$PREFERENCE_PROVIDER_AUTHORITY/$preferencesName")
                 cursor = context.contentResolver.query(uri, null, null, null, null)
+                if (cursor == null) {
+                    return@tryAsynchronously
+                }
                 while (cursor.moveToNext()) {
                     val key = cursor.getString(0)
                     val type = cursor.getString(2)
