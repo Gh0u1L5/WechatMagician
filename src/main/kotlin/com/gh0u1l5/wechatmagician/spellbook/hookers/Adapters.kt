@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import android.view.View
+import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationWithCacheAdapter
@@ -48,11 +49,13 @@ object Adapters : EventCenter() {
                 HeaderViewListAdapter, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                val adapter = param.thisObject
+                val adapter     = param.thisObject
+                val position    = param.args[0] as Int
                 val convertView = param.args[1] as View?
-                val view = param.result as View? ?: return
+                val parent      = param.args[2] as ViewGroup
+                val result      = param.result as View? ?: return
                 notify("onSnsUserUIAdapterGotView") { plugin ->
-                    (plugin as IAdapterHook).onSnsUserUIAdapterGotView(adapter, convertView, view)
+                    (plugin as IAdapterHook).onSnsUserUIAdapterGotView(adapter, position, convertView, parent, result)
                 }
             }
         })

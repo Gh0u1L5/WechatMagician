@@ -18,6 +18,7 @@ import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook
+import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationApkPath
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.isImportantWechatProcess
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
@@ -89,10 +90,6 @@ class WechatHook : IXposedHookLoadPackage {
         })
     }
 
-    private fun findApplicationApkPath(context: Context, packageName: String) =
-            context.packageManager.getApplicationInfo(packageName, 0).publicSourceDir ?:
-            throw Error("Failed to get apk path for $packageName")
-
     // NOTE: Remember to catch all the exceptions here, otherwise you may get boot loop.
     override fun handleLoadPackage(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryVerbosely {
@@ -139,7 +136,7 @@ class WechatHook : IXposedHookLoadPackage {
 
         // Load module resources to current process
         tryAsynchronously {
-            val path = findApplicationApkPath(context, MAGICIAN_PACKAGE_NAME)
+            val path = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
             resources = XModuleResources.createInstance(path, null)
             WechatStatus.toggle(STATUS_FLAG_RESOURCES, true)
         }
@@ -160,7 +157,7 @@ class WechatHook : IXposedHookLoadPackage {
 
     // handleLoadWechatOnFly uses reflection to load updated module without reboot.
     private fun handleLoadWechatOnFly(lpparam: XC_LoadPackage.LoadPackageParam, context: Context) {
-        val path = findApplicationApkPath(context, MAGICIAN_PACKAGE_NAME)
+        val path = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
         if (!File(path).exists()) {
             log("Cannot load module on fly: APK not found")
             return

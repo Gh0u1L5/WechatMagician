@@ -1,8 +1,8 @@
 package com.gh0u1l5.wechatmagician.spellbook
 
-import android.content.Context
 import android.widget.Adapter
 import android.widget.BaseAdapter
+import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationVersion
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil
@@ -14,25 +14,39 @@ import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findMethodsByExactP
 import com.gh0u1l5.wechatmagician.spellbook.util.Version
 import com.gh0u1l5.wechatmagician.spellbook.util.WaitChannel
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
 import java.lang.ref.WeakReference
 import java.lang.reflect.Field
 import java.lang.reflect.Method
 
-// WechatPackage analyzes and stores critical classes and objects in Wechat application.
-// These classes and objects will be used for hooking and tampering with runtime data.
+/**
+ * This singleton is the core part that analyzes and stores critical classes and objects of Wechat.
+ * These classes and objects will be used for hooking and tampering with runtime data.
+ */
 object WechatPackage {
 
-    // initializeChannel resumes all the thread waiting for the WechatPackage initialization.
+    /**
+     * A [WaitChannel] blocking all the evaluations until [WechatPackage.init] has finished.
+     */
     private val initializeChannel = WaitChannel()
 
-    // These stores necessary information to match signatures.
-    @Volatile var packageName: String = ""
-    @Volatile var loader: ClassLoader? = null
+    /**
+     * A [Version] holding the version of current Wechat.
+     */
     @Volatile var version: Version? = null
-    @Volatile var classes: List<String>? = null
+    /**
+     * A string holding the package name of current Wechat process.
+     */
+    @Volatile private var packageName: String = ""
+    /**
+     * A class loader holding the classes provided by the Wechat APK.
+     */
+    @Volatile var loader: ClassLoader? = null
+    /**
+     * A list holding a cache of full names for classes provided by the Wechat APK.
+     */
+    @Volatile private var classes: List<String>? = null
 
     // These are the cache of important global objects
     @Volatile var AddressAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
@@ -43,6 +57,14 @@ object WechatPackage {
     @Volatile var MainDatabaseObject: Any? = null
     @Volatile var SnsDatabaseObject: Any? = null
 
+    /**
+     * Creates a lazy object for inner usage in [WechatPackage]. Its evaluation will be blocked by
+     * the [initializeChannel] if the initialization is unfinished.
+     *
+     * @param name The name of the lazy field. This is used to print a helpful error message.
+     * @param initializer The callback that actually initialize the lazy object.
+     * @return a lazy object that can be used for lazy evaluation.
+     */
     private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
         initializeChannel.wait()
         initializer() ?: throw Error("Failed to evaluate $name")
@@ -304,14 +326,19 @@ object WechatPackage {
         ).firstOrNull()
     }
 
-    // init initializes necessary information for static analysis.
+    /**
+     * Loads necessary information for static analysis into [WechatPackage].
+     *
+     * @param lpparam The LoadPackageParam object that describes the current process. It should be
+     * the same one passed to [de.robv.android.xposed.IXposedHookLoadPackage.handleLoadPackage].
+     */
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryAsynchronously {
             try {
                 packageName = lpparam.packageName
-                loader = lpparam.classLoader
-                version = getVersion(lpparam)
+                version = getApplicationVersion(lpparam.packageName)
 
+                loader = lpparam.classLoader
                 var apkFile: ApkFile? = null
                 try {
                     apkFile = ApkFile(lpparam.appInfo.sourceDir)
@@ -329,28 +356,20 @@ object WechatPackage {
         }
     }
 
-    // getVersion returns the version of current package / application
-    private fun getVersion(lpparam: XC_LoadPackage.LoadPackageParam): Version {
-        val activityThreadClass = findClass("android.app.ActivityThread", null)
-        val activityThread = callStaticMethod(activityThreadClass, "currentActivityThread")
-        val context = callMethod(activityThread, "getSystemContext") as Context?
-        val versionName = context?.packageManager?.getPackageInfo(lpparam.packageName, 0)?.versionName
-        return Version(versionName ?: throw Error("Cannot get Wechat version"))
-    }
-
+    /**
+     * Generates a report for sending support emails.
+     */
     override fun toString(): String {
         val body = try {
             this::class.java.declaredFields.filter { field ->
                 when (field.name) {
                     "INSTANCE", "\$\$delegatedProperties",
                     "initializeChannel",
-                    "packageName", "loader", "version", "classes",
+                    "version", "packageName", "loader", "classes",
                     "WECHAT_PACKAGE_SQLITE",
                     "WECHAT_PACKAGE_UI",
                     "WECHAT_PACKAGE_SNS_UI",
-                    "WECHAT_PACKAGE_GALLERY_UI",
-                    "requireHookStatusReceiver",
-                    "requireWechatPackageReceiver" -> false
+                    "WECHAT_PACKAGE_GALLERY_UI" -> false
                     else -> true
                 }
             }.joinToString("\n") {

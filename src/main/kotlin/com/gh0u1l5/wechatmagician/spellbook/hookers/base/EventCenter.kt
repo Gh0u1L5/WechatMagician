@@ -11,7 +11,7 @@ abstract class EventCenter {
     private val registries: MutableMap<String, List<Any>> = ConcurrentHashMap()
 
     private fun Any.hasEvent(event: String) =
-            this::class.java.declaredMethods.any { method -> method.name == event }
+            try { this::class.java.getDeclaredMethod(event); true } catch (t: Throwable) { false }
 
     private fun register(event: String, observer: Any) {
         if (observer.hasEvent(event)) {

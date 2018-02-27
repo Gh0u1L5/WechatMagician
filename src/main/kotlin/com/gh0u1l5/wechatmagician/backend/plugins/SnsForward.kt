@@ -142,15 +142,15 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     }
 
     // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
-    override fun onSnsUserUIAdapterGotView(adapter: Any, convertView: View?, view: View) {
+    override fun onSnsUserUIAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) {
         if (adapter === SnsUserUIAdapterObject.get()) {
             if (convertView == null) { // this is a new view
-                if (view is ViewGroup) {
-                    repeat(view.childCount, {
-                        view.getChildAt(it).isClickable = false
+                if (result is ViewGroup) {
+                    repeat(result.childCount, {
+                        result.getChildAt(it).isClickable = false
                     })
                 }
-                view.isLongClickable = true
+                result.isLongClickable = true
             }
         }
     }
