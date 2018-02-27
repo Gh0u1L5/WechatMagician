@@ -113,7 +113,7 @@ object WechatPackage {
                 .firstOrNull()
     }
     val NotificationAppMsgQueueAddMethod: Method by innerLazy("NotificationAppMsgQueueAddMethod") {
-        findMethodsByExactParameters(NotificationAppMsgQueue, NotificationItem).firstOrNull()
+        findMethodsByExactParameters(NotificationAppMsgQueue, null, NotificationItem).firstOrNull()
     }
 
     val LauncherUI: Class<*> by innerLazy("LauncherUI") {

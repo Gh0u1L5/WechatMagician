@@ -50,8 +50,6 @@ object PackageUtil {
             })
         }
 
-        fun toList(): List<Class<*>> = classes
-
         fun firstOrNull(): Class<*>? = classes.firstOrNull()
     }
 
@@ -83,14 +81,12 @@ object PackageUtil {
     }
 
     // findClassesFromPackage returns a list of all the classes contained in the given package.
-    @JvmStatic fun findClassesFromPackage(
-            loader: ClassLoader, classes: List<String>, packageName: String, depth: Int = 0
-    ): Classes {
+    @JvmStatic fun findClassesFromPackage(loader: ClassLoader, classes: List<String>, packageName: String, depth: Int = 0): Classes {
         if ((packageName to depth) in classesCache) {
             return classesCache[packageName to depth]!!
         }
         classesCache[packageName to depth] = Classes(classes.filter { clazz ->
-            val currentPackage = clazz.substringBeforeLast("")
+            val currentPackage = clazz.substringBeforeLast(".")
             if (depth == 0) {
                 return@filter currentPackage == packageName
             }
@@ -102,21 +98,15 @@ object PackageUtil {
     }
 
     // findMethodExactIfExists looks up and returns a method if it exists, otherwise it returns null.
-    @JvmStatic fun findMethodExactIfExists(
-            clazz: Class<*>?, methodName: String, vararg parameterTypes: Class<*>
-    ): Method? =
+    @JvmStatic fun findMethodExactIfExists(clazz: Class<*>?, methodName: String, vararg parameterTypes: Class<*>): Method? =
             try { findMethodExact(clazz, methodName, *parameterTypes) } catch (_: Throwable) { null }
 
     // findMethodsByExactParameters returns a list of all methods declared/overridden in a class with the specified parameter types.
-    @JvmStatic fun findMethodsByExactParameters(
-            clazz: Class<*>?, returnType: Class<*>?, vararg parameterTypes: Class<*>
-    ): List<Method> {
+    @JvmStatic fun findMethodsByExactParameters(clazz: Class<*>?, returnType: Class<*>?, vararg parameterTypes: Class<*>): List<Method> {
         if (clazz == null) {
             return emptyList()
         }
-        return XposedHelpers.findMethodsByExactParameters(
-                clazz, returnType, *parameterTypes
-        ).toList()
+        return XposedHelpers.findMethodsByExactParameters(clazz, returnType, *parameterTypes).toList()
     }
 
     // findFieldsWithGenericType finds all the fields of the given type.
