@@ -85,13 +85,11 @@ object SpellBook {
     }
 
     private fun deployHookers(customHookers: List<Any>) {
-        tryVerbosely {
-            (hookers + customHookers).forEach { hooker ->
-                hooker::class.java.declaredMethods.forEach { method ->
-                    val isHookMethod = method.isAnnotationPresent(WechatHookMethod::class.java)
-                    if (isHookMethod) {
-                        tryHook { method.invoke(null) }
-                    }
+        (hookers + customHookers).forEach { hooker ->
+            hooker::class.java.declaredMethods.forEach { method ->
+                val isHookMethod = method.isAnnotationPresent(WechatHookMethod::class.java)
+                if (isHookMethod) {
+                    tryHook { method.invoke(null) }
                 }
             }
         }

@@ -102,6 +102,7 @@ class WechatHook : IXposedHookLoadPackage {
                         handleLoadMagician(lpparam.classLoader)
                     })
                 else -> if (isImportantWechatProcess(lpparam)) {
+                    log("Wechat Magician: process = ${lpparam.processName}, version = ${BuildConfig.VERSION_NAME}")
                     hookApplicationAttach(lpparam.classLoader, { context ->
                         if (!BuildConfig.DEBUG) {
                             handleLoadWechat(lpparam, context)
