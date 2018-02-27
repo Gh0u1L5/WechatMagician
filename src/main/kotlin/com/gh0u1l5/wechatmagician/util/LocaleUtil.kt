@@ -6,7 +6,6 @@ import android.content.Context.MODE_PRIVATE
 import android.os.Build
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.util.IPCUtil.getProtectedSharedPreferences
 import java.util.*
 
@@ -29,7 +28,6 @@ object LocaleUtil {
 
     fun setLocale(context: Context, language: String): Context {
         persist(context, language)
-        LocalizedStrings.language = language
 
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             updateResources(context, language)

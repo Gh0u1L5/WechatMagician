@@ -1,6 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend.storage
 
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
+import com.gh0u1l5.wechatmagician.backend.WechatHook
 import de.robv.android.xposed.XposedBridge.log
 import java.util.*
 
@@ -32,7 +33,7 @@ object LocalizedStrings {
     const val BUTTON_OK                     = "button_ok"
     const val BUTTON_CANCEL                 = "button_cancel"
 
-    @Volatile private var pref: Preferences? = null
+    private val pref = WechatHook.settings
     @Volatile var language: String = Locale.getDefault().language
 
     private val resources: Map<String, Map<String, String>> = mapOf(
@@ -86,17 +87,8 @@ object LocalizedStrings {
             )
     )
 
-    fun load(settings: Preferences) {
-        pref = settings
-    }
-
     operator fun get(key: String): String {
-        val language = pref?.getString(SETTINGS_MODULE_LANGUAGE, language)
-        if (language == null) {
-            log("RES => Preference not found")
-            return "???"
-        }
-
+        val language = pref.getString(SETTINGS_MODULE_LANGUAGE, language)
         val resource = resources[language] ?: resources["en"]
         val value = resource!![key]
         if (value == null) {
