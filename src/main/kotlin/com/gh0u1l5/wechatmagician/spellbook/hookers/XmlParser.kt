@@ -19,7 +19,7 @@ object XmlParser : EventCenter() {
     @WechatHookMethod @JvmStatic fun hookEvents() {
         findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
-                notify("beforeXmlParse") { plugin ->
+                notify("onXmlParsing") { plugin ->
                     (plugin as IXmlParserHook).onXmlParsing(param)
                 }
             }

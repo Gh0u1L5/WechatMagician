@@ -70,11 +70,11 @@ object SpellBook {
     }
 
     private fun loadPlugins(plugins: List<Any>) {
-        tryAsynchronously {
-            centers.forEach { center ->
+        centers.forEach { center ->
+            tryAsynchronously {
                 center.interfaces.forEach { `interface` ->
                     plugins.forEach { plugin ->
-                        val assignable = plugin::class.java.isAssignableFrom(`interface`)
+                        val assignable = `interface`.isAssignableFrom(plugin::class.java)
                         if (assignable) {
                             center.register(`interface`, plugin)
                         }

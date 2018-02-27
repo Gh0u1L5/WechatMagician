@@ -30,7 +30,7 @@ object Database : EventCenter() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val path     = param.args[0] as String
                 val database = param.result
-                notify("onDatabaseOpen") { plugin ->
+                notify("onDatabaseOpened") { plugin ->
                     (plugin as IDatabaseHook).onDatabaseOpened(path, database)
                 }
             }
