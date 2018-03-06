@@ -1,21 +1,24 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers.base
 
+import android.os.Build
+import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
+import de.robv.android.xposed.XposedBridge.log
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class EventCenter {
 
     abstract val interfaces: List<Class<*>>
 
-    private val registries: MutableMap<String, List<Any>> = ConcurrentHashMap()
+    private val registries: MutableMap<String, Set<Any>> = ConcurrentHashMap()
 
     private fun Any.hasEvent(event: String) =
             try { this::class.java.getDeclaredMethod(event); true } catch (t: Throwable) { false }
 
     private fun register(event: String, observer: Any) {
         if (observer.hasEvent(event)) {
-            val added = registries[event] ?: emptyList()
+            val added = registries[event] ?: emptySet()
             registries[event] = added + observer
         }
     }
@@ -30,6 +33,9 @@ abstract class EventCenter {
         if (event == "") {
             throw IllegalArgumentException("event cannot be empty!")
         }
+        if (BuildConfig.DEBUG && registries[event] == null) {
+            log("notify($event) hits nothing!")
+        }
         registries[event]?.forEach {
             tryVerbosely { action(it) }
         }
@@ -39,6 +45,9 @@ abstract class EventCenter {
         if (event == "") {
             throw IllegalArgumentException("event cannot be empty!")
         }
+        if (BuildConfig.DEBUG && registries[event] == null) {
+            log("notifyParallel($event) hits nothing!")
+        }
         registries[event]?.map { observer ->
             tryAsynchronously { action(observer) }
         }?.forEach(Thread::join)
@@ -47,6 +56,9 @@ abstract class EventCenter {
     fun <T: Any>notifyForResult(event: String, action: (Any) -> T?): List<T> {
         if (event == "") {
             throw IllegalArgumentException("event cannot be empty!")
+        }
+        if (BuildConfig.DEBUG && registries[event] == null) {
+            log("notifyForResult($event) hits nothing!")
         }
         return registries[event]?.mapNotNull {
             tryVerbosely { action(it) }
