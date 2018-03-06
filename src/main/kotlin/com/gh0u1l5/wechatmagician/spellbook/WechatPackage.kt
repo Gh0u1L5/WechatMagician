@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.spellbook
 
 import android.widget.Adapter
 import android.widget.BaseAdapter
+import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationVersion
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.C
@@ -334,24 +335,22 @@ object WechatPackage {
      */
     fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryAsynchronously {
+            var apkFile: ApkFile? = null
             try {
                 packageName = lpparam.packageName
                 version = getApplicationVersion(lpparam.packageName)
-
                 loader = lpparam.classLoader
-                var apkFile: ApkFile? = null
-                try {
-                    apkFile = ApkFile(lpparam.appInfo.sourceDir)
-                    classes = apkFile.dexClasses.map { clazz ->
-                        PackageUtil.getClassName(clazz)
-                    }
-                } finally {
-                    apkFile?.close()
+                apkFile = ApkFile(lpparam.appInfo.sourceDir)
+                classes = apkFile.dexClasses.map { clazz ->
+                    PackageUtil.getClassName(clazz)
                 }
             } catch (t: Throwable) {
-                // Ignore this one
+                if (BuildConfig.DEBUG) {
+                    log(t)
+                }
             } finally {
                 initializeChannel.done()
+                apkFile?.close()
             }
         }
     }
