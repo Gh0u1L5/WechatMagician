@@ -30,4 +30,6 @@ class WaitChannel {
             channel.notifyAll()
         }
     }
+
+    fun isDone() = synchronized(channel) { done }
 }

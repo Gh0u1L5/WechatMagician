@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.backend
 
+import android.app.Application
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -76,16 +77,13 @@ class WechatHook : IXposedHookLoadPackage {
         }
     }
 
-    // NOTE: Hooking Application.attach is necessary because Android 4.X is not supporting
-    //       multi-dex applications natively. More information are available in this link:
-    //       https://github.com/rovo89/xposedbridge/issues/30
-    // NOTE: Since Wechat 6.5.16, the MultiDex installation became asynchronous. It is not
-    //       guaranteed to be finished after Application.attach, but the exceptions caused
-    //       by this can be ignored safely (See details in tryHook).
-    private inline fun hookApplicationAttach(loader: ClassLoader, crossinline callback: (Context) -> Unit) {
-        findAndHookMethod("android.app.Application", loader, "attach", Context::class.java, object : XC_MethodHook() {
+    // hookAttachBaseContext is a stable way to get current application on all the platforms.
+    private inline fun hookAttachBaseContext(loader: ClassLoader, crossinline callback: (Context) -> Unit) {
+        findAndHookMethod(
+                "android.content.ContextWrapper", loader, "attachBaseContext",
+                Context::class.java, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
-                callback(param.thisObject as Context)
+                callback(param.thisObject as? Application ?: return)
             }
         })
     }
@@ -95,12 +93,12 @@ class WechatHook : IXposedHookLoadPackage {
         tryVerbosely {
             when (lpparam.packageName) {
                 MAGICIAN_PACKAGE_NAME ->
-                    hookApplicationAttach(lpparam.classLoader, { _ ->
+                    hookAttachBaseContext(lpparam.classLoader, { _ ->
                         handleLoadMagician(lpparam.classLoader)
                     })
                 else -> if (isImportantWechatProcess(lpparam)) {
                     log("Wechat Magician: process = ${lpparam.processName}, version = ${BuildConfig.VERSION_NAME}")
-                    hookApplicationAttach(lpparam.classLoader, { context ->
+                    hookAttachBaseContext(lpparam.classLoader, { context ->
                         if (!BuildConfig.DEBUG) {
                             handleLoadWechat(lpparam, context)
                         } else {

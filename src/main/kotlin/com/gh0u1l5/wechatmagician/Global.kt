@@ -15,6 +15,7 @@ object Global {
     @SuppressLint("SdCardPath")
     private val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
     val XPOSED_BASE_DIR = "$DATA_DIR/$XPOSED_PACKAGE_NAME/"
+    val MAGICIAN_BASE_DIR = "$DATA_DIR/$MAGICIAN_PACKAGE_NAME/"
 
     const val FOLDER_SHARED_PREFS = "shared_prefs"
 
