@@ -8,6 +8,7 @@ import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.Version
+import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
@@ -130,8 +131,8 @@ object SpellBook {
      * more methods that has [WechatHookMethod] annotation.
      */
     fun startup(lpparam: XC_LoadPackage.LoadPackageParam, plugins: List<Any>, hookers: List<Any>) {
+        log("Wechat SpellBook: ${plugins.size} plugins, ${hookers.size} hookers.")
         WechatPackage.init(lpparam)
-
         registerPlugins(plugins)
         registerHookers(hookers)
     }

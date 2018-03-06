@@ -121,7 +121,10 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     private val str = LocalizedStrings
 
-    override fun onDatabaseOpened(path: String, database: Any) {
+    override fun onDatabaseOpened(path: String, database: Any?) {
+        if (database == null) {
+            return
+        }
         if (path.endsWith("SnsMicroMsg.db")) {
             // Force Wechat to retrieve existing SNS data from remote server.
             val deleted = ContentValues().apply { put("sourceType", 0) }

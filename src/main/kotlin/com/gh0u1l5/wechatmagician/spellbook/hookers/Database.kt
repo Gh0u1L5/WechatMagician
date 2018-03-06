@@ -24,9 +24,8 @@ object Database : EventCenter() {
                 C.String, SQLiteCursorFactory, C.Int, SQLiteErrorHandler, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val path     = param.args[0] as String
-                val database = param.result
                 notify("onDatabaseOpening") { plugin ->
-                    (plugin as IDatabaseHook).onDatabaseOpening(path, database)
+                    (plugin as IDatabaseHook).onDatabaseOpening(path)
                 }
             }
             override fun afterHookedMethod(param: MethodHookParam) {

@@ -5,8 +5,8 @@ import de.robv.android.xposed.XC_MethodHook
 interface IDatabaseHook {
 
     // SQLiteDatabase.openDatabase(path: String, factory: CursorFactory, flags: Int, errorHandler: SQLiteErrorHandler): SQLiteDatabase
-    fun onDatabaseOpening(path: String, database: Any) { }
-    fun onDatabaseOpened(path: String, database: Any) { }
+    fun onDatabaseOpening(path: String) { }
+    fun onDatabaseOpened(path: String, database: Any?) { }
 
     // SQLiteDatabase.rawQueryWithFactory(factory: CursorFactory, sql: String, selectionArgs: Array<String>?, editTable: String?, cancellationSignal: SQLiteCancellationSignal?): Cursor
     fun onDatabaseQuerying(param: XC_MethodHook.MethodHookParam) { }

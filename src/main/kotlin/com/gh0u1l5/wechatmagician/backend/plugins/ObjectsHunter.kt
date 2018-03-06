@@ -35,7 +35,7 @@ object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHook, IMessageStora
         ConversationAdapterObject = WeakReference(adapter)
     }
 
-    override fun onDatabaseOpened(path: String, database: Any) {
+    override fun onDatabaseOpened(path: String, database: Any?) {
         if (path.endsWith("SnsMicroMsg.db")) {
             if (SnsDatabaseObject !== database) {
                 SnsDatabaseObject = database
