@@ -32,7 +32,8 @@ import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getListViewFromSnsActivity
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getViewAtPosition
 import de.robv.android.xposed.XposedBridge.log
-import de.robv.android.xposed.XposedHelpers.*
+import de.robv.android.xposed.XposedHelpers.callMethod
+import de.robv.android.xposed.XposedHelpers.getLongField
 import java.lang.ref.WeakReference
 
 object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {

@@ -2,7 +2,6 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.os.Environment
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_load
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_mBitmapCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgStorageObject

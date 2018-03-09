@@ -17,7 +17,7 @@ import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_CHATROOM
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ChattingUI
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationAdapterObject
 import com.gh0u1l5.wechatmagician.spellbook.hookers.ListViewHider
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
@@ -90,7 +90,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
     }
 
     fun onChatroomHiderConversationClick(view: View, username: String): Boolean {
-        view.context.startActivity(Intent(view.context, WechatPackage.ChattingUI)
+        view.context.startActivity(Intent(view.context, ChattingUI)
                 .putExtra("Chat_Mode", 1)
                 .putExtra("Chat_User", username))
         return true

@@ -23,8 +23,8 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMListPopupWindow
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCancellationSignal
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCursorFactory
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteDatabase
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod

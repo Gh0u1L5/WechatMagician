@@ -15,7 +15,7 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_SELECT_ALL
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ContactInfo
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMActivity
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectContactUI
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUI
@@ -152,7 +152,7 @@ object Limits : IActivityHook {
 
                 if (contactField == null) {
                     contactField = item::class.java.fields.firstOrNull {
-                        it.type.name == WechatPackage.ContactInfo.name
+                        it.type.name == ContactInfo.name
                     } ?: return@next
                 }
                 val contact = contactField?.get(item) ?: return@next

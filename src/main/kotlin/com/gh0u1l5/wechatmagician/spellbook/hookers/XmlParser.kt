@@ -1,8 +1,8 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_XML_PARSER
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter

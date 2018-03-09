@@ -1,7 +1,8 @@
 package com.gh0u1l5.wechatmagician.util
 
 import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.EncEngine
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.EncEngine_transFor
 import de.robv.android.xposed.XposedHelpers
 import java.net.URL
 
@@ -26,8 +27,8 @@ object DownloadUtil {
             throw Error("Failed to download $url")
         }
 
-        val encEngine = XposedHelpers.newInstance(WechatPackage.EncEngine, media.main.key)
-        WechatPackage.EncEngine_transFor.invoke(encEngine, content, content.size)
+        val encEngine = XposedHelpers.newInstance(EncEngine, media.main.key)
+        EncEngine_transFor.invoke(encEngine, content, content.size)
         XposedHelpers.callMethod(encEngine, "free")
         FileUtil.writeBytesToDisk(path, content)
     }
