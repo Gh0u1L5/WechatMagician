@@ -1,13 +1,13 @@
 package com.gh0u1l5.wechatmagician.frontend.widget
 
 import android.content.Context
-import android.support.v7.preference.SwitchPreferenceCompat
+import android.preference.SwitchPreference
 import android.util.AttributeSet
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 
-class PasswordSwitchPreference : SwitchPreferenceCompat {
+class PasswordSwitchPreference : SwitchPreference {
 
     constructor(context: Context) : super(context)
 

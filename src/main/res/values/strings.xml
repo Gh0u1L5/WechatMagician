@@ -25,7 +25,6 @@
     <string name="prompt_need_reboot">Take effect after reboot.</string>
     <string name="prompt_wait">Please wait for a while.....</string>
     <string name="prompt_load_component_status_failed">Failed to retrieve the status of components.</string>
-    <string name="pref_description_settings">Unless expressly stated otherwise, these options take effect after modification immediately.</string>
     <string name="pref_warning_developer">These debug options will significantly slow down Wechat. The changes will take effect after reboot.</string>
 
     <string name="status_component_title">Component Details</string>

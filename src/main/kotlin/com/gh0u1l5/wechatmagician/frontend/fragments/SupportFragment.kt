@@ -1,13 +1,13 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.app.Activity.RESULT_OK
+import android.app.Fragment
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.content.FileProvider.getUriForFile
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,9 +49,9 @@ class SupportFragment : Fragment() {
 
     private fun generateReport() {
         Toast.makeText(
-                context, getString(R.string.prompt_wait), Toast.LENGTH_SHORT
+                activity, getString(R.string.prompt_wait), Toast.LENGTH_SHORT
         ).show()
-        context?.sendOrderedBroadcast(Intent(ACTION_REQUIRE_WECHAT_PACKAGE), null, object : BroadcastReceiver() {
+        activity?.sendOrderedBroadcast(Intent(ACTION_REQUIRE_WECHAT_PACKAGE), null, object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val greetings = getString(R.string.support_report_greetings)
                 if (resultData == null) {

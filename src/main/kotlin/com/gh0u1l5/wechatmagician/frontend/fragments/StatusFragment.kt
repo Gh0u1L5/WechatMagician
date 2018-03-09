@@ -1,12 +1,12 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
 import android.app.Activity
+import android.app.Fragment
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.LayoutInflater
@@ -40,17 +40,15 @@ class StatusFragment : Fragment() {
         super.onStart()
 
         if (isModuleLoaded()) {
-            val context = context ?: return
-
             // Set the main banner of status fragment.
             val color: Int
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N || getXposedVersion() >= 89) {
-                color = ContextCompat.getColor(context, R.color.ok)
+                color = ContextCompat.getColor(activity!!, R.color.ok)
                 status_text.text = getString(R.string.status_ok)
                 status_image.setImageResource(R.drawable.ic_status_ok)
                 status_image.contentDescription = getString(R.string.status_ok)
             } else {
-                color = ContextCompat.getColor(context, R.color.warn)
+                color = ContextCompat.getColor(activity!!, R.color.warn)
                 status_text.text = getString(R.string.status_outdated_xposed)
                 status_image.setImageResource(R.drawable.ic_status_error)
                 status_image.contentDescription = getString(R.string.status_outdated_xposed)
@@ -59,7 +57,7 @@ class StatusFragment : Fragment() {
             status_image.setBackgroundColor(color)
 
             // Set the status for each component.
-            requireHookStatus(context, { status ->
+            requireHookStatus(activity!!, { status ->
                 for (entry in componentMap) {
                     if (status[entry.key] == true) {
                         setComponentIconValid(entry.value)

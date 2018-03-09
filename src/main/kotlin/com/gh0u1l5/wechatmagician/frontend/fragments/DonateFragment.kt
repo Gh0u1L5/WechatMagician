@@ -1,10 +1,10 @@
 package com.gh0u1l5.wechatmagician.frontend.fragments
 
+import android.app.Fragment
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -16,7 +16,6 @@ import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment.Companion.re
 import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.util.AlipayUtil
 import kotlinx.android.synthetic.main.fragment_donate.*
-
 
 class DonateFragment : Fragment() {
 
@@ -30,7 +29,7 @@ class DonateFragment : Fragment() {
         super.onStart()
 
         // Hide Tenpay if the URI router is not hijacked.
-        requireHookStatus(context!!, { status ->
+        requireHookStatus(activity!!, { status ->
             if (status[STATUS_FLAG_URI_ROUTER] != true) {
                 donate_tenpay.visibility = GONE
             }

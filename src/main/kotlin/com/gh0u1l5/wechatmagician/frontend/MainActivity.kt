@@ -1,10 +1,9 @@
 package com.gh0u1l5.wechatmagician.frontend
 
+import android.app.Fragment
 import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.NavigationView
-import android.support.v4.app.Fragment
-import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
@@ -32,13 +31,7 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar,
-                R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close)
-        drawer_layout.addDrawerListener(toggle)
-        toggle.syncState()
+        setSupportActionBar(toolbar)
 
         nav_view.setNavigationItemSelectedListener(this)
 
@@ -48,7 +41,7 @@ class MainActivity : AppCompatActivity(),
         }
 
         if (main_container != null && savedInstanceState == null) {
-            supportFragmentManager.beginTransaction()
+            fragmentManager.beginTransaction()
                     .replace(R.id.main_container, StatusFragment.newInstance())
                     .commit()
         }
@@ -86,7 +79,7 @@ class MainActivity : AppCompatActivity(),
             else ->
                 throw Error("Unknown navigation item: ${item.itemId}")
         }
-        supportFragmentManager.beginTransaction()
+        fragmentManager.beginTransaction()
                 .replace(R.id.main_container, fragment)
                 .commit()
 

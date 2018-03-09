@@ -33,7 +33,6 @@ object LocalizedStrings {
     const val BUTTON_OK                     = "button_ok"
     const val BUTTON_CANCEL                 = "button_cancel"
 
-    private val pref = WechatHook.settings
     @Volatile var language: String = Locale.getDefault().language
 
     private val resources: Map<String, Map<String, String>> = mapOf(
@@ -88,8 +87,11 @@ object LocalizedStrings {
     )
 
     operator fun get(key: String): String {
-        val language = pref.getString(SETTINGS_MODULE_LANGUAGE, language)
-        val resource = resources[language] ?: resources["en"]
+        val language = try {
+            WechatHook.settings.getString(SETTINGS_MODULE_LANGUAGE, language)
+        } catch (_: NoClassDefFoundError) { "zh" }
+
+        val resource = resources[language] ?: resources["zh"]
         val value = resource!![key]
         if (value == null) {
             log("RES => Resource Missing: $key")

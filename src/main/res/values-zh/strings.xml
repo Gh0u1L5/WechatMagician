@@ -25,7 +25,6 @@
     <string name="prompt_need_reboot">重启后生效</string>
     <string name="prompt_wait">请稍候片刻……</string>
     <string name="prompt_load_component_status_failed">组件状态检查失败</string>
-    <string name="pref_description_settings">以下选项若无明确说明，均会在修改后即时生效。如果没有生效的话，重启大概也救不了你。</string>
     <string name="pref_warning_developer">以下调试选项会显著拖慢微信运行速度，请在开发者指导下选择性开启，修改后重启生效。</string>
 
     <string name="status_component_title">组件运行状态</string>

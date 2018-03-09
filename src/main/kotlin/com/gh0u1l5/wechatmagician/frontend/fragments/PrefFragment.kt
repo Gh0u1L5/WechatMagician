@@ -6,8 +6,8 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager.*
 import android.os.Build
 import android.os.Bundle
+import android.preference.PreferenceFragment
 import android.support.v4.content.ContextCompat
-import android.support.v7.preference.PreferenceFragmentCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,13 +24,15 @@ import com.gh0u1l5.wechatmagician.util.IPCUtil.putExtra
 import com.gh0u1l5.wechatmagician.util.LocaleUtil
 import java.io.File
 
-class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceChangeListener {
 
-    override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             // Move old shared preferences to device protected storage if it exists
-            val oldPrefDir = "${context?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
-            val newPrefDir = "${context?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
+            val oldPrefDir = "${activity?.applicationInfo?.dataDir}/$FOLDER_SHARED_PREFS"
+            val newPrefDir = "${activity?.applicationInfo?.deviceProtectedDataDir}/$FOLDER_SHARED_PREFS"
             try {
                 File(oldPrefDir).renameTo(File(newPrefDir))
             } catch (t: Throwable) {
@@ -43,14 +45,13 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
             val preferencesResId = arguments!!.getInt(ARG_PREF_RES)
             val preferencesName = arguments!!.getString(ARG_PREF_NAME)
             preferenceManager.sharedPreferencesName = preferencesName
-            setPreferencesFromResource(preferencesResId, rootKey)
+            addPreferencesFromResource(preferencesResId)
         }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val context = context ?: return null
         return super.onCreateView(inflater, container, savedInstanceState)?.apply {
-            setBackgroundColor(ContextCompat.getColor(context, R.color.card_background))
+            setBackgroundColor(ContextCompat.getColor(activity!!, R.color.card_background))
         }
     }
 
@@ -73,10 +74,10 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
                     val newState = if (hide) COMPONENT_ENABLED_STATE_DISABLED else COMPONENT_ENABLED_STATE_ENABLED
                     val className = "$MAGICIAN_PACKAGE_NAME.frontend.MainActivityAlias"
                     val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
-                    context!!.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
+                    activity!!.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
                 } catch (t: Throwable) {
                     Log.e(LOG_TAG, "Cannot hide icon: $t")
-                    Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, t.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             SETTINGS_MODULE_LANGUAGE -> {
@@ -86,12 +87,12 @@ class PrefFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPrefe
                     activity!!.recreate()
                 } catch (t: Throwable) {
                     Log.e(LOG_TAG, "Cannot change language: $t")
-                    Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(activity, t.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
             }
             else -> {
                 val value = preferences.all[key] ?: return
-                context?.sendBroadcast(Intent(ACTION_UPDATE_PREF).apply {
+                activity?.sendBroadcast(Intent(ACTION_UPDATE_PREF).apply {
                     putExtra("key", key)
                     putExtra("value", value)
                 })
