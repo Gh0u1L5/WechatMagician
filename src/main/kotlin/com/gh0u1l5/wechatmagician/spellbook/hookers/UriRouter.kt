@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_URI_ROUTER
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.WXCustomScheme
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.WXCustomSchemeEntryMethod
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.WXCustomScheme_entry
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
@@ -18,7 +18,7 @@ object UriRouter : EventCenter() {
         get() = listOf(IUriRouterHook::class.java)
 
     @WechatHookMethod @JvmStatic fun hookEvents() {
-        findAndHookMethod(WXCustomScheme, WXCustomSchemeEntryMethod, object : XC_MethodHook() {
+        findAndHookMethod(WXCustomScheme, WXCustomScheme_entry, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val intent = param.args[0] as Intent?
                 val uri = intent?.data ?: return

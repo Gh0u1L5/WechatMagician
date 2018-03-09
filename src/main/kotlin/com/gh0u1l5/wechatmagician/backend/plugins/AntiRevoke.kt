@@ -7,7 +7,7 @@ import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_RECALL
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageInsertMethod
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
@@ -102,9 +102,9 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
             XposedHelpers.setObjectField(copy, "field_content", values["content"])
             XposedHelpers.setLongField(copy, "field_createTime", createTime + 1L)
 
-            when (MsgStorageInsertMethod.parameterTypes.size) {
-                1 -> MsgStorageInsertMethod.invoke(MsgStorageObject, copy)
-                2 -> MsgStorageInsertMethod.invoke(MsgStorageObject, copy, false)
+            when (MsgInfoStorage_insert.parameterTypes.size) {
+                1 -> MsgInfoStorage_insert.invoke(MsgStorageObject, copy)
+                2 -> MsgInfoStorage_insert.invoke(MsgStorageObject, copy, false)
             }
         }
     }

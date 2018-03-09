@@ -1,8 +1,8 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_XML_PARSER
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XMLParseMethod
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XMLParserClass
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
@@ -17,7 +17,7 @@ object XmlParser : EventCenter() {
 
     @Suppress("UNCHECKED_CAST")
     @WechatHookMethod @JvmStatic fun hookEvents() {
-        findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {
+        findAndHookMethod(XmlParser, XmlParser_parse, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("onXmlParsing") { plugin ->
                     (plugin as IXmlParserHook).onXmlParsing(param)

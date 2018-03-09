@@ -20,7 +20,7 @@ import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUploadUI
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUploadUIEditTextField
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUploadUI_mSnsEditText
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsUserUIAdapterObject
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
@@ -198,8 +198,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         val intent = activity.intent ?: return
         if (intent.getBooleanExtra("Ksnsforward", false)) {
             val content = intent.getStringExtra("Kdescription")
-            val editTextField = SnsUploadUIEditTextField
-            val editText = getObjectField(activity, editTextField)
+            val editText = SnsUploadUI_mSnsEditText.get(activity)
             callMethod(editText, "setText", content)
         }
     }

@@ -19,7 +19,7 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMActivity
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectContactUI
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUI
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUIMaxLimitMethod
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectConversationUI_checkLimit
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
@@ -124,7 +124,7 @@ object Limits : IActivityHook {
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
     @WechatHookMethod @JvmStatic fun breakSelectConversationLimit() {
-        findAndHookMethod(SelectConversationUI, SelectConversationUIMaxLimitMethod, object : XC_MethodHook() {
+        findAndHookMethod(SelectConversationUI, SelectConversationUI_checkLimit, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false
@@ -152,7 +152,7 @@ object Limits : IActivityHook {
 
                 if (contactField == null) {
                     contactField = item::class.java.fields.firstOrNull {
-                        it.type.name == WechatPackage.ContactInfoClass.name
+                        it.type.name == WechatPackage.ContactInfo.name
                     } ?: return@next
                 }
                 val contact = contactField?.get(item) ?: return@next

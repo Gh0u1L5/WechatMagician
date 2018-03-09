@@ -100,7 +100,7 @@ object WechatPackage {
     val WXCustomScheme: Class<*> by innerLazy("WXCustomScheme") {
         findClassIfExists("$packageName.plugin.base.stub.WXCustomSchemeEntryActivity", loader)
     }
-    val WXCustomSchemeEntryMethod: Method by innerLazy("WXCustomSchemeEntryMethod") {
+    val WXCustomScheme_entry: Method by innerLazy("WXCustomScheme_entry") {
         findMethodsByExactParameters(WXCustomScheme, C.Boolean, C.Intent).firstOrNull()
     }
 
@@ -110,7 +110,7 @@ object WechatPackage {
                 .filterByMethod(null, "free")
                 .firstOrNull()
     }
-    val EncEngineEDMethod: Method by innerLazy("EncEngineEDMethod") {
+    val EncEngine_transFor: Method by innerLazy("EncEngine_transFor") {
         findMethodsByExactParameters(EncEngine, C.Int, C.ByteArray, C.Int).firstOrNull()
     }
 
@@ -135,7 +135,7 @@ object WechatPackage {
                 .filterByMethod(null, NotificationItem)
                 .firstOrNull()
     }
-    val NotificationAppMsgQueueAddMethod: Method by innerLazy("NotificationAppMsgQueueAddMethod") {
+    val NotificationAppMsgQueue_add: Method by innerLazy("NotificationAppMsgQueue_add") {
         findMethodsByExactParameters(NotificationAppMsgQueue, null, NotificationItem).firstOrNull()
     }
 
@@ -166,7 +166,7 @@ object WechatPackage {
         }
         return@innerLazy addressBase
     }
-    val MMBaseAdapterGetMethod: String by innerLazy("MMBaseAdapterGetMethod") {
+    val MMBaseAdapter_getItemInternal: String by innerLazy("MMBaseAdapter_getItemInternal") {
         MMBaseAdapter.declaredMethods.filter {
             it.parameterTypes.size == 1 && it.parameterTypes[0] == C.Int
         }.firstOrNull {
@@ -237,10 +237,9 @@ object WechatPackage {
                 .filterByField("$WECHAT_PACKAGE_SNS_UI.SnsUploadSayFooter")
                 .firstOrNull()
     }
-    val SnsUploadUIEditTextField: String by innerLazy("SnsUploadUIEditTextField") {
-        findFieldsWithType(
-                SnsUploadUI, "$WECHAT_PACKAGE_SNS_UI.SnsEditText"
-        ).firstOrNull()?.name ?: ""
+    val SnsUploadUI_mSnsEditText: Field by innerLazy("SnsUploadUI_mSnsEditText") {
+        findFieldsWithType(SnsUploadUI, "$WECHAT_PACKAGE_SNS_UI.SnsEditText")
+                .firstOrNull()?.apply { isAccessible = true }
     }
     val SnsUserUI: Class<*> by innerLazy("SnsUserUI") {
         findClassIfExists("$WECHAT_PACKAGE_SNS_UI.SnsUserUI", loader)
@@ -260,71 +259,81 @@ object WechatPackage {
     val SelectConversationUI: Class<*> by innerLazy("SelectConversationUI") {
         findClassIfExists("$WECHAT_PACKAGE_UI.transmit.SelectConversationUI", loader)
     }
-    val SelectConversationUIMaxLimitMethod: Method by innerLazy("SelectConversationUIMaxLimitMethod") {
+    val SelectConversationUI_checkLimit: Method by innerLazy("SelectConversationUI_checkLimit") {
         findMethodsByExactParameters(SelectConversationUI, C.Boolean, C.Boolean).firstOrNull()
     }
 
-    val MsgInfoClass: Class<*> by innerLazy("MsgInfoClass") {
+    val MsgInfo: Class<*> by innerLazy("MsgInfo") {
         findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                 .filterByMethod(C.Boolean, "isSystem")
                 .firstOrNull()
     }
-    val ContactInfoClass: Class<*> by innerLazy("ContactInfoClass") {
+    val ContactInfo: Class<*> by innerLazy("ContactInfo") {
         findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
                 .filterByMethod(C.String, "getCityCode")
                 .filterByMethod(C.String, "getCountryCode")
                 .firstOrNull()
     }
 
-    val MsgStorageClass: Class<*> by innerLazy("MsgStorageClass") {
+    val MsgInfoStorage: Class<*> by innerLazy("MsgInfoStorage") {
         when {
             version!! >= Version("6.5.8") ->
                 findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
-                        .filterByMethod(C.Long, MsgInfoClass, C.Boolean)
+                        .filterByMethod(C.Long, MsgInfo, C.Boolean)
                         .firstOrNull()
             else ->
                 findClassesFromPackage(loader!!, classes!!, "$packageName.storage")
-                        .filterByMethod(C.Long, MsgInfoClass)
+                        .filterByMethod(C.Long, MsgInfo)
                         .firstOrNull()
         }
     }
-    val MsgStorageInsertMethod: Method by innerLazy("MsgStorageInsertMethod") {
+    val MsgInfoStorage_insert: Method by innerLazy("MsgInfoStorage_insert") {
         when {
             version!! >= Version("6.5.8") ->
-                findMethodsByExactParameters(
-                        MsgStorageClass, C.Long, MsgInfoClass, C.Boolean
-                ).firstOrNull()
+                findMethodsByExactParameters(MsgInfoStorage, C.Long, MsgInfo, C.Boolean).firstOrNull()
             else ->
-                findMethodsByExactParameters(
-                        MsgStorageClass, C.Long, MsgInfoClass
-                ).firstOrNull()
+                findMethodsByExactParameters(MsgInfoStorage, C.Long, MsgInfo).firstOrNull()
         }
     }
 
-    val CacheMapClass: String by lazy { "$packageName.a.f" }
-    val CacheMapPutMethod = "k"
-
-    val ImgStorageClass: Class<*> by innerLazy("ImgStorageClass") {
-        findClassesFromPackage(loader!!, classes!!, packageName, 1)
-                .filterByMethod(C.String, ImgStorageLoadMethod, C.String, C.String, C.String, C.Boolean)
+    val LruCache: Class<*> by innerLazy("LruCache") {
+        findClassesFromPackage(loader!!, classes!!, "$packageName.sdk.platformtools")
+                .filterByMethod(null, "trimToSize", C.Int)
                 .firstOrNull()
     }
-    val ImgStorageCacheField: Field by innerLazy("ImgStorageCacheField") {
-        findFieldsWithGenericType(
-                ImgStorageClass, "$CacheMapClass<java.lang.String, android.graphics.Bitmap>"
-        ).firstOrNull()?.apply { isAccessible = true }
-    }
-    val ImgStorageLoadMethod = "a"
 
-    val XMLParserClass: Class<*> by innerLazy("XMLParserClass") {
+    val LruCacheWithListener: Class<*> by innerLazy("LruCacheWithListener") {
+        findClassesFromPackage(loader!!, classes!!, packageName, 1)
+                .filterBySuper(LruCache)
+                .firstOrNull()
+    }
+    val LruCacheWithListener_put: Method by innerLazy("LruCacheWithListener_put") {
+        findMethodsByExactParameters(LruCacheWithListener, null, C.Object, C.Object)
+                .firstOrNull()?.apply { isAccessible = true }
+    }
+
+    val ImgInfoStorage: Class<*> by innerLazy("ImgInfoStorage") {
+        findClassesFromPackage(loader!!, classes!!, packageName, 1)
+                .filterByMethod(C.String, C.String, C.String, C.String, C.Boolean)
+                .firstOrNull()
+    }
+    val ImgInfoStorage_mBitmapCache: Field by innerLazy("ImgInfoStorage_mBitmapCache") {
+        findFieldsWithGenericType(
+                ImgInfoStorage, "${LruCacheWithListener.canonicalName}<java.lang.String, android.graphics.Bitmap>")
+                .firstOrNull()?.apply { isAccessible = true }
+    }
+    val ImgInfoStorage_load: Method by innerLazy("ImgInfoStorage_load") {
+        findMethodsByExactParameters(ImgInfoStorage, C.String, C.String, C.String, C.String, C.Boolean)
+                .firstOrNull()?.apply { isAccessible = true }
+    }
+
+    val XmlParser: Class<*> by innerLazy("XmlParser") {
         findClassesFromPackage(loader!!, classes!!, "$packageName.sdk.platformtools")
                 .filterByMethod(C.Map, C.String, C.String)
                 .firstOrNull()
     }
-    val XMLParseMethod: Method by innerLazy("XMLParseMethod") {
-        findMethodsByExactParameters(
-                XMLParserClass, C.Map, C.String, C.String
-        ).firstOrNull()
+    val XmlParser_parse: Method by innerLazy("XmlParser_parse") {
+        findMethodsByExactParameters(XmlParser, C.Map, C.String, C.String).firstOrNull()
     }
 
     /**

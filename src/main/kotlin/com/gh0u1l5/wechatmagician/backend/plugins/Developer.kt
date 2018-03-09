@@ -23,8 +23,8 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMListPopupWindow
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCancellationSignal
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCursorFactory
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteDatabase
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XMLParseMethod
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XMLParserClass
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
@@ -252,7 +252,7 @@ object Developer {
     // Hook XML Parser to trace the XML files used in Wechat.
     @WechatHookMethod @JvmStatic fun traceXMLParse() {
         if (pref.getBoolean(DEVELOPER_XML_PARSER, false)) {
-            findAndHookMethod(XMLParserClass, XMLParseMethod, object : XC_MethodHook() {
+            findAndHookMethod(XmlParser, XmlParser_parse, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
                     val xml = param.args[0] as String?

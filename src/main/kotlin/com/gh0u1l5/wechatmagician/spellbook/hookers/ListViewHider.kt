@@ -6,7 +6,7 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationWithCacheAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMBaseAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMBaseAdapterGetMethod
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMBaseAdapter_getItemInternal
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import de.robv.android.xposed.XC_MethodHook
@@ -74,7 +74,7 @@ object ListViewHider {
 
     @WechatHookMethod @JvmStatic fun hijackMMBaseAdapter() {
         // Hook getItem() of base adapters
-        findAndHookMethod(MMBaseAdapter, MMBaseAdapterGetMethod, C.Int, object : XC_MethodHook() {
+        findAndHookMethod(MMBaseAdapter, MMBaseAdapter_getItemInternal, C.Int, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val adapter = param.thisObject as BaseAdapter
                 val index = param.args[0] as Int

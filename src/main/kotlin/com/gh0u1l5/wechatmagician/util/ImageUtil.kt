@@ -3,6 +3,10 @@ package com.gh0u1l5.wechatmagician.util
 import android.graphics.Bitmap
 import android.os.Environment
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_load
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_mBitmapCache
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.LruCacheWithListener_put
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.text.SimpleDateFormat
 import java.util.*
@@ -17,9 +21,8 @@ object ImageUtil {
 
     // getPathFromImgId maps the given imgId to corresponding absolute path.
     private fun getPathFromImgId(imgId: String): String? {
-        val storage = WechatPackage.ImgStorageObject ?: return null
-        val load = WechatPackage.ImgStorageLoadMethod
-        return callMethod(storage, load, imgId, "th_", "", false) as String
+        val storage = ImgStorageObject ?: return null
+        return ImgInfoStorage_load.invoke(storage, imgId, "th_", "", false) as? String
     }
 
     // replaceThumbDiskCache replaces the disk cache of a specific
@@ -40,12 +43,12 @@ object ImageUtil {
     // thumbnail with the given bitmap.
     private fun replaceThumbMemoryCache(path: String, bitmap: Bitmap) {
         // Check if memory cache and image storage are established
-        val storage = WechatPackage.ImgStorageObject ?: return
-        val cache = WechatPackage.ImgStorageCacheField.get(storage)
+        val storage = ImgStorageObject ?: return
+        val cache = ImgInfoStorage_mBitmapCache.get(storage)
 
         // Update memory cache
         callMethod(cache, "remove", path)
-        callMethod(cache, WechatPackage.CacheMapPutMethod, "${path}hd", bitmap)
+        callMethod(cache, LruCacheWithListener_put.name, "${path}hd", bitmap)
 
         // Notify storage update
         callMethod(storage, "doNotify")

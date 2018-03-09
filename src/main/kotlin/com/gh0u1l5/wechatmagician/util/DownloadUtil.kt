@@ -27,7 +27,7 @@ object DownloadUtil {
         }
 
         val encEngine = XposedHelpers.newInstance(WechatPackage.EncEngine, media.main.key)
-        WechatPackage.EncEngineEDMethod.invoke(encEngine, content, content.size)
+        WechatPackage.EncEngine_transFor.invoke(encEngine, content, content.size)
         XposedHelpers.callMethod(encEngine, "free")
         FileUtil.writeBytesToDisk(path, content)
     }
