@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.TextView
+import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
 import com.gh0u1l5.wechatmagician.R
@@ -33,6 +34,9 @@ class MainActivity : AppCompatActivity(),
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
+        if (!BuildConfig.DEBUG) {
+            nav_view.menu.removeItem(R.id.nav_developer)
+        }
         nav_view.setNavigationItemSelectedListener(this)
 
         val headerView = nav_view.getHeaderView(0)

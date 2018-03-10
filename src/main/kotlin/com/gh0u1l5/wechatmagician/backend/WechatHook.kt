@@ -60,7 +60,6 @@ class WechatHook : IXposedHookLoadPackage {
                 SnsBlock,
                 SnsForward
         )
-        private val customHookers = listOf(Limits, Developer)
 
         private val requireHookStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -150,7 +149,11 @@ class WechatHook : IXposedHookLoadPackage {
         ChatroomHideList.load(context)
 
         // Launch Wechat SpellBook
-        SpellBook.startup(lpparam, plugins, customHookers)
+        if (!BuildConfig.DEBUG) {
+            SpellBook.startup(lpparam, plugins, listOf(Limits))
+        } else {
+            SpellBook.startup(lpparam, plugins, listOf(Limits, Developer))
+        }
     }
 
     // handleLoadWechatOnFly uses reflection to load updated module without reboot.
