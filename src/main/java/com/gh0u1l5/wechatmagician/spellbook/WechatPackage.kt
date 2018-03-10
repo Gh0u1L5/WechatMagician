@@ -67,7 +67,7 @@ object WechatPackage {
      * @return a lazy object that can be used for lazy evaluation.
      */
     private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
-        initializeChannel.wait(2000)
+        initializeChannel.wait(8000)
         initializer() ?: throw Error("Failed to evaluate $name")
     }
 
@@ -342,7 +342,7 @@ object WechatPackage {
      * @param lpparam The LoadPackageParam object that describes the current process. It should be
      * the same one passed to [de.robv.android.xposed.IXposedHookLoadPackage.handleLoadPackage].
      */
-    fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
+    @JvmStatic fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryAsynchronously {
             var apkFile: ApkFile? = null
             try {

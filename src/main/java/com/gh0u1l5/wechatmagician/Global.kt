@@ -12,6 +12,10 @@ object Global {
     const val WECHAT_PACKAGE_NAME   = "com.tencent.mm"
     const val MAGICIAN_PACKAGE_NAME = "com.gh0u1l5.wechatmagician"
 
+    const val ITEM_ID_BUTTON_HIDE_FRIEND   = 0x510
+    const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511
+    const val ITEM_ID_BUTTON_CLEAN_UNREAD  = 0x512
+
     @SuppressLint("SdCardPath")
     private val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
     val XPOSED_BASE_DIR = "$DATA_DIR/$XPOSED_PACKAGE_NAME/"
@@ -58,8 +62,4 @@ object Global {
     const val ACTION_REQUIRE_WECHAT_PACKAGE = "$MAGICIAN_PACKAGE_NAME.ACTION_REQUIRE_WECHAT_PACKAGE"
     const val ACTION_UPDATE_PREF            = "$MAGICIAN_PACKAGE_NAME.ACTION_UPDATE_PREF"
     val PREFERENCE_STRING_LIST_KEYS         = listOf(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT)
-
-    const val ITEM_ID_BUTTON_HIDE_FRIEND   = 0x510
-    const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511
-    const val ITEM_ID_BUTTON_CLEAN_UNREAD  = 0x512
 }
