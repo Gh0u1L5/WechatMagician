@@ -62,7 +62,7 @@ object LocalizedStrings {
             ),
             "en" to mapOf(
                     TITLE_SECRET_FRIEND to "Secret Friends",
-                    BUTTON_HIDE_FRIEND to "Hide This Friend",
+                    BUTTON_HIDE_FRIEND to "Hide Friend",
                     BUTTON_HIDE_CHATROOM to "Hide Useless Chatroom",
                     PROMPT_NEW_PASSWORD to "Please enter a new password:",
                     PROMPT_VERIFY_PASSWORD to "Please enter your password:",

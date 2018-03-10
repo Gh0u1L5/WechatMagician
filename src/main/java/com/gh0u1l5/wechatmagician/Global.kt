@@ -34,6 +34,7 @@ object Global {
     const val SETTINGS_MODULE_LANGUAGE                = "settings_module_language"
     const val SETTINGS_SECRET_FRIEND                  = "settings_secret_friend"
     const val SETTINGS_SECRET_FRIEND_PASSWORD         = "settings_secret_friend_password"
+    const val SETTINGS_SECRET_FRIEND_HIDE_OPTION      = "settings_secret_friend_hide_option"
     const val SETTINGS_SELECT_PHOTOS_LIMIT            = "settings_select_photos_limit"
     const val SETTINGS_SNS_ADBLOCK                    = "settings_sns_adblock"
     const val SETTINGS_SNS_DELETE_COMMENT             = "settings_sns_delete_comment"

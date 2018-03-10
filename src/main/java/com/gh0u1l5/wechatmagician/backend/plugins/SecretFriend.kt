@@ -6,6 +6,7 @@ import android.widget.BaseAdapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
+import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_HIDE_OPTION
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
@@ -97,13 +98,12 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
     }
 
     // Add menu items in the popup menu for contacts.
-    // TODO: change the title of the button for hiding friends.
     override fun onPopupMenuForContactsCreating(username: String): MenuAppender.PopupMenuItem? {
         if (!isPluginEnabled()) {
             return null
         }
         val itemId = ITEM_ID_BUTTON_HIDE_FRIEND
-        val title = str[BUTTON_HIDE_FRIEND]
+        val title = pref.getString(SETTINGS_SECRET_FRIEND_HIDE_OPTION, str[BUTTON_HIDE_FRIEND])
         val onClickListener = { context: Context ->
             changeUserStatusByUsername(context, username, true)
         }

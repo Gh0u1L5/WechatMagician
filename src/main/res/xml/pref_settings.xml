@@ -86,5 +86,13 @@
             android:selectAllOnFocus="true"
             android:singleLine="true"
             android:title="@string/pref_text_secret_friend_password" />
+        <EditTextPreference
+            android:defaultValue="Hide Friend"
+            android:dependency="settings_secret_friend"
+            android:key="settings_secret_friend_hide_option"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:summary="@string/pref_text_secret_friend_hide_option_summary"
+            android:title="@string/pref_text_secret_friend_hide_option" />
     </PreferenceCategory>
 </PreferenceScreen>
