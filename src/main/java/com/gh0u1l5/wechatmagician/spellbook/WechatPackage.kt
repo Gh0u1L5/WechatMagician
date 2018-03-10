@@ -344,6 +344,10 @@ object WechatPackage {
      */
     @JvmStatic fun init(lpparam: XC_LoadPackage.LoadPackageParam) {
         tryAsynchronously {
+            if (initializeChannel.isDone()) {
+                return@tryAsynchronously
+            }
+
             var apkFile: ApkFile? = null
             try {
                 packageName = lpparam.packageName

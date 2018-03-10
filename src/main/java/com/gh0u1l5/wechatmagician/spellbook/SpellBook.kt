@@ -37,6 +37,10 @@ object SpellBook {
             UriRouter,
             XmlParser
     )
+    /**
+     * True if the official hookers is loading or already loaded.
+     */
+    @Volatile private var isOfficialHookersLoaded = false
 
     /**
      * A list holding the event centers that actually notify the plugins.
@@ -115,7 +119,6 @@ object SpellBook {
     private inline fun tryHook(crossinline hook: () -> Unit) {
         when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.N -> tryVerbosely { hook() }
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP -> tryAsynchronously { hook() }
             else -> tryAsynchronously { try { hook() } catch (t: Throwable) { /* Ignore */ } }
         }
     }
@@ -134,7 +137,8 @@ object SpellBook {
         log("Wechat SpellBook: ${plugins.size} plugins, ${hookers.size} hookers.")
         WechatPackage.init(lpparam)
         registerPlugins(plugins)
-        registerHookers(hookers)
+        registerOfficialHookers()
+        registerCustomHookers(hookers)
     }
 
     /**
@@ -156,10 +160,28 @@ object SpellBook {
     }
 
     /**
-     * Registers all the hookers to the Xposed framework using [tryHook].
+     * Registers all the official hookers to the Xposed framework using [tryHook].
      */
-    private fun registerHookers(customHookers: List<Any>) {
-        (officialHookers + customHookers).forEach { hooker ->
+    private fun registerOfficialHookers() {
+        if (isOfficialHookersLoaded) {
+            return
+        }
+        isOfficialHookersLoaded = true
+        officialHookers.forEach { hooker ->
+            hooker::class.java.declaredMethods.forEach { method ->
+                val isHookMethod = method.isAnnotationPresent(WechatHookMethod::class.java)
+                if (isHookMethod) {
+                    tryHook { method.invoke(null) }
+                }
+            }
+        }
+    }
+
+    /**
+     * Registers all the custom hookers to the Xposed framework using [tryHook].
+     */
+    private fun registerCustomHookers(customHookers: List<Any>) {
+        customHookers.forEach { hooker ->
             hooker::class.java.declaredMethods.forEach { method ->
                 val isHookMethod = method.isAnnotationPresent(WechatHookMethod::class.java)
                 if (isHookMethod) {
