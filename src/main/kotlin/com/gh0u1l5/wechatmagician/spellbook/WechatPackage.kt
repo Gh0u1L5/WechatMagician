@@ -67,7 +67,7 @@ object WechatPackage {
      * @return a lazy object that can be used for lazy evaluation.
      */
     private fun <T> innerLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
-        initializeChannel.wait()
+        initializeChannel.wait(2000)
         initializer() ?: throw Error("Failed to evaluate $name")
     }
 

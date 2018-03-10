@@ -4,17 +4,7 @@ class WaitChannel {
     @Volatile private var done = false
     private val channel = java.lang.Object()
 
-    fun wait(): Boolean {
-        synchronized(channel) {
-            if (!done) {
-                channel.wait()
-                return true
-            }
-            return false
-        }
-    }
-
-    fun wait(millis: Long): Boolean {
+    fun wait(millis: Long = 0L): Boolean {
         synchronized(channel) {
             if (!done) {
                 channel.wait(millis)

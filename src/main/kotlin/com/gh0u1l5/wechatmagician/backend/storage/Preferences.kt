@@ -71,7 +71,7 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
     // listen registers the updateReceiver to listen the update events from the frontend.
     private val updateReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
-            loadChannel.wait()
+            loadChannel.wait(2000)
             // If we are using the legacy logic, then just stay with it.
             if (legacy != null) {
                 legacy?.reload()
@@ -103,7 +103,7 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
     override fun getAll(): MutableMap<String, *>? = if (legacy != null) legacy!!.all else content
 
     private fun getValue(key: String): Any? {
-        loadChannel.wait()
+        loadChannel.wait(100)
         return all?.get(key)
     }
 
@@ -122,7 +122,7 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
     override fun getStringSet(key: String, defValue: MutableSet<String>): MutableSet<String> = getValue(key, defValue)
 
     fun getStringList(key: String, defValue: List<String>): List<String> {
-        loadChannel.wait()
+        loadChannel.wait(100)
         return listCache[key] ?: defValue
     }
 
