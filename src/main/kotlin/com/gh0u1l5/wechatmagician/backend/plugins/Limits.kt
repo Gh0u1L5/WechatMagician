@@ -34,6 +34,7 @@ object Limits : IActivityHook {
     private val pref = WechatHook.settings
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
+    // TODO: fix the logic here 
     override fun onAlbumPreviewUICreated(activity: Activity) {
         val intent = activity.intent ?: return
         val current = intent.getIntExtra("max_select_count", 9)

@@ -65,6 +65,7 @@ class SupportFragment : Fragment() {
 
     private fun sendReport(report: String) {
         try {
+            // TODO: Fix the Xposed Log here.
             view?.context?.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                 type = "text/plain"
 //                putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(getXposedLog()))

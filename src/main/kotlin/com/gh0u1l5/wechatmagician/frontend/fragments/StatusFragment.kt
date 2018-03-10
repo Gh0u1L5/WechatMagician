@@ -25,6 +25,8 @@ import kotlinx.android.synthetic.main.fragment_status.*
 
 class StatusFragment : Fragment() {
 
+    // TODO: add local cache for status
+
     private val componentMap = mapOf(
             STATUS_FLAG_MSG_STORAGE to R.id.component_msg_storage_status,
             STATUS_FLAG_RESOURCES to R.id.component_resources_status,

@@ -40,8 +40,7 @@
             android:name=".frontend.PrefProvider"
             android:authorities="com.gh0u1l5.wechatmagician.preferences"
             android:exported="true"
-            tools:ignore="ExportedContentProvider">
-        </provider>
+            tools:ignore="ExportedContentProvider" />
 
         <meta-data
             android:name="xposedmodule"
