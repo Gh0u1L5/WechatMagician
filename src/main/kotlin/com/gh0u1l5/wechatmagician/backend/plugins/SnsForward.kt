@@ -27,6 +27,7 @@ import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.util.*
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getListViewFromSnsActivity
@@ -129,8 +130,10 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         if (path.endsWith("SnsMicroMsg.db")) {
             // Force Wechat to retrieve existing SNS data from remote server.
             val deleted = ContentValues().apply { put("sourceType", 0) }
-            callMethod(database, "delete", "snsExtInfo3", "local_flag=0", null)
-            callMethod(database, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
+            tryVerbosely {
+                callMethod(database, "delete", "snsExtInfo3", "local_flag=0", null)
+                callMethod(database, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
+            }
         }
     }
 
