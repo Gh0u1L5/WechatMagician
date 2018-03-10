@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Wechat Magician</string>
     <string name="app_desc">Make you the master of your Wechat.</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="view_about_project_github">GitHub: Gh0u1L5/WechatMagician</string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 
@@ -11,20 +13,42 @@
     <string name="support">Support</string>
     <string name="donate">Donate</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="support_github_mark">Github Mark</string>
-    <string name="support_github_logo">Github</string>
-    <string name="support_send_email">Email</string>
+    <string name="button_ok">Okay</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_clean_unread">Mark All as Read</string>
+    <string name="button_hide_chatroom">Hide Useless Chatroom</string>
+    <string name="button_unhide_chatroom">Unhide Chatroom</string>
+    <string name="button_hide_friend">Hide Friend</string>
+    <string name="button_select_all">All</string>
+    <string name="button_sns_forward">Forward</string>
+    <string name="button_sns_screenshot">Screenshot</string>
+
+    <string name="prompt_alipay_not_found">Alipay Not Found</string>
+    <string name="prompt_message_recall">want to recall the message, idiot.</string>
+    <string name="prompt_need_reboot">Take effect after reboot.</string>
+    <string name="prompt_screenshot">The screenshot has been saved to</string>
+    <string name="prompt_sns_invalid">Record is invalid or deleted.</string>
+    <string name="prompt_wait">Please wait for a while.....</string>
+    <string name="prompt_load_component_status_failed">Failed to retrieve the status of components.</string>
+
+    <string name="prompt_setup_password">Please enter a new password:</string>
+    <string name="prompt_verify_password">Please enter your password:</string>
+    <string name="prompt_user_not_found">User Not Found!</string>
+    <string name="prompt_password_missing">Please set your password first!</string>
+    <string name="prompt_correct_password">Correct Password!</string>
+    <string name="prompt_wrong_password">Wrong Password!</string>
+
     <string name="donate_alipay">Alipay</string>
     <string name="donate_wepay">Wechat Pay</string>
+    <string name="label_deleted">[Deleted]</string>
+    <string name="label_unnamed">[Unnamed]</string>
     <string name="status_ok">The module is loaded properly.</string>
     <string name="status_error">The module isn\'t loaded, please check the Xposed framework.</string>
     <string name="status_outdated_xposed">Current Xposed Framework is lower than 89.0; this may cause some unexpected crashes.</string>
-    <string name="prompt_alipay_not_found">Alipay Not Found</string>
-    <string name="prompt_need_reboot">Take effect after reboot.</string>
-    <string name="prompt_wait">Please wait for a while.....</string>
-    <string name="prompt_load_component_status_failed">Failed to retrieve the status of components.</string>
+    <string name="support_github_mark">Github Mark</string>
+    <string name="support_github_logo">Github</string>
+    <string name="support_send_email">Email</string>
+    <string name="title_secret_friend">Secret Friend</string>
 
     <string name="status_component_title">Component Details</string>
     <string name="status_component_valid">Valid</string>
@@ -34,23 +58,6 @@
     <string name="status_component_database">SQLite Database Hijacking</string>
     <string name="status_component_xml_parser">XML Parser Hijacking</string>
     <string name="status_component_custom_scheme">URI Router Hijacking</string>
-
-    <string name="pref_category_ui">UI Debug Options</string>
-    <string name="pref_toggle_touch_event">Trace Touch Events</string>
-    <string name="pref_toggle_trace_activities">Trace Activities</string>
-    <string name="pref_toggle_dump_popup_menu">Dump Popup Menu</string>
-
-    <string name="pref_category_database">Database Debug Options</string>
-    <string name="pref_toggle_database_query">Trace Query</string>
-    <string name="pref_toggle_database_insert">Trace Insert</string>
-    <string name="pref_toggle_database_update">Trace Update</string>
-    <string name="pref_toggle_database_delete">Trace Delete</string>
-    <string name="pref_toggle_database_execute">Trace Execute</string>
-
-    <string name="pref_category_developer_miscellaneous">Miscellaneous</string>
-    <string name="pref_toggle_trace_logcat">Trace LogCat</string>
-    <string name="pref_toggle_trace_files">Trace File Operations</string>
-    <string name="pref_toggle_xml_parser">Trace XML Parser</string>
 
     <string name="pref_category_interface">Interface</string>
     <string name="pref_toggle_hide_icon">Hide Launcher Icon</string>
@@ -69,7 +76,6 @@
     <string name="pref_toggle_chatroom_hider_summary">Hide the useless chatrooms into Chatroom Helper.</string>
     <string name="pref_toggle_prevent_recall">Prevent Recalling</string>
     <string name="pref_text_recall_prompt">Custom Recalling Prompt</string>
-    <string name="pref_text_recall_prompt_default">want to recall the message, idiot.</string>
     <string name="pref_text_select_photos_limit">Limit on Sending Photos</string>
 
     <string name="pref_category_sns">Moments</string>
@@ -89,6 +95,23 @@
     <string name="pref_text_secret_friend_password">Password for Secret Friends</string>
     <string name="pref_text_secret_friend_hide_option">Menu Text for Secret Friends</string>
     <string name="pref_text_secret_friend_hide_option_summary">After enabling Secret Friends, there will be a "Hide Friend" option when you long clicking a contact. You can change the text here for better effect.</string>
+
+    <string name="pref_category_ui">UI Debug Options</string>
+    <string name="pref_toggle_touch_event">Trace Touch Events</string>
+    <string name="pref_toggle_trace_activities">Trace Activities</string>
+    <string name="pref_toggle_dump_popup_menu">Dump Popup Menu</string>
+
+    <string name="pref_category_database">Database Debug Options</string>
+    <string name="pref_toggle_database_query">Trace Query</string>
+    <string name="pref_toggle_database_insert">Trace Insert</string>
+    <string name="pref_toggle_database_update">Trace Update</string>
+    <string name="pref_toggle_database_delete">Trace Delete</string>
+    <string name="pref_toggle_database_execute">Trace Execute</string>
+
+    <string name="pref_category_developer_miscellaneous">Miscellaneous</string>
+    <string name="pref_toggle_trace_logcat">Trace LogCat</string>
+    <string name="pref_toggle_trace_files">Trace File Operations</string>
+    <string name="pref_toggle_xml_parser">Trace XML Parser</string>
 
     <string name="support_report_subject">Wechat Magician Report</string>
     <string name="support_report_greetings">Dear Developer,\nThe Xposed log and WechatPackage status has been attached. Currently my issue is:</string>

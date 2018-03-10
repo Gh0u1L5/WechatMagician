@@ -10,12 +10,8 @@ import android.view.*
 import android.widget.AdapterView
 import android.widget.ListPopupWindow
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_SNS_FORWARD
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_SNS_SCREENSHOT
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_SCREENSHOT
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_SNS_INVALID
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_WAIT
+import com.gh0u1l5.wechatmagician.R
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
@@ -42,8 +38,6 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     // ForwardAsyncTask is the AsyncTask that downloads SNS contents and invoke SnsUploadUI.
     class ForwardAsyncTask(snsId: Long, context: Context) : AsyncTask<Void, Void, Throwable?>() {
 
-        private val str = LocalizedStrings
-
         private val snsId = MessageUtil.longToDecimalString(snsId)
         private val snsInfo = SnsCache[this.snsId]
         private val context = WeakReference(context)
@@ -52,7 +46,8 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         override fun doInBackground(vararg params: Void): Throwable? {
             return try {
                 if (snsInfo == null) {
-                    throw Error(str[PROMPT_SNS_INVALID] + "(snsId: $snsId)")
+                    val prompt = resources?.getString(R.string.prompt_sns_invalid) ?: "Record is invalid or deleted."
+                    throw Error("$prompt (snsId: $snsId)")
                 }
                 if (snsInfo.contentUrl != null) {
                     if (snsInfo.medias.isNotEmpty()) {
@@ -74,10 +69,8 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
         override fun onPostExecute(result: Throwable?) {
             if (result != null) {
-                log("FORWARD => $result")
-                Toast.makeText(
-                        context.get(), result.localizedMessage, Toast.LENGTH_SHORT
-                ).show()
+                val message = result.localizedMessage
+                Toast.makeText(context.get(), message, Toast.LENGTH_LONG).show()
                 return
             }
 
@@ -120,8 +113,6 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     private const val ROOT_TAG = "TimelineObject"
     private const val ID_TAG   = ".TimelineObject.id"
-
-    private val str = LocalizedStrings
 
     override fun onDatabaseOpened(path: String, database: Any?) {
         if (database == null) {
@@ -209,7 +200,8 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     // Show a popup menu in SnsTimelineUI
     private fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupWindowPosition?): Boolean {
-        val operations = listOf(str[MENU_SNS_FORWARD], str[MENU_SNS_SCREENSHOT])
+        val textForward = resources?.getString(R.string.button_sns_forward) ?: "Forward"
+        val textScreenshot = resources?.getString(R.string.button_sns_screenshot) ?: "Screenshot"
         ListPopupWindow(parent.context).apply {
             if (position != null) {
                 // Calculate list view size
@@ -228,7 +220,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
             // Set general properties for popup window
             width = parent.context.dp2px(120)
             setDropDownGravity(Gravity.CENTER)
-            setAdapter(StringListAdapter(view.context, operations))
+            setAdapter(StringListAdapter(view.context, listOf(textForward, textScreenshot)))
             setOnItemClickListener { _, _, operation, _ ->
                 onTimelineItemPopupMenuSelected(view, snsId, operation)
                 dismiss()
@@ -239,12 +231,12 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     // Handle the logic about the popup menu in SnsTimelineUI
     private fun onTimelineItemPopupMenuSelected(itemView: View, snsId: Long, operation: Int): Boolean {
+        val promptWait = resources?.getString(R.string.prompt_wait) ?: "Please wait for a while....."
+        val promptScreenshot = resources?.getString(R.string.prompt_screenshot) ?: "The screenshot has been saved to"
         when (operation) {
             0 -> { // Forward
                 ForwardAsyncTask(snsId, itemView.context).execute()
-                Toast.makeText(
-                        itemView.context, str[PROMPT_WAIT], Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(itemView.context, promptWait, Toast.LENGTH_SHORT).show()
                 return true
             }
             1 -> { // Screenshot
@@ -252,9 +244,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 val bitmap = ViewUtil.drawView(itemView)
                 FileUtil.writeBitmapToDisk(path, bitmap)
                 FileUtil.notifyNewMediaFile(path, itemView.context)
-                Toast.makeText(
-                        itemView.context, str[PROMPT_SCREENSHOT] + path, Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(itemView.context, "$promptScreenshot $path", Toast.LENGTH_SHORT).show()
                 return true
             }
         }

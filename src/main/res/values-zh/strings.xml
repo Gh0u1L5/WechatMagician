@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">微信巫师</string>
     <string name="app_desc">让你玩转微信聊天与朋友圈</string>
+    <string name="navigation_drawer_open">打开导航栏</string>
+    <string name="navigation_drawer_close">关闭导航栏</string>
     <string name="view_about_project_github">项目源码 Gh0u1L5/WechatMagician</string>
     <string name="view_about_project_github_url">https://github.com/Gh0u1L5/WechatMagician</string>
 
@@ -11,20 +13,42 @@
     <string name="support">帮助</string>
     <string name="donate">捐赠</string>
 
-    <string name="navigation_drawer_open">打开导航栏</string>
-    <string name="navigation_drawer_close">关闭导航栏</string>
-    <string name="support_github_mark">Github图标</string>
-    <string name="support_github_logo">Github</string>
-    <string name="support_send_email">电子邮件</string>
+    <string name="button_ok">确定</string>
+    <string name="button_cancel">取消</string>
+    <string name="button_clean_unread">清空全部未读提醒</string>
+    <string name="button_hide_chatroom">隐藏无用群聊</string>
+    <string name="button_unhide_chatroom">还原群聊</string>
+    <string name="button_hide_friend">隐藏好友</string>
+    <string name="button_select_all">全选</string>
+    <string name="button_sns_forward">转发</string>
+    <string name="button_sns_screenshot">截图</string>
+
+    <string name="prompt_alipay_not_found">未发现支付宝手机客户端</string>
+    <string name="prompt_message_recall">妄图撤回一条消息，啧啧</string>
+    <string name="prompt_need_reboot">重启后生效</string>
+    <string name="prompt_screenshot">截图已保存至</string>
+    <string name="prompt_sns_invalid">数据失效或已删除</string>
+    <string name="prompt_wait">请稍候片刻……</string>
+    <string name="prompt_load_component_status_failed">组件状态检查失败</string>
+
+    <string name="prompt_setup_password">请设定新密码</string>
+    <string name="prompt_verify_password">请输入解锁密码</string>
+    <string name="prompt_user_not_found">用户不存在</string>
+    <string name="prompt_password_missing">请先设置密码</string>
+    <string name="prompt_correct_password">密码正确</string>
+    <string name="prompt_wrong_password">密码错误</string>
+
     <string name="donate_alipay">支付宝</string>
     <string name="donate_wepay">微信支付</string>
+    <string name="label_deleted">[已删除]</string>
+    <string name="label_unnamed">[未命名]</string>
     <string name="status_ok">插件已加载并启动</string>
     <string name="status_error">插件未能加载，请检查Xposed框架</string>
     <string name="status_outdated_xposed">当前Xposed版本低于89.0，可能造成卡死、闪退等问题</string>
-    <string name="prompt_alipay_not_found">未发现支付宝手机客户端</string>
-    <string name="prompt_need_reboot">重启后生效</string>
-    <string name="prompt_wait">请稍候片刻……</string>
-    <string name="prompt_load_component_status_failed">组件状态检查失败</string>
+    <string name="support_github_mark">Github图标</string>
+    <string name="support_github_logo">Github</string>
+    <string name="support_send_email">电子邮件</string>
+    <string name="title_secret_friend">微信密友</string>
 
     <string name="status_component_title">组件运行状态</string>
     <string name="status_component_valid">运行中</string>
@@ -34,23 +58,6 @@
     <string name="status_component_database">SQLite数据库劫持</string>
     <string name="status_component_xml_parser">XML解析器劫持</string>
     <string name="status_component_custom_scheme">URI路由劫持</string>
-
-    <string name="pref_category_ui">UI逆向工具</string>
-    <string name="pref_toggle_touch_event">跟踪触摸事件</string>
-    <string name="pref_toggle_trace_activities">跟踪Activity调用</string>
-
-    <string name="pref_category_database">数据库逆向工具</string>
-    <string name="pref_toggle_database_query">跟踪查询操作</string>
-    <string name="pref_toggle_database_insert">跟踪插入操作</string>
-    <string name="pref_toggle_database_update">跟踪更新操作</string>
-    <string name="pref_toggle_database_delete">跟踪删除操作</string>
-    <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
-
-    <string name="pref_category_developer_miscellaneous">其他逆向工具</string>
-    <string name="pref_toggle_trace_logcat">跟踪LogCat事件</string>
-    <string name="pref_toggle_trace_files">跟踪文件读写</string>
-    <string name="pref_toggle_dump_popup_menu">记录弹出菜单信息</string>
-    <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 
     <string name="pref_category_interface">用户界面</string>
     <string name="pref_toggle_hide_icon">隐藏启动图标</string>
@@ -69,7 +76,6 @@
     <string name="pref_toggle_chatroom_hider_summary">将不常用的群聊隐藏到群聊助手中</string>
     <string name="pref_toggle_prevent_recall">启用防撤回</string>
     <string name="pref_text_recall_prompt">自定义防撤回提示</string>
-    <string name="pref_text_recall_prompt_default">妄图撤回一条消息，啧啧</string>
     <string name="pref_text_select_photos_limit">自定义发送图片上限</string>
 
     <string name="pref_category_sns">朋友圈</string>
@@ -89,6 +95,23 @@
     <string name="pref_text_secret_friend_password">微信密友密码</string>
     <string name="pref_text_secret_friend_hide_option">微信密友菜单选项</string>
     <string name="pref_text_secret_friend_hide_option_summary">微信密友启用后，长按联系人默认弹出“隐藏好友”选项，可在此修改为别的字样。</string>
+
+    <string name="pref_category_ui">UI逆向工具</string>
+    <string name="pref_toggle_touch_event">跟踪触摸事件</string>
+    <string name="pref_toggle_trace_activities">跟踪Activity调用</string>
+
+    <string name="pref_category_database">数据库逆向工具</string>
+    <string name="pref_toggle_database_query">跟踪查询操作</string>
+    <string name="pref_toggle_database_insert">跟踪插入操作</string>
+    <string name="pref_toggle_database_update">跟踪更新操作</string>
+    <string name="pref_toggle_database_delete">跟踪删除操作</string>
+    <string name="pref_toggle_database_execute">跟踪SQL命令执行</string>
+
+    <string name="pref_category_developer_miscellaneous">其他逆向工具</string>
+    <string name="pref_toggle_trace_logcat">跟踪LogCat事件</string>
+    <string name="pref_toggle_trace_files">跟踪文件读写</string>
+    <string name="pref_toggle_dump_popup_menu">记录弹出菜单信息</string>
+    <string name="pref_toggle_xml_parser">跟踪XML解释器</string>
 
     <string name="support_report_subject">微信巫师用户反馈</string>
     <string name="support_report_greetings">开发者你好，Xposed日志与WechatPackage记录已添加到附件，我目前遇到的问题是：</string>

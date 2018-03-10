@@ -48,25 +48,25 @@ class SupportFragment : Fragment() {
     }
 
     private fun generateReport() {
-        Toast.makeText(
-                activity, getString(R.string.prompt_wait), Toast.LENGTH_SHORT
-        ).show()
+        val promptWait = getString(R.string.prompt_wait)
+        Toast.makeText(activity, promptWait, Toast.LENGTH_SHORT).show()
         activity?.sendOrderedBroadcast(Intent(ACTION_REQUIRE_WECHAT_PACKAGE), null, object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
+            override fun onReceive(context: Context, intent: Intent?) {
                 val greetings = getString(R.string.support_report_greetings)
                 if (resultData == null) {
-                    sendReport(greetings)
+                    sendReport(context, greetings)
                 } else {
-                    sendReport("$resultData\n\n$greetings")
+                    sendReport(context, "$resultData\n\n$greetings")
                 }
             }
         }, null, RESULT_OK, null, null)
     }
 
-    private fun sendReport(report: String) {
+    private fun sendReport(context: Context, report: String) {
         try {
             // TODO: Fix the Xposed Log here.
-            view?.context?.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
+            // TODO: save log to file
+            context.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                 type = "text/plain"
 //                putParcelableArrayListExtra(Intent.EXTRA_STREAM, arrayListOf(getXposedLog()))
                 putExtra(Intent.EXTRA_EMAIL, arrayOf("WechatMagician@yahoo.com"))
@@ -75,7 +75,7 @@ class SupportFragment : Fragment() {
             })
         } catch (t: Throwable) {
             Log.e(LOG_TAG, "Cannot send email: $t")
-            Toast.makeText(view?.context, t.localizedMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 

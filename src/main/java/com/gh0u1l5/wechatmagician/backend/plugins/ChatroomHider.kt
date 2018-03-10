@@ -9,11 +9,9 @@ import android.widget.BaseAdapter
 import android.widget.ListPopupWindow
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_CHATROOM
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_CHATROOM_HIDER
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_CANCEL
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_HIDE_CHATROOM
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.MENU_CHATROOM_UNHIDE
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
@@ -29,7 +27,6 @@ import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
 
-    private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_CHATTING_CHATROOM_HIDER, false)
@@ -64,7 +61,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
             return null
         }
         val itemId = ITEM_ID_BUTTON_HIDE_CHATROOM
-        val title = str[BUTTON_HIDE_CHATROOM]
+        val title = resources?.getString(R.string.button_hide_chatroom) ?: "Hide Useless Chatroom"
         val onClickListener = { _: Context ->
             changeChatroomStatus(username, true)
         }
@@ -77,10 +74,11 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         }
         if (command.startsWith("chatrooms")) {
             val adapter = ConversationAdapter(context)
+            val cancel = resources?.getString(R.string.button_cancel) ?: "Cancel"
             AlertDialog.Builder(context)
                     .setTitle("Wechat Magician")
                     .setAdapter(adapter, { _, _ -> })
-                    .setNegativeButton(str[BUTTON_CANCEL], { dialog, _ ->
+                    .setNegativeButton(cancel, { dialog, _ ->
                         dialog.dismiss()
                     })
                     .show()
@@ -97,12 +95,12 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
     }
 
     fun onChatroomHiderConversationLongClick(view: View, adapter: ConversationAdapter, username: String): Boolean {
-        val operations = listOf(str[MENU_CHATROOM_UNHIDE])
+        val textUnhideChatroom = resources?.getString(R.string.button_unhide_chatroom) ?: "Unhide Chatroom"
         ListPopupWindow(view.context).apply {
             anchorView = view
             width = view.context.dp2px(140)
             setDropDownGravity(Gravity.CENTER)
-            setAdapter(StringListAdapter(view.context, operations))
+            setAdapter(StringListAdapter(view.context, listOf(textUnhideChatroom)))
             setOnItemClickListener { _, _, operation, _ ->
                 onChatroomHiderConversationPopupMenuSelected(adapter, username, operation)
                 dismiss()

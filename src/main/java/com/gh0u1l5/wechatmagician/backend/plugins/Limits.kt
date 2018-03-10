@@ -13,8 +13,7 @@ import android.widget.TextView
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_SELECT_ALL
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ContactInfo
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMActivity
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SelectContactUI
@@ -30,7 +29,6 @@ import java.lang.reflect.Field
 
 object Limits : IActivityHook {
 
-    private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
     // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
@@ -58,26 +56,27 @@ object Limits : IActivityHook {
                 }
 
                 val menu = param.args[0] as Menu? ?: return
+
                 val activity = param.thisObject as Activity
-                val checked = activity.intent?.getBooleanExtra(
-                        "select_all_checked", false
-                ) ?: false
+                val intent = activity.intent ?: return
+                val checked = intent.getBooleanExtra("select_all_checked", false)
 
                 val selectAll = menu.add(0, 2, 0, "")
                 selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-                if (WechatHook.resources == null) {
+
+                val textSelectAll = resources?.getString(R.string.button_select_all) ?: "All"
+                if (resources == null) {
                     selectAll.isChecked = checked
-                    selectAll.title = str[BUTTON_SELECT_ALL] + "  " +
-                            if (checked) "\u2611" else "\u2610"
+                    selectAll.title = textSelectAll + "  " + if (checked) "\u2611" else "\u2610"
                     selectAll.setOnMenuItemClickListener {
                         onSelectContactUISelectAll(activity, !selectAll.isChecked); true
                     }
                 } else {
-                    val layout = WechatHook.resources?.getLayout(R.layout.wechat_checked_textview)
+                    val layout = resources?.getLayout(R.layout.wechat_checked_textview)
                     val checkedTextView = activity.layoutInflater.inflate(layout, null)
                     checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
                         setTextColor(Color.WHITE)
-                        text = str[BUTTON_SELECT_ALL]
+                        text = textSelectAll
                     }
                     checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
                         isChecked = checked

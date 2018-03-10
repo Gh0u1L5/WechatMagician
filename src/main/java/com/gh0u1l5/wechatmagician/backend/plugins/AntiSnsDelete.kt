@@ -2,9 +2,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.Global
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.LABEL_DELETED
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.list.SnsBlacklist
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.util.MessageUtil
@@ -12,7 +12,6 @@ import de.robv.android.xposed.XC_MethodHook
 
 object AntiSnsDelete : IDatabaseHook {
 
-    private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
     override fun onDatabaseUpdating(param: XC_MethodHook.MethodHookParam) {
@@ -54,7 +53,8 @@ object AntiSnsDelete : IDatabaseHook {
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
     private fun handleMomentDelete(content: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyInfoDelete(str[LABEL_DELETED], content)?.let { msg ->
+        val label = resources?.getString(R.string.label_deleted) ?: "[Deleted]"
+        MessageUtil.notifyInfoDelete(label, content)?.let { msg ->
             values.remove("sourceType")
             values.put("content", msg)
         }
@@ -62,7 +62,8 @@ object AntiSnsDelete : IDatabaseHook {
 
     // handleCommentDelete notifies user that someone has deleted the given comment in moments.
     private fun handleCommentDelete(curActionBuf: ByteArray?, values: ContentValues) {
-        MessageUtil.notifyCommentDelete(str[LABEL_DELETED], curActionBuf)?.let { msg ->
+        val label = resources?.getString(R.string.label_deleted) ?: "[Deleted]"
+        MessageUtil.notifyCommentDelete(label, curActionBuf)?.let { msg ->
             values.remove("commentflag")
             values.put("curActionBuf", msg)
         }

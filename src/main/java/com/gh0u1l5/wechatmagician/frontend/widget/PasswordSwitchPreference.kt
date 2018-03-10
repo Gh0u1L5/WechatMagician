@@ -3,8 +3,7 @@ package com.gh0u1l5.wechatmagician.frontend.widget
 import android.content.Context
 import android.preference.SwitchPreference
 import android.util.AttributeSet
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 
 class PasswordSwitchPreference : SwitchPreference {
@@ -26,7 +25,7 @@ class PasswordSwitchPreference : SwitchPreference {
             if (encrypted == "") {
                 return super.onClick()
             }
-            val message = LocalizedStrings[PROMPT_VERIFY_PASSWORD]
+            val message = context.getString(R.string.prompt_verify_password)
             PasswordUtil.askPasswordWithVerify(context, "Wechat Magician", message, encrypted) {
                 super.onClick()
             }

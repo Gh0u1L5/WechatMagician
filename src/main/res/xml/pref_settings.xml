@@ -25,7 +25,7 @@
             android:key="settings_chatting_recall"
             android:title="@string/pref_toggle_prevent_recall" />
         <EditTextPreference
-            android:defaultValue="@string/pref_text_recall_prompt_default"
+            android:defaultValue="@string/prompt_message_recall"
             android:dependency="settings_chatting_recall"
             android:key="settings_chatting_recall_prompt"
             android:selectAllOnFocus="true"
@@ -87,7 +87,7 @@
             android:singleLine="true"
             android:title="@string/pref_text_secret_friend_password" />
         <EditTextPreference
-            android:defaultValue="Hide Friend"
+            android:defaultValue="@string/button_hide_friend"
             android:dependency="settings_secret_friend"
             android:key="settings_secret_friend_hide_option"
             android:selectAllOnFocus="true"

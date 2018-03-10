@@ -8,9 +8,8 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.LABEL_UNNAMED
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
@@ -27,8 +26,6 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val atCount: Int,
             val unreadCount: Int
     )
-
-    private val str = LocalizedStrings
 
     companion object {
         fun getConversationList(): MutableList<Conversation> {
@@ -89,7 +86,7 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val nickname = getChildAt(0) as TextView?
             val digest = getChildAt(1) as TextView?
             if (conversation.nickname == "") {
-                nickname?.text = str[LABEL_UNNAMED]
+                nickname?.text = resources?.getString(R.string.label_unnamed) ?: "[Unnamed]"
             } else {
                 nickname?.text = conversation.nickname
             }

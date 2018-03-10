@@ -3,9 +3,9 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.content.ContentValues
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_RECALL
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
@@ -27,7 +27,6 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
     private const val TYPE_TAG        = ".sysmsg.\$type"
     private const val REPLACE_MSG_TAG = ".sysmsg.revokemsg.replacemsg"
 
-    private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_CHATTING_RECALL, true)
@@ -45,7 +44,8 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
             val msg = xml[REPLACE_MSG_TAG] ?: return
             if (msg.startsWith("\"")) {
-                val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, str[PROMPT_RECALL])
+                val default = resources?.getString(R.string.prompt_message_recall) ?: "Message Recalled."
+                val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, default)
                 xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
             }
         }

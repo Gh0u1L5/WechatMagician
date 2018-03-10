@@ -8,13 +8,9 @@ import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_HIDE_OPTION
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
+import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.BUTTON_HIDE_FRIEND
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_SET_PASSWORD
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_USER_NOT_FOUND
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.PROMPT_VERIFY_PASSWORD
-import com.gh0u1l5.wechatmagician.backend.storage.LocalizedStrings.TITLE_SECRET_FRIEND
+import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase.getContactByNickname
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapterObject
@@ -28,16 +24,14 @@ import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenuHook, ISearchBarConsole {
 
-    private val str = LocalizedStrings
     private val pref = WechatHook.settings
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SECRET_FRIEND, true)
 
     private fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
-            Toast.makeText(
-                    context, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
-            ).show()
+            val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found) ?: "User Not Found!"
+            Toast.makeText(context, promptUserNotFound, Toast.LENGTH_SHORT).show()
             return
         }
         if (isSecret) {
@@ -78,9 +72,8 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         }
         val username = activity.intent.getStringExtra("Chat_User")
         if (username in SecretFriendList) {
-            Toast.makeText(
-                    activity, str[PROMPT_USER_NOT_FOUND], Toast.LENGTH_SHORT
-            ).show()
+            val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found) ?: "User Not Found!"
+            Toast.makeText(activity, promptUserNotFound, Toast.LENGTH_SHORT).show()
             activity.finish()
         }
     }
@@ -102,8 +95,9 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         if (!isPluginEnabled()) {
             return null
         }
+        val textHideFriend = resources?.getString(R.string.button_hide_friend) ?: "Hide Friend"
         val itemId = ITEM_ID_BUTTON_HIDE_FRIEND
-        val title = pref.getString(SETTINGS_SECRET_FRIEND_HIDE_OPTION, str[BUTTON_HIDE_FRIEND])
+        val title = pref.getString(SETTINGS_SECRET_FRIEND_HIDE_OPTION, textHideFriend)
         val onClickListener = { context: Context ->
             changeUserStatusByUsername(context, username, true)
         }
@@ -116,13 +110,19 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         if (!isPluginEnabled()) {
             return false
         }
+
+        val titleSecretFriend = resources?.getString(R.string.title_secret_friend)
+                ?: "Secret Friend"
+        val promptPasswordMissing = resources?.getString(R.string.prompt_password_missing)
+                ?: "Please set your password first!"
+        val promptVerifyPassword = resources?.getString(R.string.prompt_verify_password)
+                ?: "Please enter your password:"
+
         when {
             command.startsWith("hide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted == "") {
-                    Toast.makeText(
-                            context, str[PROMPT_SET_PASSWORD], Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
                 } else {
                     val nickname = command.drop("hide ".length)
                     changeUserStatusByNickname(context, nickname, true)
@@ -132,13 +132,9 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
             command.startsWith("unhide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted == "") {
-                    Toast.makeText(
-                            context, str[PROMPT_SET_PASSWORD], Toast.LENGTH_SHORT
-                    ).show()
+                    Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
                 } else {
-                    val title = str[TITLE_SECRET_FRIEND]
-                    val message = str[PROMPT_VERIFY_PASSWORD]
-                    PasswordUtil.askPasswordWithVerify(context, title, message, encrypted) {
+                    PasswordUtil.askPasswordWithVerify(context, titleSecretFriend, promptVerifyPassword, encrypted) {
                         val nickname = command.drop("unhide ".length)
                         if (nickname == "all") {
                             SecretFriendList.forEach { username ->
