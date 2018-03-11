@@ -135,7 +135,7 @@ object SpellBook {
      */
     fun startup(lpparam: XC_LoadPackage.LoadPackageParam, plugins: List<Any>, hookers: List<Any>) {
         log("Wechat SpellBook: ${plugins.size} plugins, ${hookers.size} hookers.")
-        WechatPackage.init(lpparam)
+        WechatGlobal.init(lpparam)
         registerPlugins(plugins)
         registerOfficialHookers()
         registerCustomHookers(hookers)

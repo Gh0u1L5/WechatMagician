@@ -16,18 +16,15 @@ import android.widget.ImageView
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_DATABASE
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_MSG_STORAGE
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_RESOURCES
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_URI_ROUTER
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_XML_PARSER
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus.StatusFlag.*
 import kotlinx.android.synthetic.main.fragment_status.*
 
 class StatusFragment : Fragment() {
 
     // TODO: add local cache for status
 
-    private val componentMap = mapOf(
+    private val componentMap = mapOf (
             STATUS_FLAG_MSG_STORAGE to R.id.component_msg_storage_status,
             STATUS_FLAG_RESOURCES to R.id.component_resources_status,
             STATUS_FLAG_DATABASE to R.id.component_database_status,
@@ -96,13 +93,13 @@ class StatusFragment : Fragment() {
     companion object {
         fun newInstance(): StatusFragment = StatusFragment()
 
-        fun requireHookStatus(context: Context, callback: (HashMap<String, Boolean>) -> Unit) {
+        fun requireHookStatus(context: Context, callback: (HashMap<WechatStatus.StatusFlag, Boolean>) -> Unit) {
             context.sendOrderedBroadcast(Intent(ACTION_REQUIRE_HOOK_STATUS), null, object : BroadcastReceiver() {
                 @Suppress("UNCHECKED_CAST")
                 override fun onReceive(context: Context?, intent: Intent?) {
                     val result = getResultExtras(true)
                     val status = result.getSerializable("status")
-                    callback(status as HashMap<String, Boolean>? ?: return)
+                    callback(status as? HashMap<WechatStatus.StatusFlag, Boolean> ?: return)
                 }
             }, null, Activity.RESULT_OK, null, null)
         }

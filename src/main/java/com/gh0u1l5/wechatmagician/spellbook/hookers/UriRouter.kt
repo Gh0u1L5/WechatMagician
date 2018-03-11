@@ -2,13 +2,12 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import android.app.Activity
 import android.content.Intent
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_URI_ROUTER
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.WXCustomScheme
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.WXCustomScheme_entry
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IUriRouterHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.base.stub.Classes.WXCustomScheme
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.base.stub.Methods.WXCustomScheme_entry
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
@@ -32,6 +31,6 @@ object UriRouter : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_URI_ROUTER, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_URI_ROUTER, true)
     }
 }

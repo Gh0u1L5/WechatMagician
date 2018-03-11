@@ -5,12 +5,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_COMMAND
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ActionBarEditText
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.ISearchBarConsole
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.tools.Classes.ActionBarEditText
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
 
@@ -53,6 +52,6 @@ object SearchBar : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_COMMAND, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_COMMAND, true)
     }
 }

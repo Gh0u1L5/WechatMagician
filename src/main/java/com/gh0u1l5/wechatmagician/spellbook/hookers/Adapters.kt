@@ -3,12 +3,12 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationWithCacheAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.HeaderViewListAdapter
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLoader
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.AddressAdapter
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.conversation.Classes.ConversationWithCacheAdapter
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
@@ -46,7 +46,7 @@ object Adapters : EventCenter() {
             }
         })
         findAndHookMethod(
-                HeaderViewListAdapter, "getView",
+                "android.widget.HeaderViewListAdapter", wxLoader, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val adapter     = param.thisObject

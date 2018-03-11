@@ -30,8 +30,8 @@ WechatMagician is a fancy Xposed module designed for Chinese social media applic
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:
 * __Stability__: Most of those modules crashes for every Wechat update due to the obfuscator used by Wechat.
   - This project wraps each feature into a small "unit"; a single unit can crash safely without ruining the whole module.
-  - This project has [a set of APIs](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/util/PackageUtil.kt) to analyze and match the signatures of critical classes / methods.
-  - This project picks only [the signatures](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/backend/WechatPackage.kt) that exist since Wechat 6.5.3. Even if a signature is broken in the coming Wechat updates, it can be fixed easily.
+  - This project has [a set of APIs](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/spellbook/util/PackageUtil.kt) to analyze and match the signatures of critical classes / methods.
+  - This project picks only [the signatures](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/spellbook/mirror/) that exist since Wechat 6.5.3. Even if a signature is broken in the coming Wechat updates, it can be fixed easily.
   - This project hooks the methods close to system components / platform tools. This sacrifices some speed but ensures some stable break points.
 * __Simplicity__: Large modules like WeXposed have many functions that are hardly used by most of the users, but most of the crashes are caused by those functions.
   - If those functions are implemented by different modules, and the users can just install the modules as they need, then our lives would be much more easier.

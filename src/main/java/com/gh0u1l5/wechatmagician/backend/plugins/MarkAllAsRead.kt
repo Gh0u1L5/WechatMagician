@@ -9,9 +9,9 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.LauncherUI
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.LauncherUI
 import me.leolin.shortcutbadger.ShortcutBadger
 
 object MarkAllAsRead : IPopupMenuHook {

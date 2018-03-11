@@ -1,16 +1,14 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_IMG_STORAGE
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_MSG_STORAGE
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_load
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgInfoStorage
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IImageStorageHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Classes.ImgInfoStorage
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Classes.MsgInfoStorage
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Methods.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
@@ -42,7 +40,7 @@ object Storage : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_MSG_STORAGE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_MSG_STORAGE, true)
     }
 
     @WechatHookMethod @JvmStatic fun hookImageStorage() {
@@ -66,6 +64,6 @@ object Storage : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_IMG_STORAGE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_IMG_STORAGE, true)
     }
 }

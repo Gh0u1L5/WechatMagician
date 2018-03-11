@@ -17,11 +17,10 @@ import com.gh0u1l5.wechatmagician.backend.plugins.*
 import com.gh0u1l5.wechatmagician.backend.storage.Preferences
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_RESOURCES
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationApkPath
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.isImportantWechatProcess
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
@@ -71,7 +70,7 @@ class WechatHook : IXposedHookLoadPackage {
 
         private val requireWechatPackageReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                resultData = WechatPackage.toString()
+                resultData = WechatGlobal.toString()
             }
         }
     }
@@ -135,7 +134,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryAsynchronously {
             val path = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
             resources = XModuleResources.createInstance(path, null)
-            WechatStatus.toggle(STATUS_FLAG_RESOURCES, true)
+            WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_RESOURCES, true)
         }
 
         // Initialize the shared preferences

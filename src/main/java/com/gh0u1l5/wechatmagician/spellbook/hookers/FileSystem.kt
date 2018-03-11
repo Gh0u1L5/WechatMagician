@@ -1,6 +1,6 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
@@ -16,7 +16,7 @@ object FileSystem : EventCenter() {
 
     @WechatHookMethod @JvmStatic fun hookEvents() {
         findAndHookConstructor(
-                "java.io.FileOutputStream", WechatPackage.loader,
+                "java.io.FileOutputStream", WechatGlobal.wxLoader,
                 C.File, C.Boolean, object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("onFileWriting") { plugin ->
@@ -24,7 +24,7 @@ object FileSystem : EventCenter() {
                 }
             }
         })
-        findAndHookMethod("java.io.File", WechatPackage.loader, "delete", object : XC_MethodHook() {
+        findAndHookMethod("java.io.File", WechatGlobal.wxLoader, "delete", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 notify("onFileDeleting") { plugin ->
                     (plugin as IFileSystemHook).onFileDeleting(param)

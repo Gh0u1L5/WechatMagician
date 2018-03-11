@@ -37,8 +37,8 @@ WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控
 本项目在吸取其他微信插件经验教训的基础上希望实现以下几个小目标：
 * __稳定__ —— 绝大部分微信插件每逢更新必崩溃，许多老旧插件已经无法在新版微信上运行。
   - 本项目将每个小功能都拆分到单独的模块中，单个模块失效不会影响其他功能的使用。
-  - 本项目使用自行设计的一套[API](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/util/PackageUtil.kt)，通过比对特征来定位关键类、关键方法。
-  - 本项目选用的[每一条特征](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/backend/WechatPackage.kt)都保证自 6.5.3 版本开始稳定存在，即使失效也能在短时间内进行修复。
+  - 本项目使用自行设计的一套[API](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/spellbook/util/PackageUtil.kt)，通过比对特征来定位关键类、关键方法。
+  - 本项目选用的[每一条特征](https://github.com/Gh0u1L5/WechatMagician/blob/master/src/main/kotlin/com/gh0u1l5/wechatmagician/spellbook/mirror/)都保证自 6.5.3 版本开始稳定存在，即使失效也能在短时间内进行修复。
   - 本项目Hook的位置尽量贴近底层，通过牺牲一定的运行速度保证注入位置的稳定性。
 * __简洁__ —— 大型插件如微X模块有相当多的不常用功能，而这些不常用功能往往是闪退和崩溃的罪魁祸首。
   - 如果将不同的功能交由不同的插件实现，用户选择自己需要的插件安装，将大大提升开发者和用户双方的体验。

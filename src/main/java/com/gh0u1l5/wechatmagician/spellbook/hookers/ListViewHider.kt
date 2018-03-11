@@ -2,12 +2,12 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.Predicate
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.BaseAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationWithCacheAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMBaseAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMBaseAdapter_getItemInternal
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLoader
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMBaseAdapter
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Methods.MMBaseAdapter_getItemInternal
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.AddressAdapter
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.conversation.Classes.ConversationWithCacheAdapter
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -100,7 +100,7 @@ object ListViewHider {
         })
 
         // Hook notifyDataSetChanged() of base adapters
-        findAndHookMethod(BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
+        findAndHookMethod("android.widget.BaseAdapter", wxLoader, "notifyDataSetChanged", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 when (param.thisObject::class.java) {
                     AddressAdapter -> {

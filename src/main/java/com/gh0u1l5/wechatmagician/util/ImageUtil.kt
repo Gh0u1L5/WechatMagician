@@ -2,10 +2,10 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.os.Environment
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_load
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgInfoStorage_mBitmapCache
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgStorageObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.LruCacheWithListener_put
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Fields.ImgInfoStorage_mBitmapCache
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.LruCacheWithListener_put
 import de.robv.android.xposed.XposedHelpers.callMethod
 import java.text.SimpleDateFormat
 import java.util.*

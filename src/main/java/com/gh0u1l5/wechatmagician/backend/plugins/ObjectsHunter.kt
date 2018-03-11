@@ -1,12 +1,12 @@
 package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.widget.BaseAdapter
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapterObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationAdapterObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ImgStorageObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MainDatabaseObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.AddressAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ConversationAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MainDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.SnsDatabaseObject
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
 import de.robv.android.xposed.XC_MethodHook
 import java.lang.ref.WeakReference

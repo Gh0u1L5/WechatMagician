@@ -40,7 +40,7 @@ object PackageUtil {
         fun filterByField(fieldName: String, fieldType: String): Classes {
             return Classes(classes.filter {
                 val field = it.getField(fieldName)
-                field != null && field.type.name == fieldType
+                field != null && field.type.canonicalName == fieldType
             })
         }
 

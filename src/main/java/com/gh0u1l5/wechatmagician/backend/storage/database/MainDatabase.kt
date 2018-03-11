@@ -1,7 +1,7 @@
 package com.gh0u1l5.wechatmagician.backend.storage.database
 
 import android.content.ContentValues
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MainDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MainDatabaseObject
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.callMethod
 

@@ -1,12 +1,11 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_XML_PARSER
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Classes.XmlParser
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Methods.XmlParser_parse
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
@@ -32,6 +31,6 @@ object XmlParser : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_XML_PARSER, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_XML_PARSER, true)
     }
 }

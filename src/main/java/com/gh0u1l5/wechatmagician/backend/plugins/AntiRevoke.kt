@@ -7,12 +7,12 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgInfoStorage_insert
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MsgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Methods.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil

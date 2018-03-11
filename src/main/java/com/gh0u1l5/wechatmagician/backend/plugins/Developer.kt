@@ -17,15 +17,15 @@ import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_TOUCH_EVENT
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_TRACE_ACTIVITIES
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.LogCat
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.MMListPopupWindow
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCancellationSignal
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCursorFactory
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteDatabase
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.XmlParser_parse
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Classes.Logcat
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Classes.XmlParser
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Methods.XmlParser_parse
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.base.Classes.MMListPopupWindow
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.database.Classes.SQLiteCursorFactory
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.database.Classes.SQLiteDatabase
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.support.Classes.SQLiteCancellationSignal
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
 import com.gh0u1l5.wechatmagician.util.MessageUtil.argsToString
@@ -45,7 +45,7 @@ object Developer {
     @WechatHookMethod @JvmStatic fun traceTouchEvents() {
         if (pref.getBoolean(DEVELOPER_UI_TOUCH_EVENT, false)) {
             findAndHookMethod(
-                    "android.view.View", WechatPackage.loader,
+                    "android.view.View", WechatGlobal.wxLoader,
                     "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -59,7 +59,7 @@ object Developer {
     @WechatHookMethod @JvmStatic fun traceActivities() {
         if (pref.getBoolean(DEVELOPER_UI_TRACE_ACTIVITIES, false)) {
             findAndHookMethod(
-                    "android.app.Activity", WechatPackage.loader,
+                    "android.app.Activity", WechatGlobal.wxLoader,
                     "startActivity", C.Intent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -71,7 +71,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    "android.app.Activity", WechatPackage.loader,
+                    "android.app.Activity", WechatGlobal.wxLoader,
                     "onCreate", C.Bundle, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun afterHookedMethod(param: MethodHookParam) {
@@ -200,7 +200,7 @@ object Developer {
         if (pref.getBoolean(DEVELOPER_TRACE_LOGCAT, false)) {
             val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
-                findAndHookMethod(LogCat, func, C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
+                findAndHookMethod(Logcat, func, C.String, C.String, C.ObjectArray, object : XC_MethodHook() {
                     override fun afterHookedMethod(param: MethodHookParam) {
                         val tag = param.args[0] as String?
                         val msg = param.args[1] as String?
@@ -220,7 +220,7 @@ object Developer {
     @WechatHookMethod @JvmStatic fun traceFiles() {
         if (pref.getBoolean(DEVELOPER_TRACE_FILES, false)) {
             findAndHookConstructor(
-                    "java.io.FileInputStream", WechatPackage.loader,
+                    "java.io.FileInputStream", WechatGlobal.wxLoader,
                     C.File, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -230,7 +230,7 @@ object Developer {
             })
 
             findAndHookConstructor(
-                    "java.io.FileOutputStream", WechatPackage.loader,
+                    "java.io.FileOutputStream", WechatGlobal.wxLoader,
                     C.File, C.Boolean, object : XC_MethodHook() {
                 @Throws(Throwable::class)
                 override fun beforeHookedMethod(param: MethodHookParam) {
@@ -240,7 +240,7 @@ object Developer {
             })
 
             findAndHookMethod(
-                    "java.io.File", WechatPackage.loader, "delete", object : XC_MethodHook() {
+                    "java.io.File", WechatGlobal.wxLoader, "delete", object : XC_MethodHook() {
                 override fun beforeHookedMethod(param: MethodHookParam) {
                     val file = param.thisObject as File
                     log("FILE => Delete ${file.absolutePath}")

@@ -1,14 +1,13 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
-import com.gh0u1l5.wechatmagician.spellbook.Global.STATUS_FLAG_DATABASE
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCancellationSignal
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteCursorFactory
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteDatabase
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SQLiteErrorHandler
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.Classes.SQLiteErrorHandler
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.database.Classes.SQLiteCursorFactory
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.database.Classes.SQLiteDatabase
+import com.gh0u1l5.wechatmagician.spellbook.mirror.wcdb.support.Classes.SQLiteCancellationSignal
 import com.gh0u1l5.wechatmagician.spellbook.util.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -112,6 +111,6 @@ object Database : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(STATUS_FLAG_DATABASE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_DATABASE, true)
     }
 }

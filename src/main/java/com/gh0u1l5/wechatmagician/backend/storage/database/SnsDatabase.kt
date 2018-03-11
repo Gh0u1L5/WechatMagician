@@ -1,6 +1,6 @@
 package com.gh0u1l5.wechatmagician.backend.storage.database
 
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.SnsDatabaseObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.SnsDatabaseObject
 import com.gh0u1l5.wechatmagician.util.MessageUtil.longToDecimalString
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedBridge.log

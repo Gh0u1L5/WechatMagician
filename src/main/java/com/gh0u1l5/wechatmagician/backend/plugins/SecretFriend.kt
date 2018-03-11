@@ -13,8 +13,8 @@ import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase.getContactByNickname
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.AddressAdapterObject
-import com.gh0u1l5.wechatmagician.spellbook.WechatPackage.ConversationAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.AddressAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ConversationAdapterObject
 import com.gh0u1l5.wechatmagician.spellbook.hookers.ListViewHider
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
