@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.spellbook.hookers.base
+package com.gh0u1l5.wechatmagician.spellbook.base
 
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously

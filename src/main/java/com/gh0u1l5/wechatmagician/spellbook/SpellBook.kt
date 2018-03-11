@@ -4,10 +4,10 @@ import android.content.Context
 import android.os.Build
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.hookers.*
-import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
+import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
-import com.gh0u1l5.wechatmagician.spellbook.util.Version
+import com.gh0u1l5.wechatmagician.spellbook.base.Version
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage
@@ -107,7 +107,8 @@ object SpellBook {
     fun getApplicationVersion(packageName: String): Version {
         val pm = getSystemContext().packageManager
         val versionName = pm.getPackageInfo(packageName, 0)?.versionName
-        return Version(versionName ?: throw Error("Failed to get the version of $packageName"))
+        return Version(versionName
+                ?: throw Error("Failed to get the version of $packageName"))
     }
 
     /**

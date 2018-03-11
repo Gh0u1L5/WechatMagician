@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.spellbook.util
+package com.gh0u1l5.wechatmagician.spellbook.base
 
 // Version is a helper class for comparing version strings.
 class Version(private val versionName: String) {

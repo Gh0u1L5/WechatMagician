@@ -10,7 +10,7 @@ import com.gh0u1l5.wechatmagician.Global.PREFERENCE_PROVIDER_AUTHORITY
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_STRING_LIST_KEYS
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
-import com.gh0u1l5.wechatmagician.spellbook.util.WaitChannel
+import com.gh0u1l5.wechatmagician.spellbook.base.WaitChannel
 import de.robv.android.xposed.XSharedPreferences
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap

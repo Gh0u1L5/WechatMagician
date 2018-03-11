@@ -1,5 +1,5 @@
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import com.gh0u1l5.wechatmagician.spellbook.util.Version
+import com.gh0u1l5.wechatmagician.spellbook.base.Version
 import org.junit.Test as Test
 import org.junit.Assert.*
 

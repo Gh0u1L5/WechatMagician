@@ -2,9 +2,9 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
-import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
+import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
-import com.gh0u1l5.wechatmagician.spellbook.util.C
+import com.gh0u1l5.wechatmagician.spellbook.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookConstructor
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod

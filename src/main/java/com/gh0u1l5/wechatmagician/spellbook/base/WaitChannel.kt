@@ -1,4 +1,4 @@
-package com.gh0u1l5.wechatmagician.spellbook.util
+package com.gh0u1l5.wechatmagician.spellbook.base
 
 class WaitChannel {
     @Volatile private var done = false

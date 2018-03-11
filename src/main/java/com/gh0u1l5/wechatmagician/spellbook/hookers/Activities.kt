@@ -2,7 +2,7 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import android.app.Activity
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
-import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
+import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsTimeLineUI
@@ -10,7 +10,7 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsU
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUserUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.webwx.ui.Classes.WebWXLoginUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
-import com.gh0u1l5.wechatmagician.spellbook.util.C
+import com.gh0u1l5.wechatmagician.spellbook.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 

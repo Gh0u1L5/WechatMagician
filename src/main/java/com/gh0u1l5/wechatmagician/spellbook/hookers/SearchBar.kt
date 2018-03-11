@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
-import com.gh0u1l5.wechatmagician.spellbook.hookers.base.EventCenter
+import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.ISearchBarConsole
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.tools.Classes.ActionBarEditText
 import de.robv.android.xposed.XC_MethodHook

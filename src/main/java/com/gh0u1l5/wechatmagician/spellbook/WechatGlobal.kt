@@ -6,8 +6,8 @@ import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationVersion
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil
-import com.gh0u1l5.wechatmagician.spellbook.util.Version
-import com.gh0u1l5.wechatmagician.spellbook.util.WaitChannel
+import com.gh0u1l5.wechatmagician.spellbook.base.Version
+import com.gh0u1l5.wechatmagician.spellbook.base.WaitChannel
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
