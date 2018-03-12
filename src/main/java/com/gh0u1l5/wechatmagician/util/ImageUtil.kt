@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.util
 
 import android.graphics.Bitmap
 import android.os.Environment
+import android.os.Environment.MEDIA_MOUNTED
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Fields.ImgInfoStorage_mBitmapCache
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
@@ -63,6 +64,10 @@ object ImageUtil {
 
     // createScreenshotPath generates a path for saving the new screenshot
     fun createScreenshotPath(): String {
+        val state = Environment.getExternalStorageState()
+        if (state != MEDIA_MOUNTED) {
+            throw Error("SD card is not presented! (state: $state)")
+        }
         val time = Calendar.getInstance().time
         val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
         val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"

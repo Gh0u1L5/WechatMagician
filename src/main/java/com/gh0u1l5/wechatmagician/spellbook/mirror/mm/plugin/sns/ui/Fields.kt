@@ -3,7 +3,7 @@ package com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLazy
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxPackageName
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUploadUI
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findFieldsWithType
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findFieldsWithType
 import java.lang.reflect.Field
 
 object Fields {

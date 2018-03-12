@@ -9,8 +9,8 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 import java.util.concurrent.ConcurrentHashMap
 
-// PackageUtil is a helper object for static analysis
-object PackageUtil {
+// ReflectionUtil is a helper object for static analysis
+object ReflectionUtil {
 
     class Classes(private val classes: List<Class<*>>) {
         fun filterBySuper(superClass: Class<*>?): Classes {
@@ -25,28 +25,28 @@ object PackageUtil {
         }
 
         fun filterByMethod(returnType: Class<*>?, methodName: String, vararg parameterTypes: Class<*>): Classes {
-            return Classes(classes.filter {
-                val method = findMethodExactIfExists(it, methodName, *parameterTypes)
+            return Classes(classes.filter { clazz ->
+                val method = findMethodExactIfExists(clazz, methodName, *parameterTypes)
                 method != null && method.returnType == returnType ?: method.returnType
             })
         }
 
         fun filterByMethod(returnType: Class<*>?, vararg parameterTypes: Class<*>): Classes {
-            return Classes(classes.filter {
-                findMethodsByExactParameters(it, returnType, *parameterTypes).isNotEmpty()
+            return Classes(classes.filter { clazz ->
+                findMethodsByExactParameters(clazz, returnType, *parameterTypes).isNotEmpty()
             })
         }
 
         fun filterByField(fieldName: String, fieldType: String): Classes {
-            return Classes(classes.filter {
-                val field = it.getField(fieldName)
+            return Classes(classes.filter { clazz ->
+                val field = findFieldIfExists(clazz, fieldName)
                 field != null && field.type.canonicalName == fieldType
             })
         }
 
         fun filterByField(fieldType: String): Classes {
-            return Classes(classes.filter {
-                findFieldsWithType(it, fieldType).isNotEmpty()
+            return Classes(classes.filter { clazz ->
+                findFieldsWithType(clazz, fieldType).isNotEmpty()
             })
         }
 
@@ -91,7 +91,8 @@ object PackageUtil {
                 return@filter currentPackage == packageName
             }
             val satisfyPrefix = currentPackage.startsWith(packageName)
-            val satisfyDepth = currentPackage.drop(packageName.length).count { it == '.' } == depth
+            val currentDepth = currentPackage.drop(packageName.length).count { it == '.' }
+            val satisfyDepth = depth == -1 || depth == currentDepth
             return@filter satisfyPrefix && satisfyDepth
         }.mapNotNull { findClassIfExists(it, loader) })
         return classesCache[packageName to depth]!!
@@ -108,6 +109,10 @@ object PackageUtil {
         }
         return XposedHelpers.findMethodsByExactParameters(clazz, returnType, *parameterTypes).toList()
     }
+
+    // findFieldIfExists looks up and returns a field if it exists, otherwise it returns null
+    @JvmStatic fun findFieldIfExists(clazz: Class<*>?, fieldName: String): Field? =
+            try { clazz?.getField(fieldName) } catch (_: Throwable) { null }
 
     // findFieldsWithGenericType finds all the fields of the given type.
     @JvmStatic fun findFieldsWithType(clazz: Class<*>?, typeName: String): List<Field> {

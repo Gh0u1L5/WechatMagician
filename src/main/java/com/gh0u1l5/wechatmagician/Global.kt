@@ -8,9 +8,11 @@ object Global {
     const val LOG_TAG = "WechatMagician"
 
     const val XPOSED_PACKAGE_NAME   = "de.robv.android.xposed.installer"
-    const val XPOSED_FILE_PROVIDER  = "de.robv.android.xposed.installer.fileprovider"
     const val WECHAT_PACKAGE_NAME   = "com.tencent.mm"
     const val MAGICIAN_PACKAGE_NAME = "com.gh0u1l5.wechatmagician"
+
+    const val XPOSED_FILE_PROVIDER     = "$XPOSED_PACKAGE_NAME.fileprovider"
+    const val MAGICIAN_REPORT_PROVIDER = "$MAGICIAN_PACKAGE_NAME.reports"
 
     const val ITEM_ID_BUTTON_HIDE_FRIEND   = 0x510
     const val ITEM_ID_BUTTON_HIDE_CHATROOM = 0x511

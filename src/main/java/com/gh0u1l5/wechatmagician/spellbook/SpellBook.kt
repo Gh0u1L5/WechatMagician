@@ -3,11 +3,11 @@ package com.gh0u1l5.wechatmagician.spellbook
 import android.content.Context
 import android.os.Build
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
-import com.gh0u1l5.wechatmagician.spellbook.hookers.*
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
+import com.gh0u1l5.wechatmagician.spellbook.base.Version
+import com.gh0u1l5.wechatmagician.spellbook.hookers.*
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
-import com.gh0u1l5.wechatmagician.spellbook.base.Version
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.*
 import de.robv.android.xposed.callbacks.XC_LoadPackage

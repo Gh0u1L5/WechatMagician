@@ -7,6 +7,10 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.XModuleResources
 import android.os.Bundle
+import android.os.Environment
+import android.os.Environment.MEDIA_MOUNTED
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
@@ -20,10 +24,12 @@ import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationApkPath
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.isImportantWechatProcess
-import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
+import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.collectMirrorReports
+import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.findAllMirrorObjects
+import com.gh0u1l5.wechatmagician.util.FileUtil
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -33,6 +39,8 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -70,7 +78,25 @@ class WechatHook : IXposedHookLoadPackage {
 
         private val requireWechatPackageReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
-                resultData = WechatGlobal.toString()
+                val state = Environment.getExternalStorageState()
+                if (state != MEDIA_MOUNTED) {
+                    val message = "Error: SD card is not presented! (state: $state)"
+                    Toast.makeText(context, message, LENGTH_SHORT).show()
+                }
+
+                val time = Calendar.getInstance().time
+                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
+                val storage = Environment.getExternalStorageDirectory().absolutePath
+                val reportPath = "$storage/WechatMagician/reports/report-${formatter.format(time)}.txt"
+
+                tryAsynchronously {
+                    val apkPath = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
+                    val report = collectMirrorReports(findAllMirrorObjects(apkPath))
+                            .joinToString("\n") { "${it.first} -> ${it.second}" }
+                    FileUtil.writeBytesToDisk(reportPath, report.toByteArray())
+                }
+
+                resultData = reportPath
             }
         }
     }

@@ -15,7 +15,7 @@ import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Methods.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
@@ -44,7 +44,8 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
             val msg = xml[REPLACE_MSG_TAG] ?: return
             if (msg.startsWith("\"")) {
-                val default = resources?.getString(R.string.prompt_message_recall) ?: "Message Recalled."
+                val default = resources?.getString(R.string.prompt_message_recall)
+                        ?: "want to recall the message, idiot."
                 val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, default)
                 xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
             }
@@ -95,7 +96,7 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
             val msg = MessageCache[msgId] ?: return@tryVerbosely
 
             val copy = msg::class.java.newInstance()
-            PackageUtil.shadowCopy(msg, copy)
+            ReflectionUtil.shadowCopy(msg, copy)
 
             val createTime = XposedHelpers.getLongField(msg, "field_createTime")
             XposedHelpers.setIntField(copy, "field_type", values["type"] as Int)

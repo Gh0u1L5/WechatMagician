@@ -5,8 +5,8 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxClasses
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLazy
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLoader
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxPackageName
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findClassIfExists
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findClassesFromPackage
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findClassIfExists
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findClassesFromPackage
 
 object Classes {
     val LauncherUI: Class<*> by wxLazy("LauncherUI") {

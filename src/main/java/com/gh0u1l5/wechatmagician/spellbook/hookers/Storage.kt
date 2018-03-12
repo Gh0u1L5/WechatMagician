@@ -9,7 +9,7 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Classes.ImgInfoStorage
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Classes.MsgInfoStorage
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Methods.MsgInfoStorage_insert
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedBridge.hookAllConstructors
 import de.robv.android.xposed.XposedHelpers.getLongField

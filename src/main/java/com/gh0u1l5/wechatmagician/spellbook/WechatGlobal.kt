@@ -4,10 +4,10 @@ import android.widget.Adapter
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationVersion
-import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil
 import com.gh0u1l5.wechatmagician.spellbook.base.Version
 import com.gh0u1l5.wechatmagician.spellbook.base.WaitChannel
+import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil
 import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import net.dongliu.apk.parser.ApkFile
@@ -77,12 +77,13 @@ object WechatGlobal {
 
             var apkFile: ApkFile? = null
             try {
-                wxPackageName = lpparam.packageName
                 wxVersion = getApplicationVersion(lpparam.packageName)
+                wxPackageName = lpparam.packageName
                 wxLoader = lpparam.classLoader
+
                 apkFile = ApkFile(lpparam.appInfo.sourceDir)
                 wxClasses = apkFile.dexClasses.map { clazz ->
-                    PackageUtil.getClassName(clazz)
+                    ReflectionUtil.getClassName(clazz)
                 }
             } catch (t: Throwable) {
                 if (BuildConfig.DEBUG) {
@@ -94,6 +95,4 @@ object WechatGlobal {
             }
         }
     }
-
-    // TODO: find a new way for generating reports.
 }

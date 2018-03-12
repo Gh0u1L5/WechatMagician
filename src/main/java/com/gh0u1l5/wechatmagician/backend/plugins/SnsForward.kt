@@ -6,10 +6,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.AsyncTask
 import android.os.Environment
+import android.os.Environment.MEDIA_MOUNTED
 import android.view.*
 import android.widget.AdapterView
 import android.widget.ListPopupWindow
 import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
@@ -44,6 +46,10 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
         override fun doInBackground(vararg params: Void): Throwable? {
             return try {
+                val state = Environment.getExternalStorageState()
+                if (state != MEDIA_MOUNTED) {
+                    throw Error("SD card is not presented! (state: $state)")
+                }
                 if (snsInfo == null) {
                     val prompt = resources?.getString(R.string.prompt_sns_invalid) ?: "Record is invalid or deleted."
                     throw Error("$prompt (snsId: $snsId)")
@@ -239,11 +245,16 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 return true
             }
             1 -> { // Screenshot
-                val path = ImageUtil.createScreenshotPath()
-                val bitmap = ViewUtil.drawView(itemView)
-                FileUtil.writeBitmapToDisk(path, bitmap)
-                FileUtil.notifyNewMediaFile(path, itemView.context)
-                Toast.makeText(itemView.context, "$promptScreenshot $path", Toast.LENGTH_SHORT).show()
+                val context = itemView.context ?: return true
+                try {
+                    val path = ImageUtil.createScreenshotPath()
+                    val bitmap = ViewUtil.drawView(itemView)
+                    FileUtil.writeBitmapToDisk(path, bitmap)
+                    FileUtil.notifyNewMediaFile(path, itemView.context)
+                    Toast.makeText(context, "$promptScreenshot $path", LENGTH_SHORT).show()
+                } catch (t: Throwable) {
+                    Toast.makeText(context, "Error: $t", LENGTH_SHORT).show()
+                }
                 return true
             }
         }

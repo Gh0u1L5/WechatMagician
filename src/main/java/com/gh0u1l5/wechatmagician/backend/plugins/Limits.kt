@@ -21,7 +21,7 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMActivity
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.SelectContactUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Classes.SelectConversationUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Methods.SelectConversationUI_checkLimit
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod

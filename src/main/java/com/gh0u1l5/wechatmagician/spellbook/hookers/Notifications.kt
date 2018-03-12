@@ -5,7 +5,7 @@ import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.INotificationHook
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.booter.notification.queue.Classes.NotificationAppMsgQueue
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.booter.notification.queue.Methods.NotificationAppMsgQueue_add
-import com.gh0u1l5.wechatmagician.spellbook.util.PackageUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findAndHookMethod
 import de.robv.android.xposed.XC_MethodHook
 
 object Notifications : EventCenter() {

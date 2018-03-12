@@ -5,6 +5,7 @@ import android.content.Context
 import android.view.ContextMenu
 import android.view.View
 import android.widget.AdapterView
+import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
@@ -13,7 +14,6 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.Address
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.ContactLongClickListener
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.conversation.Classes.ConversationCreateContextMenuListener
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.conversation.Classes.ConversationLongClickListener
-import com.gh0u1l5.wechatmagician.spellbook.C
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.*
 
