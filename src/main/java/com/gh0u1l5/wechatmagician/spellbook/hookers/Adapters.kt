@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.C
-import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLoader
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
@@ -46,7 +45,7 @@ object Adapters : EventCenter() {
             }
         })
         findAndHookMethod(
-                "android.widget.HeaderViewListAdapter", wxLoader, "getView",
+                C.HeaderViewListAdapter, "getView",
                 C.Int, C.View, C.ViewGroup, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val adapter     = param.thisObject
@@ -54,8 +53,8 @@ object Adapters : EventCenter() {
                 val convertView = param.args[1] as View?
                 val parent      = param.args[2] as ViewGroup
                 val result      = param.result as View? ?: return
-                notify("onSnsUserUIAdapterGotView") { plugin ->
-                    (plugin as IAdapterHook).onSnsUserUIAdapterGotView(adapter, position, convertView, parent, result)
+                notify("onHeaderViewListAdapterGotView") { plugin ->
+                    (plugin as IAdapterHook).onHeaderViewListAdapterGotView(adapter, position, convertView, parent, result)
                 }
             }
         })

@@ -33,5 +33,5 @@ interface IAdapterHook {
      * @param parent The parent that this view will eventually be attached to
      * @param result The view that is returned by the original getView() function.
      */
-    fun onSnsUserUIAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) { }
+    fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) { }
 }

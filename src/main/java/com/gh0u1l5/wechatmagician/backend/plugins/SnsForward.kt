@@ -65,7 +65,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 }
                 snsInfo.medias.mapIndexed { i, media ->
                     tryAsynchronously {
-                        when(media.type) {
+                        when (media.type) {
                             "2" -> DownloadUtil.downloadImage("$storage/.cache/$i", media)
                             "6" -> DownloadUtil.downloadVideo("$storage/.cache/$i", media)
                         }
@@ -147,7 +147,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     }
 
     // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
-    override fun onSnsUserUIAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) {
+    override fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) {
         if (adapter === SnsUserUIAdapterObject.get()) {
             if (convertView == null) { // this is a new view
                 if (result is ViewGroup) {

@@ -3,7 +3,6 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.Predicate
-import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxLoader
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMBaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Methods.MMBaseAdapter_getItemInternal
@@ -100,7 +99,7 @@ object ListViewHider {
         })
 
         // Hook notifyDataSetChanged() of base adapters
-        findAndHookMethod("android.widget.BaseAdapter", wxLoader, "notifyDataSetChanged", object : XC_MethodHook() {
+        findAndHookMethod(C.BaseAdapter, "notifyDataSetChanged", object : XC_MethodHook() {
             override fun beforeHookedMethod(param: MethodHookParam) {
                 when (param.thisObject::class.java) {
                     AddressAdapter -> {
