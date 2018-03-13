@@ -12,7 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
+import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_REPORTS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_REPORT_PROVIDER
 import com.gh0u1l5.wechatmagician.R
@@ -38,7 +38,7 @@ class SupportFragment : Fragment() {
     private fun generateReport() {
         val promptWait = getString(R.string.prompt_wait)
         Toast.makeText(activity, promptWait, Toast.LENGTH_SHORT).show()
-        activity?.sendOrderedBroadcast(Intent(ACTION_REQUIRE_WECHAT_PACKAGE), null, object : BroadcastReceiver() {
+        activity?.sendOrderedBroadcast(Intent(ACTION_REQUIRE_REPORTS), null, object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent?) {
                 val greetings = getString(R.string.support_report_greetings)
                 sendReport(context, greetings, resultData)

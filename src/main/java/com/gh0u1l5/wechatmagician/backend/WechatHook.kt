@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.XModuleResources
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.os.Environment.MEDIA_MOUNTED
@@ -13,7 +14,7 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
-import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_WECHAT_PACKAGE
+import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_REPORTS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
@@ -24,6 +25,7 @@ import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationApkPath
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.isImportantWechatProcess
+import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxVersion
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
@@ -76,7 +78,7 @@ class WechatHook : IXposedHookLoadPackage {
             }
         }
 
-        private val requireWechatPackageReceiver = object : BroadcastReceiver() {
+        private val requireMagicianReportReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 val state = Environment.getExternalStorageState()
                 if (state != MEDIA_MOUNTED) {
@@ -91,9 +93,15 @@ class WechatHook : IXposedHookLoadPackage {
 
                 tryAsynchronously {
                     val apkPath = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
-                    val report = collectMirrorReports(findAllMirrorObjects(apkPath))
+                    val reportHead = listOf(
+                            "Device: SDK${Build.VERSION.SDK_INT}-${Build.PRODUCT}",
+                            "Xposed Version: ${XposedBridge.XPOSED_BRIDGE_VERSION}",
+                            "Wechat Version: $wxVersion",
+                            "Module Version: ${BuildConfig.VERSION_NAME}"
+                    ).joinToString("\n")
+                    val reportBody = collectMirrorReports(findAllMirrorObjects(apkPath))
                             .joinToString("\n") { "${it.first} -> ${it.second}" }
-                    FileUtil.writeBytesToDisk(reportPath, report.toByteArray())
+                    FileUtil.writeBytesToDisk(reportPath, "$reportHead\n$reportBody".toByteArray())
                 }
 
                 resultData = reportPath
@@ -153,7 +161,7 @@ class WechatHook : IXposedHookLoadPackage {
         // Register receivers for frontend communications
         tryVerbosely {
             context.registerReceiver(requireHookStatusReceiver, IntentFilter(ACTION_REQUIRE_HOOK_STATUS))
-            context.registerReceiver(requireWechatPackageReceiver, IntentFilter(ACTION_REQUIRE_WECHAT_PACKAGE))
+            context.registerReceiver(requireMagicianReportReceiver, IntentFilter(ACTION_REQUIRE_REPORTS))
         }
 
         // Load module resources to current process
