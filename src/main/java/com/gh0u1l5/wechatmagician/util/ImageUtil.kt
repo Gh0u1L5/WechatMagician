@@ -7,9 +7,8 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Fields.ImgInfoStorage_mBitmapCache
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.LruCacheWithListener_put
+import com.gh0u1l5.wechatmagician.util.FileUtil.createTimeTag
 import de.robv.android.xposed.XposedHelpers.callMethod
-import java.text.SimpleDateFormat
-import java.util.*
 
 // ImageUtil is a helper object for processing thumbnails.
 object ImageUtil {
@@ -68,9 +67,7 @@ object ImageUtil {
         if (state != MEDIA_MOUNTED) {
             throw Error("SD card is not presented! (state: $state)")
         }
-        val time = Calendar.getInstance().time
-        val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
         val storage = Environment.getExternalStorageDirectory().absolutePath + "/WechatMagician"
-        return "$storage/screenshot/SNS-${formatter.format(time)}.jpg"
+        return "$storage/screenshot/SNS-${createTimeTag()}.jpg"
     }
 }

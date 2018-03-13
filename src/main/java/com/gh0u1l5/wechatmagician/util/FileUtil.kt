@@ -7,6 +7,8 @@ import android.net.Uri
 import android.os.SystemClock.elapsedRealtime
 import java.io.*
 import java.lang.System.currentTimeMillis
+import java.text.SimpleDateFormat
+import java.util.*
 
 // FileUtil is a helper object for file I/O.
 object FileUtil {
@@ -73,6 +75,10 @@ object FileUtil {
             writeCallback(path)
         }
     }
+
+    // createTimeTag returns the current time in a simple format as a time tag.
+    private val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
+    fun createTimeTag(): String = formatter.format(Calendar.getInstance().time)
 
     // notifyNewMediaFile notifies all the gallery apps that there is a new file to scan.
     fun notifyNewMediaFile(path: String, context: Context?) {

@@ -32,6 +32,7 @@ import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.collectMirrorReports
 import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.findAllMirrorObjects
 import com.gh0u1l5.wechatmagician.util.FileUtil
+import com.gh0u1l5.wechatmagician.util.FileUtil.createTimeTag
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -41,8 +42,6 @@ import de.robv.android.xposed.XposedBridge.log
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import de.robv.android.xposed.callbacks.XC_LoadPackage
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 // WechatHook is the entry point of the module, here we load all the plugins.
 class WechatHook : IXposedHookLoadPackage {
@@ -86,10 +85,8 @@ class WechatHook : IXposedHookLoadPackage {
                     Toast.makeText(context, message, LENGTH_SHORT).show()
                 }
 
-                val time = Calendar.getInstance().time
-                val formatter = SimpleDateFormat("yyyy-MM-dd-HHmmss", Locale.getDefault())
                 val storage = Environment.getExternalStorageDirectory().absolutePath
-                val reportPath = "$storage/WechatMagician/reports/report-${formatter.format(time)}.txt"
+                val reportPath = "$storage/WechatMagician/reports/report-${createTimeTag()}.txt"
 
                 tryAsynchronously {
                     val apkPath = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
