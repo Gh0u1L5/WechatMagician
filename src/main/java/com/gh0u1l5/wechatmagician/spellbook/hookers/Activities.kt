@@ -1,16 +1,13 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import android.app.Activity
+import android.os.Bundle
+import android.view.Menu
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsTimeLineUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUploadUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUserUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.webwx.ui.Classes.WebWXLoginUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMActivity
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 
@@ -20,51 +17,37 @@ object Activities : EventCenter() {
         get() = listOf(IActivityHook::class.java)
 
     @WechatHookMethod @JvmStatic fun hookEvents() {
-        findAndHookMethod(AlbumPreviewUI, "onCreate", C.Bundle, object : XC_MethodHook() {
+        findAndHookMethod(MMActivity, "onCreateOptionsMenu", C.Menu, object : XC_MethodHook() {
             override fun afterHookedMethod(param: MethodHookParam) {
                 val activity = param.thisObject as? Activity ?: return
-                notify("onAlbumPreviewUICreated") { plugin ->
-                    (plugin as IActivityHook).onAlbumPreviewUICreated(activity)
+                val menu = param.args[0] as? Menu ?: return
+                notify("onMMActivityOptionsMenuCreated") { plugin ->
+                    (plugin as IActivityHook).onMMActivityOptionsMenuCreated(activity, menu)
                 }
             }
         })
-        findAndHookMethod(ChattingUI, "onCreate", C.Bundle, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) {
+        findAndHookMethod(C.Activity, "onCreate", C.Bundle, object : XC_MethodHook() {
+            override fun beforeHookedMethod(param: MethodHookParam) {
                 val activity = param.thisObject as? Activity ?: return
-                notify("onChattingUICreated") { plugin ->
-                    (plugin as IActivityHook).onChattingUICreated(activity)
+                val savedInstanceState = param.args[0] as Bundle?
+                notify("onActivityCreating") { plugin ->
+                    (plugin as IActivityHook).onActivityCreating(activity, savedInstanceState)
                 }
             }
         })
-        findAndHookMethod(WebWXLoginUI, "onCreate", C.Bundle, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) {
+        findAndHookMethod(C.Activity, "onStart", object : XC_MethodHook() {
+            override fun beforeHookedMethod(param: MethodHookParam) {
                 val activity = param.thisObject as? Activity ?: return
-                notify("onWebLoginUICreated") { plugin ->
-                    (plugin as IActivityHook).onWebLoginUICreated(activity)
+                notify("onActivityStarting") { plugin ->
+                    (plugin as IActivityHook).onActivityStarting(activity)
                 }
             }
         })
-        findAndHookMethod(SnsTimeLineUI, "onCreate", C.Bundle, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) {
+        findAndHookMethod(C.Activity, "onResume", object : XC_MethodHook() {
+            override fun beforeHookedMethod(param: MethodHookParam) {
                 val activity = param.thisObject as? Activity ?: return
-                notify("onSnsTimelineUICreated") { plugin ->
-                    (plugin as IActivityHook).onSnsTimelineUICreated(activity)
-                }
-            }
-        })
-        findAndHookMethod(SnsUploadUI, "onCreate", C.Bundle, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) {
-                val activity = param.thisObject as? Activity ?: return
-                notify("onSnsUploadUICreated") { plugin ->
-                    (plugin as IActivityHook).onSnsUploadUICreated(activity)
-                }
-            }
-        })
-        findAndHookMethod(SnsUserUI, "onCreate", C.Bundle, object : XC_MethodHook() {
-            override fun afterHookedMethod(param: MethodHookParam) {
-                val activity = param.thisObject as? Activity ?: return
-                notify("onSnsUserUICreated") { plugin ->
-                    (plugin as IActivityHook).onSnsUserUICreated(activity)
+                notify("onActivityResuming") { plugin ->
+                    (plugin as IActivityHook).onActivityResuming(activity)
                 }
             }
         })

@@ -13,6 +13,7 @@ object C {
     val String = String::class.java
     val Throwable = Throwable::class.java
 
+    val Activity = android.app.Activity::class.java
     val AdapterView = android.widget.AdapterView::class.java
     val AdapterView_OnItemClickListener = android.widget.AdapterView.OnItemClickListener::class.java
     val AttributeSet = android.util.AttributeSet::class.java

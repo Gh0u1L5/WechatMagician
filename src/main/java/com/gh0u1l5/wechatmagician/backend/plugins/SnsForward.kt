@@ -22,7 +22,9 @@ import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsTimeLineUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUploadUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Classes.SnsUserUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.sns.ui.Fields.SnsUploadUI_mSnsEditText
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
@@ -158,48 +160,49 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         }
     }
 
-    // Hook SnsUserUI.onCreate to popup a menu during long click.
-    override fun onSnsUserUICreated(activity: Activity) {
-        val listView = getListViewFromSnsActivity(activity) ?: return
-        SnsUserUIAdapterObject = WeakReference(listView.adapter)
-        listView.setOnItemLongClickListener { parent, view, position, _ ->
-            val item = parent.getItemAtPosition(position)
-            val snsId = getLongField(item, "field_snsId")
-            onTimelineItemLongClick(parent, view, snsId, null)
-        }
-    }
-
-    // Hook SnsTimeLineUI.onCreate to popup a menu during long click.
-    override fun onSnsTimelineUICreated(activity: Activity) {
-        val listView = getListViewFromSnsActivity(activity) ?: return
-
-        // Set onTouchListener for the list view.
-        var lastKnownX = 0
-        var lastKnownY = 0
-        val detector = GestureDetector(listView.context, object : GestureDetector.SimpleOnGestureListener() {
-            override fun onLongPress(e: MotionEvent?) {
-                val position = listView.pointToPosition(lastKnownX, lastKnownY)
-                val view = listView.getViewAtPosition(position)
-                val item = listView.getItemAtPosition(position)
-                val snsId = getLongField(item, "field_snsId")
-                val popup = ListPopupWindowPosition(listView, lastKnownX, lastKnownY)
-                onTimelineItemLongClick(listView, view, snsId, popup)
+    override fun onActivityStarting(activity: Activity) {
+        when (activity::class.java) {
+            SnsUserUI -> {
+                // Hook SnsUserUI to popup a menu during long click.
+                val listView = getListViewFromSnsActivity(activity) ?: return
+                SnsUserUIAdapterObject = WeakReference(listView.adapter)
+                listView.setOnItemLongClickListener { parent, view, position, _ ->
+                    val item = parent.getItemAtPosition(position)
+                    val snsId = getLongField(item, "field_snsId")
+                    onTimelineItemLongClick(parent, view, snsId, null)
+                }
             }
-        })
-        (listView as View).setOnTouchListener { _, event ->
-            lastKnownX = event.x.toInt()
-            lastKnownY = event.y.toInt()
-            return@setOnTouchListener detector.onTouchEvent(event)
-        }
-    }
-
-    // Hook SnsUploadUI.onCreate to clean EditText properly before forwarding.
-    override fun onSnsUploadUICreated(activity: Activity) {
-        val intent = activity.intent ?: return
-        if (intent.getBooleanExtra("Ksnsforward", false)) {
-            val content = intent.getStringExtra("Kdescription")
-            val editText = SnsUploadUI_mSnsEditText.get(activity)
-            callMethod(editText, "setText", content)
+            SnsTimeLineUI -> {
+                // Hook SnsTimeLineUI to popup a menu during long click.
+                val listView = getListViewFromSnsActivity(activity) ?: return
+                // Set onTouchListener for the list view.
+                var lastKnownX = 0
+                var lastKnownY = 0
+                val detector = GestureDetector(listView.context, object : GestureDetector.SimpleOnGestureListener() {
+                    override fun onLongPress(e: MotionEvent?) {
+                        val position = listView.pointToPosition(lastKnownX, lastKnownY)
+                        val view = listView.getViewAtPosition(position)
+                        val item = listView.getItemAtPosition(position)
+                        val snsId = getLongField(item, "field_snsId")
+                        val popup = ListPopupWindowPosition(listView, lastKnownX, lastKnownY)
+                        onTimelineItemLongClick(listView, view, snsId, popup)
+                    }
+                })
+                (listView as View).setOnTouchListener { _, event ->
+                    lastKnownX = event.x.toInt()
+                    lastKnownY = event.y.toInt()
+                    return@setOnTouchListener detector.onTouchEvent(event)
+                }
+            }
+            SnsUploadUI -> {
+                // Hook SnsUploadUI to clean EditText properly before forwarding.
+                val intent = activity.intent ?: return
+                if (intent.getBooleanExtra("Ksnsforward", false)) {
+                    val content = intent.getStringExtra("Kdescription")
+                    val editText = SnsUploadUI_mSnsEditText.get(activity)
+                    callMethod(editText, "setText", content)
+                }
+            }
         }
     }
 

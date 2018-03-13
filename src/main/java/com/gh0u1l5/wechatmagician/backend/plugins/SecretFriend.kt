@@ -18,6 +18,7 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ConversationAdapterObje
 import com.gh0u1l5.wechatmagician.spellbook.hookers.ListViewHider
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.getObjectField
@@ -66,15 +67,18 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
     override fun onConversationAdapterCreated(adapter: BaseAdapter) = onAdapterCreated(adapter)
 
     // Hide the chatting windows for secret friends.
-    override fun onChattingUICreated(activity: Activity) {
+    override fun onActivityStarting(activity: Activity) {
         if (!isPluginEnabled()) {
             return
         }
-        val username = activity.intent.getStringExtra("Chat_User")
-        if (username in SecretFriendList) {
-            val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found) ?: "User Not Found!"
-            Toast.makeText(activity, promptUserNotFound, Toast.LENGTH_SHORT).show()
-            activity.finish()
+        if (activity::class.java == ChattingUI) {
+            val username = activity.intent.getStringExtra("Chat_User")
+            if (username in SecretFriendList) {
+                val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found)
+                        ?: "User Not Found!"
+                Toast.makeText(activity, promptUserNotFound, Toast.LENGTH_SHORT).show()
+                activity.finish()
+            }
         }
     }
 

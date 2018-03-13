@@ -14,10 +14,11 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
+import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Classes.ContactInfo
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMActivity
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.SelectContactUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Classes.SelectConversationUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Methods.SelectConversationUI_checkLimit
@@ -31,68 +32,70 @@ object Limits : IActivityHook {
 
     private val pref = WechatHook.settings
 
-    // Hook AlbumPreviewUI to bypass the limit on number of selected photos.
-    // TODO: fix the logic here 
-    override fun onAlbumPreviewUICreated(activity: Activity) {
-        val intent = activity.intent ?: return
-        val current = intent.getIntExtra("max_select_count", 9)
-        val limit = try {
-            pref.getString(SETTINGS_SELECT_PHOTOS_LIMIT, "1000").toInt()
-        } catch (_: Throwable) { 1000 }
-        if (current <= 9) {
-            intent.putExtra("max_select_count", current + limit - 9)
+    override fun onActivityCreating(activity: Activity, savedInstanceState: Bundle?) {
+        when (activity::class.java) {
+            AlbumPreviewUI -> {
+                // Bypass the limit on number of photos the user can select
+                val intent = activity.intent ?: return
+                val oldLimit = intent.getIntExtra("max_select_count", 9)
+                val newLimit = try {
+                    pref.getString(SETTINGS_SELECT_PHOTOS_LIMIT, "1000").toInt()
+                } catch (_: Throwable) { 1000 }
+                if (oldLimit <= 9) {
+                    intent.putExtra("max_select_count", oldLimit + newLimit - 9)
+                }
+            }
+            SelectContactUI -> {
+                // Bypass the limit on number of recipients the user can forward.
+                val intent = activity.intent ?: return
+                if (intent.getIntExtra("max_limit_num", -1) == 9) {
+                    intent.putExtra("max_limit_num", 0x7FFFFFFF)
+                }
+            }
         }
     }
 
-    @WechatHookMethod @JvmStatic fun breakSelectContactLimit() {
-        // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
-        findAndHookMethod(
-                MMActivity, "onCreateOptionsMenu",
-                Menu::class.java, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun afterHookedMethod(param: MethodHookParam) {
-                if (param.thisObject::class.java != SelectContactUI) {
-                    return
-                }
+    // Hook MMActivity.onCreateOptionsMenu to add "Select All" button.
+    override fun onMMActivityOptionsMenuCreated(activity: Activity, menu: Menu) {
+        if (activity::class.java != SelectContactUI) {
+            return
+        }
 
-                val menu = param.args[0] as Menu? ?: return
+        val intent = activity.intent ?: return
+        val checked = intent.getBooleanExtra("select_all_checked", false)
 
-                val activity = param.thisObject as Activity
-                val intent = activity.intent ?: return
-                val checked = intent.getBooleanExtra("select_all_checked", false)
+        val selectAll = menu.add(0, 2, 0, "")
+        selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-                val selectAll = menu.add(0, 2, 0, "")
-                selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
-
-                val textSelectAll = resources?.getString(R.string.button_select_all) ?: "All"
-                if (resources == null) {
-                    selectAll.isChecked = checked
-                    selectAll.title = textSelectAll + "  " + if (checked) "\u2611" else "\u2610"
-                    selectAll.setOnMenuItemClickListener {
-                        onSelectContactUISelectAll(activity, !selectAll.isChecked); true
-                    }
-                } else {
-                    val layout = resources?.getLayout(R.layout.wechat_checked_textview)
-                    val checkedTextView = activity.layoutInflater.inflate(layout, null)
-                    checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
-                        setTextColor(Color.WHITE)
-                        text = textSelectAll
-                    }
-                    checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
-                        isChecked = checked
-                        setOnCheckedChangeListener { _, checked ->
-                            onSelectContactUISelectAll(activity, checked)
-                        }
-                    }
-                    selectAll.actionView = checkedTextView
+        val textSelectAll = resources?.getString(R.string.button_select_all) ?: "All"
+        if (resources == null) {
+            selectAll.isChecked = checked
+            selectAll.title = textSelectAll + "  " + if (checked) "\u2611" else "\u2610"
+            selectAll.setOnMenuItemClickListener {
+                onSelectContactUISelectAll(activity, !selectAll.isChecked); true
+            }
+        } else {
+            val layout = resources?.getLayout(R.layout.wechat_checked_textview)
+            val checkedTextView = activity.layoutInflater.inflate(layout, null)
+            checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
+                setTextColor(Color.WHITE)
+                text = textSelectAll
+            }
+            checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
+                isChecked = checked
+                setOnCheckedChangeListener { _, checked ->
+                    onSelectContactUISelectAll(activity, checked)
                 }
             }
-        })
+            selectAll.actionView = checkedTextView
+        }
+    }
 
-        // Hook SelectContactUI to help the "Select All" button.
+    // Hook SelectContactUI to help the "Select All" button.
+    @WechatHookMethod @JvmStatic fun handleSelectAll() {
         findAndHookMethod(
                 SelectContactUI, "onActivityResult",
-                Int::class.java, Int::class.java, Intent::class.java, object : XC_MethodHook() {
+                C.Int, C.Int, C.Intent, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 val requestCode = param.args[0] as Int
@@ -104,19 +107,6 @@ object Limits : IActivityHook {
                     activity.setResult(resultCode, data)
                     activity.finish()
                     param.result = null
-                }
-            }
-        })
-
-        // Hook SelectContactUI to bypass the limit on number of recipients.
-        findAndHookMethod(
-                SelectContactUI, "onCreate",
-                Bundle::class.java, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                val intent = (param.thisObject as Activity).intent ?: return
-                if (intent.getIntExtra("max_limit_num", -1) == 9) {
-                    intent.putExtra("max_limit_num", 0x7FFFFFFF)
                 }
             }
         })

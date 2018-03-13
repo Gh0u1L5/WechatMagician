@@ -59,7 +59,6 @@ class WechatHook : IXposedHookLoadPackage {
                 AntiSnsDelete,
                 AutoLogin,
                 ChatroomHider,
-                Developer,
                 Donate,
                 Limits,
                 MarkAllAsRead,

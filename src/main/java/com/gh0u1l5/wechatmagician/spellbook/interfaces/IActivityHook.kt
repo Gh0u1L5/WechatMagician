@@ -1,52 +1,38 @@
 package com.gh0u1l5.wechatmagician.spellbook.interfaces
 
 import android.app.Activity
+import android.os.Bundle
+import android.view.Menu
 
 interface IActivityHook {
 
     /**
-     * Called when a Wechat AlbumPreviewUI has been created. User can pick some pictures in it.
+     * Called when a Wechat MMActivity has created a options menu.
      *
-     * @param activity The Activity object of the AlbumPreviewUI.
+     * @param activity The current activity shown in foreground.
+     * @param menu The options menu just created by the activity.
      */
-    fun onAlbumPreviewUICreated(activity: Activity) { }
+    fun onMMActivityOptionsMenuCreated(activity: Activity, menu: Menu) { }
 
     /**
-     * Called when a Wechat ChattingUI has been created. User can chat with another user or chatting
-     * group in it.
+     * Called before an activity is created.
      *
-     * @param activity The Activity object of the ChattingUI.
+     * @param activity The activity object that is creating.
+     * @param savedInstanceState The saved instance state for restoring the state.
      */
-    fun onChattingUICreated(activity: Activity) { }
+    fun onActivityCreating(activity: Activity, savedInstanceState: Bundle?) { }
 
     /**
-     * Called when a Wechat WebLoginUI has been created. User can approve a login request in it.
+     * Called before an activity is started.
      *
-     * @param activity The Activity object of the WebLoginUI.
+     * @param activity The activity object that is starting.
      */
-    fun onWebLoginUICreated(activity: Activity) { }
+    fun onActivityStarting(activity: Activity) { }
 
     /**
-     * Called when a Wechat SnsTimelineUI has been created. User can explore the moments shared by
-     * all the other friends in it.
+     * Called before an activity is resumed.
      *
-     * @param activity The Activity object of the SnsTimelineUI.
+     * @param activity The activity object that is resuming.
      */
-    fun onSnsTimelineUICreated(activity: Activity) { }
-
-    /**
-     * Called when a Wechat SnsUserUI has been created. User can explore the moments posted by
-     * himself / herself in it.
-     *
-     * @param activity The Activity object of the SnsUserUI.
-     */
-    fun onSnsUserUICreated(activity: Activity) { }
-
-    /**
-     * Called when a Wechat SnsUploadUI has been created. User can post a new moment to other
-     * friends in it.
-     *
-     * @param activity The Activity object of the SnsUploadUI.
-     */
-    fun onSnsUploadUICreated(activity: Activity) { }
+    fun onActivityResuming(activity: Activity) { }
 }
