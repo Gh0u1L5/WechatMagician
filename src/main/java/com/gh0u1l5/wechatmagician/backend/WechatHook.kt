@@ -89,7 +89,7 @@ class WechatHook : IXposedHookLoadPackage {
 
                 tryAsynchronously {
                     val apkPath = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
-                    val reportHead = listOf(
+                    val reportHead = listOf (
                             "Device: SDK${Build.VERSION.SDK_INT}-${Build.PRODUCT}",
                             "Xposed Version: ${XposedBridge.XPOSED_BRIDGE_VERSION}",
                             "Wechat Version: $wxVersion",
