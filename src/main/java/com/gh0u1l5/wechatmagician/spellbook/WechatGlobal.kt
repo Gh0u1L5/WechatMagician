@@ -41,6 +41,11 @@ object WechatGlobal {
      */
     @Volatile var wxClasses: List<String>? = null
 
+    /**
+     * A flag indicating whether the codes are running under unit test mode.
+     */
+    @Volatile var wxUnitTestMode: Boolean = false
+
     // These are the cache of important global objects
     @Volatile var AddressAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
     @Volatile var ConversationAdapterObject: WeakReference<BaseAdapter?> = WeakReference(null)
@@ -59,7 +64,9 @@ object WechatGlobal {
      * @return a lazy object that can be used for lazy evaluation.
      */
     fun <T> wxLazy(name: String, initializer: () -> T?): Lazy<T> = lazy {
-        initializeChannel.wait(8000)
+        if (!wxUnitTestMode) {
+            initializeChannel.wait(4000)
+        }
         initializer() ?: throw Error("Failed to evaluate $name")
     }
 
