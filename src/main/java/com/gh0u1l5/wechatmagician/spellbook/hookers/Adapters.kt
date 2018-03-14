@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.C
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
@@ -58,5 +59,7 @@ object Adapters : EventCenter() {
                 }
             }
         })
+
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_ADAPTERS)
     }
 }

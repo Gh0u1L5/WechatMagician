@@ -1,5 +1,6 @@
 package com.gh0u1l5.wechatmagician.spellbook.hookers
 
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.INotificationHook
@@ -26,5 +27,6 @@ object Notifications : EventCenter() {
                 }
             }
         })
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_NOTIFICATIONS)
     }
 }

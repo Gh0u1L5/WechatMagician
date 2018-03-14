@@ -2,6 +2,7 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
@@ -36,5 +37,6 @@ object FileSystem : EventCenter() {
                 }
             }
         })
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_FILESYSTEM)
     }
 }

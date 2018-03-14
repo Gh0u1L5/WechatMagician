@@ -4,6 +4,7 @@ import android.app.Activity
 import android.os.Bundle
 import android.view.Menu
 import com.gh0u1l5.wechatmagician.spellbook.C
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
@@ -51,5 +52,7 @@ object Activities : EventCenter() {
                 }
             }
         })
+
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_ACTIVITIES)
     }
 }

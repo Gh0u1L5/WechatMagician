@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.spellbook.hookers
 import android.widget.BaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.Predicate
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.MMBaseAdapter
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Methods.MMBaseAdapter_getItemInternal
@@ -111,5 +112,7 @@ object ListViewHider {
                 }
             }
         })
+
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_BASE_ADAPTER)
     }
 }

@@ -6,6 +6,7 @@ import android.view.ContextMenu
 import android.view.View
 import android.widget.AdapterView
 import com.gh0u1l5.wechatmagician.spellbook.C
+import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.base.EventCenter
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
@@ -91,7 +92,7 @@ object MenuAppender : EventCenter() {
             }
         })
 
-
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_CONTACT_POPUP)
     }
 
     @WechatHookMethod @JvmStatic fun hijackPopupMenuForConversations() {
@@ -127,5 +128,7 @@ object MenuAppender : EventCenter() {
                 }
             }
         })
+
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_CONVERSATION_POPUP)
     }
 }
