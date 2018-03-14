@@ -40,7 +40,7 @@ object Storage : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_MSG_STORAGE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_MSG_STORAGE)
     }
 
     @WechatHookMethod @JvmStatic fun hookImageStorage() {
@@ -64,6 +64,6 @@ object Storage : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_IMG_STORAGE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_IMG_STORAGE)
     }
 }

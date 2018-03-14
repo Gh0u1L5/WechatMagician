@@ -52,6 +52,6 @@ object SearchBar : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_COMMAND, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_COMMAND)
     }
 }

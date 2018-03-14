@@ -111,6 +111,6 @@ object Database : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_DATABASE, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_DATABASE)
     }
 }

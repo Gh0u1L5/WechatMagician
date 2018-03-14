@@ -58,7 +58,7 @@ class StatusFragment : Fragment() {
             // Set the status for each component.
             requireHookStatus(activity!!, { status ->
                 for (entry in componentMap) {
-                    if (status[entry.key] == true) {
+                    if (status.contains(entry.key)) {
                         setComponentIconValid(entry.value)
                     }
                 }
@@ -93,13 +93,15 @@ class StatusFragment : Fragment() {
     companion object {
         fun newInstance(): StatusFragment = StatusFragment()
 
-        fun requireHookStatus(context: Context, callback: (HashMap<WechatStatus.StatusFlag, Boolean>) -> Unit) {
-            context.sendOrderedBroadcast(Intent(ACTION_REQUIRE_HOOK_STATUS), null, object : BroadcastReceiver() {
+        fun requireHookStatus(context: Context, callback: (List<WechatStatus.StatusFlag>) -> Unit) {
+            val intent = Intent(ACTION_REQUIRE_HOOK_STATUS).addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
+            context.sendOrderedBroadcast(intent, null, object : BroadcastReceiver() {
                 @Suppress("UNCHECKED_CAST")
                 override fun onReceive(context: Context?, intent: Intent?) {
                     val result = getResultExtras(true)
-                    val status = result.getSerializable("status")
-                    callback(status as? HashMap<WechatStatus.StatusFlag, Boolean> ?: return)
+                    val status = result.getIntArray("status")
+                    val flags = WechatStatus.StatusFlag.values()
+                    callback(status.map { flags[it] })
                 }
             }, null, Activity.RESULT_OK, null, null)
         }

@@ -31,6 +31,6 @@ object UriRouter : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_URI_ROUTER, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_URI_ROUTER)
     }
 }

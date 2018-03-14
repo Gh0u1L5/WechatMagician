@@ -30,7 +30,7 @@ class DonateFragment : Fragment() {
 
         // Hide Tenpay if the URI router is not hijacked.
         requireHookStatus(activity!!, { status ->
-            if (status[STATUS_FLAG_URI_ROUTER] != true) {
+            if (!status.contains(STATUS_FLAG_URI_ROUTER)) {
                 donate_tenpay.visibility = GONE
             }
         })

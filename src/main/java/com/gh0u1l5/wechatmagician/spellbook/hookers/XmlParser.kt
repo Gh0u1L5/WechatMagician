@@ -31,6 +31,6 @@ object XmlParser : EventCenter() {
             }
         })
 
-        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_XML_PARSER, true)
+        WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_XML_PARSER)
     }
 }

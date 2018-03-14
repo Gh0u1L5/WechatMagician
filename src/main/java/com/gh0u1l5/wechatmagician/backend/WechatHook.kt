@@ -71,7 +71,7 @@ class WechatHook : IXposedHookLoadPackage {
         private val requireHookStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 setResultExtras(Bundle().apply {
-                    putSerializable("status", WechatStatus.report())
+                    putIntArray("status", WechatStatus.report())
                 })
             }
         }
@@ -164,7 +164,7 @@ class WechatHook : IXposedHookLoadPackage {
         tryAsynchronously {
             val path = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
             resources = XModuleResources.createInstance(path, null)
-            WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_RESOURCES, true)
+            WechatStatus.toggle(WechatStatus.StatusFlag.STATUS_FLAG_RESOURCES)
         }
 
         // Initialize the shared preferences

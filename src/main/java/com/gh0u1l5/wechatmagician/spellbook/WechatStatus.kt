@@ -25,15 +25,15 @@ object WechatStatus {
     /**
      * A [ConcurrentHashMap] storing the working status of all the features.
      */
-    private val status = ConcurrentHashMap<StatusFlag, Boolean>()
+    private var status: IntArray = intArrayOf()
 
     /**
      * Returns the current working status as a [ConcurrentHashMap].
      */
-    fun report(): ConcurrentHashMap<StatusFlag, Boolean> = status
+    @Synchronized fun report(): IntArray = status
 
     /**
      * Updates the working status for the specific feature.
      */
-    fun toggle(key: StatusFlag, value: Boolean) { status[key] = value }
+    @Synchronized fun toggle(flag: StatusFlag) { status += flag.ordinal }
 }
