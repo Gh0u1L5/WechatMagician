@@ -1,12 +1,14 @@
 package com.gh0u1l5.wechatmagician.spellbook.interfaces
 
-import de.robv.android.xposed.XC_MethodHook
+import java.io.File
 
 interface IFileSystemHook {
 
-    fun onFileDeleting(param: XC_MethodHook.MethodHookParam) { }
+    fun onFileDeleting(file: File) = false
 
-    fun onFileDeleted(param: XC_MethodHook.MethodHookParam) { }
+    fun onFileDeleted(file: File) = Unit
 
-    fun onFileWriting(param: XC_MethodHook.MethodHookParam) { }
+    fun onFileReading(file: File) = Unit
+
+    fun onFileWriting(file: File, overwrite: Boolean) = Unit
 }

@@ -76,12 +76,13 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         }
     }
 
-    override fun onFileDeleting(param: XC_MethodHook.MethodHookParam) {
-        val path = (param.thisObject as File).absolutePath
-        when {
-            path.contains("/image2/") -> param.result = true
-            path.contains("/voice2/") -> param.result = true
-            path.contains("/video/") -> param.result = true
+    override fun onFileDeleting(file: File): Boolean {
+        val path = file.absolutePath
+        return when {
+            path.contains("/image2/") -> true
+            path.contains("/voice2/") -> true
+            path.contains("/video/") -> true
+            else -> false
         }
     }
 
