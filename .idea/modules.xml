@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/WechatMagician.iml" filepath="$PROJECT_DIR$/WechatMagician.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/spellbook/spellbook.iml" filepath="$PROJECT_DIR$/spellbook/spellbook.iml" />
+    </modules>
+  </component>
+</project>
