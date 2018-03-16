@@ -1,0 +1,24 @@
+language: android
+
+env:
+  global:
+    - GRADLE_VERSION=4.5
+    - ANDROID_API_LEVEL=27
+    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+
+android:
+  components:
+    - tools
+    - platform-tools
+    - tools
+    # The BuildTools version used by your project
+    - build-tools-${ANDROID_BUILD_TOOLS_VERSION}
+    # The SDK version used to compile your project
+    - android-${ANDROID_API_LEVEL}
+
+before_install:
+    # Setup the correct gradle version.
+    - wget http://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
+    - unzip gradle-${GRADLE_VERSION}-bin.zip
+    - export GRADLE_HOME=$PWD/gradle-${GRADLE_VERSION}
+    - export PATH=$GRADLE_HOME/bin:$PATH
