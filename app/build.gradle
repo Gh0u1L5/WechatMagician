@@ -26,10 +26,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     lintOptions {
+        abortOnError false
         checkReleaseBuilds false
     }
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
     }
 }
 
