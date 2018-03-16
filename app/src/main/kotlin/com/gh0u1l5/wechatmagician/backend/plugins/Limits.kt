@@ -14,6 +14,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
@@ -67,7 +68,7 @@ object Limits : IActivityHook {
         val selectAll = menu.add(0, 2, 0, "")
         selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-        val textSelectAll = resources?.getString(R.string.button_select_all) ?: "All"
+        val textSelectAll = Strings.getString(R.string.button_select_all)
         if (resources == null) {
             selectAll.isChecked = checked
             selectAll.title = textSelectAll + "  " + if (checked) "\u2611" else "\u2610"

@@ -11,6 +11,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase.getContactByNickname
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.AddressAdapterObject
@@ -31,7 +32,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
 
     private fun changeUserStatusByUsername(context: Context, username: String?, isSecret: Boolean) {
         if (username == null) {
-            val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found) ?: "User Not Found!"
+            val promptUserNotFound = Strings.getString(R.string.prompt_user_not_found)
             Toast.makeText(context, promptUserNotFound, Toast.LENGTH_SHORT).show()
             return
         }
@@ -99,7 +100,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         if (!isPluginEnabled()) {
             return null
         }
-        val textHideFriend = resources?.getString(R.string.button_hide_friend) ?: "Hide Friend"
+        val textHideFriend = Strings.getString(R.string.button_hide_friend)
         val itemId = ITEM_ID_BUTTON_HIDE_FRIEND
         val title = pref.getString(SETTINGS_SECRET_FRIEND_HIDE_OPTION, textHideFriend)
         val onClickListener = { context: Context ->

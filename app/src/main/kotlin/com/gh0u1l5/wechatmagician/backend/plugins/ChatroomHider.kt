@@ -11,7 +11,7 @@ import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_CHATROOM
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_CHATROOM_HIDER
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.frontend.wechat.ConversationAdapter
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
@@ -61,7 +61,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
             return null
         }
         val itemId = ITEM_ID_BUTTON_HIDE_CHATROOM
-        val title = resources?.getString(R.string.button_hide_chatroom) ?: "Hide Useless Chatroom"
+        val title = Strings.getString(R.string.button_hide_chatroom)
         val onClickListener = { _: Context ->
             changeChatroomStatus(username, true)
         }
@@ -74,7 +74,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         }
         if (command.startsWith("chatrooms")) {
             val adapter = ConversationAdapter(context)
-            val cancel = resources?.getString(R.string.button_cancel) ?: "Cancel"
+            val cancel = Strings.getString(R.string.button_cancel)
             AlertDialog.Builder(context)
                     .setTitle("Wechat Magician")
                     .setAdapter(adapter, { _, _ -> })
@@ -95,7 +95,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
     }
 
     fun onChatroomHiderConversationLongClick(view: View, adapter: ConversationAdapter, username: String): Boolean {
-        val textUnhideChatroom = resources?.getString(R.string.button_unhide_chatroom) ?: "Unhide Chatroom"
+        val textUnhideChatroom = Strings.getString(R.string.button_unhide_chatroom)
         ListPopupWindow(view.context).apply {
             anchorView = view
             width = view.context.dp2px(140)

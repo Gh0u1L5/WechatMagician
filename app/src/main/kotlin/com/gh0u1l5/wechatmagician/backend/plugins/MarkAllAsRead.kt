@@ -7,7 +7,7 @@ import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_CLEAN_UNREAD
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MARK_ALL_AS_READ
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
@@ -40,7 +40,7 @@ object MarkAllAsRead : IPopupMenuHook {
             return null
         }
         val itemId = ITEM_ID_BUTTON_CLEAN_UNREAD
-        val title = resources?.getString(R.string.button_clean_unread) ?: "Mark All as Read"
+        val title = Strings.getString(R.string.button_clean_unread)
         val onClickListener = { context: Context ->
             cleanUnreadCount(context as Activity)
         }

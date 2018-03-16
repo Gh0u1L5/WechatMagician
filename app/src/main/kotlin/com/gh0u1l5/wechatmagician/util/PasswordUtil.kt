@@ -11,7 +11,7 @@ import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.SALT
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import java.security.MessageDigest
 
@@ -38,8 +38,8 @@ object PasswordUtil {
             okay = context.getString(R.string.button_ok)
             cancel = context.getString(R.string.button_cancel)
         } else {
-            okay = resources?.getString(R.string.button_ok) ?: "Okay"
-            cancel = resources?.getString(R.string.button_cancel) ?: "Cancel"
+            okay = Strings.getString(R.string.button_ok)
+            cancel = Strings.getString(R.string.button_cancel)
         }
 
         val input = EditText(context).apply {
@@ -81,8 +81,8 @@ object PasswordUtil {
             promptCorrectPassword = context.getString(R.string.prompt_correct_password)
             promptWrongPassword = context.getString(R.string.prompt_wrong_password)
         } else {
-            promptCorrectPassword = resources?.getString(R.string.prompt_correct_password) ?: "Correct Password!"
-            promptWrongPassword = resources?.getString(R.string.prompt_wrong_password) ?: "Wrong Password!"
+            promptCorrectPassword = Strings.getString(R.string.prompt_correct_password)
+            promptWrongPassword = Strings.getString(R.string.prompt_wrong_password)
         }
 
         askPassword(context, title, message) { input ->
@@ -100,7 +100,7 @@ object PasswordUtil {
         val message = if (context.applicationInfo.packageName == MAGICIAN_PACKAGE_NAME) {
             context.getString(R.string.prompt_setup_password)
         } else {
-            resources?.getString(R.string.prompt_setup_password) ?: "Please enter a new password:"
+            Strings.getString(R.string.prompt_setup_password)
         }
 
         askPassword(context, title, message) { input ->
@@ -115,7 +115,7 @@ object PasswordUtil {
         val message = if (context.applicationInfo.packageName == MAGICIAN_PACKAGE_NAME) {
             context.getString(R.string.prompt_verify_password)
         } else {
-            resources?.getString(R.string.prompt_verify_password) ?: "Please enter your password:"
+            Strings.getString(R.string.prompt_verify_password)
         }
         val encrypted = preferences.getString(key, "")
         askPasswordWithVerify(context, title, message, encrypted) {

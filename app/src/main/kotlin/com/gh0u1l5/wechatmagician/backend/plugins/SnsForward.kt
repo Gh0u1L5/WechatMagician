@@ -13,7 +13,7 @@ import android.widget.ListPopupWindow
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.gh0u1l5.wechatmagician.R
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
@@ -53,7 +53,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                     throw Error("SD card is not presented! (state: $state)")
                 }
                 if (snsInfo == null) {
-                    val prompt = resources?.getString(R.string.prompt_sns_invalid) ?: "Record is invalid or deleted."
+                    val prompt = Strings.getString(R.string.prompt_sns_invalid)
                     throw Error("$prompt (snsId: $snsId)")
                 }
                 if (snsInfo.contentUrl != null) {
@@ -208,8 +208,8 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     // Show a popup menu in SnsTimelineUI
     private fun onTimelineItemLongClick(parent: AdapterView<*>, view: View, snsId: Long, position: ListPopupWindowPosition?): Boolean {
-        val textForward = resources?.getString(R.string.button_sns_forward) ?: "Forward"
-        val textScreenshot = resources?.getString(R.string.button_sns_screenshot) ?: "Screenshot"
+        val textForward = Strings.getString(R.string.button_sns_forward)
+        val textScreenshot = Strings.getString(R.string.button_sns_screenshot)
         ListPopupWindow(parent.context).apply {
             if (position != null) {
                 // Calculate list view size
@@ -239,8 +239,8 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
 
     // Handle the logic about the popup menu in SnsTimelineUI
     private fun onTimelineItemPopupMenuSelected(itemView: View, snsId: Long, operation: Int): Boolean {
-        val promptWait = resources?.getString(R.string.prompt_wait) ?: "Please wait for a while....."
-        val promptScreenshot = resources?.getString(R.string.prompt_screenshot) ?: "The screenshot has been saved to"
+        val promptWait = Strings.getString(R.string.prompt_wait)
+        val promptScreenshot = Strings.getString(R.string.prompt_screenshot)
         when (operation) {
             0 -> { // Forward
                 ForwardAsyncTask(snsId, itemView.context).execute()

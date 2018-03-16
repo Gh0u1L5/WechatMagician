@@ -10,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.plugins.ChatroomHider
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
@@ -86,7 +87,7 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val nickname = getChildAt(0) as TextView?
             val digest = getChildAt(1) as TextView?
             if (conversation.nickname == "") {
-                nickname?.text = resources?.getString(R.string.label_unnamed) ?: "[Unnamed]"
+                nickname?.text = Strings.getString(R.string.label_unnamed)
             } else {
                 nickname?.text = conversation.nickname
             }
