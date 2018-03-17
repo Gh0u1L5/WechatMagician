@@ -44,6 +44,7 @@ object PasswordUtil {
 
         val input = EditText(context).apply {
             maxLines = 1
+            hint = message
             inputType = TYPE_CLASS_TEXT or TYPE_TEXT_VARIATION_PASSWORD
             layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -61,7 +62,6 @@ object PasswordUtil {
 
         val builder = AlertDialog.Builder(context)
                 .setTitle(title)
-                .setMessage(message)
                 .setView(content)
         builder.setPositiveButton(okay) { dialog, _ ->
             onFinish(input.text.toString())

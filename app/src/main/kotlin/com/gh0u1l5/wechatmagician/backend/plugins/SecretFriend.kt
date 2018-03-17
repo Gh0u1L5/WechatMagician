@@ -110,7 +110,6 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
     }
 
     // Handle SearchBar commands to operate on secret friends.
-    // TODO: use XML for popup dialogs
     override fun onHandleCommand(context: Context, command: String): Boolean {
         if (!isPluginEnabled()) {
             return false
