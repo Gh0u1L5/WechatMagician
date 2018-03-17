@@ -6,14 +6,10 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.CheckBox
-import android.widget.HeaderViewListAdapter
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SELECT_PHOTOS_LIMIT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
@@ -24,6 +20,7 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.SelectC
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Classes.SelectConversationUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Methods.SelectConversationUI_checkLimit
 import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
@@ -68,27 +65,30 @@ object Limits : IActivityHook {
         val selectAll = menu.add(0, 2, 0, "")
         selectAll.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
 
-        val textSelectAll = Strings.getString(R.string.button_select_all)
-        if (resources == null) {
-            selectAll.isChecked = checked
-            selectAll.title = textSelectAll + "  " + if (checked) "\u2611" else "\u2610"
-            selectAll.setOnMenuItemClickListener {
-                onSelectContactUISelectAll(activity, !selectAll.isChecked); true
+        val btnText = TextView(activity).apply {
+            setTextColor(Color.WHITE)
+            text = Strings.getString(R.string.button_select_all)
+            layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginEnd = context.dp2px(4)
             }
-        } else {
-            val layout = resources?.getLayout(R.layout.wechat_checked_textview)
-            val checkedTextView = activity.layoutInflater.inflate(layout, null)
-            checkedTextView.findViewById<TextView>(R.id.ctv_text).apply {
-                setTextColor(Color.WHITE)
-                text = textSelectAll
+        }
+        val btnCheckbox = CheckBox(activity).apply {
+            isChecked = checked
+            setOnCheckedChangeListener { _, checked ->
+                onSelectContactUISelectAll(activity, checked)
             }
-            checkedTextView.findViewById<CheckBox>(R.id.ctv_checkbox).apply {
-                isChecked = checked
-                setOnCheckedChangeListener { _, checked ->
-                    onSelectContactUISelectAll(activity, checked)
-                }
+            layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT).apply {
+                marginEnd = context.dp2px(6)
             }
-            selectAll.actionView = checkedTextView
+        }
+        selectAll.actionView = LinearLayout(activity).apply {
+            addView(btnText)
+            addView(btnCheckbox)
+            orientation = LinearLayout.HORIZONTAL
         }
     }
 
