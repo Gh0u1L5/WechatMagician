@@ -5,7 +5,7 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_CHATTING_RECALL_PROMPT
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
+import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
@@ -44,8 +44,7 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
             val msg = xml[REPLACE_MSG_TAG] ?: return
             if (msg.startsWith("\"")) {
-                val default = resources?.getString(R.string.prompt_message_recall)
-                        ?: "want to recall the message, idiot."
+                val default = Strings.getString(R.string.prompt_message_recall)
                 val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, default)
                 xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
             }

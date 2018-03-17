@@ -10,7 +10,6 @@ import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_HIDE_OPTION
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SECRET_FRIEND_PASSWORD
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
-import com.gh0u1l5.wechatmagician.backend.WechatHook.Companion.resources
 import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase.getContactByNickname
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList
@@ -75,8 +74,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         if (activity::class.java == ChattingUI) {
             val username = activity.intent.getStringExtra("Chat_User")
             if (username in SecretFriendList) {
-                val promptUserNotFound = resources?.getString(R.string.prompt_user_not_found)
-                        ?: "User Not Found!"
+                val promptUserNotFound = Strings.getString(R.string.prompt_user_not_found)
                 Toast.makeText(activity, promptUserNotFound, Toast.LENGTH_SHORT).show()
                 activity.finish()
             }
@@ -115,12 +113,9 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
             return false
         }
 
-        val titleSecretFriend = resources?.getString(R.string.title_secret_friend)
-                ?: "Secret Friend"
-        val promptPasswordMissing = resources?.getString(R.string.prompt_password_missing)
-                ?: "Please set your password first!"
-        val promptVerifyPassword = resources?.getString(R.string.prompt_verify_password)
-                ?: "Please enter your password:"
+        val titleSecretFriend = Strings.getString(R.string.title_secret_friend)
+        val promptPasswordMissing = Strings.getString(R.string.prompt_password_missing)
+        val promptVerifyPassword = Strings.getString(R.string.prompt_verify_password)
 
         when {
             command.startsWith("hide ") -> {
