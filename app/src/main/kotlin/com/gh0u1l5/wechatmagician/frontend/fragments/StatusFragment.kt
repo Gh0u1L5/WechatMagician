@@ -100,8 +100,10 @@ class StatusFragment : Fragment() {
                 override fun onReceive(context: Context?, intent: Intent?) {
                     val result = getResultExtras(true)
                     val status = result.getIntArray("status")
-                    val flags = WechatStatus.StatusFlag.values()
-                    callback(status.map { flags[it] })
+                    if (status != null) {
+                        val flags = WechatStatus.StatusFlag.values()
+                        callback(status.map { flags[it] })
+                    }
                 }
             }, null, Activity.RESULT_OK, null, null)
         }
