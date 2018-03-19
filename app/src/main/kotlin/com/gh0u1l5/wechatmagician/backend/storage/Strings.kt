@@ -33,8 +33,8 @@ object Strings {
                     R.string.prompt_wait to "Please wait for a while.....",
                     R.string.prompt_load_component_status_failed to "Failed to retrieve the status of components.",
 
-                    R.string.prompt_setup_password to "Please enter a new password:",
-                    R.string.prompt_verify_password to "Please enter your password:",
+                    R.string.prompt_setup_password to "Enter a new password",
+                    R.string.prompt_verify_password to "Enter your password",
                     R.string.prompt_user_not_found to "User Not Found!",
                     R.string.prompt_password_missing to "Please set your password first!",
                     R.string.prompt_correct_password to "Correct Password!",

@@ -2,7 +2,7 @@
 
 _Read this README.md in other languages:_  [English](https://github.com/Gh0u1L5/WechatMagician/blob/master/README.en.md).
 
-WechatMagician是一款骚兮兮的Xposed插件，致力于让用户彻底掌控微信上的聊天消息及朋友圈内容，支持微信 6.5.3 及以上版本。
+WechatMagician是一款骚兮兮的Xposed插件，底层使用 __[WechatSpellbook](https://github.com/Gh0u1L5/WechatSpellbook)__ 框架，致力于让用户彻底掌控微信上的聊天消息及朋友圈内容，支持微信 6.5.3 及以上版本。
 
 ## 实现功能
 
