@@ -1,6 +1,6 @@
 # WechatMagician
 
-WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. Currently this module supports WeChat 6.5.3+.
+WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. It is based on the __[WechatSpellbook](https://github.com/Gh0u1L5/WechatSpellbook)__ framework. Currently this module supports WeChat 6.5.3+.
 
 ## Features
 
