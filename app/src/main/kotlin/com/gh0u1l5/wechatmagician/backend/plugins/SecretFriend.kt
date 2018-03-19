@@ -20,7 +20,6 @@ import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
-import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenuHook, ISearchBarConsole {
@@ -81,16 +80,11 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         }
     }
 
-    // Hide the message notifications from secret friends.
-    override fun onMessageNotificationAdding(param: XC_MethodHook.MethodHookParam) {
+    override fun onMessageHandling(message: INotificationHook.Message): Boolean {
         if (!isPluginEnabled()) {
-            return
+            return false
         }
-        val notification = param.args[0].toString()
-        val username = notification.substringAfter("userName: ").substringBefore(",")
-        if (username in SecretFriendList) {
-            param.result = null
-        }
+        return message.talker in SecretFriendList
     }
 
     // Add menu items in the popup menu for contacts.
