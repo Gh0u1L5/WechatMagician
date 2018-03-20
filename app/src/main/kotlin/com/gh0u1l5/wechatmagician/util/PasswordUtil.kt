@@ -49,8 +49,10 @@ object PasswordUtil {
             layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT).apply {
-                marginStart = context.dp2px(25)
-                marginEnd = context.dp2px(25)
+                topMargin = context.dp2px(10)
+                bottomMargin = context.dp2px(10)
+                leftMargin = context.dp2px(25)
+                rightMargin = context.dp2px(25)
             }
         }
         val content = LinearLayout(context).apply {
