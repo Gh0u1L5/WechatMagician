@@ -35,7 +35,7 @@ object MarkAllAsRead : IPopupMenuHook {
         activity.overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
     }
 
-    override fun onPopupMenuForConversationsCreating(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForConversationsCreating(username: String): List<MenuAppender.PopupMenuItem>? {
         if (!isPluginEnabled()) {
             return null
         }
@@ -44,6 +44,6 @@ object MarkAllAsRead : IPopupMenuHook {
         val onClickListener = { context: Context ->
             cleanUnreadCount(context as Activity)
         }
-        return MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener)
+        return listOf(MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener))
     }
 }

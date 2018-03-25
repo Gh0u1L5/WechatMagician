@@ -8,6 +8,10 @@ import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.interruption
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.replacement
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
@@ -17,7 +21,6 @@ import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import de.robv.android.xposed.XC_MethodHook
 import de.robv.android.xposed.XposedHelpers
 import java.io.File
 
@@ -37,51 +40,50 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         }
     }
 
-    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(xml: String, root: String, result: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
             return
         }
-        if (root == ROOT_TAG && xml[TYPE_TAG] == "revokemsg") {
-            val msg = xml[REPLACE_MSG_TAG] ?: return
+        if (root == ROOT_TAG && result[TYPE_TAG] == "revokemsg") {
+            val msg = result[REPLACE_MSG_TAG] ?: return
             if (msg.startsWith("\"")) {
                 val default = Strings.getString(R.string.prompt_message_recall)
                 val prompt = pref.getString(SETTINGS_CHATTING_RECALL_PROMPT, default)
-                xml[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
+                result[REPLACE_MSG_TAG] = MessageUtil.applyEasterEgg(msg, prompt)
             }
         }
     }
 
-    override fun onDatabaseUpdating(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int?> {
         if (!isPluginEnabled()) {
-            return
+            return nop()
         }
-        val table = param.args[0] as String? ?: return
-        val values = param.args[1] as ContentValues? ?: return
         if (table == "message" && values["type"] == 10000) {
             if (values.getAsString("content").startsWith("\"")) {
                 handleMessageRecall(values)
-                param.result = 1
+                return replacement(1)
             }
         }
+        return nop()
     }
 
-    override fun onDatabaseDeleting(param: XC_MethodHook.MethodHookParam) {
+    override fun onDatabaseDeleting(thisObject: Any, table: String, whereClause: String?, whereArgs: Array<String>?): Operation<Int?> {
         if (!isPluginEnabled()) {
-            return
+            return nop()
         }
-        val table = param.args[0] as String?
-        when (table) {
-            "ImgInfo2", "voiceinfo", "videoinfo2", "WxFileIndex2" -> param.result = 1
+        return when (table) {
+            "ImgInfo2", "voiceinfo", "videoinfo2", "WxFileIndex2" -> replacement(1)
+            else -> nop()
         }
     }
 
-    override fun onFileDeleting(file: File): Boolean {
+    override fun onFileDeleting(file: File): Operation<Boolean?> {
         val path = file.absolutePath
         return when {
-            path.contains("/image2/") -> true
-            path.contains("/voice2/") -> true
-            path.contains("/video/") -> true
-            else -> false
+            path.contains("/image2/") -> interruption()
+            path.contains("/voice2/") -> interruption()
+            path.contains("/video/")  -> interruption()
+            else -> nop()
         }
     }
 

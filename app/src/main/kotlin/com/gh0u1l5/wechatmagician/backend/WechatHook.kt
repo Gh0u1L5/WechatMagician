@@ -168,6 +168,7 @@ class WechatHook : IXposedHookLoadPackage {
         }
 
         // Initialize the shared preferences
+        // TODO: check why it no longer works after restarting Wechat
         settings.listen(context)
         settings.load(context)
         developer.listen(context)

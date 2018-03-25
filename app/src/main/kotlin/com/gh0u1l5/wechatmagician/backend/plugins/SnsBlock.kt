@@ -17,17 +17,17 @@ object SnsBlock : IXmlParserHook {
 
     private fun isPluginEnabled() = pref.getBoolean(SETTINGS_SNS_KEYWORD_BLACKLIST, false)
 
-    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(xml: String, root: String, result: MutableMap<String, String>) {
         if (!isPluginEnabled()) {
             return
         }
-        if (root == ROOT_TAG && xml[PRIVATE_TAG] != "1") {
-            val content = xml[CONTENT_TAG] ?: return
+        if (root == ROOT_TAG && result[PRIVATE_TAG] != "1") {
+            val content = result[CONTENT_TAG] ?: return
             val keywords = pref.getStringList(SETTINGS_SNS_KEYWORD_BLACKLIST_CONTENT, emptyList())
             keywords.forEach { keyword ->
                 if (content.contains(keyword)) {
-                    SnsBlacklist += xml[ID_TAG]
-                    xml[PRIVATE_TAG] = "1"
+                    SnsBlacklist += result[ID_TAG]
+                    result[PRIVATE_TAG] = "1"
                     return
                 }
             }

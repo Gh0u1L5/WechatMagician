@@ -18,6 +18,8 @@ import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.frontend.wechat.ListPopupWindowPosition
 import com.gh0u1l5.wechatmagician.frontend.wechat.StringListAdapter
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.SnsUserUIAdapterObject
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
@@ -121,33 +123,36 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     private const val ROOT_TAG = "TimelineObject"
     private const val ID_TAG   = ".TimelineObject.id"
 
-    override fun onDatabaseOpened(path: String, database: Any?) {
-        if (database == null) {
-            return
+    override fun onDatabaseOpened(path: String, factory: Any?, flags: Int, errorHandler: Any?, result: Any?): Operation<Any?> {
+        if (result == null) {
+            return nop()
         }
         if (path.endsWith("SnsMicroMsg.db")) {
             // Force Wechat to retrieve existing SNS data from remote server.
             val deleted = ContentValues().apply { put("sourceType", 0) }
             tryVerbosely {
-                callMethod(database, "delete", "snsExtInfo3", "local_flag=0", null)
-                callMethod(database, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
+                callMethod(result, "delete", "snsExtInfo3", "local_flag=0", null)
+                callMethod(result, "update", "SnsInfo", deleted, "sourceType in (8,10,12,14)", null)
             }
         }
+        return nop()
     }
 
-    override fun onXmlParsed(root: String, xml: MutableMap<String, String>) {
+    override fun onXmlParsed(xml: String, root: String, result: MutableMap<String, String>) {
         tryAsynchronously {
             if (root == ROOT_TAG) {
-                val id = xml[ID_TAG]
+                val id = result[ID_TAG]
                 if (id != null) {
-                    SnsCache[id] = SnsCache.SnsInfo(xml)
+                    SnsCache[id] = SnsCache.SnsInfo(result)
                 }
             }
         }
     }
 
-    // Hook HeaderViewListAdapter.getView to make sure the items are long clickable.
-    override fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View) {
+    override fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View?): Operation<View?> {
+        if (result == null) {
+            return nop()
+        }
         if (adapter === SnsUserUIAdapterObject.get()) {
             if (convertView == null) { // this is a new view
                 if (result is ViewGroup) {
@@ -158,6 +163,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
                 result.isLongClickable = true
             }
         }
+        return nop()
     }
 
     override fun onActivityStarting(activity: Activity) {

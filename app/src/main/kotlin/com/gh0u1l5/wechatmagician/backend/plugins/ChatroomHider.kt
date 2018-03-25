@@ -53,7 +53,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         }
     }
 
-    override fun onPopupMenuForConversationsCreating(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForConversationsCreating(username: String): List<MenuAppender.PopupMenuItem>? {
         if (!isPluginEnabled()) {
             return null
         }
@@ -65,7 +65,7 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         val onClickListener = { _: Context ->
             changeChatroomStatus(username, true)
         }
-        return MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener)
+        return listOf(MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener))
     }
 
     override fun onHandleCommand(context: Context, command: String): Boolean {

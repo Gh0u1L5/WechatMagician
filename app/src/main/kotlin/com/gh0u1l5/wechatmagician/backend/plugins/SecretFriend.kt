@@ -88,7 +88,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
     }
 
     // Add menu items in the popup menu for contacts.
-    override fun onPopupMenuForContactsCreating(username: String): MenuAppender.PopupMenuItem? {
+    override fun onPopupMenuForContactsCreating(username: String): List<MenuAppender.PopupMenuItem>? {
         if (!isPluginEnabled()) {
             return null
         }
@@ -98,7 +98,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         val onClickListener = { context: Context ->
             changeUserStatusByUsername(context, username, true)
         }
-        return MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener)
+        return listOf(MenuAppender.PopupMenuItem(0, itemId, 0, title, onClickListener))
     }
 
     // Handle SearchBar commands to operate on secret friends.

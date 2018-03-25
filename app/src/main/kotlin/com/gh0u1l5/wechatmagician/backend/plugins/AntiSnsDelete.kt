@@ -6,49 +6,48 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.list.SnsBlacklist
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.util.MessageUtil
-import de.robv.android.xposed.XC_MethodHook
 
 object AntiSnsDelete : IDatabaseHook {
 
     private val pref = WechatHook.settings
 
-    override fun onDatabaseUpdating(param: XC_MethodHook.MethodHookParam) {
-        val table = param.args[0] as String? ?: return
-        val values = param.args[1] as ContentValues? ?: return
-
+    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int?> {
         when (table) {
             "SnsInfo" -> { // delete moment
                 if (values["type"] !in listOf(1, 2, 3, 15)) {
-                    return
+                    return nop()
                 }
                 if (values["sourceType"] != 0) {
-                    return
+                    return nop()
                 }
                 if (values["stringSeq"] in SnsBlacklist) {
-                    return
+                    return nop()
                 }
                 if (!pref.getBoolean(Global.SETTINGS_SNS_DELETE_MOMENT, true)) {
-                    return
+                    return nop()
                 }
                 val content = values["content"] as ByteArray?
                 handleMomentDelete(content, values)
             }
             "SnsComment" -> { // delete moment comment
                 if (values["type"] == 1) {
-                    return
+                    return nop()
                 }
                 if (values["commentflag"] != 1) {
-                    return
+                    return nop()
                 }
                 if (!pref.getBoolean(Global.SETTINGS_SNS_DELETE_COMMENT, true)) {
-                    return
+                    return nop()
                 }
                 val curActionBuf = values["curActionBuf"] as ByteArray?
                 handleCommentDelete(curActionBuf, values)
             }
         }
+        return nop()
     }
 
     // handleMomentDelete notifies user that someone has deleted the given moment.
