@@ -12,7 +12,8 @@ import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.spellbook.C
-import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.base.Hooker
+import com.gh0u1l5.wechatmagician.spellbook.base.HookerProvider
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Classes.ContactInfo
@@ -26,9 +27,13 @@ import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.lang.reflect.Field
 
-object Limits : IActivityHook {
+object Limits : IActivityHook, HookerProvider {
 
     private val pref = WechatHook.settings
+
+    override fun provideStaticHookers(): List<Hooker>? {
+        return listOf(onCheckSelectLimitHooker, onSelectAllContactHooker)
+    }
 
     override fun onActivityCreating(activity: Activity, savedInstanceState: Bundle?) {
         when (activity::class.java) {
@@ -92,8 +97,18 @@ object Limits : IActivityHook {
         }
     }
 
+    // Hook SelectConversationUI to bypass the limit on number of recipients.
+    private val onCheckSelectLimitHooker = Hooker {
+        findAndHookMethod(SelectConversationUI, SelectConversationUI_checkLimit, object : XC_MethodHook() {
+            @Throws(Throwable::class)
+            override fun beforeHookedMethod(param: MethodHookParam) {
+                param.result = false
+            }
+        })
+    }
+
     // Hook SelectContactUI to help the "Select All" button.
-    @WechatHookMethod @JvmStatic fun handleSelectAll() {
+    private val onSelectAllContactHooker = Hooker {
         findAndHookMethod(
                 SelectContactUI, "onActivityResult",
                 C.Int, C.Int, C.Intent, object : XC_MethodHook() {
@@ -109,16 +124,6 @@ object Limits : IActivityHook {
                     activity.finish()
                     param.result = null
                 }
-            }
-        })
-    }
-
-    // Hook SelectConversationUI to bypass the limit on number of recipients.
-    @WechatHookMethod @JvmStatic fun breakSelectConversationLimit() {
-        findAndHookMethod(SelectConversationUI, SelectConversationUI_checkLimit, object : XC_MethodHook() {
-            @Throws(Throwable::class)
-            override fun beforeHookedMethod(param: MethodHookParam) {
-                param.result = false
             }
         })
     }

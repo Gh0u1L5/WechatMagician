@@ -18,7 +18,8 @@ import com.gh0u1l5.wechatmagician.Global.DEVELOPER_UI_TRACE_ACTIVITIES
 import com.gh0u1l5.wechatmagician.Global.DEVELOPER_XML_PARSER
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.spellbook.C
-import com.gh0u1l5.wechatmagician.spellbook.annotations.WechatHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.base.Hooker
+import com.gh0u1l5.wechatmagician.spellbook.base.HookerProvider
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Classes.Logcat
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Classes.XmlParser
 import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.sdk.platformtools.Methods.XmlParser_parse
@@ -36,12 +37,24 @@ import de.robv.android.xposed.XposedHelpers.findAndHookConstructor
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.io.File
 
-object Developer {
+object Developer : HookerProvider {
 
     private val pref = WechatHook.developer
 
+    override fun provideStaticHookers(): List<Hooker>? {
+        return listOf (
+                traceTouchEventsHooker,
+                traceActivitiesHooker,
+                dumpPopupMenuHooker,
+                traceDatabaseHooker,
+                traceLogcatHooker,
+                traceFilesHooker,
+                traceXMLParseHooker
+        )
+    }
+
     // Hook View.onTouchEvent to trace touch events.
-    @WechatHookMethod @JvmStatic fun traceTouchEvents() {
+    private val traceTouchEventsHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_UI_TOUCH_EVENT, false)) {
             findAndHookMethod(C.View, "onTouchEvent", C.MotionEvent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -53,7 +66,7 @@ object Developer {
     }
 
     // Hook Activity.startActivity and Activity.onCreate to trace activities.
-    @WechatHookMethod @JvmStatic fun traceActivities() {
+    private val traceActivitiesHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_UI_TRACE_ACTIVITIES, false)) {
             findAndHookMethod(C.Activity, "startActivity", C.Intent, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -80,7 +93,7 @@ object Developer {
     }
 
     // Hook MMListPopupWindow to trace every popup menu.
-    @WechatHookMethod @JvmStatic fun dumpPopupMenu() {
+    private val dumpPopupMenuHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_UI_DUMP_POPUP_MENU, false)) {
             hookAllConstructors(MMListPopupWindow, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -107,7 +120,7 @@ object Developer {
     }
 
     // Hook SQLiteDatabase to trace all the database operations.
-    @WechatHookMethod @JvmStatic fun traceDatabase() {
+    private val traceDatabaseHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_DATABASE_QUERY, false)) {
             findAndHookMethod(
                     SQLiteDatabase, "rawQueryWithFactory",
@@ -187,7 +200,7 @@ object Developer {
     }
 
     // Hook Log to trace hidden logcat output.
-    @WechatHookMethod @JvmStatic fun traceLogCat() {
+    private val traceLogcatHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_TRACE_LOGCAT, false)) {
             val functions = listOf("d", "e", "f", "i", "v", "w")
             functions.forEach { func ->
@@ -208,7 +221,7 @@ object Developer {
     }
 
     // Hook FileInputStream / FileOutputStream to trace file operations.
-    @WechatHookMethod @JvmStatic fun traceFiles() {
+    private val traceFilesHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_TRACE_FILES, false)) {
             findAndHookConstructor(C.FileInputStream, C.File, object : XC_MethodHook() {
                 @Throws(Throwable::class)
@@ -236,7 +249,7 @@ object Developer {
     }
 
     // Hook XML Parser to trace the XML files used in Wechat.
-    @WechatHookMethod @JvmStatic fun traceXMLParse() {
+    private val traceXMLParseHooker = Hooker {
         if (pref.getBoolean(DEVELOPER_XML_PARSER, false)) {
             findAndHookMethod(XmlParser, XmlParser_parse, object : XC_MethodHook() {
                 @Throws(Throwable::class)
