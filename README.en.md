@@ -22,9 +22,14 @@ WechatMagician is a fancy Xposed module designed for Chinese social media applic
 #### Miscellaneous
 1. Automatically confirm the login requests from Wechat PC client (take your own risk if you turn on this function).
 
-## Official QQ Group
+## QQ Group / Wechat Group
+Official QQ Groups:
 * Group One: 135955386 (Full)
 * Group Two: 157550472
+
+Official Wechat Groups:
+1. Add Wechat account "XposedHelper", send the key word "Wechat Magician".
+2. Add Wechat account "CSYJZF".
 
 ## Design
 After learning from the failure of other Wechat modules, this project wants to do a better job in the following aspects:
