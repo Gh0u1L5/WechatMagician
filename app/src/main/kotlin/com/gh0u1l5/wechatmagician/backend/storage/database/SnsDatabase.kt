@@ -10,7 +10,7 @@ import de.robv.android.xposed.XposedHelpers.callMethod
 object SnsDatabase {
     // getSnsIdFromRowId searches the database to find the snsId in a specific row
     fun getSnsIdFromRowId(rowId: String?): String? {
-        if (rowId == null || rowId == "") {
+        if (rowId.isNullOrEmpty()) {
             return null
         }
 

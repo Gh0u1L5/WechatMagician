@@ -63,21 +63,21 @@ object MainDatabase {
     }
 
     fun getContactsByAlias(alias: String): List<Contact>? {
-        if (alias == "") {
+        if (alias.isEmpty()) {
             return null
         }
         return getContacts("alias=?", arrayOf(alias), ignoreDuplicate = true)
     }
 
     fun getContactByNickname(nickname: String): Contact? {
-        if (nickname == "") {
+        if (nickname.isEmpty()) {
             return null
         }
         return getContacts("nickname=?", arrayOf(nickname))?.firstOrNull()
     }
 
     fun getContactByUsername(username: String): Contact? {
-        if (username == "") {
+        if (username.isEmpty()) {
             return null
         }
         return getContacts("username=?", arrayOf(username))?.firstOrNull()
@@ -118,7 +118,7 @@ object MainDatabase {
     }
 
     fun getConversationByUsername(username: String): Conversation? {
-        if (username == "") {
+        if (username.isEmpty()) {
             return null
         }
         return getConversations("username=?", arrayOf(username))?.firstOrNull()

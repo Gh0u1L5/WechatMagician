@@ -114,7 +114,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
         when {
             command.startsWith("hide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
-                if (encrypted == "") {
+                if (encrypted.isEmpty()) {
                     Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
                 } else {
                     val nickname = command.drop("hide ".length)
@@ -124,7 +124,7 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
             }
             command.startsWith("unhide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
-                if (encrypted == "") {
+                if (encrypted.isEmpty()) {
                     Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
                 } else {
                     PasswordUtil.askPasswordWithVerify(context, titleSecretFriend, promptVerifyPassword, encrypted) {

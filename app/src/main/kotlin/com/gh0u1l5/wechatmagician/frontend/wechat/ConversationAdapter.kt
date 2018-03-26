@@ -86,7 +86,7 @@ class ConversationAdapter(context: Context, val conversations: MutableList<Conve
             val conversation = getItem(position)
             val nickname = getChildAt(0) as TextView?
             val digest = getChildAt(1) as TextView?
-            if (conversation.nickname == "") {
+            if (conversation.nickname.isEmpty()) {
                 nickname?.text = Strings.getString(R.string.label_unnamed)
             } else {
                 nickname?.text = conversation.nickname

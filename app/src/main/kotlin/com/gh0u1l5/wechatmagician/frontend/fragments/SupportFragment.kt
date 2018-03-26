@@ -56,7 +56,7 @@ class SupportFragment : Fragment() {
             if (xposedLog.canRead()) {
                 files.add(getUriForFile(context, MAGICIAN_REPORT_PROVIDER, xposedLog))
             }
-            if (magicianLog.path != "") {
+            if (magicianLog.path.isNotEmpty()) {
                 files.add(getUriForFile(context, MAGICIAN_REPORT_PROVIDER, magicianLog))
             }
             context.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {

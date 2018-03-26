@@ -22,7 +22,7 @@ class PasswordSwitchPreference : SwitchPreference {
 
         val status = pref.getBoolean(key, false)
         if (status) { // close
-            if (encrypted == "") {
+            if (encrypted.isEmpty()) {
                 return super.onClick()
             }
             val message = context.getString(R.string.prompt_verify_password)
@@ -30,7 +30,7 @@ class PasswordSwitchPreference : SwitchPreference {
                 super.onClick()
             }
         } else { // open
-            if (encrypted != "") {
+            if (encrypted.isNotEmpty()) {
                 return super.onClick()
             }
             PasswordUtil.createPassword(context, "Wechat Magician", pref, "${key}_password") {
