@@ -3,6 +3,8 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.os.Handler
+import android.os.Looper
 import android.view.Gravity
 import android.view.View
 import android.widget.BaseAdapter
@@ -26,6 +28,8 @@ import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
+
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     private val pref = WechatHook.settings
 
@@ -75,13 +79,15 @@ object ChatroomHider : IAdapterHook, IPopupMenuHook, ISearchBarConsole {
         if (command.startsWith("chatrooms")) {
             val adapter = ConversationAdapter(context)
             val cancel = Strings.getString(R.string.button_cancel)
-            AlertDialog.Builder(context)
-                    .setTitle("Wechat Magician")
-                    .setAdapter(adapter, { _, _ -> })
-                    .setNegativeButton(cancel, { dialog, _ ->
-                        dialog.dismiss()
-                    })
-                    .show()
+            mainHandler.post {
+                AlertDialog.Builder(context)
+                        .setTitle("Wechat Magician")
+                        .setAdapter(adapter, { _, _ -> })
+                        .setNegativeButton(cancel, { dialog, _ ->
+                            dialog.dismiss()
+                        })
+                        .show()
+            }
             return true
         }
         return super.onHandleCommand(context, command)

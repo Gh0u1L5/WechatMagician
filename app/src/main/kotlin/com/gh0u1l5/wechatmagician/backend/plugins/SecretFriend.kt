@@ -2,6 +2,8 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 
 import android.app.Activity
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.BaseAdapter
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ITEM_ID_BUTTON_HIDE_FRIEND
@@ -23,6 +25,8 @@ import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
 object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenuHook, ISearchBarConsole {
+
+    private val mainHandler by lazy { Handler(Looper.getMainLooper()) }
 
     private val pref = WechatHook.settings
 
@@ -115,7 +119,9 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
             command.startsWith("hide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted.isEmpty()) {
-                    Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
+                    mainHandler.post {
+                        Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
+                    }
                 } else {
                     val nickname = command.drop("hide ".length)
                     changeUserStatusByNickname(context, nickname, true)
@@ -125,16 +131,20 @@ object SecretFriend : IActivityHook, IAdapterHook, INotificationHook, IPopupMenu
             command.startsWith("unhide ") -> {
                 val encrypted = pref.getString(SETTINGS_SECRET_FRIEND_PASSWORD, "")
                 if (encrypted.isEmpty()) {
-                    Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
+                    mainHandler.post {
+                        Toast.makeText(context, promptPasswordMissing, Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    PasswordUtil.askPasswordWithVerify(context, titleSecretFriend, promptVerifyPassword, encrypted) {
-                        val nickname = command.drop("unhide ".length)
-                        if (nickname == "all") {
-                            SecretFriendList.forEach { username ->
-                                changeUserStatusByUsername(context, username, false)
+                    mainHandler.post {
+                        PasswordUtil.askPasswordWithVerify(context, titleSecretFriend, promptVerifyPassword, encrypted) {
+                            val nickname = command.drop("unhide ".length)
+                            if (nickname == "all") {
+                                SecretFriendList.forEach { username ->
+                                    changeUserStatusByUsername(context, username, false)
+                                }
+                            } else {
+                                changeUserStatusByNickname(context, nickname, false)
                             }
-                        } else {
-                            changeUserStatusByNickname(context, nickname, false)
                         }
                     }
                 }

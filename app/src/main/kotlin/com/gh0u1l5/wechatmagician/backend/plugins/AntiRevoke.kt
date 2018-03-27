@@ -80,9 +80,9 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
     override fun onFileDeleting(file: File): Operation<Boolean?> {
         val path = file.absolutePath
         return when {
-            path.contains("/image2/") -> interruption()
-            path.contains("/voice2/") -> interruption()
-            path.contains("/video/")  -> interruption()
+            path.contains("/image2/") -> replacement(true)
+            path.contains("/voice2/") -> replacement(true)
+            path.contains("/video/")  -> replacement(true)
             else -> nop()
         }
     }
