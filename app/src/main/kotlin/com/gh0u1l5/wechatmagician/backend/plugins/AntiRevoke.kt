@@ -9,14 +9,13 @@ import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation
-import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.interruption
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.replacement
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IFileSystemHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IMessageStorageHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Methods.MsgInfoStorage_insert
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.storage.Methods.MsgInfoStorage_insert
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil

@@ -4,9 +4,9 @@ import android.graphics.Bitmap
 import android.os.Environment
 import android.os.Environment.MEDIA_MOUNTED
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Fields.ImgInfoStorage_mBitmapCache
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.ImgInfoStorage_load
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.Methods.LruCacheWithListener_put
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Fields.ImgInfoStorage_mBitmapCache
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Methods.ImgInfoStorage_load
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Methods.LruCacheWithListener_put
 import com.gh0u1l5.wechatmagician.util.FileUtil.createTimeTag
 import de.robv.android.xposed.XposedHelpers.callMethod
 

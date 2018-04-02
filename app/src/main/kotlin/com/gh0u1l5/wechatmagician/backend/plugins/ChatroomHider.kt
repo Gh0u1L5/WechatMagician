@@ -23,7 +23,7 @@ import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IAdapterHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.ISearchBarConsole
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.ui.chatting.Classes.ChattingUI
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XposedHelpers.getObjectField
 

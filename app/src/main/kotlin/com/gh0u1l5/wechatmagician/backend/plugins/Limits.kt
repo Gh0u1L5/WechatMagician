@@ -15,14 +15,13 @@ import com.gh0u1l5.wechatmagician.spellbook.C
 import com.gh0u1l5.wechatmagician.spellbook.base.Hooker
 import com.gh0u1l5.wechatmagician.spellbook.base.HookerProvider
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IActivityHook
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.storage.Classes.ContactInfo
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.contact.Classes.SelectContactUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Classes.SelectConversationUI
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.transmit.Methods.SelectConversationUI_checkLimit
-import com.gh0u1l5.wechatmagician.spellbook.util.ReflectionUtil.findAndHookMethod
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.plugin.gallery.ui.Classes.AlbumPreviewUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.storage.Classes.ContactInfo
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.ui.contact.Classes.SelectContactUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.ui.transmit.Methods.SelectConversationUI_checkLimit
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import de.robv.android.xposed.XC_MethodHook
+import de.robv.android.xposed.XposedBridge.hookMethod
 import de.robv.android.xposed.XposedHelpers
 import de.robv.android.xposed.XposedHelpers.findAndHookMethod
 import java.lang.reflect.Field
@@ -99,7 +98,7 @@ object Limits : IActivityHook, HookerProvider {
 
     // Hook SelectConversationUI to bypass the limit on number of recipients.
     private val onCheckSelectLimitHooker = Hooker {
-        findAndHookMethod(SelectConversationUI, SelectConversationUI_checkLimit, object : XC_MethodHook() {
+        hookMethod(SelectConversationUI_checkLimit, object : XC_MethodHook() {
             @Throws(Throwable::class)
             override fun beforeHookedMethod(param: MethodHookParam) {
                 param.result = false

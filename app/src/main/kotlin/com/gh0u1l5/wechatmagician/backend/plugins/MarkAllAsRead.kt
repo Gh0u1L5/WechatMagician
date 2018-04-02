@@ -11,7 +11,7 @@ import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.database.MainDatabase
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IPopupMenuHook
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.Classes.LauncherUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.ui.Classes.LauncherUI
 import me.leolin.shortcutbadger.ShortcutBadger
 
 object MarkAllAsRead : IPopupMenuHook {

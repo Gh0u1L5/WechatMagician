@@ -20,7 +20,7 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ConversationAdapterObje
 import com.gh0u1l5.wechatmagician.spellbook.hookers.ListViewHider
 import com.gh0u1l5.wechatmagician.spellbook.hookers.MenuAppender
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.*
-import com.gh0u1l5.wechatmagician.spellbook.mirror.mm.ui.chatting.Classes.ChattingUI
+import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.ui.chatting.Classes.ChattingUI
 import com.gh0u1l5.wechatmagician.util.PasswordUtil
 import de.robv.android.xposed.XposedHelpers.getObjectField
 
