@@ -31,8 +31,8 @@ import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.collectMirrorReports
 import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.findAllMirrorObjects
-import com.gh0u1l5.wechatmagician.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.FileUtil.createTimeTag
+import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil
+import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil.createTimeTag
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -51,22 +51,6 @@ class WechatHook : IXposedHookLoadPackage {
 
         val settings = Preferences(PREFERENCE_NAME_SETTINGS)
         val developer = Preferences(PREFERENCE_NAME_DEVELOPER)
-
-        private val plugins = listOf (
-                AdBlock,
-                Alert,
-                AntiRevoke,
-                AntiSnsDelete,
-                AutoLogin,
-                ChatroomHider,
-                Donate,
-                Limits,
-                MarkAllAsRead,
-                ObjectsHunter,
-                SecretFriend,
-                SnsBlock,
-                SnsForward
-        )
 
         private val requireHookStatusReceiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
@@ -180,9 +164,9 @@ class WechatHook : IXposedHookLoadPackage {
 
         // Launch Wechat SpellBook
         if (!BuildConfig.DEBUG) {
-            SpellBook.startup(lpparam, plugins, listOf(Limits))
+            SpellBook.startup(lpparam, WechatPlugins.list(), listOf(Limits))
         } else {
-            SpellBook.startup(lpparam, plugins, listOf(Limits, Developer))
+            SpellBook.startup(lpparam, WechatPlugins.list(), listOf(Limits, Developer))
         }
     }
 
