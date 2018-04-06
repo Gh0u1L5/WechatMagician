@@ -3,6 +3,7 @@ package com.gh0u1l5.wechatmagician.util
 import com.gh0u1l5.wechatmagician.backend.storage.cache.SnsCache
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.modelsfs.Classes.EncEngine
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.modelsfs.Methods.EncEngine_transFor
+import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil
 import de.robv.android.xposed.XposedHelpers
 import java.net.URL
 

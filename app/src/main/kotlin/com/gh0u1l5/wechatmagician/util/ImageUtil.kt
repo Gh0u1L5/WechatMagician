@@ -7,7 +7,8 @@ import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.ImgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Fields.ImgInfoStorage_mBitmapCache
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Methods.ImgInfoStorage_load
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.Methods.LruCacheWithListener_put
-import com.gh0u1l5.wechatmagician.util.FileUtil.createTimeTag
+import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil
+import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil.createTimeTag
 import de.robv.android.xposed.XposedHelpers.callMethod
 
 // ImageUtil is a helper object for processing thumbnails.
