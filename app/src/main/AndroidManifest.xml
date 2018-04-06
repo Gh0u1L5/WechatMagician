@@ -6,6 +6,7 @@
     android:versionName="2.8.0">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:name=".frontend.WMApplication"
@@ -15,6 +16,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+
         <activity
             android:name=".frontend.MainActivity"
             android:screenOrientation="portrait">
@@ -44,7 +46,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.gh0u1l5.wechatmagician.reports"
+            android:authorities="com.gh0u1l5.wechatmagician.files"
             android:exported="false"
             android:grantUriPermissions="true" >
             <meta-data

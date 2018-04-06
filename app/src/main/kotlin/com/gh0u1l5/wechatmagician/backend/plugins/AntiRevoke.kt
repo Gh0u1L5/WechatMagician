@@ -9,7 +9,6 @@ import com.gh0u1l5.wechatmagician.backend.storage.Strings
 import com.gh0u1l5.wechatmagician.backend.storage.cache.MessageCache
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.MsgStorageObject
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation
-import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.interruption
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.replacement
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IDatabaseHook

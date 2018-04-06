@@ -15,7 +15,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_REPORTS
 import com.gh0u1l5.wechatmagician.Global.LOG_TAG
-import com.gh0u1l5.wechatmagician.Global.MAGICIAN_REPORT_PROVIDER
+import com.gh0u1l5.wechatmagician.Global.MAGICIAN_FILE_PROVIDER
 import com.gh0u1l5.wechatmagician.Global.XPOSED_BASE_DIR
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
@@ -54,10 +54,10 @@ class SupportFragment : Fragment() {
         try {
             val files = arrayListOf<Uri>()
             if (xposedLog.canRead()) {
-                files.add(getUriForFile(context, MAGICIAN_REPORT_PROVIDER, xposedLog))
+                files.add(getUriForFile(context, MAGICIAN_FILE_PROVIDER, xposedLog))
             }
             if (magicianLog.path.isNotEmpty()) {
-                files.add(getUriForFile(context, MAGICIAN_REPORT_PROVIDER, magicianLog))
+                files.add(getUriForFile(context, MAGICIAN_FILE_PROVIDER, magicianLog))
             }
             context.startActivity(Intent(Intent.ACTION_SEND_MULTIPLE).apply {
                 type = "text/plain"

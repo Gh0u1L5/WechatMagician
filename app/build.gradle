@@ -60,6 +60,7 @@ dependencies {
     compileOnly 'de.robv.android.xposed:api:53:sources'
 
     implementation project(':spellbook')
+    implementation 'com.github.kittinunf.fuel:fuel-android:1.12.1'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 }

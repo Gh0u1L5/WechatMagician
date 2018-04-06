@@ -11,8 +11,8 @@ object Global {
     const val WECHAT_PACKAGE_NAME   = "com.tencent.mm"
     const val MAGICIAN_PACKAGE_NAME = "com.gh0u1l5.wechatmagician"
 
-    const val XPOSED_FILE_PROVIDER     = "$XPOSED_PACKAGE_NAME.fileprovider"
-    const val MAGICIAN_REPORT_PROVIDER = "$MAGICIAN_PACKAGE_NAME.reports"
+    const val XPOSED_FILE_PROVIDER   = "$XPOSED_PACKAGE_NAME.fileprovider"
+    const val MAGICIAN_FILE_PROVIDER = "$MAGICIAN_PACKAGE_NAME.files"
 
     @SuppressLint("SdCardPath")
     private val DATA_DIR = if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) "/data/data/" else "/data/user_de/0/"
