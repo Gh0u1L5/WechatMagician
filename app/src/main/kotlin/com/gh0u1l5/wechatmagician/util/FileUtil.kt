@@ -16,31 +16,23 @@ object FileUtil {
     fun writeBytesToDisk(path: String, content: ByteArray) {
         val file = File(path)
         file.parentFile.mkdirs()
-        var out: FileOutputStream? = null
-        try {
-            out = FileOutputStream(file)
-            out.write(content)
-        } finally {
-            out?.close()
+        FileOutputStream(file).use {
+            it.write(content)
         }
     }
 
     // readBytesFromDisk returns all the bytes of a binary file.
     fun readBytesFromDisk(path: String): ByteArray {
-        var ins: FileInputStream? = null
-        return try {
-            ins = FileInputStream(path)
-            ins.readBytes()
-        } finally {
-            ins?.close()
+        return FileInputStream(path).use {
+            it.readBytes()
         }
     }
 
     // writeObjectToDisk writes a serializable object to disk.
     fun writeObjectToDisk(path: String, obj: Serializable) {
         val out = ByteArrayOutputStream()
-        ObjectOutputStream(out).apply {
-            writeObject(obj); close()
+        ObjectOutputStream(out).use {
+            it.writeObject(obj)
         }
         writeBytesToDisk(path, out.toByteArray())
     }
@@ -50,8 +42,7 @@ object FileUtil {
         val bytes = readBytesFromDisk(path)
         val ins = ByteArrayInputStream(bytes)
         return ObjectInputStream(ins).use {
-            val obj = it.readObject()
-            it.close(); obj
+            it.readObject()
         }
     }
 

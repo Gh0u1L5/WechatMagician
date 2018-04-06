@@ -32,24 +32,22 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
     // load reads the shared preferences or reloads the existing preferences
     fun load(context: Context) {
         tryAsynchronously {
-            var cursor: Cursor? = null
             try {
                 // Load the shared preferences using ContentProvider.
                 val uri = Uri.parse("content://$PREFERENCE_PROVIDER_AUTHORITY/$preferencesName")
-                cursor = context.contentResolver.query(uri, null, null, null, null)
-                if (cursor == null) {
-                    return@tryAsynchronously
-                }
-                while (cursor.moveToNext()) {
-                    val key = cursor.getString(0)
-                    val type = cursor.getString(2)
-                    content[key] = when (type) {
-                        "Int"     -> cursor.getInt(1)
-                        "Long"    -> cursor.getLong(1)
-                        "Float"   -> cursor.getFloat(1)
-                        "Boolean" -> (cursor.getString(1) == "true")
-                        "String"  -> cursor.getString(1)
-                        else -> null
+                val cursor = context.contentResolver.query(uri, null, null, null, null)
+                cursor.use {
+                    while (cursor.moveToNext()) {
+                        val key = cursor.getString(0)
+                        val type = cursor.getString(2)
+                        content[key] = when (type) {
+                            "Int"     -> cursor.getInt(1)
+                            "Long"    -> cursor.getLong(1)
+                            "Float"   -> cursor.getFloat(1)
+                            "Boolean" -> (cursor.getString(1) == "true")
+                            "String"  -> cursor.getString(1)
+                            else -> null
+                        }
                     }
                 }
             } catch (_: SecurityException) {
@@ -62,7 +60,6 @@ class Preferences(private val preferencesName: String) : SharedPreferences {
                 legacy = XSharedPreferences(File(preferencesDir, "$preferencesName.xml"))
             } finally {
                 loadChannel.done()
-                cursor?.close()
                 cacheStringList()
             }
         }
