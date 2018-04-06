@@ -2,7 +2,7 @@ language: android
 
 env:
   global:
-    - GRADLE_VERSION=4.5
+    - GRADLE_VERSION=4.4
     - ANDROID_API_LEVEL=27
     - ANDROID_BUILD_TOOLS_VERSION=27.0.3
 
