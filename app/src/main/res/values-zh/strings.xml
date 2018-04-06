@@ -14,6 +14,7 @@
     <string name="donate">捐赠</string>
 
     <string name="button_ok">确定</string>
+    <string name="button_update">更新</string>
     <string name="button_cancel">取消</string>
     <string name="button_clean_unread">清空全部未读提醒</string>
     <string name="button_hide_chatroom">隐藏无用群聊</string>
@@ -24,12 +25,13 @@
     <string name="button_sns_screenshot">截图</string>
 
     <string name="prompt_alipay_not_found">未发现支付宝手机客户端</string>
+    <string name="prompt_load_component_status_failed">组件状态检查失败</string>
     <string name="prompt_message_recall">妄图撤回一条消息，啧啧</string>
     <string name="prompt_need_reboot">重启后生效</string>
     <string name="prompt_screenshot">截图已保存至</string>
     <string name="prompt_sns_invalid">数据失效或已删除</string>
+    <string name="prompt_update_discovered">发现更新</string>
     <string name="prompt_wait">请稍候片刻……</string>
-    <string name="prompt_load_component_status_failed">组件状态检查失败</string>
 
     <string name="prompt_setup_password">请设定新密码</string>
     <string name="prompt_verify_password">请输入解锁密码</string>

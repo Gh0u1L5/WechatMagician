@@ -14,6 +14,7 @@
     <string name="donate">Donate</string>
 
     <string name="button_ok">Okay</string>
+    <string name="button_update">Update</string>
     <string name="button_cancel">Cancel</string>
     <string name="button_clean_unread">Mark All as Read</string>
     <string name="button_hide_chatroom">Hide Useless Chatroom</string>
@@ -24,12 +25,13 @@
     <string name="button_sns_screenshot">Screenshot</string>
 
     <string name="prompt_alipay_not_found">Alipay Not Found</string>
+    <string name="prompt_load_component_status_failed">Failed to retrieve the status of components.</string>
     <string name="prompt_message_recall">want to recall the message, idiot.</string>
     <string name="prompt_need_reboot">Take effect after reboot.</string>
     <string name="prompt_screenshot">The screenshot has been saved to</string>
     <string name="prompt_sns_invalid">Record is invalid or deleted.</string>
+    <string name="prompt_update_discovered">Update Discovered</string>
     <string name="prompt_wait">Please wait for a while.....</string>
-    <string name="prompt_load_component_status_failed">Failed to retrieve the status of components.</string>
 
     <string name="prompt_setup_password">Enter new password</string>
     <string name="prompt_verify_password">Enter your password</string>

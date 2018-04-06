@@ -18,6 +18,7 @@ import com.gh0u1l5.wechatmagician.frontend.fragments.PrefFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.StatusFragment
 import com.gh0u1l5.wechatmagician.frontend.fragments.SupportFragment
 import com.gh0u1l5.wechatmagician.util.LocaleUtil
+import com.gh0u1l5.wechatmagician.util.UpdateUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil.openURL
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -33,7 +34,6 @@ class MainActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
 
         val toggle = ActionBarDrawerToggle(
                 this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
@@ -55,6 +55,8 @@ class MainActivity : AppCompatActivity(),
                     .replace(R.id.main_container, StatusFragment.newInstance())
                     .commit()
         }
+
+        UpdateUtil.checkVersion(this)
     }
 
     override fun onBackPressed() {
