@@ -177,9 +177,9 @@ class WechatHook : IXposedHookLoadPackage {
 
         // Launch Wechat SpellBook
         if (!BuildConfig.DEBUG) {
-            SpellBook.startup(lpparam, WechatPlugins.list(), listOf(Limits))
+            SpellBook.startup(lpparam, WechatPlugins, listOf(Limits))
         } else {
-            SpellBook.startup(lpparam, WechatPlugins.list(), listOf(Limits, Developer))
+            SpellBook.startup(lpparam, WechatPlugins, listOf(Limits, Developer))
         }
     }
 
