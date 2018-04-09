@@ -72,7 +72,7 @@ task generatePluginList() {
 
     def plugins = fileTree(PLUGIN_DIR).collect { file ->
         file.name.substring(0, file.name.length() - 3)
-    }
+    }.sort()
     file(PLUGIN_LIST_FILE).text = """package com.gh0u1l5.wechatmagician.backend
 
 import com.gh0u1l5.wechatmagician.backend.plugins.*
