@@ -27,12 +27,14 @@ import com.gh0u1l5.wechatmagician.spellbook.SpellBook.getApplicationApkPath
 import com.gh0u1l5.wechatmagician.spellbook.SpellBook.isImportantWechatProcess
 import com.gh0u1l5.wechatmagician.spellbook.WechatGlobal.wxVersion
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
+import com.gh0u1l5.wechatmagician.spellbook.mirror.MirrorClasses
+import com.gh0u1l5.wechatmagician.spellbook.mirror.MirrorFields
+import com.gh0u1l5.wechatmagician.spellbook.mirror.MirrorMethods
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
-import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.collectMirrorReports
-import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.findAllMirrorObjects
 import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil
 import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil.createTimeTag
+import com.gh0u1l5.wechatmagician.spellbook.util.MirrorUtil.generateReport
 import dalvik.system.PathClassLoader
 import de.robv.android.xposed.IXposedHookLoadPackage
 import de.robv.android.xposed.XC_MethodHook
@@ -72,15 +74,26 @@ class WechatHook : IXposedHookLoadPackage {
                 val reportPath = "$storage/WechatMagician/reports/report-${createTimeTag()}.txt"
 
                 tryAsynchronously {
-                    val apkPath = getApplicationApkPath(MAGICIAN_PACKAGE_NAME)
                     val reportHead = listOf (
                             "Device: SDK${Build.VERSION.SDK_INT}-${Build.PRODUCT}",
                             "Xposed Version: ${XposedBridge.XPOSED_BRIDGE_VERSION}",
                             "Wechat Version: $wxVersion",
                             "Module Version: ${BuildConfig.VERSION_NAME}"
                     ).joinToString("\n")
-                    val reportBody = collectMirrorReports(findAllMirrorObjects(apkPath))
-                            .joinToString("\n") { "${it.first} -> ${it.second}" }
+                    val reportBody = listOf(
+                            "Classes:",
+                            generateReport(MirrorClasses).joinToString("\n") {
+                                "  ${it.first} -> ${it.second}"
+                            },
+                            "Methods:",
+                            generateReport(MirrorMethods).joinToString("\n") {
+                                "  ${it.first} -> ${it.second}"
+                            },
+                            "Fields:",
+                            generateReport(MirrorFields).joinToString("\n") {
+                                "  ${it.first} -> ${it.second}"
+                            }
+                    ).joinToString("\n")
                     FileUtil.writeBytesToDisk(reportPath, "$reportHead\n$reportBody".toByteArray())
                 }
 
