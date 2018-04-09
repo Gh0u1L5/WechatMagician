@@ -21,6 +21,8 @@ import de.robv.android.xposed.XposedHelpers.findFirstFieldByExactType
 
 // ViewUtil is a helper object for debugging / handling UI operations.
 object ViewUtil {
+    private const val TAG = "ViewUtil"
+
     // dumpViewGroup dumps the structure of a view group.
     fun dumpViewGroup(prefix: String, viewGroup: ViewGroup) {
         repeat(viewGroup.childCount, {
@@ -78,7 +80,7 @@ object ViewUtil {
         try {
             context?.startActivity(Intent(Intent.ACTION_VIEW).setData(Uri.parse(url)))
         } catch (t: Throwable) {
-            Log.e(Global.LOG_TAG, "Cannot open URL $url: $t")
+            Log.e(TAG, "Cannot open URL $url: $t")
             Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }

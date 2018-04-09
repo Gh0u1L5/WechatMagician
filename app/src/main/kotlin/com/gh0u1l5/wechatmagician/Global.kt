@@ -5,7 +5,6 @@ import android.os.Build
 
 object Global {
     const val SALT = "W3ch4tM4g1c14n"
-    const val LOG_TAG = "WechatMagician"
 
     const val XPOSED_PACKAGE_NAME   = "de.robv.android.xposed.installer"
     const val WECHAT_PACKAGE_NAME   = "com.tencent.mm"

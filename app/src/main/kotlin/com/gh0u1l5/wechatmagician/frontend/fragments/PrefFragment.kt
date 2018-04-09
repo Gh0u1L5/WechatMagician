@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
-import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_INTERFACE_HIDE_ICON
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_MODULE_LANGUAGE
@@ -76,7 +75,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                     val componentName = ComponentName(MAGICIAN_PACKAGE_NAME, className)
                     activity!!.packageManager.setComponentEnabledSetting(componentName, newState, DONT_KILL_APP)
                 } catch (t: Throwable) {
-                    Log.e(LOG_TAG, "Cannot hide icon: $t")
+                    Log.e(TAG, "Cannot hide icon: $t")
                     Toast.makeText(activity, t.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -86,7 +85,7 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
                     LocaleUtil.setLocale(activity!!, language)
                     activity!!.recreate()
                 } catch (t: Throwable) {
-                    Log.e(LOG_TAG, "Cannot change language: $t")
+                    Log.e(TAG, "Cannot change language: $t")
                     Toast.makeText(activity, t.localizedMessage, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -101,6 +100,8 @@ class PrefFragment : PreferenceFragment(), SharedPreferences.OnSharedPreferenceC
     }
 
     companion object {
+        private const val TAG = "PrefFragment"
+
         private const val ARG_PREF_RES = "preferencesResId"
         private const val ARG_PREF_NAME = "preferencesFileName"
 

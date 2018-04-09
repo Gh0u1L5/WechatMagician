@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_REPORTS
-import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_FILE_PROVIDER
 import com.gh0u1l5.wechatmagician.Global.XPOSED_BASE_DIR
 import com.gh0u1l5.wechatmagician.R
@@ -67,12 +66,13 @@ class SupportFragment : Fragment() {
                 putExtra(Intent.EXTRA_TEXT, greetings)
             })
         } catch (t: Throwable) {
-            Log.w(LOG_TAG, t)
+            Log.w(TAG, t)
             Toast.makeText(context, t.localizedMessage, Toast.LENGTH_SHORT).show()
         }
     }
 
     companion object {
+        private const val TAG = "SupportFragment"
         fun newInstance(): SupportFragment = SupportFragment()
     }
 }

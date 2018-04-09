@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_HOOK_STATUS
-import com.gh0u1l5.wechatmagician.Global.LOG_TAG
 import com.gh0u1l5.wechatmagician.R
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus
 import com.gh0u1l5.wechatmagician.spellbook.WechatStatus.StatusFlag.*
@@ -70,7 +69,7 @@ class StatusFragment : Fragment() {
     private fun isModuleLoaded(): Boolean {
         // In some frameworks, short methods (less than two Dalvik instructions)
         // can not be hooked stably. This log just makes the method longer to hook.
-        Log.v(LOG_TAG, "$javaClass.isModuleLoaded() invoked.")
+        Log.v(TAG, "$javaClass.isModuleLoaded() invoked.")
         return false
     }
 
@@ -78,7 +77,7 @@ class StatusFragment : Fragment() {
     private fun getXposedVersion(): Int {
         // In some frameworks, short methods (less than two Dalvik instructions)
         // can not be hooked stably. This log just makes the method longer to hook.
-        Log.v(LOG_TAG, "$javaClass.getXposedVersion() invoked. ")
+        Log.v(TAG, "$javaClass.getXposedVersion() invoked. ")
         return 0
     }
 
@@ -91,6 +90,8 @@ class StatusFragment : Fragment() {
     }
 
     companion object {
+        private const val TAG = "StatusFragment"
+
         fun newInstance(): StatusFragment = StatusFragment()
 
         fun requireHookStatus(context: Context, callback: (List<WechatStatus.StatusFlag>) -> Unit) {
