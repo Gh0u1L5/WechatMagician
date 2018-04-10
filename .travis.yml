@@ -1,24 +1,29 @@
 language: android
+jdk: oraclejdk8
 
 env:
   global:
-    - GRADLE_VERSION=4.4
-    - ANDROID_API_LEVEL=27
-    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+    - BUILD_API=android-27
+    - BUILD_TOOLS=build-tools-27.0.3
 
 android:
   components:
     - tools
     - platform-tools
-    - tools
-    # The BuildTools version used by your project
-    - build-tools-${ANDROID_BUILD_TOOLS_VERSION}
     # The SDK version used to compile your project
-    - android-${ANDROID_API_LEVEL}
+    - $BUILD_API
+    # The BuildTools version used by your project
+    - $BUILD_TOOLS
 
-before_install:
-    # Setup the correct gradle version.
-    - wget http://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip
-    - unzip gradle-${GRADLE_VERSION}-bin.zip
-    - export GRADLE_HOME=$PWD/gradle-${GRADLE_VERSION}
-    - export PATH=$GRADLE_HOME/bin:$PATH
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -rf $HOME/.gradle/caches/*/plugin-resolution/
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+
+script:
+  - ./gradlew build check
