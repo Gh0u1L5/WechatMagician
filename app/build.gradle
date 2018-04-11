@@ -21,10 +21,6 @@ android {
         maxSdkVersion 27
         targetSdkVersion 27
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_7
-        targetCompatibility JavaVersion.VERSION_1_7
-    }
     lintOptions {
         abortOnError false
         checkReleaseBuilds false
@@ -63,7 +59,7 @@ dependencies {
     implementation project(':spellbook')
     implementation 'com.github.kittinunf.fuel:fuel-android:1.12.1'
     implementation 'me.leolin:ShortcutBadger:1.1.19@aar'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 task generatePluginList() {
