@@ -176,10 +176,10 @@ class WechatHook : IXposedHookLoadPackage {
         ChatroomHideList.load(context)
 
         // Launch Wechat SpellBook
-        if (!BuildConfig.DEBUG) {
-            SpellBook.startup(lpparam, WechatPlugins, listOf(Limits))
+        if (BuildConfig.DEBUG) {
+            SpellBook.startup(lpparam, WechatPlugins)
         } else {
-            SpellBook.startup(lpparam, WechatPlugins, listOf(Limits, Developer))
+            SpellBook.startup(lpparam, WechatPlugins - Developer)
         }
     }
 
