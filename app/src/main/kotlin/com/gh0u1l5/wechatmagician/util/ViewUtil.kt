@@ -13,7 +13,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.Toast
-import com.gh0u1l5.wechatmagician.Global
 import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.plugin.sns.ui.Classes.SnsActivity
 import de.robv.android.xposed.XposedBridge
 import de.robv.android.xposed.XposedHelpers

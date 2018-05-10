@@ -3,8 +3,8 @@ package com.gh0u1l5.wechatmagician.backend.plugins
 import com.gh0u1l5.wechatmagician.Global.SETTINGS_SNS_ADBLOCK
 import com.gh0u1l5.wechatmagician.backend.WechatHook
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation
-import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.interruption
 import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.nop
+import com.gh0u1l5.wechatmagician.spellbook.base.Operation.Companion.replacement
 import com.gh0u1l5.wechatmagician.spellbook.interfaces.IXmlParserHook
 
 object AdBlock : IXmlParserHook {
@@ -20,6 +20,6 @@ object AdBlock : IXmlParserHook {
         if (root != "ADInfo") {
             return nop()
         }
-        return interruption()
+        return replacement(null)
     }
 }

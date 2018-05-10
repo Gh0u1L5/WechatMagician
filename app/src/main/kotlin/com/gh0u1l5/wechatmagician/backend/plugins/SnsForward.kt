@@ -31,7 +31,10 @@ import com.gh0u1l5.wechatmagician.spellbook.mirror.com.tencent.mm.plugin.sns.ui.
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryAsynchronously
 import com.gh0u1l5.wechatmagician.spellbook.util.BasicUtil.tryVerbosely
 import com.gh0u1l5.wechatmagician.spellbook.util.FileUtil
-import com.gh0u1l5.wechatmagician.util.*
+import com.gh0u1l5.wechatmagician.util.DownloadUtil
+import com.gh0u1l5.wechatmagician.util.ImageUtil
+import com.gh0u1l5.wechatmagician.util.MessageUtil
+import com.gh0u1l5.wechatmagician.util.ViewUtil
 import com.gh0u1l5.wechatmagician.util.ViewUtil.dp2px
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getListViewFromSnsActivity
 import com.gh0u1l5.wechatmagician.util.ViewUtil.getViewAtPosition

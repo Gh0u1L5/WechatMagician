@@ -18,7 +18,7 @@ import com.gh0u1l5.wechatmagician.Global.ACTION_REQUIRE_REPORTS
 import com.gh0u1l5.wechatmagician.Global.MAGICIAN_PACKAGE_NAME
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_SETTINGS
-import com.gh0u1l5.wechatmagician.backend.plugins.*
+import com.gh0u1l5.wechatmagician.backend.plugins.Developer
 import com.gh0u1l5.wechatmagician.backend.storage.Preferences
 import com.gh0u1l5.wechatmagician.backend.storage.list.ChatroomHideList
 import com.gh0u1l5.wechatmagician.backend.storage.list.SecretFriendList

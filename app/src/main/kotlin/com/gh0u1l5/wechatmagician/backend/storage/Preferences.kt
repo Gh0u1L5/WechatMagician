@@ -1,7 +1,6 @@
 package com.gh0u1l5.wechatmagician.backend.storage
 
 import android.content.*
-import android.database.Cursor
 import android.net.Uri
 import com.gh0u1l5.wechatmagician.Global.ACTION_UPDATE_PREF
 import com.gh0u1l5.wechatmagician.Global.FOLDER_SHARED_PREFS
