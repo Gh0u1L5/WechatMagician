@@ -53,7 +53,7 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         }
     }
 
-    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int?> {
+    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int> {
         if (!isPluginEnabled()) {
             return nop()
         }
@@ -66,7 +66,7 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         return nop()
     }
 
-    override fun onDatabaseDeleting(thisObject: Any, table: String, whereClause: String?, whereArgs: Array<String>?): Operation<Int?> {
+    override fun onDatabaseDeleting(thisObject: Any, table: String, whereClause: String?, whereArgs: Array<String>?): Operation<Int> {
         if (!isPluginEnabled()) {
             return nop()
         }
@@ -76,7 +76,7 @@ object AntiRevoke : IDatabaseHook, IFileSystemHook, IMessageStorageHook, IXmlPar
         }
     }
 
-    override fun onFileDeleting(file: File): Operation<Boolean?> {
+    override fun onFileDeleting(file: File): Operation<Boolean> {
         val path = file.absolutePath
         return when {
             path.contains("/image2/") -> replacement(true)

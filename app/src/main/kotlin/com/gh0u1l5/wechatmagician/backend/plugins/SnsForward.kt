@@ -127,7 +127,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
     private const val ROOT_TAG = "TimelineObject"
     private const val ID_TAG   = ".TimelineObject.id"
 
-    override fun onDatabaseOpened(path: String, factory: Any?, flags: Int, errorHandler: Any?, result: Any?): Operation<Any?> {
+    override fun onDatabaseOpened(path: String, factory: Any?, flags: Int, errorHandler: Any?, result: Any?): Operation<Any> {
         if (result == null) {
             return nop()
         }
@@ -153,7 +153,7 @@ object SnsForward : IActivityHook, IAdapterHook, IDatabaseHook, IXmlParserHook {
         }
     }
 
-    override fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View?): Operation<View?> {
+    override fun onHeaderViewListAdapterGotView(adapter: Any, position: Int, convertView: View?, parent: ViewGroup, result: View?): Operation<View> {
         if (result == null) {
             return nop()
         }

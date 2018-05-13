@@ -37,7 +37,7 @@ object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHook, IMessageStora
         ConversationAdapterObject = WeakReference(adapter)
     }
 
-    override fun onDatabaseOpened(path: String, factory: Any?, flags: Int, errorHandler: Any?, result: Any?): Operation<Any?> {
+    override fun onDatabaseOpened(path: String, factory: Any?, flags: Int, errorHandler: Any?, result: Any?): Operation<Any> {
         if (path.endsWith("SnsMicroMsg.db")) {
             if (SnsDatabaseObject !== result) {
                 SnsDatabaseObject = result
@@ -46,7 +46,7 @@ object ObjectsHunter : IActivityHook, IAdapterHook, IDatabaseHook, IMessageStora
         return nop()
     }
 
-    override fun onDatabaseUpdated(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int, result: Int): Operation<Int?> {
+    override fun onDatabaseUpdated(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int, result: Int): Operation<Int> {
         val path = thisObject.toString()
         if (path.endsWith("EnMicroMsg.db")) {
             if (MainDatabaseObject !== thisObject) {

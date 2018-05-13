@@ -15,7 +15,7 @@ object AntiSnsDelete : IDatabaseHook {
 
     private val pref = WechatHook.settings
 
-    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int?> {
+    override fun onDatabaseUpdating(thisObject: Any, table: String, values: ContentValues, whereClause: String?, whereArgs: Array<String>?, conflictAlgorithm: Int): Operation<Int> {
         when (table) {
             "SnsInfo" -> { // delete moment
                 if (values["type"] !in listOf(1, 2, 3, 15)) {
