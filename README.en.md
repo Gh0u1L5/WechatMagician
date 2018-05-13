@@ -2,6 +2,19 @@
 
 WechatMagician is a fancy Xposed module designed for Chinese social media application Wechat, to help the users get the ultimate control of their messages and moments. It is based on the __[WechatSpellbook](https://github.com/Gh0u1L5/WechatSpellbook)__ framework. Currently this module supports WeChat 6.5.3+.
 
+## Get Start
+Because WechatMagician is based on the __[WechatSpellbook](https://github.com/Gh0u1L5/WechatSpellbook)__ framework, when you clone the repository, don't forget the ```--recursive``` argument.
+``` bash
+git clone --recursive https://github.com/Gh0u1L5/WechatMagician.git
+```
+
+If you have already cloned the project, you can execute the following command to update the submodules.
+``` bash
+git submodule update --init --recursive
+```
+
+Similarly, if you are downloading the zip archieves, you have to also download the codes of WechatSpellbook and express them into the "spellbook" folder.
+
 ## Features
 
 #### Chatting
