@@ -8,6 +8,7 @@ import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import com.gh0u1l5.wechatmagician.BuildConfig
 import com.gh0u1l5.wechatmagician.Global.PREFERENCE_NAME_DEVELOPER
@@ -35,8 +36,17 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val toggle = ActionBarDrawerToggle(
-                this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = object : ActionBarDrawerToggle(this, drawer_layout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+            override fun onDrawerOpened(drawerView: View) {
+                super.onDrawerOpened(drawerView)
+                super.onDrawerSlide(drawerView, 0F) // this disables the arrow @ completed state
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                super.onDrawerSlide(drawerView, 0F) // this disables the animation
+            }
+        }
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
 
